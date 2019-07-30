@@ -5,11 +5,11 @@
 	<key>BuildDetails</key>
 	<dict>
 		<key>CarthageVersion</key>
-		<string>0.31.1</string>
+		<string>0.33.0</string>
 		<key>CocoapodsVersion</key>
-		<string>1.5.3</string>
+		<string></string>
 		<key>OSXVersion</key>
-		<string>10.13.6</string>
+		<string>10.14</string>
 		<key>WebRTCCommit</key>
 		<string>ca71024b4993ba95e3e6b8d0758004cffc54ddaf M70</string>
 	</dict>
