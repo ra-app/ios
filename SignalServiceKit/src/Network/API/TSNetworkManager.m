@@ -14,7 +14,7 @@
 #import <AFNetworking/AFNetworking.h>
 #import <SignalServiceKit/SignalServiceKit-Swift.h>
 
-NSString *const TSNetworkManagerDomain = @"org.whispersystems.signal.networkManager";
+NSString *const TSNetworkManagerDomain = @"com.ramicro.raapp.networkManager";
 
 BOOL IsNSErrorNetworkFailure(NSError *_Nullable error)
 {

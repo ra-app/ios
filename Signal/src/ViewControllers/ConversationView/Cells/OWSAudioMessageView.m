@@ -4,7 +4,7 @@
 
 #import "OWSAudioMessageView.h"
 #import "ConversationViewItem.h"
-#import "Signal-Swift.h"
+#import "RAAPP-Swift.h"
 #import "UIColor+OWS.h"
 #import "ViewControllerUtils.h"
 #import <SignalMessaging/OWSFormat.h>

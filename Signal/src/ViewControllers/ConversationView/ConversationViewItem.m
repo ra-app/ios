@@ -8,7 +8,7 @@
 #import "OWSMessageCell.h"
 #import "OWSMessageHeaderView.h"
 #import "OWSSystemMessageCell.h"
-#import "Signal-Swift.h"
+#import "RAAPP-Swift.h"
 #import <AssetsLibrary/AssetsLibrary.h>
 #import <SignalMessaging/NSString+OWS.h>
 #import <SignalMessaging/OWSUnreadIndicator.h>

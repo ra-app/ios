@@ -15,7 +15,7 @@
 #import "ProfileViewController.h"
 #import "PushManager.h"
 #import "RegistrationUtils.h"
-#import "Signal-Swift.h"
+#import "RAAPP-Swift.h"
 #import <SignalMessaging/Environment.h>
 #import <SignalMessaging/OWSContactsManager.h>
 #import <SignalMessaging/UIUtil.h>

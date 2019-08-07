@@ -4,7 +4,7 @@
 
 #import "NotificationsManager.h"
 #import "PushManager.h"
-#import "Signal-Swift.h"
+#import "RAAPP-Swift.h"
 #import <AudioToolbox/AudioServices.h>
 #import <SignalMessaging/Environment.h>
 #import <SignalMessaging/NSString+OWS.h>

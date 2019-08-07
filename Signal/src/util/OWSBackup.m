@@ -6,7 +6,7 @@
 #import "OWSBackupExportJob.h"
 #import "OWSBackupIO.h"
 #import "OWSBackupImportJob.h"
-#import "Signal-Swift.h"
+#import "RAAPP-Swift.h"
 #import <Curve25519Kit/Randomness.h>
 #import <SignalServiceKit/YapDatabaseConnection+OWS.h>
 

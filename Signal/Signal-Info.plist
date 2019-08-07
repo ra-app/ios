@@ -30,7 +30,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>org.whispersystems.signal</string>
+			<string>com.ramicro.raapp</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>sgnl</string>
@@ -104,7 +104,7 @@
 			<key>UIApplicationShortcutItemTitle</key>
 			<string>New Message</string>
 			<key>UIApplicationShortcutItemType</key>
-			<string>org.whispersystems.signal.quickCompose</string>
+			<string>com.ramicro.raapp.quickCompose</string>
 		</dict>
 	</array>
 	<key>UIBackgroundModes</key>

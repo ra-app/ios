@@ -6,7 +6,7 @@
 #import "AddToGroupViewController.h"
 #import "AvatarViewHelper.h"
 #import "OWSNavigationController.h"
-#import "Signal-Swift.h"
+#import "RAAPP-Swift.h"
 #import "SignalApp.h"
 #import <Curve25519Kit/Randomness.h>
 #import <SignalMessaging/BlockListUIUtils.h>

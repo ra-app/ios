@@ -5,7 +5,7 @@
 #import "CodeVerificationViewController.h"
 #import "OWS2FARegistrationViewController.h"
 #import "ProfileViewController.h"
-#import "Signal-Swift.h"
+#import "RAAPP-Swift.h"
 #import <PromiseKit/AnyPromise.h>
 #import <SignalMessaging/UIViewController+OWS.h>
 #import <SignalServiceKit/OWSError.h>

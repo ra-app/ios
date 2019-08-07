@@ -3,7 +3,7 @@
 //
 
 #import "MainAppContext.h"
-#import "Signal-Swift.h"
+#import "RAAPP-Swift.h"
 #import <SignalMessaging/Environment.h>
 #import <SignalMessaging/OWSProfileManager.h>
 #import <SignalMessaging/SignalMessaging-Swift.h>

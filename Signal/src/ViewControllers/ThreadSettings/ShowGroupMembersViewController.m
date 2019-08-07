@@ -3,7 +3,7 @@
 //
 
 #import "ShowGroupMembersViewController.h"
-#import "Signal-Swift.h"
+#import "RAAPP-Swift.h"
 #import "SignalApp.h"
 #import "ViewControllerUtils.h"
 #import <SignalMessaging/BlockListUIUtils.h>

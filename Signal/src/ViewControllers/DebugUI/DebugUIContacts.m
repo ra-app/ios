@@ -4,7 +4,7 @@
 
 #import "DebugUIContacts.h"
 #import "OWSTableViewController.h"
-#import "Signal-Swift.h"
+#import "RAAPP-Swift.h"
 #import "SignalApp.h"
 #import <Contacts/Contacts.h>
 #import <Curve25519Kit/Randomness.h>

@@ -6,7 +6,7 @@
 #import "OWSBackupIO.h"
 #import "OWSDatabaseMigration.h"
 #import "OWSDatabaseMigrationRunner.h"
-#import "Signal-Swift.h"
+#import "RAAPP-Swift.h"
 #import <SignalServiceKit/NSData+OWS.h>
 #import <SignalServiceKit/OWSBackgroundTask.h>
 #import <SignalServiceKit/OWSFileSystem.h>
