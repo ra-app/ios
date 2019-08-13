@@ -48,7 +48,7 @@ NSString *NSStringForScreenLockUIState(ScreenLockUIState value)
     UIImage *image = [UIImage imageNamed:@"RA-icon-256"];
     UIImageView *imageView = [UIImageView new];
     imageView.image = image;
-    imageView.contentMode = UIViewContentModeScaleAspectFit;
+    imageView.contentMode = UIViewContentModeScaleAspectFill;
     [edgesView addSubview:imageView];
     [imageView autoHCenterInSuperview];
 

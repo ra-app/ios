@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 // Where the user enters the verification code they wish to document
 @property (nonatomic) UITextField *challengeTextField;
+@property (nonatomic) UIView *header;
 
 @property (nonatomic) UILabel *phoneNumberLabel;
 
@@ -73,6 +74,7 @@ NS_ASSUME_NONNULL_BEGIN
     [self createViews];
 
     [self initializeKeyboardHandlers];
+   
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -80,12 +82,16 @@ NS_ASSUME_NONNULL_BEGIN
     [super viewWillAppear:animated];
     [self enableServerActions:YES];
     [self updatePhoneNumberLabel];
+   
+   
+    
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     [_challengeTextField becomeFirstResponder];
+     [self setGradientForView:_header];
 }
 
 #pragma mark -
@@ -95,20 +101,21 @@ NS_ASSUME_NONNULL_BEGIN
     self.view.backgroundColor = [UIColor whiteColor];
     self.view.opaque = YES;
 
-    UIColor *signalBlueColor = [UIColor ows_signalBrandBlueColor];
+    UIColor *signalBlueColor = [UIColor blueColor];//[UIColor ows_signalBrandBlueColor];
 
-    UIView *header = [UIView new];
-    header.backgroundColor = signalBlueColor;
-    [self.view addSubview:header];
-    [header autoPinWidthToSuperview];
-    [header autoPinEdgeToSuperviewEdge:ALEdgeTop];
+    _header = [UIView new];
+    _header.backgroundColor = signalBlueColor;
+    [self.view addSubview:_header];
+    [_header autoPinWidthToSuperview];
+    [_header autoPinEdgeToSuperviewEdge:ALEdgeTop];
     // The header will grow to accomodate the titleLabel's height.
-
+   
+    
     UILabel *titleLabel = [UILabel new];
     titleLabel.textColor = [UIColor whiteColor];
     titleLabel.text = [self phoneNumberText];
     titleLabel.font = [UIFont ows_mediumFontWithSize:20.f];
-    [header addSubview:titleLabel];
+    [_header addSubview:titleLabel];
     [titleLabel autoPinToTopLayoutGuideOfViewController:self withInset:0];
     [titleLabel autoPinEdgeToSuperviewEdge:ALEdgeBottom];
     [titleLabel autoSetDimension:ALDimensionHeight toSize:40];
@@ -128,7 +135,7 @@ NS_ASSUME_NONNULL_BEGIN
             forState:UIControlStateNormal];
         [backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         backButton.titleLabel.font = [UIFont ows_mediumFontWithSize:14.f];
-        [header addSubview:backButton];
+        [_header addSubview:backButton];
         [backButton autoPinLeadingToSuperviewMarginWithInset:10.f];
         [backButton autoAlignAxis:ALAxisHorizontal toSameAxisOfView:titleLabel];
         [backButton addTarget:self action:@selector(backButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
@@ -144,7 +151,7 @@ NS_ASSUME_NONNULL_BEGIN
     [_phoneNumberLabel autoPinWidthToSuperviewWithMargin:ScaleFromIPhone5(32)];
     [_phoneNumberLabel autoPinEdge:ALEdgeTop
                             toEdge:ALEdgeBottom
-                            ofView:header
+                            ofView:_header
                         withOffset:ScaleFromIPhone5To7Plus(30, 100)];
 
     const CGFloat kHMargin = 36;
@@ -247,6 +254,8 @@ NS_ASSUME_NONNULL_BEGIN
     [_requestCallSpinner autoSetDimension:ALDimensionHeight toSize:kSpinnerSize];
     [_requestCallSpinner autoVCenterInSuperview];
     [_requestCallSpinner autoPinTrailingToSuperviewMarginWithInset:kSpinnerSpacing];
+    
+    
 }
 
 - (NSString *)phoneNumberText
@@ -507,6 +516,19 @@ NS_ASSUME_NONNULL_BEGIN
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
     return UIStatusBarStyleLightContent;
+}
+
+-(void) setGradientForView:(UIView *) view {
+    UIColor *green = [UIColor colorWithRGBHex:0x41D794];
+    UIColor *blue = [UIColor colorWithRGBHex:0x005AF5];
+    
+    CAGradientLayer *gradient = [CAGradientLayer layer];
+    gradient.frame = view.bounds;
+    gradient.startPoint = CGPointMake(1, 0);
+    gradient.endPoint = CGPointMake(1, 1);
+    gradient.colors = [NSArray arrayWithObjects:(id)[green CGColor], [blue CGColor], nil];
+    
+    [view.layer insertSublayer:gradient atIndex:0];
 }
 
 @end

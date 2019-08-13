@@ -430,6 +430,11 @@
 		45F659821E1BE77000444429 /* NonCallKitCallUIAdaptee.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45F659811E1BE77000444429 /* NonCallKitCallUIAdaptee.swift */; };
 		45FBC5C81DF8575700E9B410 /* CallKitCallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FBC59A1DF8575700E9B410 /* CallKitCallManager.swift */; };
 		45FBC5D11DF8592E00E9B410 /* SignalCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FBC5D01DF8592E00E9B410 /* SignalCall.swift */; };
+		4A3D0582230198F500F4CA0D /* ExtentionUINavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3D0581230198F500F4CA0D /* ExtentionUINavigationBar.swift */; };
+		4A3D05832301BE3800F4CA0D /* ExtentionUINavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3D0581230198F500F4CA0D /* ExtentionUINavigationBar.swift */; };
+		4A3D05852301BE8700F4CA0D /* ExtentionUIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3D05842301BE8600F4CA0D /* ExtentionUIColor.swift */; };
+		4A3D05862301BE8700F4CA0D /* ExtentionUIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3D05842301BE8600F4CA0D /* ExtentionUIColor.swift */; };
+		4A3D058D23029C7C00F4CA0D /* RaRegistrationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A3D058923029C7C00F4CA0D /* RaRegistrationViewController.xib */; };
 		4AC4EA13C8A444455DAB351F /* Pods_SignalMessaging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 264242150E87D10A357DB07B /* Pods_SignalMessaging.framework */; };
 		4C090A1B210FD9C7001FD7F9 /* HapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C090A1A210FD9C7001FD7F9 /* HapticFeedback.swift */; };
 		4C11AA5020FD59C700351FBD /* MessageStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C11AA4F20FD59C700351FBD /* MessageStatusView.swift */; };
@@ -1123,6 +1128,9 @@
 		45F659811E1BE77000444429 /* NonCallKitCallUIAdaptee.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonCallKitCallUIAdaptee.swift; sourceTree = "<group>"; };
 		45FBC59A1DF8575700E9B410 /* CallKitCallManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallKitCallManager.swift; sourceTree = "<group>"; };
 		45FBC5D01DF8592E00E9B410 /* SignalCall.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignalCall.swift; sourceTree = "<group>"; };
+		4A3D0581230198F500F4CA0D /* ExtentionUINavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtentionUINavigationBar.swift; sourceTree = "<group>"; };
+		4A3D05842301BE8600F4CA0D /* ExtentionUIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtentionUIColor.swift; sourceTree = "<group>"; };
+		4A3D058923029C7C00F4CA0D /* RaRegistrationViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RaRegistrationViewController.xib; sourceTree = "<group>"; };
 		4C090A1A210FD9C7001FD7F9 /* HapticFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HapticFeedback.swift; path = UserInterface/HapticFeedback.swift; sourceTree = "<group>"; };
 		4C11AA4F20FD59C700351FBD /* MessageStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageStatusView.swift; sourceTree = "<group>"; };
 		4C13C9F520E57BA30089A98B /* ColorPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerViewController.swift; sourceTree = "<group>"; };
@@ -1396,6 +1404,7 @@
 				340FC877204DAC8C007AEB0F /* CodeVerificationViewController.m */,
 				340FC878204DAC8C007AEB0F /* RegistrationViewController.h */,
 				340FC876204DAC8C007AEB0F /* RegistrationViewController.m */,
+				4A3D058923029C7C00F4CA0D /* RaRegistrationViewController.xib */,
 			);
 			path = Registration;
 			sourceTree = "<group>";
@@ -2129,6 +2138,15 @@
 			path = Speakerbox;
 			sourceTree = "<group>";
 		};
+		4A3D0580230198C100F4CA0D /* Extentions */ = {
+			isa = PBXGroup;
+			children = (
+				4A3D05842301BE8600F4CA0D /* ExtentionUIColor.swift */,
+				4A3D0581230198F500F4CA0D /* ExtentionUINavigationBar.swift */,
+			);
+			path = Extentions;
+			sourceTree = "<group>";
+		};
 		4C3EF8002109184A0007EBF7 /* SSKTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -2198,6 +2216,7 @@
 		76EB04C818170B33006006FC /* util */ = {
 			isa = PBXGroup;
 			children = (
+				4A3D0580230198C100F4CA0D /* Extentions */,
 				B90418E4183E9DD40038554A /* DateUtil.h */,
 				B90418E5183E9DD40038554A /* DateUtil.m */,
 				34B0796C1FCF46B000E248C2 /* MainAppContext.h */,
@@ -2679,7 +2698,7 @@
 				LastSwiftUpdateCheck = 0920;
 				LastTestingUpgradeCheck = 0600;
 				LastUpgradeCheck = 0940;
-				ORGANIZATIONNAME = "Open Whisper Systems";
+				ORGANIZATIONNAME = "Jurasoft AG";
 				TargetAttributes = {
 					453518671FC635DD00210559 = {
 						CreatedOnToolsVersion = 9.2;
@@ -2883,6 +2902,7 @@
 				AD83FF451A73426500B5C81A /* audio_pause_button@2x.png in Resources */,
 				45A2F005204473A3002E978A /* NewMessage.aifc in Resources */,
 				45B74A882044AAB600CD42F8 /* aurora.aifc in Resources */,
+				4A3D058D23029C7C00F4CA0D /* RaRegistrationViewController.xib in Resources */,
 				45B74A742044AAB600CD42F8 /* aurora-quiet.aifc in Resources */,
 				45B74A852044AAB600CD42F8 /* bamboo.aifc in Resources */,
 				45B74A782044AAB600CD42F8 /* bamboo-quiet.aifc in Resources */,
@@ -3195,6 +3215,7 @@
 				34480B621FD0A98800BC14EF /* UIColor+OWS.m in Sources */,
 				4C20B2B720CA0034001BAC90 /* ThreadViewModel.swift in Sources */,
 				34480B641FD0A98800BC14EF /* UIView+OWS.m in Sources */,
+				4A3D05832301BE3800F4CA0D /* ExtentionUINavigationBar.swift in Sources */,
 				34AC0A1C211B39EA00997B47 /* OWSFlatButton.swift in Sources */,
 				34C3C7932040B0DD0000134C /* OWSAudioPlayer.m in Sources */,
 				34AC09E5211B39B100997B47 /* ScreenLockViewController.m in Sources */,
@@ -3212,6 +3233,7 @@
 				451F8A461FD715BA005CB9DA /* OWSGroupAvatarBuilder.m in Sources */,
 				346129961FD1E30000532771 /* OWSDatabaseMigration.m in Sources */,
 				346129FB1FD5F31400532771 /* OWS101ExistingUsersBlockOnIdentityChange.m in Sources */,
+				4A3D05862301BE8700F4CA0D /* ExtentionUIColor.swift in Sources */,
 				34AC09EA211B39B100997B47 /* ModalActivityIndicatorViewController.swift in Sources */,
 				344F248D2007CCD600CFB4F4 /* DisplayableText.swift in Sources */,
 				450998651FD8A34D00D89EB3 /* DeviceSleepManager.swift in Sources */,
@@ -3292,6 +3314,7 @@
 				34C4E2582118957600BEA353 /* WebRTCProto.swift in Sources */,
 				34D1F0BD1F8D108C0066283D /* AttachmentUploadView.m in Sources */,
 				452EC6DF205E9E30000E787C /* MediaGalleryViewController.swift in Sources */,
+				4A3D0582230198F500F4CA0D /* ExtentionUINavigationBar.swift in Sources */,
 				34386A52207D0C01009F5D9C /* HomeViewCell.m in Sources */,
 				34DBF007206C3CB200025978 /* OWSBubbleShapeView.m in Sources */,
 				34D1F0BA1F8800D90066283D /* OWSAudioMessageView.m in Sources */,
@@ -3410,6 +3433,7 @@
 				340FC8BB204DAC8D007AEB0F /* OWSAddToContactViewController.m in Sources */,
 				340FC8C0204DB7D2007AEB0F /* OWSBackupExportJob.m in Sources */,
 				45F32C232057297A00A300D5 /* MediaPageViewController.swift in Sources */,
+				4A3D05852301BE8700F4CA0D /* ExtentionUIColor.swift in Sources */,
 				340FC8A7204DAC8D007AEB0F /* RegistrationViewController.m in Sources */,
 				452C468F1E427E200087B011 /* OutboundCallInitiator.swift in Sources */,
 				34D2CCDA2062E7D000CB1A14 /* OWSScreenLockUI.m in Sources */,

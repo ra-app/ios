@@ -31,11 +31,13 @@ NSString *const kKeychainKey_LastRegisteredPhoneNumber = @"kKeychainKey_LastRegi
 @property (nonatomic) NSString *countryCode;
 @property (nonatomic) NSString *callingCode;
 
-@property (nonatomic) UILabel *countryCodeLabel;
-@property (nonatomic) UITextField *phoneNumberTextField;
+@property (nonatomic) IBOutlet UILabel *countryCodeLabel;
+@property (nonatomic) IBOutlet UITextField *phoneNumberTextField;
 @property (nonatomic) UILabel *examplePhoneNumberLabel;
-@property (nonatomic) OWSFlatButton *activateButton;
+//@property (nonatomic) OWSFlatButton *activateButton;
+@property (nonatomic) IBOutlet UIButton *activateButton;
 @property (nonatomic) UIActivityIndicatorView *spinnerView;
+@property (strong, nonatomic) IBOutlet UIView *viewHeader;
 
 @end
 
@@ -55,6 +57,8 @@ NSString *const kKeychainKey_LastRegisteredPhoneNumber = @"kKeychainKey_LastRegi
     [self populateDefaultCountryNameAndCode];
     OWSAssertDebug([self.navigationController isKindOfClass:[OWSNavigationController class]]);
     [SignalApp.sharedApp setSignUpFlowNavigationController:(OWSNavigationController *)self.navigationController];
+    
+    [self setGradientForView:self.viewHeader];
 }
 
 - (void)viewDidLoad
@@ -64,219 +68,237 @@ NSString *const kKeychainKey_LastRegisteredPhoneNumber = @"kKeychainKey_LastRegi
     OWSProdInfo([OWSAnalyticsEvents registrationBegan]);
 }
 
+-(void) setGradientForView:(UIView *) view {
+    UIColor *green = [UIColor colorWithRGBHex:0x41D794];
+    UIColor *blue = [UIColor colorWithRGBHex:0x005AF5];
+    
+    CAGradientLayer *gradient = [CAGradientLayer layer];
+    gradient.frame = view.bounds;
+    gradient.startPoint = CGPointMake(1, 0);
+    gradient.endPoint = CGPointMake(1, 1);
+    gradient.colors = [NSArray arrayWithObjects:(id)[green CGColor], [blue CGColor], nil];
+    
+    [view.layer insertSublayer:gradient atIndex:0];
+}
+
 - (void)createViews
 {
-    self.view.backgroundColor = [UIColor whiteColor];
-    self.view.userInteractionEnabled = YES;
+//    self.view.backgroundColor = [UIColor whiteColor];
+//    self.view.userInteractionEnabled = YES;
     [self.view
         addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(backgroundTapped:)]];
 
-    UIView *headerWrapper = [UIView containerView];
-    [self.view addSubview:headerWrapper];
-    headerWrapper.backgroundColor = UIColor.ows_signalBrandBlueColor;
-    [headerWrapper autoPinEdgesToSuperviewEdgesWithInsets:UIEdgeInsetsZero excludingEdge:ALEdgeBottom];
+//    UIView *headerWrapper = [UIView containerView];
+//    [self.view addSubview:headerWrapper];
+//    headerWrapper.backgroundColor = [UIColor blueColor]; //UIColor.ows_signalBrandBlueColor;
+//    [headerWrapper autoPinEdgesToSuperviewEdgesWithInsets:UIEdgeInsetsZero excludingEdge:ALEdgeBottom];
+//
+//    UILabel *headerLabel = [UILabel new];
+//    headerLabel.text = NSLocalizedString(@"REGISTRATION_TITLE_LABEL", @"");
+//    headerLabel.textColor = [UIColor whiteColor];
+//    headerLabel.font = [UIFont ows_mediumFontWithSize:ScaleFromIPhone5To7Plus(20.f, 24.f)];
+//
+//#ifdef SHOW_LEGAL_TERMS_LINK
+//    NSString *legalTopMatterFormat = NSLocalizedString(@"REGISTRATION_LEGAL_TOP_MATTER_FORMAT",
+//        @"legal disclaimer, embeds a tappable {{link title}} which is styled as a hyperlink");
+//    NSString *legalTopMatterLinkWord = NSLocalizedString(
+//        @"REGISTRATION_LEGAL_TOP_MATTER_LINK_TITLE", @"embedded in legal topmatter, styled as a link");
+//    NSString *legalTopMatter = [NSString stringWithFormat:legalTopMatterFormat, legalTopMatterLinkWord];
+//    NSMutableAttributedString *attributedLegalTopMatter =
+//        [[NSMutableAttributedString alloc] initWithString:legalTopMatter];
+//    NSRange linkRange = [legalTopMatter rangeOfString:legalTopMatterLinkWord];
+//    NSDictionary *linkStyleAttributes = @{
+//        NSUnderlineStyleAttributeName : @(NSUnderlineStyleSingle | NSUnderlinePatternSolid),
+//    };
+//    [attributedLegalTopMatter setAttributes:linkStyleAttributes range:linkRange];
+//
+//    UILabel *legalTopMatterLabel = [UILabel new];
+//    legalTopMatterLabel.textColor = UIColor.whiteColor;
+//    legalTopMatterLabel.font = [UIFont ows_regularFontWithSize:ScaleFromIPhone5To7Plus(13.f, 15.f)];
+//    legalTopMatterLabel.numberOfLines = 0;
+//    legalTopMatterLabel.textAlignment = NSTextAlignmentCenter;
+//    legalTopMatterLabel.attributedText = attributedLegalTopMatter;
+//    legalTopMatterLabel.userInteractionEnabled = YES;
+//
+//    UITapGestureRecognizer *tapGesture =
+//        [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapLegalTerms:)];
+//    [legalTopMatterLabel addGestureRecognizer:tapGesture];
+//#endif
+//
+//    UIStackView *headerContent = [[UIStackView alloc] initWithArrangedSubviews:@[ headerLabel ]];
+//#ifdef SHOW_LEGAL_TERMS_LINK
+//    [headerContent addArrangedSubview:legalTopMatterLabel];
+//#endif
+//    headerContent.axis = UILayoutConstraintAxisVertical;
+//    headerContent.alignment = UIStackViewAlignmentCenter;
+//    headerContent.spacing = ScaleFromIPhone5To7Plus(8, 16);
+//    headerContent.layoutMarginsRelativeArrangement = YES;
+//
+//    {
+//        CGFloat topMargin = ScaleFromIPhone5To7Plus(4, 16);
+//        CGFloat bottomMargin = ScaleFromIPhone5To7Plus(8, 16);
+//        headerContent.layoutMargins = UIEdgeInsetsMake(topMargin, 40, bottomMargin, 40);
+//    }
+//
+//    [headerWrapper addSubview:headerContent];
+//    [headerContent autoPinToTopLayoutGuideOfViewController:self withInset:0];
+//    [headerContent autoPinEdgesToSuperviewMarginsExcludingEdge:ALEdgeTop];
 
-    UILabel *headerLabel = [UILabel new];
-    headerLabel.text = NSLocalizedString(@"REGISTRATION_TITLE_LABEL", @"");
-    headerLabel.textColor = [UIColor whiteColor];
-    headerLabel.font = [UIFont ows_mediumFontWithSize:ScaleFromIPhone5To7Plus(20.f, 24.f)];
+//    const CGFloat kRowHeight = 60.f;
+//    const CGFloat kRowHMargin = 20.f;
+//    const CGFloat kSeparatorHeight = 1.f;
+//    const CGFloat kExamplePhoneNumberVSpacing = 8.f;
+//    const CGFloat fontSizePoints = ScaleFromIPhone5To7Plus(16.f, 20.f);
+//
+//    UIView *contentView = [UIView containerView];
+//    [contentView setHLayoutMargins:kRowHMargin];
+//    contentView.backgroundColor = [UIColor whiteColor];
+//    [self.view addSubview:contentView];
+//    [contentView autoPinToBottomLayoutGuideOfViewController:self withInset:0];
+//    [contentView autoPinWidthToSuperview];
+//    [contentView autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:headerContent];
+//
+//    // Country
+//    UIView *countryRow = [UIView containerView];
+//    [contentView addSubview:countryRow];
+//    [countryRow autoPinLeadingAndTrailingToSuperviewMargin];
+//    [countryRow autoPinEdgeToSuperviewEdge:ALEdgeTop];
+//    [countryRow autoSetDimension:ALDimensionHeight toSize:kRowHeight];
+//    [countryRow
+//        addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self
+//                                                                     action:@selector(countryCodeRowWasTapped:)]];
+//
+//    UILabel *countryNameLabel = [UILabel new];
+//    countryNameLabel.text
+//        = NSLocalizedString(@"REGISTRATION_DEFAULT_COUNTRY_NAME", @"Label for the country code field");
+//    countryNameLabel.textColor = [UIColor blackColor];
+//    countryNameLabel.font = [UIFont ows_mediumFontWithSize:fontSizePoints];
+//    [countryRow addSubview:countryNameLabel];
+//    [countryNameLabel autoVCenterInSuperview];
+//    [countryNameLabel autoPinLeadingToSuperviewMargin];
+//
+//    UILabel *countryCodeLabel = [UILabel new];
+//    self.countryCodeLabel = countryCodeLabel;
+//    countryCodeLabel.textColor = [UIColor ows_materialBlueColor];
+//    countryCodeLabel.font = [UIFont ows_mediumFontWithSize:fontSizePoints + 2.f];
+//    [countryRow addSubview:countryCodeLabel];
+//    [countryCodeLabel autoVCenterInSuperview];
+//    [countryCodeLabel autoPinTrailingToSuperviewMargin];
+//
+//    UIView *separatorView1 = [UIView new];
+//    separatorView1.backgroundColor = [UIColor colorWithWhite:0.75f alpha:1.f];
+//    [contentView addSubview:separatorView1];
+//    [separatorView1 autoPinWidthToSuperview];
+//    [separatorView1 autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:countryRow];
+//    [separatorView1 autoSetDimension:ALDimensionHeight toSize:kSeparatorHeight];
+//
+//    // Phone Number
+//    UIView *phoneNumberRow = [UIView containerView];
+//    [contentView addSubview:phoneNumberRow];
+//    [phoneNumberRow autoPinLeadingAndTrailingToSuperviewMargin];
+//    [phoneNumberRow autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:separatorView1];
+//    [phoneNumberRow autoSetDimension:ALDimensionHeight toSize:kRowHeight];
+//
+//    UILabel *phoneNumberLabel = [UILabel new];
+//    phoneNumberLabel.text
+//        = NSLocalizedString(@"REGISTRATION_PHONENUMBER_BUTTON", @"Label for the phone number textfield");
+//    phoneNumberLabel.textColor = [UIColor blackColor];
+//    phoneNumberLabel.font = [UIFont ows_mediumFontWithSize:fontSizePoints];
+//    [phoneNumberRow addSubview:phoneNumberLabel];
+//    [phoneNumberLabel autoVCenterInSuperview];
+//    [phoneNumberLabel autoPinLeadingToSuperviewMargin];
+//
+//    UITextField *phoneNumberTextField;
+//    if (UIDevice.currentDevice.isShorterThanIPhone5) {
+//        phoneNumberTextField = [DismissableTextField new];
+//    } else {
+//        phoneNumberTextField = [OWSTextField new];
+//    }
+//
+//    phoneNumberTextField.textAlignment = NSTextAlignmentRight;
+//    phoneNumberTextField.delegate = self;
+//    phoneNumberTextField.keyboardType = UIKeyboardTypeNumberPad;
+//    phoneNumberTextField.placeholder = NSLocalizedString(
+//        @"REGISTRATION_ENTERNUMBER_DEFAULT_TEXT", @"Placeholder text for the phone number textfield");
+//    self.phoneNumberTextField = phoneNumberTextField;
+//    phoneNumberTextField.textColor = [UIColor ows_materialBlueColor];
+//    phoneNumberTextField.font = [UIFont ows_mediumFontWithSize:fontSizePoints + 2];
+//    [phoneNumberRow addSubview:phoneNumberTextField];
+//    [phoneNumberTextField autoVCenterInSuperview];
+//    [phoneNumberTextField autoPinTrailingToSuperviewMargin];
+//
+//    UILabel *examplePhoneNumberLabel = [UILabel new];
+//    self.examplePhoneNumberLabel = examplePhoneNumberLabel;
+//    examplePhoneNumberLabel.font = [UIFont ows_regularFontWithSize:fontSizePoints - 2.f];
+//    examplePhoneNumberLabel.textColor = Theme.middleGrayColor;
+//    [contentView addSubview:examplePhoneNumberLabel];
+//    [examplePhoneNumberLabel autoPinTrailingToSuperviewMargin];
+//    [examplePhoneNumberLabel autoPinEdge:ALEdgeTop
+//                                  toEdge:ALEdgeBottom
+//                                  ofView:phoneNumberTextField
+//                              withOffset:kExamplePhoneNumberVSpacing];
+//
+//    UIView *separatorView2 = [UIView new];
+//    separatorView2.backgroundColor = [UIColor colorWithWhite:0.75f alpha:1.f];
+//    [contentView addSubview:separatorView2];
+//    [separatorView2 autoPinWidthToSuperview];
+//    [separatorView2 autoPinEdge:ALEdgeTop
+//                         toEdge:ALEdgeBottom
+//                         ofView:phoneNumberRow
+//                     withOffset:examplePhoneNumberLabel.font.lineHeight];
+//    [separatorView2 autoSetDimension:ALDimensionHeight toSize:kSeparatorHeight];
+//
+//    // Activate Button
+//    const CGFloat kActivateButtonHeight = 47.f;
+//    // NOTE: We use ows_signalBrandBlueColor instead of ows_materialBlueColor
+//    //       throughout the onboarding flow to be consistent with the headers.
+//    OWSFlatButton *activateButton = [OWSFlatButton buttonWithTitle:NSLocalizedString(@"REGISTRATION_VERIFY_DEVICE", @"")
+//                                                              font:[OWSFlatButton fontForHeight:kActivateButtonHeight]
+//                                                        titleColor:[UIColor whiteColor]
+//                                                   backgroundColor:[UIColor ows_signalBrandBlueColor]
+//                                                            target:self
+//                                                          selector:@selector(didTapRegisterButton)];
+//    self.activateButton = activateButton;
+//    [contentView addSubview:activateButton];
+//    [activateButton autoPinLeadingAndTrailingToSuperviewMargin];
+//    [activateButton autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:separatorView2 withOffset:15];
+//    [activateButton autoSetDimension:ALDimensionHeight toSize:kActivateButtonHeight];
+//
+    
+    // ToDo Spinner
+//    UIActivityIndicatorView *spinnerView =
+//        [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+//    self.spinnerView = spinnerView;
+//    [activateButton addSubview:spinnerView];
+//    [spinnerView autoVCenterInSuperview];
+//    [spinnerView autoSetDimension:ALDimensionWidth toSize:20.f];
+//    [spinnerView autoSetDimension:ALDimensionHeight toSize:20.f];
+//    [spinnerView autoPinTrailingToSuperviewMarginWithInset:20.f];
+//    [spinnerView stopAnimating];
 
-#ifdef SHOW_LEGAL_TERMS_LINK
-    NSString *legalTopMatterFormat = NSLocalizedString(@"REGISTRATION_LEGAL_TOP_MATTER_FORMAT",
-        @"legal disclaimer, embeds a tappable {{link title}} which is styled as a hyperlink");
-    NSString *legalTopMatterLinkWord = NSLocalizedString(
-        @"REGISTRATION_LEGAL_TOP_MATTER_LINK_TITLE", @"embedded in legal topmatter, styled as a link");
-    NSString *legalTopMatter = [NSString stringWithFormat:legalTopMatterFormat, legalTopMatterLinkWord];
-    NSMutableAttributedString *attributedLegalTopMatter =
-        [[NSMutableAttributedString alloc] initWithString:legalTopMatter];
-    NSRange linkRange = [legalTopMatter rangeOfString:legalTopMatterLinkWord];
-    NSDictionary *linkStyleAttributes = @{
-        NSUnderlineStyleAttributeName : @(NSUnderlineStyleSingle | NSUnderlinePatternSolid),
-    };
-    [attributedLegalTopMatter setAttributes:linkStyleAttributes range:linkRange];
-
-    UILabel *legalTopMatterLabel = [UILabel new];
-    legalTopMatterLabel.textColor = UIColor.whiteColor;
-    legalTopMatterLabel.font = [UIFont ows_regularFontWithSize:ScaleFromIPhone5To7Plus(13.f, 15.f)];
-    legalTopMatterLabel.numberOfLines = 0;
-    legalTopMatterLabel.textAlignment = NSTextAlignmentCenter;
-    legalTopMatterLabel.attributedText = attributedLegalTopMatter;
-    legalTopMatterLabel.userInteractionEnabled = YES;
-
-    UITapGestureRecognizer *tapGesture =
-        [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(didTapLegalTerms:)];
-    [legalTopMatterLabel addGestureRecognizer:tapGesture];
-#endif
-
-    UIStackView *headerContent = [[UIStackView alloc] initWithArrangedSubviews:@[ headerLabel ]];
-#ifdef SHOW_LEGAL_TERMS_LINK
-    [headerContent addArrangedSubview:legalTopMatterLabel];
-#endif
-    headerContent.axis = UILayoutConstraintAxisVertical;
-    headerContent.alignment = UIStackViewAlignmentCenter;
-    headerContent.spacing = ScaleFromIPhone5To7Plus(8, 16);
-    headerContent.layoutMarginsRelativeArrangement = YES;
-
-    {
-        CGFloat topMargin = ScaleFromIPhone5To7Plus(4, 16);
-        CGFloat bottomMargin = ScaleFromIPhone5To7Plus(8, 16);
-        headerContent.layoutMargins = UIEdgeInsetsMake(topMargin, 40, bottomMargin, 40);
-    }
-
-    [headerWrapper addSubview:headerContent];
-    [headerContent autoPinToTopLayoutGuideOfViewController:self withInset:0];
-    [headerContent autoPinEdgesToSuperviewMarginsExcludingEdge:ALEdgeTop];
-
-    const CGFloat kRowHeight = 60.f;
-    const CGFloat kRowHMargin = 20.f;
-    const CGFloat kSeparatorHeight = 1.f;
-    const CGFloat kExamplePhoneNumberVSpacing = 8.f;
-    const CGFloat fontSizePoints = ScaleFromIPhone5To7Plus(16.f, 20.f);
-
-    UIView *contentView = [UIView containerView];
-    [contentView setHLayoutMargins:kRowHMargin];
-    contentView.backgroundColor = [UIColor whiteColor];
-    [self.view addSubview:contentView];
-    [contentView autoPinToBottomLayoutGuideOfViewController:self withInset:0];
-    [contentView autoPinWidthToSuperview];
-    [contentView autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:headerContent];
-
-    // Country
-    UIView *countryRow = [UIView containerView];
-    [contentView addSubview:countryRow];
-    [countryRow autoPinLeadingAndTrailingToSuperviewMargin];
-    [countryRow autoPinEdgeToSuperviewEdge:ALEdgeTop];
-    [countryRow autoSetDimension:ALDimensionHeight toSize:kRowHeight];
-    [countryRow
-        addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self
-                                                                     action:@selector(countryCodeRowWasTapped:)]];
-
-    UILabel *countryNameLabel = [UILabel new];
-    countryNameLabel.text
-        = NSLocalizedString(@"REGISTRATION_DEFAULT_COUNTRY_NAME", @"Label for the country code field");
-    countryNameLabel.textColor = [UIColor blackColor];
-    countryNameLabel.font = [UIFont ows_mediumFontWithSize:fontSizePoints];
-    [countryRow addSubview:countryNameLabel];
-    [countryNameLabel autoVCenterInSuperview];
-    [countryNameLabel autoPinLeadingToSuperviewMargin];
-
-    UILabel *countryCodeLabel = [UILabel new];
-    self.countryCodeLabel = countryCodeLabel;
-    countryCodeLabel.textColor = [UIColor ows_materialBlueColor];
-    countryCodeLabel.font = [UIFont ows_mediumFontWithSize:fontSizePoints + 2.f];
-    [countryRow addSubview:countryCodeLabel];
-    [countryCodeLabel autoVCenterInSuperview];
-    [countryCodeLabel autoPinTrailingToSuperviewMargin];
-
-    UIView *separatorView1 = [UIView new];
-    separatorView1.backgroundColor = [UIColor colorWithWhite:0.75f alpha:1.f];
-    [contentView addSubview:separatorView1];
-    [separatorView1 autoPinWidthToSuperview];
-    [separatorView1 autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:countryRow];
-    [separatorView1 autoSetDimension:ALDimensionHeight toSize:kSeparatorHeight];
-
-    // Phone Number
-    UIView *phoneNumberRow = [UIView containerView];
-    [contentView addSubview:phoneNumberRow];
-    [phoneNumberRow autoPinLeadingAndTrailingToSuperviewMargin];
-    [phoneNumberRow autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:separatorView1];
-    [phoneNumberRow autoSetDimension:ALDimensionHeight toSize:kRowHeight];
-
-    UILabel *phoneNumberLabel = [UILabel new];
-    phoneNumberLabel.text
-        = NSLocalizedString(@"REGISTRATION_PHONENUMBER_BUTTON", @"Label for the phone number textfield");
-    phoneNumberLabel.textColor = [UIColor blackColor];
-    phoneNumberLabel.font = [UIFont ows_mediumFontWithSize:fontSizePoints];
-    [phoneNumberRow addSubview:phoneNumberLabel];
-    [phoneNumberLabel autoVCenterInSuperview];
-    [phoneNumberLabel autoPinLeadingToSuperviewMargin];
-
-    UITextField *phoneNumberTextField;
-    if (UIDevice.currentDevice.isShorterThanIPhone5) {
-        phoneNumberTextField = [DismissableTextField new];
-    } else {
-        phoneNumberTextField = [OWSTextField new];
-    }
-
-    phoneNumberTextField.textAlignment = NSTextAlignmentRight;
-    phoneNumberTextField.delegate = self;
-    phoneNumberTextField.keyboardType = UIKeyboardTypeNumberPad;
-    phoneNumberTextField.placeholder = NSLocalizedString(
-        @"REGISTRATION_ENTERNUMBER_DEFAULT_TEXT", @"Placeholder text for the phone number textfield");
-    self.phoneNumberTextField = phoneNumberTextField;
-    phoneNumberTextField.textColor = [UIColor ows_materialBlueColor];
-    phoneNumberTextField.font = [UIFont ows_mediumFontWithSize:fontSizePoints + 2];
-    [phoneNumberRow addSubview:phoneNumberTextField];
-    [phoneNumberTextField autoVCenterInSuperview];
-    [phoneNumberTextField autoPinTrailingToSuperviewMargin];
-
-    UILabel *examplePhoneNumberLabel = [UILabel new];
-    self.examplePhoneNumberLabel = examplePhoneNumberLabel;
-    examplePhoneNumberLabel.font = [UIFont ows_regularFontWithSize:fontSizePoints - 2.f];
-    examplePhoneNumberLabel.textColor = Theme.middleGrayColor;
-    [contentView addSubview:examplePhoneNumberLabel];
-    [examplePhoneNumberLabel autoPinTrailingToSuperviewMargin];
-    [examplePhoneNumberLabel autoPinEdge:ALEdgeTop
-                                  toEdge:ALEdgeBottom
-                                  ofView:phoneNumberTextField
-                              withOffset:kExamplePhoneNumberVSpacing];
-
-    UIView *separatorView2 = [UIView new];
-    separatorView2.backgroundColor = [UIColor colorWithWhite:0.75f alpha:1.f];
-    [contentView addSubview:separatorView2];
-    [separatorView2 autoPinWidthToSuperview];
-    [separatorView2 autoPinEdge:ALEdgeTop
-                         toEdge:ALEdgeBottom
-                         ofView:phoneNumberRow
-                     withOffset:examplePhoneNumberLabel.font.lineHeight];
-    [separatorView2 autoSetDimension:ALDimensionHeight toSize:kSeparatorHeight];
-
-    // Activate Button
-    const CGFloat kActivateButtonHeight = 47.f;
-    // NOTE: We use ows_signalBrandBlueColor instead of ows_materialBlueColor
-    //       throughout the onboarding flow to be consistent with the headers.
-    OWSFlatButton *activateButton = [OWSFlatButton buttonWithTitle:NSLocalizedString(@"REGISTRATION_VERIFY_DEVICE", @"")
-                                                              font:[OWSFlatButton fontForHeight:kActivateButtonHeight]
-                                                        titleColor:[UIColor whiteColor]
-                                                   backgroundColor:[UIColor ows_signalBrandBlueColor]
-                                                            target:self
-                                                          selector:@selector(didTapRegisterButton)];
-    self.activateButton = activateButton;
-    [contentView addSubview:activateButton];
-    [activateButton autoPinLeadingAndTrailingToSuperviewMargin];
-    [activateButton autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:separatorView2 withOffset:15];
-    [activateButton autoSetDimension:ALDimensionHeight toSize:kActivateButtonHeight];
-
-    UIActivityIndicatorView *spinnerView =
-        [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-    self.spinnerView = spinnerView;
-    [activateButton addSubview:spinnerView];
-    [spinnerView autoVCenterInSuperview];
-    [spinnerView autoSetDimension:ALDimensionWidth toSize:20.f];
-    [spinnerView autoSetDimension:ALDimensionHeight toSize:20.f];
-    [spinnerView autoPinTrailingToSuperviewMarginWithInset:20.f];
-    [spinnerView stopAnimating];
-
-#ifdef SHOW_LEGAL_TERMS_LINK
-    NSString *bottomTermsLinkText = NSLocalizedString(@"REGISTRATION_LEGAL_TERMS_LINK",
-        @"one line label below submit button on registration screen, which links to an external webpage.");
-    UIButton *bottomLegalLinkButton = [UIButton new];
-    bottomLegalLinkButton.titleLabel.font = [UIFont ows_regularFontWithSize:ScaleFromIPhone5To7Plus(13.f, 15.f)];
-    [bottomLegalLinkButton setTitleColor:UIColor.ows_materialBlueColor forState:UIControlStateNormal];
-    [bottomLegalLinkButton setTitle:bottomTermsLinkText forState:UIControlStateNormal];
-    [contentView addSubview:bottomLegalLinkButton];
-    [bottomLegalLinkButton addTarget:self
-                              action:@selector(didTapLegalTerms:)
-                    forControlEvents:UIControlEventTouchUpInside];
-
-    [bottomLegalLinkButton autoPinLeadingAndTrailingToSuperviewMargin];
-    [bottomLegalLinkButton autoPinEdge:ALEdgeTop
-                                toEdge:ALEdgeBottom
-                                ofView:activateButton
-                            withOffset:ScaleFromIPhone5To7Plus(8, 12)];
-    [bottomLegalLinkButton setCompressionResistanceHigh];
-    [bottomLegalLinkButton setContentHuggingHigh];
-#endif
+    
+//#ifdef SHOW_LEGAL_TERMS_LINK
+//    NSString *bottomTermsLinkText = NSLocalizedString(@"REGISTRATION_LEGAL_TERMS_LINK",
+//        @"one line label below submit button on registration screen, which links to an external webpage.");
+//    UIButton *bottomLegalLinkButton = [UIButton new];
+//    bottomLegalLinkButton.titleLabel.font = [UIFont ows_regularFontWithSize:ScaleFromIPhone5To7Plus(13.f, 15.f)];
+//    [bottomLegalLinkButton setTitleColor:UIColor.ows_materialBlueColor forState:UIControlStateNormal];
+//    [bottomLegalLinkButton setTitle:bottomTermsLinkText forState:UIControlStateNormal];
+//    [contentView addSubview:bottomLegalLinkButton];
+//    [bottomLegalLinkButton addTarget:self
+//                              action:@selector(didTapLegalTerms:)
+//                    forControlEvents:UIControlEventTouchUpInside];
+//
+//    [bottomLegalLinkButton autoPinLeadingAndTrailingToSuperviewMargin];
+//    [bottomLegalLinkButton autoPinEdge:ALEdgeTop
+//                                toEdge:ALEdgeBottom
+//                                ofView:activateButton
+//                            withOffset:ScaleFromIPhone5To7Plus(8, 12)];
+//    [bottomLegalLinkButton setCompressionResistanceHigh];
+//    [bottomLegalLinkButton setContentHuggingHigh];
+//#endif
+    
+  
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -375,8 +397,13 @@ NSString *const kKeychainKey_LastRegisteredPhoneNumber = @"kKeychainKey_LastRegi
     _countryCode = countryCode;
     _callingCode = callingCode;
 
-    NSString *title = [NSString stringWithFormat:@"%@ (%@)", callingCode, countryCode.localizedUppercaseString];
-    self.countryCodeLabel.text = title;
+    NSString *title = [NSString stringWithFormat:@"%@ ▼ %@",  countryCode.localizedUppercaseString, callingCode];
+    UIColor *blue =  [UIColor colorWithRed:0 green:62.0f/255.0f blue:240.0f/255.0f alpha:1];
+    NSMutableAttributedString * sTitle = [[NSMutableAttributedString alloc] initWithString:title];
+    [sTitle addAttribute:NSForegroundColorAttributeName value:blue range:NSMakeRange(0,countryCode.localizedUppercaseString.length + 2)];
+    
+    [sTitle addAttribute:NSFontAttributeName value:[UIFont systemFontOfSize:10] range:NSMakeRange(countryCode.localizedUppercaseString.length + 1,1)];
+    self.countryCodeLabel.attributedText = sTitle;
     [self.countryCodeLabel setNeedsLayout];
 
     self.examplePhoneNumberLabel.text =
@@ -386,7 +413,7 @@ NSString *const kKeychainKey_LastRegisteredPhoneNumber = @"kKeychainKey_LastRegi
 
 #pragma mark - Actions
 
-- (void)didTapRegisterButton
+- (IBAction)didTapRegisterButton
 {
     NSString *phoneNumberText = [_phoneNumberTextField.text ows_stripped];
     if (phoneNumberText.length < 1) {
@@ -470,7 +497,7 @@ NSString *const kKeychainKey_LastRegisteredPhoneNumber = @"kKeychainKey_LastRegi
         smsVerification:YES];
 }
 
-- (void)countryCodeRowWasTapped:(UIGestureRecognizer *)sender
+- (IBAction)countryCodeRowWasTapped:(UIGestureRecognizer *)sender
 {
     if (TSAccountManager.sharedInstance.isReregistering) {
         // Don't let user edit their phone number while re-registering.

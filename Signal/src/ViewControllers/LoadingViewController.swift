@@ -4,6 +4,7 @@
 
 import Foundation
 import PromiseKit
+import UIKit
 
 // The initial presentation is intended to be indistinguishable from the Launch Screen.
 // After a delay we present some "loading" UI so the user doesn't think the app is frozen.
@@ -18,7 +19,8 @@ public class LoadingViewController: UIViewController {
         self.view = UIView()
         view.backgroundColor = UIColor.ows_materialBlue
 
-        self.logoView = UIImageView(image: #imageLiteral(resourceName: "logoSignal"))
+        self.logoView = UIImageView(image: #imageLiteral(resourceName: "RA-icon-256"))
+        self.logoView.contentMode = .scaleAspectFill
         view.addSubview(logoView)
 
         logoView.autoCenterInSuperview()
