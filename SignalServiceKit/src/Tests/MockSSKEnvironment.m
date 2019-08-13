@@ -26,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark -
 
+#ifdef DEBUG
+
 @implementation MockSSKEnvironment
 
 + (void)activate
@@ -80,5 +82,7 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 @end
+
+#endif
 
 NS_ASSUME_NONNULL_END
