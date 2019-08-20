@@ -35,9 +35,9 @@ class InviteFlow: NSObject, MFMessageComposeViewControllerDelegate, MFMailCompos
 
         actionSheetController.addAction(dismissAction())
 
-        if let messageAction = messageAction() {
-            actionSheetController.addAction(messageAction)
-        }
+//        if let messageAction = messageAction() {
+//            actionSheetController.addAction(messageAction)
+//        }
 
         if let mailAction = mailAction() {
             actionSheetController.addAction(mailAction)
