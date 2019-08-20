@@ -687,7 +687,7 @@
 /* Label warning the user that they have been de-registered. */
 "DEREGISTRATION_WARNING" = "دستگاه دیگر ثبت شده نمی باشد. شماره تلفن شما ممکن است از یک دستگاه دیگر با سیگنال ثبت شده باشد. برای ثبت نام دوباره کلیک کنید.";
 
-/* {{Short Date}} when device last communicated with RAAPP Server. */
+/* {{Short Date}} when device last communicated with OfficeApp Server. */
 "DEVICE_LAST_ACTIVE_AT_LABEL" = "آخرین فعالیت: %@";
 
 /* {{Short Date}} when device was linked. */
@@ -717,10 +717,10 @@
 /* Section title for the 'domain fronting country' view. */
 "DOMAIN_FRONTING_COUNTRY_VIEW_SECTION_HEADER" = "محل دورزدن سانسور";
 
-/* Alert body for when the user has just tried to edit a contacts after declining to give RAAPP contacts permissions */
+/* Alert body for when the user has just tried to edit a contacts after declining to give OfficeApp contacts permissions */
 "EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_BODY" = "شما میتوانید این دسترسی را از تنظیمات اعمال کنید.";
 
-/* Alert title for when the user has just tried to edit a contacts after declining to give RAAPP contacts permissions */
+/* Alert title for when the user has just tried to edit a contacts after declining to give OfficeApp contacts permissions */
 "EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_TITLE" = "برای ویرایش اطلاعات مخاطبین، سیگنال نیاز به دسترسی به مخاطبین دارد";
 
 /* table cell label in conversation settings */
@@ -756,10 +756,10 @@
 /* No comment provided by engineer. */
 "EDIT_TXT" = "ویرایش";
 
-/* body of email sent to contacts when inviting to install RAAPP. Embeds {{link to install RAAPP}} and {{link to the RAAPP home page}} */
+/* body of email sent to contacts when inviting to install OfficeApp. Embeds {{link to install OfficeApp}} and {{link to the OfficeApp home page}} */
 "EMAIL_INVITE_BODY" = "سلام، \n\nمدتیه از برنامه سیگنال برای مکالمات محرمانه و خصوصی روی آیفونم استفاده میکنم. دوست دارم شما هم این برنامه رو نصب کنید تا خیالمون از اینکه فقط من و شما به مکالمات و تماس ها دسترسی داریم، راحت باشه.\n\nبرنامه سیگنال برای گوشی های ایفون و اندرویید موجود هست. دریافت برنامه از:%@\n\nسیگنال مثل برنامه ارسال پیام گوشی شما عمل میکنه. ما میتونیم از طریق این برنامه عکس و ویدیو بفرستیم، تماس صوتی بگیریم و گفت و گوی گروهی ایجاد کنیم. بهترین مورد درباره سیگنال اینه که هیچ کس جز خود ما نمیتونه پیام ها رو بخونه حتی سازندگان این برنامه.\n\nبرای کسب اطلاعات بیشتر راجع به شرکت Open Whisper System یعنی سازندگان برنامه سیگنال میتونید اینجا %@ مطالعه کنید.  ";
 
-/* subject of email sent to contacts when inviting to install RAAPP */
+/* subject of email sent to contacts when inviting to install OfficeApp */
 "EMAIL_INVITE_SUBJECT" = "به نرم افزار پیام رسان سیگنال بپیوندید";
 
 /* Body text an existing user sees when viewing an empty archive */
@@ -840,7 +840,7 @@
 /* Error message indicating that message send failed due to failed attachment write */
 "ERROR_DESCRIPTION_MESSAGE_SEND_FAILED_DUE_TO_FAILED_ATTACHMENT_WRITE" = "خطا در نوشتن ضمیمه.";
 
-/* Generic error used whenever RAAPP can't contact the server */
+/* Generic error used whenever OfficeApp can't contact the server */
 "ERROR_DESCRIPTION_NO_INTERNET" = "امکان برقراری ارتباط سیگنال با اینترنت وجود ندارد. لطفاً از یک شبکه‌ی بیسیم دیگر و یا از اینترنت سیم کارت خود استفاده کنید.";
 
 /* Error indicating that an outgoing message had no valid recipients. */
@@ -1251,7 +1251,7 @@
 /* status message for read messages */
 "MESSAGE_STATUS_READ" = "خوانده‌شده";
 
-/* message status if message delivery to a recipient is skipped. We skip delivering group messages to users who have left the group or unregistered their RAAPP account. */
+/* message status if message delivery to a recipient is skipped. We skip delivering group messages to users who have left the group or unregistered their OfficeApp account. */
 "MESSAGE_STATUS_RECIPIENT_SKIPPED" = "رد شده";
 
 /* Label indicating that a message failed to send. */
@@ -1313,7 +1313,7 @@
 
 /* Alert body
    Alert body when camera is not authorized */
-"MISSING_CAMERA_PERMISSION_MESSAGE" = "برای تماس ویدیویی، سیگنال نیاز به دسترسی به دوربین شما دارد:\nSettings >> Privacy >> Camera >> RAAPP";
+"MISSING_CAMERA_PERMISSION_MESSAGE" = "برای تماس ویدیویی، سیگنال نیاز به دسترسی به دوربین شما دارد:\nSettings >> Privacy >> Camera >> OfficeApp";
 
 /* Alert title
    Alert title when camera is not authorized */
@@ -1415,7 +1415,7 @@
 /* No comment provided by engineer. */
 "NOTIFICATIONS_NONE" = "هیچ نام و یا محتوایی وجود ندارد";
 
-/* Table cell switch label. When disabled, RAAPP will not play notification sounds while the app is in the foreground. */
+/* Table cell switch label. When disabled, OfficeApp will not play notification sounds while the app is in the foreground. */
 "NOTIFICATIONS_SECTION_INAPP" = "پخش در هنگام باز بودن برنامه";
 
 /* Label for settings UI that allows user to change the notification sound. */
@@ -1442,7 +1442,7 @@
 /* Info Message when {{other user}} updates message expiration to {{time amount}}, see the *_TIME_AMOUNT strings for context. */
 "OTHER_UPDATED_DISAPPEARING_MESSAGES_CONFIGURATION" = "%@ زمان محوشدن پیام را روی %@ تنظیم کرده.";
 
-/* Label warning the user that the RAAPP service may be down. */
+/* Label warning the user that the OfficeApp service may be down. */
 "OUTAGE_WARNING" = "سیگنال با مشکلات فنی روبروست. به سختی تلاش میکنیم تا سرویس را تا حد ممکن سریعا برگردانیم.";
 
 /* No comment provided by engineer. */
@@ -1808,13 +1808,13 @@
 /* Indicates that Touch ID/Face ID/Phone Passcode passcode is not set. */
 "SCREEN_LOCK_ERROR_LOCAL_AUTHENTICATION_PASSCODE_NOT_SET" = "برای استفاده از قفل صفحه نمایش می بایستی یک رمزعبور از تنظیمات iOS فعال کنید.";
 
-/* Description of how and why RAAPP iOS uses Touch ID/Face ID/Phone Passcode to unlock 'screen lock'. */
+/* Description of how and why OfficeApp iOS uses Touch ID/Face ID/Phone Passcode to unlock 'screen lock'. */
 "SCREEN_LOCK_REASON_UNLOCK_SCREEN_LOCK" = "برای باز کردن سیگنال هویت خود را احراز کنید";
 
 /* Title for alert indicating that screen lock could not be unlocked. */
 "SCREEN_LOCK_UNLOCK_FAILED" = "احراز هویت ناموفق بود";
 
-/* Label for button on lock screen that lets users unlock RAAPP. */
+/* Label for button on lock screen that lets users unlock OfficeApp. */
 "SCREEN_LOCK_UNLOCK_SIGNAL" = "آنلاک کردن سیگنال";
 
 /* No comment provided by engineer. */
@@ -1853,7 +1853,7 @@
 /* Alert body after invite succeeded */
 "SEND_INVITE_SUCCESS" = "شما دوستتان را به استفاده از سیگنال دعوت کردید!";
 
-/* Text for button to send a RAAPP invite via SMS. %@ is placeholder for the recipient's phone number. */
+/* Text for button to send a OfficeApp invite via SMS. %@ is placeholder for the recipient's phone number. */
 "SEND_INVITE_VIA_SMS_BUTTON_FORMAT" = "دعوت با پیامک: %@";
 
 /* No comment provided by engineer. */
@@ -1889,7 +1889,7 @@
 /* Table footer for the 'censorship circumvention' section shown when the app is not connected to the internet. */
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_NO_CONNECTION" = "دورزدن سانسور تنها در زمان اتصال به اینترنت فعال خواهد شد.";
 
-/* Table footer for the 'censorship circumvention' section shown when the app is connected to the RAAPP service. */
+/* Table footer for the 'censorship circumvention' section shown when the app is connected to the OfficeApp service. */
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_WEBSOCKET_CONNECTED" = "نیازی به دورزدن سانسور نیست؛ شما به سرویس سیگنال دسترسی مستقیم دارید.";
 
 /* Table header for the 'censorship circumvention' section. */
@@ -1946,7 +1946,7 @@
 /* A label for the 'add phone number' button in the block list table. */
 "SETTINGS_BLOCK_LIST_ADD_BUTTON" = "Add Blocked User";
 
-/* A label that indicates the user has no RAAPP contacts. */
+/* A label that indicates the user has no OfficeApp contacts. */
 "SETTINGS_BLOCK_LIST_NO_CONTACTS" = "هیچ کدام از مخاطبین شما سیگنال را نصب نکرده‌اند.";
 
 /* A label that indicates the user's search has no matching results. */
@@ -2120,7 +2120,7 @@
 /* Alert title */
 "SHARE_EXTENSION_SENDING_IN_PROGRESS_TITLE" = "در حال آپلود...";
 
-/* Shown when trying to share content to a RAAPP user for the share extension. Followed by failure details. */
+/* Shown when trying to share content to a OfficeApp user for the share extension. Followed by failure details. */
 "SHARE_EXTENSION_UNABLE_TO_BUILD_ATTACHMENT_ALERT_TITLE" = "ضمیمه فراهم نشد";
 
 /* Title for the 'share extension' view. */
@@ -2132,7 +2132,7 @@
 /* notification action */
 "SHOW_THREAD_BUTTON_TITLE" = "نمایش گفتگو";
 
-/* body sent to contacts when inviting to Install RAAPP */
+/* body sent to contacts when inviting to Install OfficeApp */
 "SMS_INVITE_BODY" = "من شما را از طریق این لینک، به نصب برنامه سیگنال دعوت می‌کنم:";
 
 /* Label for the 'no sound' option that allows users to disable sounds for notifications, etc. */
@@ -2292,7 +2292,7 @@
 "UPGRADE_IOS_ALERT_TITLE" = "به‌روزرسانی iOS";
 
 /* No comment provided by engineer. */
-"Upgrading RAAPP ..." = "در حال به‌روزرسانی سیگنال…";
+"Upgrading OfficeApp ..." = "در حال به‌روزرسانی سیگنال…";
 
 /* button text for back button on verification view */
 "VERIFICATION_BACK_BUTTON" = "بازگشت";

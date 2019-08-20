@@ -5,10 +5,10 @@
 "ACCEPT_NEW_IDENTITY_ACTION" = "Bvumira nhamba itsva yekuchengetedza";
 
 /* Label for 'audio call' button in contact view. */
-"ACTION_AUDIO_CALL" = "Runhare rweRAAPP ";
+"ACTION_AUDIO_CALL" = "Runhare rweOfficeApp ";
 
 /* Label for 'invite' button in contact view. */
-"ACTION_INVITE" = "Koka kuRAAPP";
+"ACTION_INVITE" = "Koka kuOfficeApp";
 
 /* Label for 'send message' button in contact view.
    Label for button that lets you send a message to a contact. */
@@ -69,7 +69,7 @@
 "APN_MESSAGE_IN_GROUP_DETAILED" = "%@ muboka %@: %@";
 
 /* Message for the 'app launch failed' alert. */
-"APP_LAUNCH_FAILURE_ALERT_MESSAGE" = "RAAPP yatadza kumuka.Tapota tumira ma debug log ako kuchikwata chedu kuti tiedze kugadzirisa dambudziko iri.";
+"APP_LAUNCH_FAILURE_ALERT_MESSAGE" = "OfficeApp yatadza kumuka.Tapota tumira ma debug log ako kuchikwata chedu kuti tiedze kugadzirisa dambudziko iri.";
 
 /* Title for the 'app launch failed' alert. */
 "APP_LAUNCH_FAILURE_ALERT_TITLE" = "Pakanganiswa";
@@ -84,7 +84,7 @@
 "APP_UPDATE_NAG_ALERT_MESSAGE_FORMAT" = "Vhezheni %@ yaapo paApp Store.";
 
 /* Title for the 'new app version available' alert. */
-"APP_UPDATE_NAG_ALERT_TITLE" = "Vhezheni itsva yeRAAPP yaapo";
+"APP_UPDATE_NAG_ALERT_TITLE" = "Vhezheni itsva yeOfficeApp yaapo";
 
 /* Label for the 'update' button in the 'new app version available' alert. */
 "APP_UPDATE_NAG_ALERT_UPDATE_BUTTON" = "Wedzera";
@@ -165,7 +165,7 @@
 "ATTACHMENT_PICKER_DOCUMENTS_FAILED_ALERT_TITLE" = "Yatadza kusarudza gwaro";
 
 /* Alert body when picking a document fails because user picked a directory/bundle */
-"ATTACHMENT_PICKER_DOCUMENTS_PICKED_DIRECTORY_FAILED_ALERT_BODY" = "RAAPP can't handle that file as is. Try compressing it before sending.";
+"ATTACHMENT_PICKER_DOCUMENTS_PICKED_DIRECTORY_FAILED_ALERT_BODY" = "OfficeApp can't handle that file as is. Try compressing it before sending.";
 
 /* Alert title when picking a document fails because user picked a directory/bundle */
 "ATTACHMENT_PICKER_DOCUMENTS_PICKED_DIRECTORY_FAILED_ALERT_TITLE" = "Faira haritsigirwe";
@@ -300,7 +300,7 @@
 "CALL_AGAIN_BUTTON_TITLE" = "Chaya zvakare";
 
 /* Alert message when calling and permissions for microphone are missing */
-"CALL_AUDIO_PERMISSION_MESSAGE" = "RAAPP irikuda kuwana kushandisa chitauriso kuti uchaye nhare pamwe nekugadzira tsamba dzemazwi.Unokwanisa kupa mvumo iyi muApp yemaSetting.";
+"CALL_AUDIO_PERMISSION_MESSAGE" = "OfficeApp irikuda kuwana kushandisa chitauriso kuti uchaye nhare pamwe nekugadzira tsamba dzemazwi.Unokwanisa kupa mvumo iyi muApp yemaSetting.";
 
 /* Alert title when calling and permissions for microphone are missing */
 "CALL_AUDIO_PERMISSION_TITLE" = "Mvumo yekushandisa chitauriso irikudiwa";
@@ -366,7 +366,7 @@
 "CALLBACK_BUTTON_TITLE" = "Dzosera nhare";
 
 /* The generic name used for calls if CallKit privacy is enabled */
-"CALLKIT_ANONYMOUS_CONTACT_NAME" = "Mushandisi weRAAPP";
+"CALLKIT_ANONYMOUS_CONTACT_NAME" = "Mushandisi weOfficeApp";
 
 /* Message for alert explaining that a user cannot be verified. */
 "CANT_VERIFY_IDENTITY_ALERT_MESSAGE" = "Mushandisi uyu haakwanise kuongororwa kusvika matumirana tsamba naye.";
@@ -384,7 +384,7 @@
 "CLOUDKIT_STATUS_NO_ACCOUNT" = "Hauna akaundi ye iCloud kuti upfimbike.";
 
 /* Error indicating that the app was prevented from accessing the user's CloudKit account. */
-"CLOUDKIT_STATUS_RESTRICTED" = "RAAPP was not allowed to access your iCloud account for backups.";
+"CLOUDKIT_STATUS_RESTRICTED" = "OfficeApp was not allowed to access your iCloud account for backups.";
 
 /* Activity Sheet label */
 "COMPARE_SAFETY_NUMBER_ACTION" = "Enzanisa nezvakachengetwa mundangariro";
@@ -399,7 +399,7 @@
 "COMPOSE_MESSAGE_INVITE_SECTION_TITLE" = "Koka";
 
 /* Multi-line label explaining why compose-screen contact picker is empty. */
-"COMPOSE_SCREEN_MISSING_CONTACTS_PERMISSION" = "Kuti uone kuti ndeapi makontakt ako vashandisi veRAAPP,bvumidza makontakt mumasistim seting.";
+"COMPOSE_SCREEN_MISSING_CONTACTS_PERMISSION" = "Kuti uone kuti ndeapi makontakt ako vashandisi veOfficeApp,bvumidza makontakt mumasistim seting.";
 
 /* No comment provided by engineer. */
 "CONFIRM_ACCOUNT_DESTRUCTION_TEXT" = "Izvi zvichatangidzisa apu kupfurikidza nekudzima tsamba dzako nekubvisa kunyoreswa kwako kusevha. Apu ichavhara kana dhata richinge radzimwa.";
@@ -685,9 +685,9 @@
 "DEREGISTRATION_REREGISTER_WITH_SAME_PHONE_NUMBER" = "Nyoresa zvakare nhamba yenhare";
 
 /* Label warning the user that they have been de-registered. */
-"DEREGISTRATION_WARNING" = "Mudziyo uyu hauna kunyoreswa.Nhamba dzako dzinogona dzakanyoreswa neRAAPP pane mumwe mudziyo.Bata unyorese.";
+"DEREGISTRATION_WARNING" = "Mudziyo uyu hauna kunyoreswa.Nhamba dzako dzinogona dzakanyoreswa neOfficeApp pane mumwe mudziyo.Bata unyorese.";
 
-/* {{Short Date}} when device last communicated with RAAPP Server. */
+/* {{Short Date}} when device last communicated with OfficeApp Server. */
 "DEVICE_LAST_ACTIVE_AT_LABEL" = "Yapedzisira kuonekwa 1%@";
 
 /* {{Short Date}} when device was linked. */
@@ -717,11 +717,11 @@
 /* Section title for the 'domain fronting country' view. */
 "DOMAIN_FRONTING_COUNTRY_VIEW_SECTION_HEADER" = "Nzvimbo iri kunzvengwa kuvharirwa";
 
-/* Alert body for when the user has just tried to edit a contacts after declining to give RAAPP contacts permissions */
+/* Alert body for when the user has just tried to edit a contacts after declining to give OfficeApp contacts permissions */
 "EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_BODY" = "Unokwanisa kupa mvumo muapp yemaseting.";
 
-/* Alert title for when the user has just tried to edit a contacts after declining to give RAAPP contacts permissions */
-"EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_TITLE" = "RAAPP inoda mvumo kumakontakt kuti makontakt ashandurwe";
+/* Alert title for when the user has just tried to edit a contacts after declining to give OfficeApp contacts permissions */
+"EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_TITLE" = "OfficeApp inoda mvumo kumakontakt kuti makontakt ashandurwe";
 
 /* table cell label in conversation settings */
 "EDIT_GROUP_ACTION" = "Shandura chikwata";
@@ -756,11 +756,11 @@
 /* No comment provided by engineer. */
 "EDIT_TXT" = "Shandura";
 
-/* body of email sent to contacts when inviting to install RAAPP. Embeds {{link to install RAAPP}} and {{link to the RAAPP home page}} */
-"EMAIL_INVITE_BODY" = "Ndeipi\n\nMazuva ano ndiri kushandisa RAAPP kuti nhaurwa dzangu paiPhone dzigare dzakavanda.Ndinodawo kuti uiisewo muphone yako,kuti tive nechivimbo chekuti iwe neni chete tisu tinoverenga kana kunzwa nhare dzedu.\n\nRAAPP iripo paiPhone neAndroid.Itore apa:%@\n\nRAAPP inoshanda seapp yawagara uinayo yekutumira tsamba.Tinogona kutumira mifananidzo nemavhidhiyo,kuchaya runhare,uye kutanga kutaura seboka.Chakanaka ndechekuti,hapana mumwe anoona chinhu,kunyangwe vanogadzira RAAPP!\n\nUnogona kuverenga zvakadzama nezve Open Whispers Systems,vanhu vanogadzira RAAPP,apa:%@";
+/* body of email sent to contacts when inviting to install OfficeApp. Embeds {{link to install OfficeApp}} and {{link to the OfficeApp home page}} */
+"EMAIL_INVITE_BODY" = "Ndeipi\n\nMazuva ano ndiri kushandisa OfficeApp kuti nhaurwa dzangu paiPhone dzigare dzakavanda.Ndinodawo kuti uiisewo muphone yako,kuti tive nechivimbo chekuti iwe neni chete tisu tinoverenga kana kunzwa nhare dzedu.\n\nOfficeApp iripo paiPhone neAndroid.Itore apa:%@\n\nOfficeApp inoshanda seapp yawagara uinayo yekutumira tsamba.Tinogona kutumira mifananidzo nemavhidhiyo,kuchaya runhare,uye kutanga kutaura seboka.Chakanaka ndechekuti,hapana mumwe anoona chinhu,kunyangwe vanogadzira OfficeApp!\n\nUnogona kuverenga zvakadzama nezve Open Whispers Systems,vanhu vanogadzira OfficeApp,apa:%@";
 
-/* subject of email sent to contacts when inviting to install RAAPP */
-"EMAIL_INVITE_SUBJECT" = "Ngati tame kuenda kuRAAPP";
+/* subject of email sent to contacts when inviting to install OfficeApp */
+"EMAIL_INVITE_SUBJECT" = "Ngati tame kuenda kuOfficeApp";
 
 /* Body text an existing user sees when viewing an empty archive */
 "EMPTY_ARCHIVE_TEXT" = "Unokwanisa kuchengeta kutaurwa husirikushandiswa kuitira imwe nguva kubva mubhokisi retsamba dzako. ";
@@ -769,7 +769,7 @@
 "EMPTY_ARCHIVE_TITLE" = "Chenesa hurukuro dzako. ";
 
 /* Full width label displayed when attempting to compose message */
-"EMPTY_CONTACTS_LABEL_LINE1" = "Hapana kontakt yako inoshandisa RAAPP.";
+"EMPTY_CONTACTS_LABEL_LINE1" = "Hapana kontakt yako inoshandisa OfficeApp.";
 
 /* Full width label displayed when attempting to compose message */
 "EMPTY_CONTACTS_LABEL_LINE2" = "Wadii wakoka mumwe munhu?";
@@ -778,7 +778,7 @@
 "EMPTY_INBOX_NEW_USER_TEXT" = "Bata pabhatani rekunyora";
 
 /* Header text a new user sees when viewing an empty inbox */
-"EMPTY_INBOX_NEW_USER_TITLE" = "Tanga nhaurwa yeRAAPP yekutanga!";
+"EMPTY_INBOX_NEW_USER_TITLE" = "Tanga nhaurwa yeOfficeApp yekutanga!";
 
 /* Body text an existing user sees when viewing an empty inbox */
 "EMPTY_INBOX_TEXT" = "Hapana. Hapana. Hapana. Hapana. ";
@@ -808,13 +808,13 @@
 "ENABLE_2FA_VIEW_PIN_DOES_NOT_MATCH" = "PIN haienderane.";
 
 /* Indicates that user should select a 'two factor auth pin'. */
-"ENABLE_2FA_VIEW_SELECT_PIN_INSTRUCTIONS" = "Enter a Registration Lock PIN. You will be asked to enter this PIN the next time you register this phone number with RAAPP.";
+"ENABLE_2FA_VIEW_SELECT_PIN_INSTRUCTIONS" = "Enter a Registration Lock PIN. You will be asked to enter this PIN the next time you register this phone number with OfficeApp.";
 
 /* Indicates that user has 'two factor auth pin' disabled. */
-"ENABLE_2FA_VIEW_STATUS_DISABLED_INSTRUCTIONS" = "For increased security, enable a Registration Lock PIN that will be required in order to register this phone number with RAAPP again.";
+"ENABLE_2FA_VIEW_STATUS_DISABLED_INSTRUCTIONS" = "For increased security, enable a Registration Lock PIN that will be required in order to register this phone number with OfficeApp again.";
 
 /* Indicates that user has 'two factor auth pin' enabled. */
-"ENABLE_2FA_VIEW_STATUS_ENABLED_INSTRUCTIONS" = "Registration Lock is enabled. You'll need to enter your PIN when registering your phone number with RAAPP again.";
+"ENABLE_2FA_VIEW_STATUS_ENABLED_INSTRUCTIONS" = "Registration Lock is enabled. You'll need to enter your PIN when registering your phone number with OfficeApp again.";
 
 /* Title for the 'enable two factor auth PIN' views. */
 "ENABLE_2FA_VIEW_TITLE" = "Registration Lock";
@@ -840,8 +840,8 @@
 /* Error message indicating that message send failed due to failed attachment write */
 "ERROR_DESCRIPTION_MESSAGE_SEND_FAILED_DUE_TO_FAILED_ATTACHMENT_WRITE" = "Yatadza nekuda kwekutadza kunyora chibatanidzwa.";
 
-/* Generic error used whenever RAAPP can't contact the server */
-"ERROR_DESCRIPTION_NO_INTERNET" = "RAAPP yatadza kuhakira padandemutande. Tinokumbira kuti muedze kubva kumasaisai mamwe eWiFi kana kushandisa dhata yenharembozha.";
+/* Generic error used whenever OfficeApp can't contact the server */
+"ERROR_DESCRIPTION_NO_INTERNET" = "OfficeApp yatadza kuhakira padandemutande. Tinokumbira kuti muedze kubva kumasaisai mamwe eWiFi kana kushandisa dhata yenharembozha.";
 
 /* Error indicating that an outgoing message had no valid recipients. */
 "ERROR_DESCRIPTION_NO_VALID_RECIPIENTS" = "Tsamba yatadza kuendeswa nekuti hapana vagamichiri vakati tsikiti.";
@@ -856,7 +856,7 @@
 "ERROR_DESCRIPTION_RESPONSE_FAILED" = "Invalid response from service.";
 
 /* Error message when attempting to send message */
-"ERROR_DESCRIPTION_SENDING_UNAUTHORIZED" = "Mudziyo wako hausisina kunyoreswa nenhamba dzako dzenhare.Unofanira kubvisa nekuisa RAAPP zvakare.";
+"ERROR_DESCRIPTION_SENDING_UNAUTHORIZED" = "Mudziyo wako hausisina kunyoreswa nenhamba dzako dzenhare.Unofanira kubvisa nekuisa OfficeApp zvakare.";
 
 /* Generic server error */
 "ERROR_DESCRIPTION_SERVER_FAILURE" = "Kanganiso pasevha. Tinokumbira kuti uyedze futi panguva inotevera.";
@@ -865,10 +865,10 @@
 "ERROR_DESCRIPTION_UNKNOWN_ERROR" = "Kukanganisa kusingazivikanwe kwaitika.";
 
 /* Error message when attempting to send message */
-"ERROR_DESCRIPTION_UNREGISTERED_RECIPIENT" = "Kontakt iyi haisi yemushandisi weRAAPP";
+"ERROR_DESCRIPTION_UNREGISTERED_RECIPIENT" = "Kontakt iyi haisi yemushandisi weOfficeApp";
 
 /* Error message when unable to receive an attachment because the sending client is too old. */
-"ERROR_MESSAGE_ATTACHMENT_FROM_OLD_CLIENT" = "Pakanganiswa:Udza atumira kuti awedzere RAAPP obva atumira zvakare.";
+"ERROR_MESSAGE_ATTACHMENT_FROM_OLD_CLIENT" = "Pakanganiswa:Udza atumira kuti awedzere OfficeApp obva atumira zvakare.";
 
 /* No comment provided by engineer. */
 "ERROR_MESSAGE_DUPLICATE_MESSAGE" = "Tagamuchira tsamba yakadzokororwa. ";
@@ -1027,7 +1027,7 @@
 "HOME_VIEW_TITLE_ARCHIVE" = "Dura";
 
 /* Title for the home view's default mode. */
-"HOME_VIEW_TITLE_INBOX" = "RAAPP";
+"HOME_VIEW_TITLE_INBOX" = "OfficeApp";
 
 /* Call setup status label */
 "IN_CALL_CONNECTING" = "Yava kubata...";
@@ -1069,13 +1069,13 @@
 "INVALID_AUDIO_FILE_ALERT_ERROR_MESSAGE" = "Faira rezwi risina kururama.";
 
 /* Alert body when contacts disabled while trying to invite contacts to signal */
-"INVITE_FLOW_REQUIRES_CONTACT_ACCESS_BODY" = "Kuti ukoke makontakt ako,unofanirwa kubvumira RAAPP mvumo kumakontakt ari muapp yemaseting.";
+"INVITE_FLOW_REQUIRES_CONTACT_ACCESS_BODY" = "Kuti ukoke makontakt ako,unofanirwa kubvumira OfficeApp mvumo kumakontakt ari muapp yemaseting.";
 
 /* Alert title when contacts disabled while trying to invite contacts to signal */
 "INVITE_FLOW_REQUIRES_CONTACT_ACCESS_TITLE" = "Bvumira kupinda kuma kontakt";
 
 /* Label for the cell that presents the 'invite contacts' workflow. */
-"INVITE_FRIENDS_CONTACT_TABLE_BUTTON" = "Koka shamwari kuRAAPP";
+"INVITE_FRIENDS_CONTACT_TABLE_BUTTON" = "Koka shamwari kuOfficeApp";
 
 /* Search */
 "INVITE_FRIENDS_PICKER_SEARCHBAR_PLACEHOLDER" = "Tsvaga";
@@ -1251,7 +1251,7 @@
 /* status message for read messages */
 "MESSAGE_STATUS_READ" = "Yaverengwa";
 
-/* message status if message delivery to a recipient is skipped. We skip delivering group messages to users who have left the group or unregistered their RAAPP account. */
+/* message status if message delivery to a recipient is skipped. We skip delivering group messages to users who have left the group or unregistered their OfficeApp account. */
 "MESSAGE_STATUS_RECIPIENT_SKIPPED" = "Asvetukwa";
 
 /* Label indicating that a message failed to send. */
@@ -1313,17 +1313,17 @@
 
 /* Alert body
    Alert body when camera is not authorized */
-"MISSING_CAMERA_PERMISSION_MESSAGE" = "RAAPP iri kuda mvumo kukamera yako kuti uchaire nevhidhiyo.Unogona kupa mvumo iyi paSettings app>>Privacy>>Camera>>RAAPP ";
+"MISSING_CAMERA_PERMISSION_MESSAGE" = "OfficeApp iri kuda mvumo kukamera yako kuti uchaire nevhidhiyo.Unogona kupa mvumo iyi paSettings app>>Privacy>>Camera>>OfficeApp ";
 
 /* Alert title
    Alert title when camera is not authorized */
-"MISSING_CAMERA_PERMISSION_TITLE" = "RAAPP inoda kuwana hupindwa pacamera yako.";
+"MISSING_CAMERA_PERMISSION_TITLE" = "OfficeApp inoda kuwana hupindwa pacamera yako.";
 
 /* Alert body when user has previously denied media library access */
 "MISSING_MEDIA_LIBRARY_PERMISSION_MESSAGE" = "You can grant this permission in the Settings app.";
 
 /* Alert title when user has previously denied media library access */
-"MISSING_MEDIA_LIBRARY_PERMISSION_TITLE" = "RAAPP inoda mvumo yeku Dura reMedia kuti iite izvi.";
+"MISSING_MEDIA_LIBRARY_PERMISSION_TITLE" = "OfficeApp inoda mvumo yeku Dura reMedia kuti iite izvi.";
 
 /* notification title. Embeds {{caller's name or phone number}} */
 "MSGVIEW_MISSED_CALL_WITH_NAME" = "Runhare rwapotswa kubva ku%@.";
@@ -1415,7 +1415,7 @@
 /* No comment provided by engineer. */
 "NOTIFICATIONS_NONE" = "Hapana Zita kana zvemukati";
 
-/* Table cell switch label. When disabled, RAAPP will not play notification sounds while the app is in the foreground. */
+/* Table cell switch label. When disabled, OfficeApp will not play notification sounds while the app is in the foreground. */
 "NOTIFICATIONS_SECTION_INAPP" = "Ridza kana App yakavhurwa";
 
 /* Label for settings UI that allows user to change the notification sound. */
@@ -1442,8 +1442,8 @@
 /* Info Message when {{other user}} updates message expiration to {{time amount}}, see the *_TIME_AMOUNT strings for context. */
 "OTHER_UPDATED_DISAPPEARING_MESSAGES_CONFIGURATION" = "%@ aita nguva yetsamba inotsakatika ive %@.";
 
-/* Label warning the user that the RAAPP service may be down. */
-"OUTAGE_WARNING" = "RAAPP is experiencing technical difficulties. We are working hard to restore service as quickly as possible.";
+/* Label warning the user that the OfficeApp service may be down. */
+"OUTAGE_WARNING" = "OfficeApp is experiencing technical difficulties. We are working hard to restore service as quickly as possible.";
 
 /* No comment provided by engineer. */
 "OUTGOING_CALL" = "Runhare rwurikubuda";
@@ -1524,19 +1524,19 @@
 "PRIVACY_VERIFICATION_FAILED_MISMATCHED_SAFETY_NUMBERS_IN_CLIPBOARD" = "Nhamba iri mundangariro haiite kunge nhamba yeku chengetedzwa yenhaurirano ino.";
 
 /* Alert body for user error */
-"PRIVACY_VERIFICATION_FAILED_NO_SAFETY_NUMBERS_IN_CLIPBOARD" = "RAAPP yashaya nhamba yekuchengetedzwa mundangariro.Waitedzera nemazvo here?";
+"PRIVACY_VERIFICATION_FAILED_NO_SAFETY_NUMBERS_IN_CLIPBOARD" = "OfficeApp yashaya nhamba yekuchengetedzwa mundangariro.Waitedzera nemazvo here?";
 
 /* Alert body when verifying with {{contact name}} */
-"PRIVACY_VERIFICATION_FAILED_THEY_HAVE_WRONG_KEY_FOR_ME" = "Uiri hwe vashandisi veRAAPP vese vanoshandisirana nhamba yekuchengetedzwa yakasiyana.Tarisisa kuti %@ iri kushambadza nhamba yekuchengetedzwa *yako* yakasiyana here.";
+"PRIVACY_VERIFICATION_FAILED_THEY_HAVE_WRONG_KEY_FOR_ME" = "Uiri hwe vashandisi veOfficeApp vese vanoshandisirana nhamba yekuchengetedzwa yakasiyana.Tarisisa kuti %@ iri kushambadza nhamba yekuchengetedzwa *yako* yakasiyana here.";
 
 /* alert body */
-"PRIVACY_VERIFICATION_FAILED_WITH_OLD_LOCAL_VERSION" = "Ukushandisa RAAPP yakare.Unoda kuiwedzera usati waongororesa.";
+"PRIVACY_VERIFICATION_FAILED_WITH_OLD_LOCAL_VERSION" = "Ukushandisa OfficeApp yakare.Unoda kuiwedzera usati waongororesa.";
 
 /* alert body */
-"PRIVACY_VERIFICATION_FAILED_WITH_OLD_REMOTE_VERSION" = "Mumwe wako ari kushandisa RAAPP yekare.Anofanirwa kuiwedzera usati waongorora.";
+"PRIVACY_VERIFICATION_FAILED_WITH_OLD_REMOTE_VERSION" = "Mumwe wako ari kushandisa OfficeApp yekare.Anofanirwa kuiwedzera usati waongorora.";
 
 /* alert body */
-"PRIVACY_VERIFICATION_FAILURE_INVALID_QRCODE" = "Kodhi yaskanwa haiite kunge nhamba yekuchengetedzwa.Mese mune RAAPP itsva here?";
+"PRIVACY_VERIFICATION_FAILURE_INVALID_QRCODE" = "Kodhi yaskanwa haiite kunge nhamba yekuchengetedzwa.Mese mune OfficeApp itsva here?";
 
 /* Paragraph(s) shown alongside the safety number when verifying privacy with {{contact name}} */
 "PRIVACY_VERIFICATION_INSTRUCTIONS" = "Kana uchida kuongorora kuchengetedza kweku hwandisa mativi ose na %@,enzanisa manhamba ari pamusoro nenhamba iri pamudziyo wavo.\n\nZvakare,unogona kuskana kodhi iri panhare yake,kana kumuti askane kodhi iri pamudziyo wako";
@@ -1575,7 +1575,7 @@
 "PROFILE_VIEW_PROFILE_AVATAR_FIELD" = "Mufananidzo";
 
 /* Description of the user profile. */
-"PROFILE_VIEW_PROFILE_DESCRIPTION" = "Profile yako yeRAAPP inenge ichionekwa kuma kontakt ako,apo unotanga nhaurwa itsva,uye pauno goverana nevamwe vashandisi nemapoka.";
+"PROFILE_VIEW_PROFILE_DESCRIPTION" = "Profile yako yeOfficeApp inenge ichionekwa kuma kontakt ako,apo unotanga nhaurwa itsva,uye pauno goverana nevamwe vashandisi nemapoka.";
 
 /* Link to more information about the user profile. */
 "PROFILE_VIEW_PROFILE_DESCRIPTION_LINK" = "Bata pano kuti uzive zvakadzama.";
@@ -1644,7 +1644,7 @@
 "REGISTER_2FA_FORGOT_PIN" = "Ndakanganwa PIN.";
 
 /* Alert message explaining what happens if you forget your 'two-factor auth pin'. */
-"REGISTER_2FA_FORGOT_PIN_ALERT_MESSAGE" = "Registration of this phone number will be possible without your Registration Lock PIN after 7 days have passed since the phone number was last active on RAAPP.";
+"REGISTER_2FA_FORGOT_PIN_ALERT_MESSAGE" = "Registration of this phone number will be possible without your Registration Lock PIN after 7 days have passed since the phone number was last active on OfficeApp.";
 
 /* Instructions to enter the 'two-factor auth pin' in the 2FA registration view. */
 "REGISTER_2FA_INSTRUCTIONS" = "This phone number has Registration Lock enabled. Please enter the Registration Lock PIN.\n\nYour Registration Lock PIN is separate from the automated verification code that was sent to your phone during the last step.";
@@ -1683,19 +1683,19 @@
 "REGISTRATION_ERROR_BLANK_VERIFICATION_CODE" = "Hati kwanise kubvumidza account yako kusvika waenzanisa kodhi yatakutumira.";
 
 /* alert body when registering an iPad */
-"REGISTRATION_IPAD_CONFIRM_BODY" = "Kunyoresa izvezvi kuchavhara RAAPP pane mimwe midziyo yakanyoreswa nenhamba dzephone idzi.";
+"REGISTRATION_IPAD_CONFIRM_BODY" = "Kunyoresa izvezvi kuchavhara OfficeApp pane mimwe midziyo yakanyoreswa nenhamba dzephone idzi.";
 
 /* button text to proceed with registration when on an iPad */
 "REGISTRATION_IPAD_CONFIRM_BUTTON" = "Nyoresa iPad iyi";
 
 /* alert title when registering an iPad */
-"REGISTRATION_IPAD_CONFIRM_TITLE" = "Une akaundi yeRAAPP?";
+"REGISTRATION_IPAD_CONFIRM_TITLE" = "Une akaundi yeOfficeApp?";
 
 /* one line label below submit button on registration screen, which links to an external webpage. */
 "REGISTRATION_LEGAL_TERMS_LINK" = "Terms & Privacy Policy";
 
 /* legal disclaimer, embeds a tappable {{link title}} which is styled as a hyperlink */
-"REGISTRATION_LEGAL_TOP_MATTER_FORMAT" = "Ukanyoresa mudziyo uyu,unobvumira ku%@ yeRAAPP";
+"REGISTRATION_LEGAL_TOP_MATTER_FORMAT" = "Ukanyoresa mudziyo uyu,unobvumira ku%@ yeOfficeApp";
 
 /* embedded in legal topmatter, styled as a link */
 "REGISTRATION_LEGAL_TOP_MATTER_LINK_TITLE" = "terms";
@@ -1743,13 +1743,13 @@
 "RELAY_REGISTERED_ERROR_RECOVERY" = "Nhamba dzenhare dzauri kuedza kunyoresa dzakanyoreswa pane rimwe sevha,tapota dzimisa kubva ikoko wobva waedza zvakare.";
 
 /* Body text for when user is periodically prompted to enter their registration lock PIN */
-"REMINDER_2FA_BODY" = "Registration Lock is enabled for your phone number. To help you memorize your Registration Lock PIN, RAAPP will periodically ask you to confirm it.";
+"REMINDER_2FA_BODY" = "Registration Lock is enabled for your phone number. To help you memorize your Registration Lock PIN, OfficeApp will periodically ask you to confirm it.";
 
 /* Body header for when user is periodically prompted to enter their registration lock PIN */
 "REMINDER_2FA_BODY_HEADER" = "Yeuchidzo:";
 
 /* Alert message explaining what happens if you forget your 'two-factor auth pin' */
-"REMINDER_2FA_FORGOT_PIN_ALERT_MESSAGE" = "Registration Lock helps protect your phone number from unauthorized registration attempts. This feature can be disabled at any time in your RAAPP privacy settings.";
+"REMINDER_2FA_FORGOT_PIN_ALERT_MESSAGE" = "Registration Lock helps protect your phone number from unauthorized registration attempts. This feature can be disabled at any time in your OfficeApp privacy settings.";
 
 /* Navbar title for when user is periodically prompted to enter their registration lock PIN */
 "REMINDER_2FA_NAV_TITLE" = "Enter Your Registration Lock PIN";
@@ -1776,7 +1776,7 @@
 "SAFETY_NUMBER_CHANGED_CONFIRM_SEND_ACTION" = "Tumira zvakadaro";
 
 /* Snippet to share {{safety number}} with a friend. sent e.g. via SMS */
-"SAFETY_NUMBER_SHARE_FORMAT" = "Nhamba yekuchengetedza yeRAAPP yedu\n%@";
+"SAFETY_NUMBER_SHARE_FORMAT" = "Nhamba yekuchengetedza yeOfficeApp yedu\n%@";
 
 /* Action sheet heading */
 "SAFETY_NUMBERS_ACTIONSHEET_TITLE" = "Nhamba yekuchengetedzwa ina %@ yashanduka.Unogona kuiongororesa.";
@@ -1808,14 +1808,14 @@
 /* Indicates that Touch ID/Face ID/Phone Passcode passcode is not set. */
 "SCREEN_LOCK_ERROR_LOCAL_AUTHENTICATION_PASSCODE_NOT_SET" = "You must enable a passcode in your iOS Settings in order to use Screen Lock.";
 
-/* Description of how and why RAAPP iOS uses Touch ID/Face ID/Phone Passcode to unlock 'screen lock'. */
-"SCREEN_LOCK_REASON_UNLOCK_SCREEN_LOCK" = "Authenticate to open RAAPP.";
+/* Description of how and why OfficeApp iOS uses Touch ID/Face ID/Phone Passcode to unlock 'screen lock'. */
+"SCREEN_LOCK_REASON_UNLOCK_SCREEN_LOCK" = "Authenticate to open OfficeApp.";
 
 /* Title for alert indicating that screen lock could not be unlocked. */
 "SCREEN_LOCK_UNLOCK_FAILED" = "Authentication Failed";
 
-/* Label for button on lock screen that lets users unlock RAAPP. */
-"SCREEN_LOCK_UNLOCK_SIGNAL" = "Unlock RAAPP";
+/* Label for button on lock screen that lets users unlock OfficeApp. */
+"SCREEN_LOCK_UNLOCK_SIGNAL" = "Unlock OfficeApp";
 
 /* No comment provided by engineer. */
 "SEARCH_BYNAMEORNUMBER_PLACEHOLDER_TEXT" = "Tsvaga nezita kana nhamba";
@@ -1851,16 +1851,16 @@
 "SEND_INVITE_FAILURE" = "Kukoka kwaramba,tapota edza pamberi.";
 
 /* Alert body after invite succeeded */
-"SEND_INVITE_SUCCESS" = "Wakoka shamwari yako kuti ishandise RAAPP!";
+"SEND_INVITE_SUCCESS" = "Wakoka shamwari yako kuti ishandise OfficeApp!";
 
-/* Text for button to send a RAAPP invite via SMS. %@ is placeholder for the recipient's phone number. */
+/* Text for button to send a OfficeApp invite via SMS. %@ is placeholder for the recipient's phone number. */
 "SEND_INVITE_VIA_SMS_BUTTON_FORMAT" = "Koka neSMS:%@";
 
 /* No comment provided by engineer. */
 "SEND_SMS_CONFIRM_TITLE" = "Koka shamwari kupfurikidza netsamba isina kukwedekerwa?";
 
 /* No comment provided by engineer. */
-"SEND_SMS_INVITE_TITLE" = "Unoda here kukoka nhamba dzinotevera kuRAAPP:";
+"SEND_SMS_INVITE_TITLE" = "Unoda here kukoka nhamba dzinotevera kuOfficeApp:";
 
 /* Navbar title */
 "SETTINGS_ABOUT" = "Nezve";
@@ -1881,7 +1881,7 @@
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_COUNTRY_FORMAT" = "Nzvimbo:%@";
 
 /* Table footer for the 'censorship circumvention' section when censorship circumvention can be manually enabled. */
-"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER" = "Kana ikabatidzwa,RAAPP inoedza kunzvenga kuvharirwa.Usabatidze apa asi chete uri nzvimbo inorambidzwa RAAPP.";
+"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER" = "Kana ikabatidzwa,OfficeApp inoedza kunzvenga kuvharirwa.Usabatidze apa asi chete uri nzvimbo inorambidzwa OfficeApp.";
 
 /* Table footer for the 'censorship circumvention' section shown when censorship circumvention has been auto-enabled based on local phone number. */
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_AUTO_ENABLED" = "Kunzvenga kuvharirwa kwabatidzwa maererano nenhamba yerunhare iri paaccount yako.";
@@ -1889,8 +1889,8 @@
 /* Table footer for the 'censorship circumvention' section shown when the app is not connected to the internet. */
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_NO_CONNECTION" = "Kunzvenga kuvharirwa kunogona kutangwa kana wakabatira paInternet.";
 
-/* Table footer for the 'censorship circumvention' section shown when the app is connected to the RAAPP service. */
-"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_WEBSOCKET_CONNECTED" = "Kunzenga kuvharirwa hakuna basa;wakabata RAAPP nakare.";
+/* Table footer for the 'censorship circumvention' section shown when the app is connected to the OfficeApp service. */
+"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_WEBSOCKET_CONNECTED" = "Kunzenga kuvharirwa hakuna basa;wakabata OfficeApp nakare.";
 
 /* Table header for the 'censorship circumvention' section. */
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_HEADER" = "Kunzvenga kuvharirwa";
@@ -1946,8 +1946,8 @@
 /* A label for the 'add phone number' button in the block list table. */
 "SETTINGS_BLOCK_LIST_ADD_BUTTON" = "Add Blocked User";
 
-/* A label that indicates the user has no RAAPP contacts. */
-"SETTINGS_BLOCK_LIST_NO_CONTACTS" = "Hauna makontakt paRAAPP";
+/* A label that indicates the user has no OfficeApp contacts. */
+"SETTINGS_BLOCK_LIST_NO_CONTACTS" = "Hauna makontakt paOfficeApp";
 
 /* A label that indicates the user's search has no matching results. */
 "SETTINGS_BLOCK_LIST_NO_SEARCH_RESULTS" = "Hapana chawanikwa";
@@ -1959,7 +1959,7 @@
 "SETTINGS_CALLING_HIDES_IP_ADDRESS_PREFERENCE_TITLE" = "Nzvengesa nhare nguva dzese";
 
 /* User settings section footer, a detailed explanation */
-"SETTINGS_CALLING_HIDES_IP_ADDRESS_PREFERENCE_TITLE_DETAIL" = "Tumira nhare dzese nemu sevha reRAAPP kuti usaratidze IP address yako kukontakt yako.Kubatidza kuno dzora qwaliti yenhare.";
+"SETTINGS_CALLING_HIDES_IP_ADDRESS_PREFERENCE_TITLE_DETAIL" = "Tumira nhare dzese nemu sevha reOfficeApp kuti usaratidze IP address yako kukontakt yako.Kubatidza kuno dzora qwaliti yenhare.";
 
 /* No comment provided by engineer. */
 "SETTINGS_CLEAR_HISTORY" = "Clear Conversation History";
@@ -2040,7 +2040,7 @@
 "SETTINGS_SCREEN_LOCK_ACTIVITY_TIMEOUT" = "Screen Lock Timeout";
 
 /* Footer for the 'screen lock' section of the privacy settings. */
-"SETTINGS_SCREEN_LOCK_SECTION_FOOTER" = "Unlock RAAPP's screen using Touch ID, Face ID, or your iOS device passcode. You can still answer incoming calls and receive message notifications while Screen Lock is enabled. RAAPP's notification settings allow you to customize the information that is displayed.";
+"SETTINGS_SCREEN_LOCK_SECTION_FOOTER" = "Unlock OfficeApp's screen using Touch ID, Face ID, or your iOS device passcode. You can still answer incoming calls and receive message notifications while Screen Lock is enabled. OfficeApp's notification settings allow you to customize the information that is displayed.";
 
 /* Title for the 'screen lock' section of the privacy settings. */
 "SETTINGS_SCREEN_LOCK_SECTION_TITLE" = "Screen Lock";
@@ -2052,10 +2052,10 @@
 "SETTINGS_SCREEN_SECURITY" = "Gonesa tsivatsaona yepachivhitivhiti";
 
 /* No comment provided by engineer. */
-"SETTINGS_SCREEN_SECURITY_DETAIL" = "Dzivisa RAAPP kuratidzwa pachivhenganisa maapp.";
+"SETTINGS_SCREEN_SECURITY_DETAIL" = "Dzivisa OfficeApp kuratidzwa pachivhenganisa maapp.";
 
 /* Settings table section footer. */
-"SETTINGS_SECTION_CALL_KIT_DESCRIPTION" = "Kubatana nenhare paiOS kunoratidza nhare dzeRAAPP paskrini rakavharwa uye panhoroondo yenhare.Unokwanisa kuratidza zita nenhamba.Kana iCloud yakavhurwa,nhoroondo yerunhare inogoveranwa neApple.";
+"SETTINGS_SECTION_CALL_KIT_DESCRIPTION" = "Kubatana nenhare paiOS kunoratidza nhare dzeOfficeApp paskrini rakavharwa uye panhoroondo yenhare.Unokwanisa kuratidza zita nenhamba.Kana iCloud yakavhurwa,nhoroondo yerunhare inogoveranwa neApple.";
 
 /* Label for the notifications section of conversation settings view. */
 "SETTINGS_SECTION_NOTIFICATIONS" = "Zviziviso";
@@ -2103,13 +2103,13 @@
 "SHARE_EXTENSION_LOADING" = "Iri kusimudzwa...";
 
 /* Message indicating that the share extension cannot be used until the user has registered in the main app. */
-"SHARE_EXTENSION_NOT_REGISTERED_MESSAGE" = "Tanga app yeRAAPP kuti unyorese.";
+"SHARE_EXTENSION_NOT_REGISTERED_MESSAGE" = "Tanga app yeOfficeApp kuti unyorese.";
 
 /* Title indicating that the share extension cannot be used until the user has registered in the main app. */
 "SHARE_EXTENSION_NOT_REGISTERED_TITLE" = "Hauna kunyoreswa";
 
 /* Message indicating that the share extension cannot be used until the main app has been launched at least once. */
-"SHARE_EXTENSION_NOT_YET_MIGRATED_MESSAGE" = "Launch the RAAPP app to update or register.";
+"SHARE_EXTENSION_NOT_YET_MIGRATED_MESSAGE" = "Launch the OfficeApp app to update or register.";
 
 /* Title indicating that the share extension cannot be used until the main app has been launched at least once. */
 "SHARE_EXTENSION_NOT_YET_MIGRATED_TITLE" = "Haina kugadzirira";
@@ -2120,11 +2120,11 @@
 /* Alert title */
 "SHARE_EXTENSION_SENDING_IN_PROGRESS_TITLE" = "Uploading…";
 
-/* Shown when trying to share content to a RAAPP user for the share extension. Followed by failure details. */
+/* Shown when trying to share content to a OfficeApp user for the share extension. Followed by failure details. */
 "SHARE_EXTENSION_UNABLE_TO_BUILD_ATTACHMENT_ALERT_TITLE" = "Yatadza kugadzirira chibatanidzwa";
 
 /* Title for the 'share extension' view. */
-"SHARE_EXTENSION_VIEW_TITLE" = "Gova kuRAAPP";
+"SHARE_EXTENSION_VIEW_TITLE" = "Gova kuOfficeApp";
 
 /* Action sheet item */
 "SHOW_SAFETY_NUMBER_ACTION" = "Ratidza nhamba yeku chengetedza.";
@@ -2132,8 +2132,8 @@
 /* notification action */
 "SHOW_THREAD_BUTTON_TITLE" = "Ratidza nhaurirano";
 
-/* body sent to contacts when inviting to Install RAAPP */
-"SMS_INVITE_BODY" = "Ndiri kukukoka kuti uvakiririe apu yeRAAPP! Iyi ndiyo kochekero yacho:";
+/* body sent to contacts when inviting to Install OfficeApp */
+"SMS_INVITE_BODY" = "Ndiri kukukoka kuti uvakiririe apu yeOfficeApp! Iyi ndiyo kochekero yacho:";
 
 /* Label for the 'no sound' option that allows users to disable sounds for notifications, etc. */
 "SOUNDS_NONE" = "Hapana";
@@ -2223,13 +2223,13 @@
 "UNLINK_CONFIRMATION_ALERT_TITLE" = "Bvisa kochekero \"%@\"?";
 
 /* Alert title when unlinking device fails */
-"UNLINKING_FAILED_ALERT_TITLE" = "RAAPP haina kukwanisa kubvisa kochekero pamuchina wako.";
+"UNLINKING_FAILED_ALERT_TITLE" = "OfficeApp haina kukwanisa kubvisa kochekero pamuchina wako.";
 
 /* Label text in device manager for a device with no name */
 "UNNAMED_DEVICE" = "Muchina usina zita";
 
 /* No comment provided by engineer. */
-"UNREGISTER_SIGNAL_FAIL" = "Tatadza kubvisa kunyoreswa kubva paRAAPP.";
+"UNREGISTER_SIGNAL_FAIL" = "Tatadza kubvisa kunyoreswa kubva paOfficeApp.";
 
 /* No comment provided by engineer. */
 "UNSUPPORTED_ATTACHMENT" = "Tatambira batanidzira yerudzi rusingatsigirwe.";
@@ -2265,7 +2265,7 @@
 "UPGRADE_EXPERIENCE_INTRODUCING_PROFILES_BUTTON" = "Gadzira profile yako";
 
 /* Description of new profile feature for upgrading (existing) users */
-"UPGRADE_EXPERIENCE_INTRODUCING_PROFILES_DESCRIPTION" = "Waakukwanisa kugoverana mufananidzo nezita neshamwari dzako paRAAPP";
+"UPGRADE_EXPERIENCE_INTRODUCING_PROFILES_DESCRIPTION" = "Waakukwanisa kugoverana mufananidzo nezita neshamwari dzako paOfficeApp";
 
 /* Header for upgrade experience */
 "UPGRADE_EXPERIENCE_INTRODUCING_PROFILES_TITLE" = "Wagadzirira here kuratidzwa zvitsva?";
@@ -2280,19 +2280,19 @@
 "UPGRADE_EXPERIENCE_INTRODUCING_READ_RECEIPTS_TITLE" = "Kuchingamidza zvitaridza kuverengwa";
 
 /* Description of video calling to upgrading (existing) users */
-"UPGRADE_EXPERIENCE_VIDEO_DESCRIPTION" = "RAAPP yaaku tsigira kuchaya nevhidhiyo kwakachengetedzwa.Ingo tanga kuchaya samazuva ese wobva wabata bhatani rekamera motaura";
+"UPGRADE_EXPERIENCE_VIDEO_DESCRIPTION" = "OfficeApp yaaku tsigira kuchaya nevhidhiyo kwakachengetedzwa.Ingo tanga kuchaya samazuva ese wobva wabata bhatani rekamera motaura";
 
 /* Header for upgrade experience */
 "UPGRADE_EXPERIENCE_VIDEO_TITLE" = "Ndeipi kunhare dzemavhidhiyo kwakachengetedzwa!";
 
 /* Message for the alert indicating that user should upgrade iOS. */
-"UPGRADE_IOS_ALERT_MESSAGE" = "RAAPP iri kuda IOS 9 kana iri mberi.Tapota wedzera IOS mu Settings App>>General>>Software Update.";
+"UPGRADE_IOS_ALERT_MESSAGE" = "OfficeApp iri kuda IOS 9 kana iri mberi.Tapota wedzera IOS mu Settings App>>General>>Software Update.";
 
 /* Title for the alert indicating that user should upgrade iOS. */
 "UPGRADE_IOS_ALERT_TITLE" = "Wedzera iOS";
 
 /* No comment provided by engineer. */
-"Upgrading RAAPP ..." = "RAAPP iri kuwedzerwa";
+"Upgrading OfficeApp ..." = "OfficeApp iri kuwedzerwa";
 
 /* button text for back button on verification view */
 "VERIFICATION_BACK_BUTTON" = "Dzoka";
@@ -2346,7 +2346,7 @@
 "VOICE_MESSAGE_TOO_SHORT_ALERT_TITLE" = "Tsamba yezwi";
 
 /* Activity indicator title, shown upon returning to the device manager, until you complete the provisioning process on desktop */
-"WAITING_TO_COMPLETE_DEVICE_LINK_TEXT" = "Pedzisa kugadzirisa paRAAPP Desktop";
+"WAITING_TO_COMPLETE_DEVICE_LINK_TEXT" = "Pedzisa kugadzirisa paOfficeApp Desktop";
 
 /* Info Message when you disable disappearing messages */
 "YOU_DISABLED_DISAPPEARING_MESSAGES_CONFIGURATION" = "Wadzima tsamba dzinonyangadika";

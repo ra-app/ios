@@ -687,7 +687,7 @@
 /* Label warning the user that they have been de-registered. */
 "DEREGISTRATION_WARNING" = "ឧបករណ៍មិនអាចចុះឈ្មោះទៀតបានទេ។ លេខទូរសព្ទរបស់អ្នកប្រហែលជាត្រូវបានចុះឈ្មោះជាមួយ ស៊ីហ្គណលលើឧបករណ៍ផ្សេងទៀត។ វាយដើម្បីចុះឈ្មោះម្តងទៀត។";
 
-/* {{Short Date}} when device last communicated with RAAPP Server. */
+/* {{Short Date}} when device last communicated with OfficeApp Server. */
 "DEVICE_LAST_ACTIVE_AT_LABEL" = "សកម្មភាពចុងក្រោយ៖ %@";
 
 /* {{Short Date}} when device was linked. */
@@ -717,10 +717,10 @@
 /* Section title for the 'domain fronting country' view. */
 "DOMAIN_FRONTING_COUNTRY_VIEW_SECTION_HEADER" = "ចៀងវាងការឃ្លាំមើលទីតាំង";
 
-/* Alert body for when the user has just tried to edit a contacts after declining to give RAAPP contacts permissions */
+/* Alert body for when the user has just tried to edit a contacts after declining to give OfficeApp contacts permissions */
 "EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_BODY" = "អ្នកអាចផ្តល់សិទ្ធិក្នុងការកំណត់កម្មវិធី។";
 
-/* Alert title for when the user has just tried to edit a contacts after declining to give RAAPP contacts permissions */
+/* Alert title for when the user has just tried to edit a contacts after declining to give OfficeApp contacts permissions */
 "EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_TITLE" = "ស៊ីហ្គណលត្រូវការចូលប្រើប្រាស់លេខទំនាក់ទំនង ដើម្បីកែប្រែព័ត៌មានទំនាក់ទំនង";
 
 /* table cell label in conversation settings */
@@ -756,10 +756,10 @@
 /* No comment provided by engineer. */
 "EDIT_TXT" = "កែប្រែ";
 
-/* body of email sent to contacts when inviting to install RAAPP. Embeds {{link to install RAAPP}} and {{link to the RAAPP home page}} */
+/* body of email sent to contacts when inviting to install OfficeApp. Embeds {{link to install OfficeApp}} and {{link to the OfficeApp home page}} */
 "EMAIL_INVITE_BODY" = "សួស្តី,\n\nថ្មីៗនេះ ខ្ញុំបានប្រើប្រាស់ ស៊ីហ្គណល ដើម្បីរក្សាការសន្ទនាឯកជនលើទូរស័ព្ទ iPhone របស់ខ្ញុំ។ ខ្ញុំចង់ឲ្យអ្នកបញ្ចូលវាដែរ ដូចនេះ យើងអាចទុកចិត្តថា មានតែអ្នកនិងខ្ញុំ ដែលអាចអានសាររបស់យើង ឬស្តាប់ការហៅរបស់យើង។\n\nស៊ីហ្គណលមានសម្រាប់ ទូរស័ព្ទ iPhone និង Android។ ទាញយកនៅទីនេះ៖ %@\n\nស៊ីហ្គណលដំណើរការដូចគ្នានឹងកម្មវិធីផ្ញើសារ ដែលមានស្រាប់ដែរ។ យើងអាចបញ្ជូនរូបភាព និងវីដេអូ ហៅទូរស័ព្ទ និងចាប់ផ្តើមការជជែកជាក្រុម។ អ្វីដែលល្អបំផុតគឺ គ្មាននរណាអាចមើលឃើញ សូម្បីអ្នកដែលបង្កើត ស៊ីហ្គណលក៏ដោយ!\n\nអ្នកអាចអានបន្ថែមអំពី Open Whisper Systems, មនុស្សបង្កើត ស៊ីហ្គណលនៅទីនេះ %@";
 
-/* subject of email sent to contacts when inviting to install RAAPP */
+/* subject of email sent to contacts when inviting to install OfficeApp */
 "EMAIL_INVITE_SUBJECT" = "តោះប្តូរទៅប្រើ ស៊ីហ្គណល";
 
 /* Body text an existing user sees when viewing an empty archive */
@@ -840,7 +840,7 @@
 /* Error message indicating that message send failed due to failed attachment write */
 "ERROR_DESCRIPTION_MESSAGE_SEND_FAILED_DUE_TO_FAILED_ATTACHMENT_WRITE" = "បរាជ័យដោយសារមិនអាចដាក់ឯកសារភ្ជាប់។";
 
-/* Generic error used whenever RAAPP can't contact the server */
+/* Generic error used whenever OfficeApp can't contact the server */
 "ERROR_DESCRIPTION_NO_INTERNET" = "ស៊ីហ្គណលមិនអាចតភ្ជាប់ទៅកាន់អ៊ីនធើណែត។ សូមព្យាយាមពីបណ្តាញ WiFi ផ្សេងទៀត ឬប្រើប្រាស់អ៊ីនធើណែតទូរសព្ទ។";
 
 /* Error indicating that an outgoing message had no valid recipients. */
@@ -1251,7 +1251,7 @@
 /* status message for read messages */
 "MESSAGE_STATUS_READ" = "អាន";
 
-/* message status if message delivery to a recipient is skipped. We skip delivering group messages to users who have left the group or unregistered their RAAPP account. */
+/* message status if message delivery to a recipient is skipped. We skip delivering group messages to users who have left the group or unregistered their OfficeApp account. */
 "MESSAGE_STATUS_RECIPIENT_SKIPPED" = "បានរំលង";
 
 /* Label indicating that a message failed to send. */
@@ -1415,7 +1415,7 @@
 /* No comment provided by engineer. */
 "NOTIFICATIONS_NONE" = "គ្មានឈ្មោះ ឬ ខ្លឹមសារ";
 
-/* Table cell switch label. When disabled, RAAPP will not play notification sounds while the app is in the foreground. */
+/* Table cell switch label. When disabled, OfficeApp will not play notification sounds while the app is in the foreground. */
 "NOTIFICATIONS_SECTION_INAPP" = "ចាក់ នៅពេលកម្មវិធីបើក";
 
 /* Label for settings UI that allows user to change the notification sound. */
@@ -1442,7 +1442,7 @@
 /* Info Message when {{other user}} updates message expiration to {{time amount}}, see the *_TIME_AMOUNT strings for context. */
 "OTHER_UPDATED_DISAPPEARING_MESSAGES_CONFIGURATION" = "%@ កំណត់រយៈពេលការរលុបសារទៅជា %@។";
 
-/* Label warning the user that the RAAPP service may be down. */
+/* Label warning the user that the OfficeApp service may be down. */
 "OUTAGE_WARNING" = "ស៊ីហ្គណល កំពុងជួបប្រទះបញ្ហាបច្ចេកទេស។ យើងកំពុងធ្វើការស្តារសេវាកម្មយ៉ាងរហ័សតាមដែលអាចធ្វើទៅបាន។";
 
 /* No comment provided by engineer. */
@@ -1808,13 +1808,13 @@
 /* Indicates that Touch ID/Face ID/Phone Passcode passcode is not set. */
 "SCREEN_LOCK_ERROR_LOCAL_AUTHENTICATION_PASSCODE_NOT_SET" = "អ្នកត្រូវប្រើលេខកូដ ក្នុង iOS អ្នក ដើម្បីប្រើប្រាស់ អេក្រង់ចាក់សោរ។";
 
-/* Description of how and why RAAPP iOS uses Touch ID/Face ID/Phone Passcode to unlock 'screen lock'. */
+/* Description of how and why OfficeApp iOS uses Touch ID/Face ID/Phone Passcode to unlock 'screen lock'. */
 "SCREEN_LOCK_REASON_UNLOCK_SCREEN_LOCK" = "ផ្ទៀងផ្ទាត់ដើម្បីបើកស៊ីហ្គណល។";
 
 /* Title for alert indicating that screen lock could not be unlocked. */
 "SCREEN_LOCK_UNLOCK_FAILED" = "ការផ្ទៀងផ្ទាត់បរាជ័យ";
 
-/* Label for button on lock screen that lets users unlock RAAPP. */
+/* Label for button on lock screen that lets users unlock OfficeApp. */
 "SCREEN_LOCK_UNLOCK_SIGNAL" = "ដោះសោរស៊ីហ្គណល";
 
 /* No comment provided by engineer. */
@@ -1853,7 +1853,7 @@
 /* Alert body after invite succeeded */
 "SEND_INVITE_SUCCESS" = "អ្នកបានអញ្ជើញមិត្តភក្តិរបស់អ្នក ឲ្យប្រើប្រាស់ស៊ីហ្គណល!";
 
-/* Text for button to send a RAAPP invite via SMS. %@ is placeholder for the recipient's phone number. */
+/* Text for button to send a OfficeApp invite via SMS. %@ is placeholder for the recipient's phone number. */
 "SEND_INVITE_VIA_SMS_BUTTON_FORMAT" = "អញ្ជើញតាមសារ SMS៖ %@";
 
 /* No comment provided by engineer. */
@@ -1889,7 +1889,7 @@
 /* Table footer for the 'censorship circumvention' section shown when the app is not connected to the internet. */
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_NO_CONNECTION" = "ការចៀសវាងការឃ្លាំមើល អាចត្រូវបានដំណើរការ ពេលភ្ជាប់អ៊ីនធើណេតតែប៉ុណ្ណោះ។";
 
-/* Table footer for the 'censorship circumvention' section shown when the app is connected to the RAAPP service. */
+/* Table footer for the 'censorship circumvention' section shown when the app is connected to the OfficeApp service. */
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_WEBSOCKET_CONNECTED" = "ការចៀសវាងការឃ្លាំមើលមិនចាំបាច់ទេ  អ្នកបានតភ្ជាប់សេវាកម្ម ស៊ីហ្គណលរួចរាល់ហើយ។";
 
 /* Table header for the 'censorship circumvention' section. */
@@ -1946,7 +1946,7 @@
 /* A label for the 'add phone number' button in the block list table. */
 "SETTINGS_BLOCK_LIST_ADD_BUTTON" = "Add Blocked User";
 
-/* A label that indicates the user has no RAAPP contacts. */
+/* A label that indicates the user has no OfficeApp contacts. */
 "SETTINGS_BLOCK_LIST_NO_CONTACTS" = "អ្នកមិនមានលេខទំនាក់ទំនងលើស៊ីហ្គណលទេ។";
 
 /* A label that indicates the user's search has no matching results. */
@@ -2120,7 +2120,7 @@
 /* Alert title */
 "SHARE_EXTENSION_SENDING_IN_PROGRESS_TITLE" = "កំពុងបញ្ជូន...";
 
-/* Shown when trying to share content to a RAAPP user for the share extension. Followed by failure details. */
+/* Shown when trying to share content to a OfficeApp user for the share extension. Followed by failure details. */
 "SHARE_EXTENSION_UNABLE_TO_BUILD_ATTACHMENT_ALERT_TITLE" = "មិនអាចរៀបចំឯកសារភ្ជាប់";
 
 /* Title for the 'share extension' view. */
@@ -2132,7 +2132,7 @@
 /* notification action */
 "SHOW_THREAD_BUTTON_TITLE" = "បង្ហាញការសន្ទនា";
 
-/* body sent to contacts when inviting to Install RAAPP */
+/* body sent to contacts when inviting to Install OfficeApp */
 "SMS_INVITE_BODY" = "ខ្ញុំអញ្ជើញអ្នក ដំឡើងស៊ីហ្គណល! នេះជាតំណ៖";
 
 /* Label for the 'no sound' option that allows users to disable sounds for notifications, etc. */
@@ -2292,7 +2292,7 @@
 "UPGRADE_IOS_ALERT_TITLE" = "ធ្វើបច្ចុប្បន្នភាព iOS";
 
 /* No comment provided by engineer. */
-"Upgrading RAAPP ..." = "កំពុងធ្វើបច្ចុប្បន្នភាព ស៊ីហ្គណល ...";
+"Upgrading OfficeApp ..." = "កំពុងធ្វើបច្ចុប្បន្នភាព ស៊ីហ្គណល ...";
 
 /* button text for back button on verification view */
 "VERIFICATION_BACK_BUTTON" = "ត្រលប់ក្រោយ";

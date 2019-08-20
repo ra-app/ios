@@ -5,10 +5,10 @@
 "ACCEPT_NEW_IDENTITY_ACTION" = "Hyväksy uusi turvanumero";
 
 /* Label for 'audio call' button in contact view. */
-"ACTION_AUDIO_CALL" = "RAAPP-puhelu";
+"ACTION_AUDIO_CALL" = "OfficeApp-puhelu";
 
 /* Label for 'invite' button in contact view. */
-"ACTION_INVITE" = "Kutsu RAAPPiin";
+"ACTION_INVITE" = "Kutsu OfficeAppiin";
 
 /* Label for 'send message' button in contact view.
    Label for button that lets you send a message to a contact. */
@@ -69,7 +69,7 @@
 "APN_MESSAGE_IN_GROUP_DETAILED" = "%@ ryhmässä %@: %@";
 
 /* Message for the 'app launch failed' alert. */
-"APP_LAUNCH_FAILURE_ALERT_MESSAGE" = "RAAPP ei avaudu. Lähetä virheenkorjauslokisi meidän tiimille, jotta voimme yrittää korjata ongelma.";
+"APP_LAUNCH_FAILURE_ALERT_MESSAGE" = "OfficeApp ei avaudu. Lähetä virheenkorjauslokisi meidän tiimille, jotta voimme yrittää korjata ongelma.";
 
 /* Title for the 'app launch failed' alert. */
 "APP_LAUNCH_FAILURE_ALERT_TITLE" = "Virhe";
@@ -84,13 +84,13 @@
 "APP_UPDATE_NAG_ALERT_MESSAGE_FORMAT" = "Versio %@ on nyt saatavilla App Storesta.";
 
 /* Title for the 'new app version available' alert. */
-"APP_UPDATE_NAG_ALERT_TITLE" = "Uusi versio RAAPPista on saatavilla";
+"APP_UPDATE_NAG_ALERT_TITLE" = "Uusi versio OfficeAppista on saatavilla";
 
 /* Label for the 'update' button in the 'new app version available' alert. */
 "APP_UPDATE_NAG_ALERT_UPDATE_BUTTON" = "Päivitä";
 
 /* Name of application */
-"APPLICATION_NAME" = "RAAPP";
+"APPLICATION_NAME" = "OfficeApp";
 
 /* Pressing this button moves a thread from the inbox to the archive */
 "ARCHIVE_ACTION" = "Arkistoi";
@@ -165,7 +165,7 @@
 "ATTACHMENT_PICKER_DOCUMENTS_FAILED_ALERT_TITLE" = "Tiedoston valinta epäonnistui.";
 
 /* Alert body when picking a document fails because user picked a directory/bundle */
-"ATTACHMENT_PICKER_DOCUMENTS_PICKED_DIRECTORY_FAILED_ALERT_BODY" = "RAAPP ei pysty käsittelemään tätä tiedostoa sellaisenaan. Yritä pakata sitä ennen lähettämistä.";
+"ATTACHMENT_PICKER_DOCUMENTS_PICKED_DIRECTORY_FAILED_ALERT_BODY" = "OfficeApp ei pysty käsittelemään tätä tiedostoa sellaisenaan. Yritä pakata sitä ennen lähettämistä.";
 
 /* Alert title when picking a document fails because user picked a directory/bundle */
 "ATTACHMENT_PICKER_DOCUMENTS_PICKED_DIRECTORY_FAILED_ALERT_TITLE" = "Tiedostotyyppiä ei tueta";
@@ -300,7 +300,7 @@
 "CALL_AGAIN_BUTTON_TITLE" = "Soita uudelleen";
 
 /* Alert message when calling and permissions for microphone are missing */
-"CALL_AUDIO_PERMISSION_MESSAGE" = "RAAPP tarvitsee lupaa käyttää laitteesi mikrofonia puheluja  ja ääniviestejä varten. Voit antaa tämän käyttöoikeuden laitteesi Asetuksista.";
+"CALL_AUDIO_PERMISSION_MESSAGE" = "OfficeApp tarvitsee lupaa käyttää laitteesi mikrofonia puheluja  ja ääniviestejä varten. Voit antaa tämän käyttöoikeuden laitteesi Asetuksista.";
 
 /* Alert title when calling and permissions for microphone are missing */
 "CALL_AUDIO_PERMISSION_TITLE" = "Mikrofonin käyttöoikeutta tarvitaan";
@@ -312,7 +312,7 @@
 "CALL_SCREEN_STATUS_NO_ANSWER" = "Ei vastausta.";
 
 /* embeds {{Call Status}} in call screen label. For ongoing calls, {{Call Status}} is a seconds timer like 01:23, otherwise {{Call Status}} is a short text like 'Ringing', 'Busy', or 'Failed Call' */
-"CALL_STATUS_FORMAT" = "RAAPP %@";
+"CALL_STATUS_FORMAT" = "OfficeApp %@";
 
 /* Label for call button for alert offering to call a user. */
 "CALL_USER_ALERT_CALL_BUTTON" = "Soita";
@@ -366,7 +366,7 @@
 "CALLBACK_BUTTON_TITLE" = "Soita takaisin";
 
 /* The generic name used for calls if CallKit privacy is enabled */
-"CALLKIT_ANONYMOUS_CONTACT_NAME" = "RAAPP-käyttäjä";
+"CALLKIT_ANONYMOUS_CONTACT_NAME" = "OfficeApp-käyttäjä";
 
 /* Message for alert explaining that a user cannot be verified. */
 "CANT_VERIFY_IDENTITY_ALERT_MESSAGE" = "Tätä käyttäjää ei voida varmentaa ennen kuin olet lähettänyt tai vastaanottanut viestejä hänen kanssaan.";
@@ -384,7 +384,7 @@
 "CLOUDKIT_STATUS_NO_ACCOUNT" = "Sinulla ei ole iCloud-tiliä varmuuskopioita varten.";
 
 /* Error indicating that the app was prevented from accessing the user's CloudKit account. */
-"CLOUDKIT_STATUS_RESTRICTED" = "RAAPPilta on evätty käyttöoikeus iCloudiin varmuuskopioita varten.";
+"CLOUDKIT_STATUS_RESTRICTED" = "OfficeAppilta on evätty käyttöoikeus iCloudiin varmuuskopioita varten.";
 
 /* Activity Sheet label */
 "COMPARE_SAFETY_NUMBER_ACTION" = "Vertaa leikepöytään";
@@ -399,7 +399,7 @@
 "COMPOSE_MESSAGE_INVITE_SECTION_TITLE" = "Kutsu";
 
 /* Multi-line label explaining why compose-screen contact picker is empty. */
-"COMPOSE_SCREEN_MISSING_CONTACTS_PERMISSION" = "Jotta voit nähdä, ketkä yhteystietodoistasi ovat RAAPPin käyttäjiä, salli yhteystietojen käyttö järjestelmäasetuksistasi.";
+"COMPOSE_SCREEN_MISSING_CONTACTS_PERMISSION" = "Jotta voit nähdä, ketkä yhteystietodoistasi ovat OfficeAppin käyttäjiä, salli yhteystietojen käyttö järjestelmäasetuksistasi.";
 
 /* No comment provided by engineer. */
 "CONFIRM_ACCOUNT_DESTRUCTION_TEXT" = "Tämä alustaa ohjelman tuhoamalla viestisi ja purkaa rekisteröitymisesi palvelimelta. Tietojen tuhoamisen jälkeen ohjelma suljetaan.";
@@ -685,9 +685,9 @@
 "DEREGISTRATION_REREGISTER_WITH_SAME_PHONE_NUMBER" = "Rekisteröi tämä puhelinnumero uudelleen";
 
 /* Label warning the user that they have been de-registered. */
-"DEREGISTRATION_WARNING" = "Tämä laite ei ole enää rekisteröity. Puhelinnumerosi saataa olla rekisteröity RAAPPiin jollain toisella laitteella. Napauta rekisteröityäksesi uudelleen.";
+"DEREGISTRATION_WARNING" = "Tämä laite ei ole enää rekisteröity. Puhelinnumerosi saataa olla rekisteröity OfficeAppiin jollain toisella laitteella. Napauta rekisteröityäksesi uudelleen.";
 
-/* {{Short Date}} when device last communicated with RAAPP Server. */
+/* {{Short Date}} when device last communicated with OfficeApp Server. */
 "DEVICE_LAST_ACTIVE_AT_LABEL" = "Viimeksi käytetty: %@";
 
 /* {{Short Date}} when device was linked. */
@@ -717,11 +717,11 @@
 /* Section title for the 'domain fronting country' view. */
 "DOMAIN_FRONTING_COUNTRY_VIEW_SECTION_HEADER" = "Sensuurin kiertämisen sijainti";
 
-/* Alert body for when the user has just tried to edit a contacts after declining to give RAAPP contacts permissions */
+/* Alert body for when the user has just tried to edit a contacts after declining to give OfficeApp contacts permissions */
 "EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_BODY" = "Voit sallia yhteystietojen käytön Asetukset-ohjelmasta";
 
-/* Alert title for when the user has just tried to edit a contacts after declining to give RAAPP contacts permissions */
-"EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_TITLE" = "RAAPP tarvitsee oikeutta käyttää yhteystietojasi niiden muokkaamiseen";
+/* Alert title for when the user has just tried to edit a contacts after declining to give OfficeApp contacts permissions */
+"EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_TITLE" = "OfficeApp tarvitsee oikeutta käyttää yhteystietojasi niiden muokkaamiseen";
 
 /* table cell label in conversation settings */
 "EDIT_GROUP_ACTION" = "Muokkaa ryhmää";
@@ -756,11 +756,11 @@
 /* No comment provided by engineer. */
 "EDIT_TXT" = "Muokkaa";
 
-/* body of email sent to contacts when inviting to install RAAPP. Embeds {{link to install RAAPP}} and {{link to the RAAPP home page}} */
-"EMAIL_INVITE_BODY" = "Hei,\n\nViimeaikoina olen käyttänyt RAAPPia pitämään keskusteluni iPhonella yksityisinä. Haluaisin, että asentaisit sen myös, jotta voimme olla varmoja, ettei kukaan muu lue viestejämme tai kuuntele puheluitamme.\n\nRAAPP on saatavilla sekä iPhonelle että Androidille. Hae se täältä: %@\n\nRAAPP toimii niinkuin nykyinen viestiohjelmasi. Sillä voi lähettää kuvia ja videoita, soittaa puheluita ja käydä ryhmäkeskusteluja. Ja parasta on, ettei kukaan ulkopuolinen näe mitään, eivät edes RAAPPin tekijät!\n\nVoit lukea lisää Open Whisper Systemsistä, eli RAAPPin kehittäjistä, täältä: %@";
+/* body of email sent to contacts when inviting to install OfficeApp. Embeds {{link to install OfficeApp}} and {{link to the OfficeApp home page}} */
+"EMAIL_INVITE_BODY" = "Hei,\n\nViimeaikoina olen käyttänyt OfficeAppia pitämään keskusteluni iPhonella yksityisinä. Haluaisin, että asentaisit sen myös, jotta voimme olla varmoja, ettei kukaan muu lue viestejämme tai kuuntele puheluitamme.\n\nOfficeApp on saatavilla sekä iPhonelle että Androidille. Hae se täältä: %@\n\nOfficeApp toimii niinkuin nykyinen viestiohjelmasi. Sillä voi lähettää kuvia ja videoita, soittaa puheluita ja käydä ryhmäkeskusteluja. Ja parasta on, ettei kukaan ulkopuolinen näe mitään, eivät edes OfficeAppin tekijät!\n\nVoit lukea lisää Open Whisper Systemsistä, eli OfficeAppin kehittäjistä, täältä: %@";
 
-/* subject of email sent to contacts when inviting to install RAAPP */
-"EMAIL_INVITE_SUBJECT" = "Vaihdetaan RAAPPiin";
+/* subject of email sent to contacts when inviting to install OfficeApp */
+"EMAIL_INVITE_SUBJECT" = "Vaihdetaan OfficeAppiin";
 
 /* Body text an existing user sees when viewing an empty archive */
 "EMPTY_ARCHIVE_TEXT" = "Voit arkistoida vanhoja keskusteluja postilaatikostasi myöhempää varten.";
@@ -769,7 +769,7 @@
 "EMPTY_ARCHIVE_TITLE" = "Siisti viestiketjujasi";
 
 /* Full width label displayed when attempting to compose message */
-"EMPTY_CONTACTS_LABEL_LINE1" = "Kellään yhteystiedollasi ei ole RAAPPia.";
+"EMPTY_CONTACTS_LABEL_LINE1" = "Kellään yhteystiedollasi ei ole OfficeAppia.";
 
 /* Full width label displayed when attempting to compose message */
 "EMPTY_CONTACTS_LABEL_LINE2" = "Kutsupa joku?";
@@ -778,7 +778,7 @@
 "EMPTY_INBOX_NEW_USER_TEXT" = "Napauta uuden viestin kirjoitus -painiketta.";
 
 /* Header text a new user sees when viewing an empty inbox */
-"EMPTY_INBOX_NEW_USER_TITLE" = "Aloita ensimmäinen RAAPP-keskustelusi!";
+"EMPTY_INBOX_NEW_USER_TITLE" = "Aloita ensimmäinen OfficeApp-keskustelusi!";
 
 /* Body text an existing user sees when viewing an empty inbox */
 "EMPTY_INBOX_TEXT" = "Postilaatikkosi on tyhjä. Hyvää päivänjatkoa!";
@@ -808,13 +808,13 @@
 "ENABLE_2FA_VIEW_PIN_DOES_NOT_MATCH" = "PIN-koodi ei ole oikein.";
 
 /* Indicates that user should select a 'two factor auth pin'. */
-"ENABLE_2FA_VIEW_SELECT_PIN_INSTRUCTIONS" = "Syötä rekisteröinnin lukituksen PIN-koodi. Seuraavan kerran kun rekisteröit RAAPPiin tällä puhelinnumerolla, sinun tulee syöttää tämä PIN-koodi.";
+"ENABLE_2FA_VIEW_SELECT_PIN_INSTRUCTIONS" = "Syötä rekisteröinnin lukituksen PIN-koodi. Seuraavan kerran kun rekisteröit OfficeAppiin tällä puhelinnumerolla, sinun tulee syöttää tämä PIN-koodi.";
 
 /* Indicates that user has 'two factor auth pin' disabled. */
-"ENABLE_2FA_VIEW_STATUS_DISABLED_INSTRUCTIONS" = "Turvallisuuden parantamiseksi, ota käyttöön rekisteröinnin lukituksen PIN-koodi, jota vaaditaan, jotta voit rekisteröityä tällä puhelinnumerolla uudelleen RAAPPiin.";
+"ENABLE_2FA_VIEW_STATUS_DISABLED_INSTRUCTIONS" = "Turvallisuuden parantamiseksi, ota käyttöön rekisteröinnin lukituksen PIN-koodi, jota vaaditaan, jotta voit rekisteröityä tällä puhelinnumerolla uudelleen OfficeAppiin.";
 
 /* Indicates that user has 'two factor auth pin' enabled. */
-"ENABLE_2FA_VIEW_STATUS_ENABLED_INSTRUCTIONS" = "Rekisteröinnin lukitus on otettu käyttöön. Sinun tulee syöttää PIN-koodisi, jos rekisteröidyt uudelleen RAAPPiin tällä puhelinnumerolla.";
+"ENABLE_2FA_VIEW_STATUS_ENABLED_INSTRUCTIONS" = "Rekisteröinnin lukitus on otettu käyttöön. Sinun tulee syöttää PIN-koodisi, jos rekisteröidyt uudelleen OfficeAppiin tällä puhelinnumerolla.";
 
 /* Title for the 'enable two factor auth PIN' views. */
 "ENABLE_2FA_VIEW_TITLE" = "Rekisteröinnin lukitus";
@@ -840,8 +840,8 @@
 /* Error message indicating that message send failed due to failed attachment write */
 "ERROR_DESCRIPTION_MESSAGE_SEND_FAILED_DUE_TO_FAILED_ATTACHMENT_WRITE" = "Lähetys epäonnistui koska liitteen lisääminen epäonnistui.";
 
-/* Generic error used whenever RAAPP can't contact the server */
-"ERROR_DESCRIPTION_NO_INTERNET" = "RAAPP ei saanut yhteyttä internetiin. Yritä uudelleen toisesta WiFi-verkosta tai kokeile mobiiliyhteyttä.";
+/* Generic error used whenever OfficeApp can't contact the server */
+"ERROR_DESCRIPTION_NO_INTERNET" = "OfficeApp ei saanut yhteyttä internetiin. Yritä uudelleen toisesta WiFi-verkosta tai kokeile mobiiliyhteyttä.";
 
 /* Error indicating that an outgoing message had no valid recipients. */
 "ERROR_DESCRIPTION_NO_VALID_RECIPIENTS" = "Viestin lähettäminen ei onnistunut, koska vastaanottajatiedoissa on virhe.";
@@ -856,7 +856,7 @@
 "ERROR_DESCRIPTION_RESPONSE_FAILED" = "Virheelinen vastaus palvelimelta.";
 
 /* Error message when attempting to send message */
-"ERROR_DESCRIPTION_SENDING_UNAUTHORIZED" = "Laitteesi ei ole enää rekisteröity puhelinnumerollesi. Sinun täytyy poistaa ja asentaa RAAPP uudelleen.";
+"ERROR_DESCRIPTION_SENDING_UNAUTHORIZED" = "Laitteesi ei ole enää rekisteröity puhelinnumerollesi. Sinun täytyy poistaa ja asentaa OfficeApp uudelleen.";
 
 /* Generic server error */
 "ERROR_DESCRIPTION_SERVER_FAILURE" = "Palvelinvirhe. Ytitä myöhemmin uudelleen.";
@@ -865,10 +865,10 @@
 "ERROR_DESCRIPTION_UNKNOWN_ERROR" = "Tuntematon virhe.";
 
 /* Error message when attempting to send message */
-"ERROR_DESCRIPTION_UNREGISTERED_RECIPIENT" = "Yhteystieto ei käytä RAAPPia.";
+"ERROR_DESCRIPTION_UNREGISTERED_RECIPIENT" = "Yhteystieto ei käytä OfficeAppia.";
 
 /* Error message when unable to receive an attachment because the sending client is too old. */
-"ERROR_MESSAGE_ATTACHMENT_FROM_OLD_CLIENT" = "Virhe: Pyydä lähettäjää päivittämään RAAPP ja lähettämään viesti uudelleen";
+"ERROR_MESSAGE_ATTACHMENT_FROM_OLD_CLIENT" = "Virhe: Pyydä lähettäjää päivittämään OfficeApp ja lähettämään viesti uudelleen";
 
 /* No comment provided by engineer. */
 "ERROR_MESSAGE_DUPLICATE_MESSAGE" = "Vastaanotettiin viestin kaksoiskappale.";
@@ -1027,7 +1027,7 @@
 "HOME_VIEW_TITLE_ARCHIVE" = "Arkisto";
 
 /* Title for the home view's default mode. */
-"HOME_VIEW_TITLE_INBOX" = "RAAPP";
+"HOME_VIEW_TITLE_INBOX" = "OfficeApp";
 
 /* Call setup status label */
 "IN_CALL_CONNECTING" = "Yhdistetään...";
@@ -1069,13 +1069,13 @@
 "INVALID_AUDIO_FILE_ALERT_ERROR_MESSAGE" = "Virheellinen äänitiedosto.";
 
 /* Alert body when contacts disabled while trying to invite contacts to signal */
-"INVITE_FLOW_REQUIRES_CONTACT_ACCESS_BODY" = "Jotta voit kutsua yhteystietoja, sinun tulee sallia RAAPPin käyttää yhteystietojasi Asetukset-ohjelmasta.";
+"INVITE_FLOW_REQUIRES_CONTACT_ACCESS_BODY" = "Jotta voit kutsua yhteystietoja, sinun tulee sallia OfficeAppin käyttää yhteystietojasi Asetukset-ohjelmasta.";
 
 /* Alert title when contacts disabled while trying to invite contacts to signal */
 "INVITE_FLOW_REQUIRES_CONTACT_ACCESS_TITLE" = "Salli yhteystietojen käyttö";
 
 /* Label for the cell that presents the 'invite contacts' workflow. */
-"INVITE_FRIENDS_CONTACT_TABLE_BUTTON" = "Kutsu ystäviä RAAPPiin";
+"INVITE_FRIENDS_CONTACT_TABLE_BUTTON" = "Kutsu ystäviä OfficeAppiin";
 
 /* Search */
 "INVITE_FRIENDS_PICKER_SEARCHBAR_PLACEHOLDER" = "Hae";
@@ -1251,7 +1251,7 @@
 /* status message for read messages */
 "MESSAGE_STATUS_READ" = "Luettu";
 
-/* message status if message delivery to a recipient is skipped. We skip delivering group messages to users who have left the group or unregistered their RAAPP account. */
+/* message status if message delivery to a recipient is skipped. We skip delivering group messages to users who have left the group or unregistered their OfficeApp account. */
 "MESSAGE_STATUS_RECIPIENT_SKIPPED" = "Sivuutettu";
 
 /* Label indicating that a message failed to send. */
@@ -1313,17 +1313,17 @@
 
 /* Alert body
    Alert body when camera is not authorized */
-"MISSING_CAMERA_PERMISSION_MESSAGE" = "RAAPP tarvitsee lupaa käyttää laitteesi kameraa videopuheluita varten. Voit antaa tämän käyttöoikeuden avaamalla laitteesi Asetukset >> Tietosuoja >> Kamera >> RAAPP";
+"MISSING_CAMERA_PERMISSION_MESSAGE" = "OfficeApp tarvitsee lupaa käyttää laitteesi kameraa videopuheluita varten. Voit antaa tämän käyttöoikeuden avaamalla laitteesi Asetukset >> Tietosuoja >> Kamera >> OfficeApp";
 
 /* Alert title
    Alert title when camera is not authorized */
-"MISSING_CAMERA_PERMISSION_TITLE" = "RAAPP tarvitsee oikeutta käyttää kameraa.";
+"MISSING_CAMERA_PERMISSION_TITLE" = "OfficeApp tarvitsee oikeutta käyttää kameraa.";
 
 /* Alert body when user has previously denied media library access */
 "MISSING_MEDIA_LIBRARY_PERMISSION_MESSAGE" = "Voit antaa tämän käyttöoikeuden laitteesi Asetuksista.";
 
 /* Alert title when user has previously denied media library access */
-"MISSING_MEDIA_LIBRARY_PERMISSION_TITLE" = "RAAPP tarvitsee lupaa päästä laitteesi mediakirjastoon.";
+"MISSING_MEDIA_LIBRARY_PERMISSION_TITLE" = "OfficeApp tarvitsee lupaa päästä laitteesi mediakirjastoon.";
 
 /* notification title. Embeds {{caller's name or phone number}} */
 "MSGVIEW_MISSED_CALL_WITH_NAME" = "Vastaamatta jäänyt puhelu: %@";
@@ -1410,12 +1410,12 @@
 "NOTIFICATION_SEND_FAILED" = "Viestin lähettäminen yhteystiedolle %@ epäonnistui.";
 
 /* No comment provided by engineer. */
-"NOTIFICATIONS_FOOTER_WARNING" = "Applen push-ilmoituspalvelussa olevien ohjelmistovirheiden vuoksi viestien esikatselu toimii tällä hetkellä vain, jos viesti saadaan haettua 30 sekunnin kuluttua sen lähettämisestä. Tästä syystä RAAPPin kuvake Koti-valikossa saattaa näytää virheellistä saapuneiden viestien määrää.";
+"NOTIFICATIONS_FOOTER_WARNING" = "Applen push-ilmoituspalvelussa olevien ohjelmistovirheiden vuoksi viestien esikatselu toimii tällä hetkellä vain, jos viesti saadaan haettua 30 sekunnin kuluttua sen lähettämisestä. Tästä syystä OfficeAppin kuvake Koti-valikossa saattaa näytää virheellistä saapuneiden viestien määrää.";
 
 /* No comment provided by engineer. */
 "NOTIFICATIONS_NONE" = "Ei nimeä eikä sisältöä";
 
-/* Table cell switch label. When disabled, RAAPP will not play notification sounds while the app is in the foreground. */
+/* Table cell switch label. When disabled, OfficeApp will not play notification sounds while the app is in the foreground. */
 "NOTIFICATIONS_SECTION_INAPP" = "Toista kun ohjelma on auki";
 
 /* Label for settings UI that allows user to change the notification sound. */
@@ -1442,8 +1442,8 @@
 /* Info Message when {{other user}} updates message expiration to {{time amount}}, see the *_TIME_AMOUNT strings for context. */
 "OTHER_UPDATED_DISAPPEARING_MESSAGES_CONFIGURATION" = "%@ asetti viestien katoamisajan: %@";
 
-/* Label warning the user that the RAAPP service may be down. */
-"OUTAGE_WARNING" = "RAAPPissa ilmenee tällä hetkellä teknisiä ongelmia. Työskentelemme parhaillaan palvelun palauttamiseksi.";
+/* Label warning the user that the OfficeApp service may be down. */
+"OUTAGE_WARNING" = "OfficeAppissa ilmenee tällä hetkellä teknisiä ongelmia. Työskentelemme parhaillaan palvelun palauttamiseksi.";
 
 /* No comment provided by engineer. */
 "OUTGOING_CALL" = "Lähtevä puhelu";
@@ -1524,19 +1524,19 @@
 "PRIVACY_VERIFICATION_FAILED_MISMATCHED_SAFETY_NUMBERS_IN_CLIPBOARD" = "Leikepöydällä oleva numero ei näytä olevan oikea turvanumero tälle keskustelulle.";
 
 /* Alert body for user error */
-"PRIVACY_VERIFICATION_FAILED_NO_SAFETY_NUMBERS_IN_CLIPBOARD" = "RAAPP ei löytänyt turvanumeroa leikepöydältä. Oletko varmasti kopioinut sen oikein?";
+"PRIVACY_VERIFICATION_FAILED_NO_SAFETY_NUMBERS_IN_CLIPBOARD" = "OfficeApp ei löytänyt turvanumeroa leikepöydältä. Oletko varmasti kopioinut sen oikein?";
 
 /* Alert body when verifying with {{contact name}} */
-"PRIVACY_VERIFICATION_FAILED_THEY_HAVE_WRONG_KEY_FOR_ME" = "Turvanumero on yksilöllinen aina kahden RAAPP-käyttäjän välillä. Tarkista vielä uudelleen, että yhteystiedon %@ laiteessa näkyy juuri teidän turvanumero.";
+"PRIVACY_VERIFICATION_FAILED_THEY_HAVE_WRONG_KEY_FOR_ME" = "Turvanumero on yksilöllinen aina kahden OfficeApp-käyttäjän välillä. Tarkista vielä uudelleen, että yhteystiedon %@ laiteessa näkyy juuri teidän turvanumero.";
 
 /* alert body */
-"PRIVACY_VERIFICATION_FAILED_WITH_OLD_LOCAL_VERSION" = "Sinulla on käytössä vanha versio RAAPPista. Sinun tulee ensin päivittää, jotta voit varmentaa.";
+"PRIVACY_VERIFICATION_FAILED_WITH_OLD_LOCAL_VERSION" = "Sinulla on käytössä vanha versio OfficeAppista. Sinun tulee ensin päivittää, jotta voit varmentaa.";
 
 /* alert body */
-"PRIVACY_VERIFICATION_FAILED_WITH_OLD_REMOTE_VERSION" = "Vastapuolella on käytössä vanha versio RAAPPista. Hänen tulee ensin päivittää, jotta voit varmentaa.";
+"PRIVACY_VERIFICATION_FAILED_WITH_OLD_REMOTE_VERSION" = "Vastapuolella on käytössä vanha versio OfficeAppista. Hänen tulee ensin päivittää, jotta voit varmentaa.";
 
 /* alert body */
-"PRIVACY_VERIFICATION_FAILURE_INVALID_QRCODE" = "Skannattu koodi ei näytä olevan turvanumero. Onko teillä kummallakin viimeisin versio RAAPPista käytössä?";
+"PRIVACY_VERIFICATION_FAILURE_INVALID_QRCODE" = "Skannattu koodi ei näytä olevan turvanumero. Onko teillä kummallakin viimeisin versio OfficeAppista käytössä?";
 
 /* Paragraph(s) shown alongside the safety number when verifying privacy with {{contact name}} */
 "PRIVACY_VERIFICATION_INSTRUCTIONS" = "Jos haluat varmentaa sinun ja yhteystiedon %@ välisen salauksen tietoturvan, vertaa ylläolevia numeroita hänen laitteessaan näkyviin vastaaviin numeroihin.\n\nVaihtoehtoisesti voit skannata koodin hänen puhelimestaan, tai pyytää häntä skannaamaan sinun koodisi.";
@@ -1575,7 +1575,7 @@
 "PROFILE_VIEW_PROFILE_AVATAR_FIELD" = "Kuvake";
 
 /* Description of the user profile. */
-"PROFILE_VIEW_PROFILE_DESCRIPTION" = "RAAPP-profiilisi näkyy kaikille yhteystiedoillesi, kun aloitat uusia keskusteluja ja kun jaat sen muiden käyttäjien ja ryhmien kanssa.";
+"PROFILE_VIEW_PROFILE_DESCRIPTION" = "OfficeApp-profiilisi näkyy kaikille yhteystiedoillesi, kun aloitat uusia keskusteluja ja kun jaat sen muiden käyttäjien ja ryhmien kanssa.";
 
 /* Link to more information about the user profile. */
 "PROFILE_VIEW_PROFILE_DESCRIPTION_LINK" = "Lisätietoja napauttamalla tästä";
@@ -1644,7 +1644,7 @@
 "REGISTER_2FA_FORGOT_PIN" = "Unohdin PIN-koodini.";
 
 /* Alert message explaining what happens if you forget your 'two-factor auth pin'. */
-"REGISTER_2FA_FORGOT_PIN_ALERT_MESSAGE" = "Rekisteröiminen tällä puhelinnumerolla on mahdollista ilman rekisteröinnin lukituksen PIN-koodia vasta, kun 7 päivää on kulunut siitä, kun tämä puhelinnumero oli viimeksi aktiivinen RAAPPissa.";
+"REGISTER_2FA_FORGOT_PIN_ALERT_MESSAGE" = "Rekisteröiminen tällä puhelinnumerolla on mahdollista ilman rekisteröinnin lukituksen PIN-koodia vasta, kun 7 päivää on kulunut siitä, kun tämä puhelinnumero oli viimeksi aktiivinen OfficeAppissa.";
 
 /* Instructions to enter the 'two-factor auth pin' in the 2FA registration view. */
 "REGISTER_2FA_INSTRUCTIONS" = "Tällä puhelinnumerolla on rekisteröinnin lukitus käytössä. Syötä rekisteröinnin lukituksen PIN-koodi jatkaaksesi.\n\nRekisteröinnin lukituksen PIN-koodi on eri kuin se automaattinen vahvistuskoodi, jonka sait tekstiviestinä puhelimeesi edellisessä vaiheessa.";
@@ -1683,19 +1683,19 @@
 "REGISTRATION_ERROR_BLANK_VERIFICATION_CODE" = "Emme pysty aktivoimaan laitettasi ennen kuin olet vahvistanut lähettämämme koodin.";
 
 /* alert body when registering an iPad */
-"REGISTRATION_IPAD_CONFIRM_BODY" = "Jos rekisteröidyt nyt, niin mahdolliset aiemmat rekisteröitymisesi RAAPPiin tällä samalla puhelinnumerolla, mutta eri laitteella, lakkaavat toimimasta.";
+"REGISTRATION_IPAD_CONFIRM_BODY" = "Jos rekisteröidyt nyt, niin mahdolliset aiemmat rekisteröitymisesi OfficeAppiin tällä samalla puhelinnumerolla, mutta eri laitteella, lakkaavat toimimasta.";
 
 /* button text to proceed with registration when on an iPad */
 "REGISTRATION_IPAD_CONFIRM_BUTTON" = "Rekisteröi tämä iPad";
 
 /* alert title when registering an iPad */
-"REGISTRATION_IPAD_CONFIRM_TITLE" = "Onko sinulla jo RAAPP-tili?";
+"REGISTRATION_IPAD_CONFIRM_TITLE" = "Onko sinulla jo OfficeApp-tili?";
 
 /* one line label below submit button on registration screen, which links to an external webpage. */
 "REGISTRATION_LEGAL_TERMS_LINK" = "Käyttöehdot ja yksityisyydensuoja";
 
 /* legal disclaimer, embeds a tappable {{link title}} which is styled as a hyperlink */
-"REGISTRATION_LEGAL_TOP_MATTER_FORMAT" = "Rekisteröimällä tämän laitteen hyväksyt RAAPPin %@";
+"REGISTRATION_LEGAL_TOP_MATTER_FORMAT" = "Rekisteröimällä tämän laitteen hyväksyt OfficeAppin %@";
 
 /* embedded in legal topmatter, styled as a link */
 "REGISTRATION_LEGAL_TOP_MATTER_LINK_TITLE" = "käyttöehdot";
@@ -1743,13 +1743,13 @@
 "RELAY_REGISTERED_ERROR_RECOVERY" = "Puhelinnumero, jota yrität rekisteröidä, on jo rekisteröity toisella palvelimella. Pura ensin rekisteröintisi sieltä ja yritä sitten uudelleen.";
 
 /* Body text for when user is periodically prompted to enter their registration lock PIN */
-"REMINDER_2FA_BODY" = "Rekisteröinnin lukitus on käytössä puhelinnumerollasi. RAAPP auttaa sinua muistamaan rekisteröinnin lukituksen PIN-koodisi pyytämällä sinua silloin tällöin vahvistamaan sen.";
+"REMINDER_2FA_BODY" = "Rekisteröinnin lukitus on käytössä puhelinnumerollasi. OfficeApp auttaa sinua muistamaan rekisteröinnin lukituksen PIN-koodisi pyytämällä sinua silloin tällöin vahvistamaan sen.";
 
 /* Body header for when user is periodically prompted to enter their registration lock PIN */
 "REMINDER_2FA_BODY_HEADER" = "Muistutus:";
 
 /* Alert message explaining what happens if you forget your 'two-factor auth pin' */
-"REMINDER_2FA_FORGOT_PIN_ALERT_MESSAGE" = "Rekisteröinnin lukitus auttaa suojaamaan puhelinnumeroasi luvattomilta rekisteröintiyrityksiltä. Voit ottaa tämän ominaisuuden pois käytöstä milloin tahansa RAAPPin yksityisyysasetuksista.";
+"REMINDER_2FA_FORGOT_PIN_ALERT_MESSAGE" = "Rekisteröinnin lukitus auttaa suojaamaan puhelinnumeroasi luvattomilta rekisteröintiyrityksiltä. Voit ottaa tämän ominaisuuden pois käytöstä milloin tahansa OfficeAppin yksityisyysasetuksista.";
 
 /* Navbar title for when user is periodically prompted to enter their registration lock PIN */
 "REMINDER_2FA_NAV_TITLE" = "Syötä rekisteröinnin lukituksen PIN-koodisi";
@@ -1776,7 +1776,7 @@
 "SAFETY_NUMBER_CHANGED_CONFIRM_SEND_ACTION" = "Lähetä joka tapauksessa";
 
 /* Snippet to share {{safety number}} with a friend. sent e.g. via SMS */
-"SAFETY_NUMBER_SHARE_FORMAT" = "Meidän RAAPP-turvanumeromme:\n%@";
+"SAFETY_NUMBER_SHARE_FORMAT" = "Meidän OfficeApp-turvanumeromme:\n%@";
 
 /* Action sheet heading */
 "SAFETY_NUMBERS_ACTIONSHEET_TITLE" = "Sinun ja yhteystiedon %@ turvanumero on vaihtunut. Saatat halua varmentaa sen.";
@@ -1808,13 +1808,13 @@
 /* Indicates that Touch ID/Face ID/Phone Passcode passcode is not set. */
 "SCREEN_LOCK_ERROR_LOCAL_AUTHENTICATION_PASSCODE_NOT_SET" = "Sinun täytyy asettaa pääsykoodi puhelimesi asetuksista, jotta voit käyttää ruudun lukitusta.";
 
-/* Description of how and why RAAPP iOS uses Touch ID/Face ID/Phone Passcode to unlock 'screen lock'. */
-"SCREEN_LOCK_REASON_UNLOCK_SCREEN_LOCK" = "Tunnistautumiseen, jotta voit avata RAAPPin";
+/* Description of how and why OfficeApp iOS uses Touch ID/Face ID/Phone Passcode to unlock 'screen lock'. */
+"SCREEN_LOCK_REASON_UNLOCK_SCREEN_LOCK" = "Tunnistautumiseen, jotta voit avata OfficeAppin";
 
 /* Title for alert indicating that screen lock could not be unlocked. */
 "SCREEN_LOCK_UNLOCK_FAILED" = "Autentikointi epäonnistui";
 
-/* Label for button on lock screen that lets users unlock RAAPP. */
+/* Label for button on lock screen that lets users unlock OfficeApp. */
 "SCREEN_LOCK_UNLOCK_SIGNAL" = "Avaa lukitus";
 
 /* No comment provided by engineer. */
@@ -1851,16 +1851,16 @@
 "SEND_INVITE_FAILURE" = "Kutsun lähettäminen epäonnistui. Yritä myöhemmin uudelleen.";
 
 /* Alert body after invite succeeded */
-"SEND_INVITE_SUCCESS" = "Olet kutsunut ystäväsi käyttämään RAAPPia!";
+"SEND_INVITE_SUCCESS" = "Olet kutsunut ystäväsi käyttämään OfficeAppia!";
 
-/* Text for button to send a RAAPP invite via SMS. %@ is placeholder for the recipient's phone number. */
+/* Text for button to send a OfficeApp invite via SMS. %@ is placeholder for the recipient's phone number. */
 "SEND_INVITE_VIA_SMS_BUTTON_FORMAT" = "Kutsu tekstiviestillä: %@";
 
 /* No comment provided by engineer. */
 "SEND_SMS_CONFIRM_TITLE" = "Kutsu ystävä suojaamattomalla tekstiviestillä?";
 
 /* No comment provided by engineer. */
-"SEND_SMS_INVITE_TITLE" = "Haluatko kutsua seuraavan numeron käyttämään RAAPPia:";
+"SEND_SMS_INVITE_TITLE" = "Haluatko kutsua seuraavan numeron käyttämään OfficeAppia:";
 
 /* Navbar title */
 "SETTINGS_ABOUT" = "Tietoja ohjelmasta";
@@ -1881,7 +1881,7 @@
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_COUNTRY_FORMAT" = "Sijainti: %@";
 
 /* Table footer for the 'censorship circumvention' section when censorship circumvention can be manually enabled. */
-"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER" = "Jos tämä on käytössä, niin RAAPP yrittää kiertää sensuuria. Älä ota tätä ominaisuutta käyttöön ellet ole paikassa, missä RAAPP on sensuroitu.";
+"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER" = "Jos tämä on käytössä, niin OfficeApp yrittää kiertää sensuuria. Älä ota tätä ominaisuutta käyttöön ellet ole paikassa, missä OfficeApp on sensuroitu.";
 
 /* Table footer for the 'censorship circumvention' section shown when censorship circumvention has been auto-enabled based on local phone number. */
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_AUTO_ENABLED" = "Puhelinnumerosi sijaintiin perustuva sensuurin kiertäminen otettu käyttöön.";
@@ -1889,8 +1889,8 @@
 /* Table footer for the 'censorship circumvention' section shown when the app is not connected to the internet. */
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_NO_CONNECTION" = "Sensuurin kiertäminen toimii ainoastaan silloin, kun olet yhteydessä internetiin.";
 
-/* Table footer for the 'censorship circumvention' section shown when the app is connected to the RAAPP service. */
-"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_WEBSOCKET_CONNECTED" = "Sensuurin kiertäminen ei ole tarpeen. Olet jo yhdistetty RAAPP-palvelimeen.";
+/* Table footer for the 'censorship circumvention' section shown when the app is connected to the OfficeApp service. */
+"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_WEBSOCKET_CONNECTED" = "Sensuurin kiertäminen ei ole tarpeen. Olet jo yhdistetty OfficeApp-palvelimeen.";
 
 /* Table header for the 'censorship circumvention' section. */
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_HEADER" = "Sensuurin kiertäminen";
@@ -1946,8 +1946,8 @@
 /* A label for the 'add phone number' button in the block list table. */
 "SETTINGS_BLOCK_LIST_ADD_BUTTON" = "Add Blocked User";
 
-/* A label that indicates the user has no RAAPP contacts. */
-"SETTINGS_BLOCK_LIST_NO_CONTACTS" = "Sinulla ei ole yhteystietoja RAAPPissa.";
+/* A label that indicates the user has no OfficeApp contacts. */
+"SETTINGS_BLOCK_LIST_NO_CONTACTS" = "Sinulla ei ole yhteystietoja OfficeAppissa.";
 
 /* A label that indicates the user's search has no matching results. */
 "SETTINGS_BLOCK_LIST_NO_SEARCH_RESULTS" = "Ei hakutuloksia";
@@ -1959,7 +1959,7 @@
 "SETTINGS_CALLING_HIDES_IP_ADDRESS_PREFERENCE_TITLE" = "Välitä aina puhelut";
 
 /* User settings section footer, a detailed explanation */
-"SETTINGS_CALLING_HIDES_IP_ADDRESS_PREFERENCE_TITLE_DETAIL" = "Välitä kaikki puhelut RAAPP-palvelimen kautta välttääksesi IP-osoitteesi paljastumista yhteystiedollesi. Tämä toiminto heikentää puhelun laatua.";
+"SETTINGS_CALLING_HIDES_IP_ADDRESS_PREFERENCE_TITLE_DETAIL" = "Välitä kaikki puhelut OfficeApp-palvelimen kautta välttääksesi IP-osoitteesi paljastumista yhteystiedollesi. Tämä toiminto heikentää puhelun laatua.";
 
 /* No comment provided by engineer. */
 "SETTINGS_CLEAR_HISTORY" = "Tyhjennä keskusteluhistoria";
@@ -2040,7 +2040,7 @@
 "SETTINGS_SCREEN_LOCK_ACTIVITY_TIMEOUT" = "Automaattisen näytön lukituksen odotusaika";
 
 /* Footer for the 'screen lock' section of the privacy settings. */
-"SETTINGS_SCREEN_LOCK_SECTION_FOOTER" = "Avaa RAAPPin ruudun lukitus Touch ID:llä, Face ID:llä tai pääsykoodillasi. Voit silti vastata saapuviin puheluihin ja saada ilmoituksia viesteistä vaikka ruudun lukitus on päällä. RAAPPin ilmoitusasetuksista voit säätää mitä tietoja ilmoituksissa näytetään.";
+"SETTINGS_SCREEN_LOCK_SECTION_FOOTER" = "Avaa OfficeAppin ruudun lukitus Touch ID:llä, Face ID:llä tai pääsykoodillasi. Voit silti vastata saapuviin puheluihin ja saada ilmoituksia viesteistä vaikka ruudun lukitus on päällä. OfficeAppin ilmoitusasetuksista voit säätää mitä tietoja ilmoituksissa näytetään.";
 
 /* Title for the 'screen lock' section of the privacy settings. */
 "SETTINGS_SCREEN_LOCK_SECTION_TITLE" = "Ruudun lukitus";
@@ -2052,10 +2052,10 @@
 "SETTINGS_SCREEN_SECURITY" = "Estä kuvakaappaukset";
 
 /* No comment provided by engineer. */
-"SETTINGS_SCREEN_SECURITY_DETAIL" = "Estä RAAPPin esikatselukuvien näkyminen ohjelmanvaihtajanäytöltä.";
+"SETTINGS_SCREEN_SECURITY_DETAIL" = "Estä OfficeAppin esikatselukuvien näkyminen ohjelmanvaihtajanäytöltä.";
 
 /* Settings table section footer. */
-"SETTINGS_SECTION_CALL_KIT_DESCRIPTION" = "iOS puheluiden integraatio näyttää RAAPP-puhelut lukitusruudullasi ja järjestelmän puheluhistoriassa. Voi halutessasi näyttää myös yhteystietosi nimen ja numeron. Jos iCloud on käytössä, puheluhistoria jaetaan myös Applelle.";
+"SETTINGS_SECTION_CALL_KIT_DESCRIPTION" = "iOS puheluiden integraatio näyttää OfficeApp-puhelut lukitusruudullasi ja järjestelmän puheluhistoriassa. Voi halutessasi näyttää myös yhteystietosi nimen ja numeron. Jos iCloud on käytössä, puheluhistoria jaetaan myös Applelle.";
 
 /* Label for the notifications section of conversation settings view. */
 "SETTINGS_SECTION_NOTIFICATIONS" = "Ilmoitukset";
@@ -2103,13 +2103,13 @@
 "SHARE_EXTENSION_LOADING" = "Ladataan...";
 
 /* Message indicating that the share extension cannot be used until the user has registered in the main app. */
-"SHARE_EXTENSION_NOT_REGISTERED_MESSAGE" = "Avaa RAAPP ohjelma rekisteröityäksesi.";
+"SHARE_EXTENSION_NOT_REGISTERED_MESSAGE" = "Avaa OfficeApp ohjelma rekisteröityäksesi.";
 
 /* Title indicating that the share extension cannot be used until the user has registered in the main app. */
 "SHARE_EXTENSION_NOT_REGISTERED_TITLE" = "Ei rekisteröity";
 
 /* Message indicating that the share extension cannot be used until the main app has been launched at least once. */
-"SHARE_EXTENSION_NOT_YET_MIGRATED_MESSAGE" = "Avaa RAAPP-ohjelma pävittääkesi tai rekisteröidäksesi";
+"SHARE_EXTENSION_NOT_YET_MIGRATED_MESSAGE" = "Avaa OfficeApp-ohjelma pävittääkesi tai rekisteröidäksesi";
 
 /* Title indicating that the share extension cannot be used until the main app has been launched at least once. */
 "SHARE_EXTENSION_NOT_YET_MIGRATED_TITLE" = "Ei valmis";
@@ -2120,11 +2120,11 @@
 /* Alert title */
 "SHARE_EXTENSION_SENDING_IN_PROGRESS_TITLE" = "Lähetetään...";
 
-/* Shown when trying to share content to a RAAPP user for the share extension. Followed by failure details. */
+/* Shown when trying to share content to a OfficeApp user for the share extension. Followed by failure details. */
 "SHARE_EXTENSION_UNABLE_TO_BUILD_ATTACHMENT_ALERT_TITLE" = "Liitteen valmistelu epäonnistui";
 
 /* Title for the 'share extension' view. */
-"SHARE_EXTENSION_VIEW_TITLE" = "Jaa RAAPPiin";
+"SHARE_EXTENSION_VIEW_TITLE" = "Jaa OfficeAppiin";
 
 /* Action sheet item */
 "SHOW_SAFETY_NUMBER_ACTION" = "Näytä turvanumero";
@@ -2132,8 +2132,8 @@
 /* notification action */
 "SHOW_THREAD_BUTTON_TITLE" = "Näytä keskustelu";
 
-/* body sent to contacts when inviting to Install RAAPP */
-"SMS_INVITE_BODY" = "Kutsun sinut käyttämään RAAPPia! Tässä linkki:";
+/* body sent to contacts when inviting to Install OfficeApp */
+"SMS_INVITE_BODY" = "Kutsun sinut käyttämään OfficeAppia! Tässä linkki:";
 
 /* Label for the 'no sound' option that allows users to disable sounds for notifications, etc. */
 "SOUNDS_NONE" = "Ei mitään";
@@ -2223,13 +2223,13 @@
 "UNLINK_CONFIRMATION_ALERT_TITLE" = "Poista \"%@\"?";
 
 /* Alert title when unlinking device fails */
-"UNLINKING_FAILED_ALERT_TITLE" = "RAAPP ei onnistunut poistamaan laitettasi.";
+"UNLINKING_FAILED_ALERT_TITLE" = "OfficeApp ei onnistunut poistamaan laitettasi.";
 
 /* Label text in device manager for a device with no name */
 "UNNAMED_DEVICE" = "Nimeämätön laite";
 
 /* No comment provided by engineer. */
-"UNREGISTER_SIGNAL_FAIL" = "Rekisteröimisen purku RAAPPista epäonnistui.";
+"UNREGISTER_SIGNAL_FAIL" = "Rekisteröimisen purku OfficeAppista epäonnistui.";
 
 /* No comment provided by engineer. */
 "UNSUPPORTED_ATTACHMENT" = "Vastaanotettiin liite, jota ei tueta.";
@@ -2265,7 +2265,7 @@
 "UPGRADE_EXPERIENCE_INTRODUCING_PROFILES_BUTTON" = "Aseta profiilisi";
 
 /* Description of new profile feature for upgrading (existing) users */
-"UPGRADE_EXPERIENCE_INTRODUCING_PROFILES_DESCRIPTION" = "Voit nyt jakaa profiilikuvasi ja -nimesi ystäviesi kanssa RAAPPissa.";
+"UPGRADE_EXPERIENCE_INTRODUCING_PROFILES_DESCRIPTION" = "Voit nyt jakaa profiilikuvasi ja -nimesi ystäviesi kanssa OfficeAppissa.";
 
 /* Header for upgrade experience */
 "UPGRADE_EXPERIENCE_INTRODUCING_PROFILES_TITLE" = "Oletko valmis kuvaa varten?";
@@ -2280,19 +2280,19 @@
 "UPGRADE_EXPERIENCE_INTRODUCING_READ_RECEIPTS_TITLE" = "Esittelemme lukukuittaukset";
 
 /* Description of video calling to upgrading (existing) users */
-"UPGRADE_EXPERIENCE_VIDEO_DESCRIPTION" = "RAAPP tukee nyt turvallisia videopuheluita. Aloita puhelu kuten ennenkin, sitten vain napauta kamerakuvaketta ja vilkuta hei.";
+"UPGRADE_EXPERIENCE_VIDEO_DESCRIPTION" = "OfficeApp tukee nyt turvallisia videopuheluita. Aloita puhelu kuten ennenkin, sitten vain napauta kamerakuvaketta ja vilkuta hei.";
 
 /* Header for upgrade experience */
 "UPGRADE_EXPERIENCE_VIDEO_TITLE" = "Hei, turvalliset videopuhelut!";
 
 /* Message for the alert indicating that user should upgrade iOS. */
-"UPGRADE_IOS_ALERT_MESSAGE" = "RAAPP vaatii iOS 9:n tai uudemman. Voit päivittää käyttöjärjestelmäsi Asetukset ohjelmasta >> Yleiset >> Ohjelmistopäivitys";
+"UPGRADE_IOS_ALERT_MESSAGE" = "OfficeApp vaatii iOS 9:n tai uudemman. Voit päivittää käyttöjärjestelmäsi Asetukset ohjelmasta >> Yleiset >> Ohjelmistopäivitys";
 
 /* Title for the alert indicating that user should upgrade iOS. */
 "UPGRADE_IOS_ALERT_TITLE" = "Päivitä iOS";
 
 /* No comment provided by engineer. */
-"Upgrading RAAPP ..." = "Päivitetään RAAPPia ...";
+"Upgrading OfficeApp ..." = "Päivitetään OfficeAppia ...";
 
 /* button text for back button on verification view */
 "VERIFICATION_BACK_BUTTON" = "Takaisin";
@@ -2346,7 +2346,7 @@
 "VOICE_MESSAGE_TOO_SHORT_ALERT_TITLE" = "Ääniviesti";
 
 /* Activity indicator title, shown upon returning to the device manager, until you complete the provisioning process on desktop */
-"WAITING_TO_COMPLETE_DEVICE_LINK_TEXT" = "Saata yhdistäminen loppuun RAAPP Desktopissa.";
+"WAITING_TO_COMPLETE_DEVICE_LINK_TEXT" = "Saata yhdistäminen loppuun OfficeApp Desktopissa.";
 
 /* Info Message when you disable disappearing messages */
 "YOU_DISABLED_DISAPPEARING_MESSAGES_CONFIGURATION" = "Sinä asetit katoavat viestit pois päältä.";

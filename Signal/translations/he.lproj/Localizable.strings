@@ -5,10 +5,10 @@
 "ACCEPT_NEW_IDENTITY_ACTION" = "אשר מספר ביטחון חדש";
 
 /* Label for 'audio call' button in contact view. */
-"ACTION_AUDIO_CALL" = "שיחת RAAPP";
+"ACTION_AUDIO_CALL" = "שיחת OfficeApp";
 
 /* Label for 'invite' button in contact view. */
-"ACTION_INVITE" = "הזמן אל RAAPP";
+"ACTION_INVITE" = "הזמן אל OfficeApp";
 
 /* Label for 'send message' button in contact view.
    Label for button that lets you send a message to a contact. */
@@ -69,7 +69,7 @@
 "APN_MESSAGE_IN_GROUP_DETAILED" = "%@ בקבוצה %@: %@";
 
 /* Message for the 'app launch failed' alert. */
-"APP_LAUNCH_FAILURE_ALERT_MESSAGE" = "RAAPP אינו יכול להיות מופעל. אנא שלח את יומן ניפוי התקלים שלך אל הצוות שלנו כך שנוכל לנסות לפתור סוגייה זו.";
+"APP_LAUNCH_FAILURE_ALERT_MESSAGE" = "OfficeApp אינו יכול להיות מופעל. אנא שלח את יומן ניפוי התקלים שלך אל הצוות שלנו כך שנוכל לנסות לפתור סוגייה זו.";
 
 /* Title for the 'app launch failed' alert. */
 "APP_LAUNCH_FAILURE_ALERT_TITLE" = "שגיאה";
@@ -84,13 +84,13 @@
 "APP_UPDATE_NAG_ALERT_MESSAGE_FORMAT" = "גרסה %@ זמינה כעת להורדה מחנות האפליקציות";
 
 /* Title for the 'new app version available' alert. */
-"APP_UPDATE_NAG_ALERT_TITLE" = "גרסה חדשה של RAAPP זמינה";
+"APP_UPDATE_NAG_ALERT_TITLE" = "גרסה חדשה של OfficeApp זמינה";
 
 /* Label for the 'update' button in the 'new app version available' alert. */
 "APP_UPDATE_NAG_ALERT_UPDATE_BUTTON" = "עדכן";
 
 /* Name of application */
-"APPLICATION_NAME" = "RAAPP";
+"APPLICATION_NAME" = "OfficeApp";
 
 /* Pressing this button moves a thread from the inbox to the archive */
 "ARCHIVE_ACTION" = "ארכב";
@@ -165,7 +165,7 @@
 "ATTACHMENT_PICKER_DOCUMENTS_FAILED_ALERT_TITLE" = "נכשל בבחירת מסמך.";
 
 /* Alert body when picking a document fails because user picked a directory/bundle */
-"ATTACHMENT_PICKER_DOCUMENTS_PICKED_DIRECTORY_FAILED_ALERT_BODY" = "RAAPP לא יכול לטפל בקובץ זה כמו שהוא. נסה לכווץ אותו לפני שליחה.";
+"ATTACHMENT_PICKER_DOCUMENTS_PICKED_DIRECTORY_FAILED_ALERT_BODY" = "OfficeApp לא יכול לטפל בקובץ זה כמו שהוא. נסה לכווץ אותו לפני שליחה.";
 
 /* Alert title when picking a document fails because user picked a directory/bundle */
 "ATTACHMENT_PICKER_DOCUMENTS_PICKED_DIRECTORY_FAILED_ALERT_TITLE" = "קובץ בלתי נתמך";
@@ -300,7 +300,7 @@
 "CALL_AGAIN_BUTTON_TITLE" = "חייג שוב";
 
 /* Alert message when calling and permissions for microphone are missing */
-"CALL_AUDIO_PERMISSION_MESSAGE" = "RAAPP דורש גישה למיקרופון שלך כדי לבצע שיחות ולהקליט הודעות קוליות. אתה יכול להעניק הרשאה זו ביישום הגדרות.";
+"CALL_AUDIO_PERMISSION_MESSAGE" = "OfficeApp דורש גישה למיקרופון שלך כדי לבצע שיחות ולהקליט הודעות קוליות. אתה יכול להעניק הרשאה זו ביישום הגדרות.";
 
 /* Alert title when calling and permissions for microphone are missing */
 "CALL_AUDIO_PERMISSION_TITLE" = "נדרשת גישה למיקרופון";
@@ -312,7 +312,7 @@
 "CALL_SCREEN_STATUS_NO_ANSWER" = "אין מענה.";
 
 /* embeds {{Call Status}} in call screen label. For ongoing calls, {{Call Status}} is a seconds timer like 01:23, otherwise {{Call Status}} is a short text like 'Ringing', 'Busy', or 'Failed Call' */
-"CALL_STATUS_FORMAT" = "RAAPP %@";
+"CALL_STATUS_FORMAT" = "OfficeApp %@";
 
 /* Label for call button for alert offering to call a user. */
 "CALL_USER_ALERT_CALL_BUTTON" = "חייג";
@@ -366,7 +366,7 @@
 "CALLBACK_BUTTON_TITLE" = "חייג חזרה";
 
 /* The generic name used for calls if CallKit privacy is enabled */
-"CALLKIT_ANONYMOUS_CONTACT_NAME" = "משתמש RAAPP";
+"CALLKIT_ANONYMOUS_CONTACT_NAME" = "משתמש OfficeApp";
 
 /* Message for alert explaining that a user cannot be verified. */
 "CANT_VERIFY_IDENTITY_ALERT_MESSAGE" = "משתמש זה לא יכול להיות מוודא עד שלא תחליף איתו הודעות.";
@@ -384,7 +384,7 @@
 "CLOUDKIT_STATUS_NO_ACCOUNT" = "אין לך חשבון iCloud עבור גיבויים.";
 
 /* Error indicating that the app was prevented from accessing the user's CloudKit account. */
-"CLOUDKIT_STATUS_RESTRICTED" = "RAAPP לא הותר לקבל גישה אל חשבון iCloud שלך עבור גיבויים.";
+"CLOUDKIT_STATUS_RESTRICTED" = "OfficeApp לא הותר לקבל גישה אל חשבון iCloud שלך עבור גיבויים.";
 
 /* Activity Sheet label */
 "COMPARE_SAFETY_NUMBER_ACTION" = "השווה עם לוח עריכה";
@@ -399,7 +399,7 @@
 "COMPOSE_MESSAGE_INVITE_SECTION_TITLE" = "הזמן";
 
 /* Multi-line label explaining why compose-screen contact picker is empty. */
-"COMPOSE_SCREEN_MISSING_CONTACTS_PERMISSION" = "כדי לראות מי מאנשי הקשר שלך הם משתמשי RAAPP, התר גישה לאנשי הקשר בהגדרות המערכת שלך.";
+"COMPOSE_SCREEN_MISSING_CONTACTS_PERMISSION" = "כדי לראות מי מאנשי הקשר שלך הם משתמשי OfficeApp, התר גישה לאנשי הקשר בהגדרות המערכת שלך.";
 
 /* No comment provided by engineer. */
 "CONFIRM_ACCOUNT_DESTRUCTION_TEXT" = "זה יאפס את היישומון ע\"י מחיקת ההודעות שלך וביטול הרישום שלך עם השרת. היישומון ייסגר לאחר מחיקת הנתונים.";
@@ -685,9 +685,9 @@
 "DEREGISTRATION_REREGISTER_WITH_SAME_PHONE_NUMBER" = "רשום מחדש מספר טלפון זה";
 
 /* Label warning the user that they have been de-registered. */
-"DEREGISTRATION_WARNING" = "מכשיר אינו רשום יותר. מספר הטלפון שלך יכול להירשם עם RAAPP על מכשיר שונה. הקש כדי לרשום מחדש.";
+"DEREGISTRATION_WARNING" = "מכשיר אינו רשום יותר. מספר הטלפון שלך יכול להירשם עם OfficeApp על מכשיר שונה. הקש כדי לרשום מחדש.";
 
-/* {{Short Date}} when device last communicated with RAAPP Server. */
+/* {{Short Date}} when device last communicated with OfficeApp Server. */
 "DEVICE_LAST_ACTIVE_AT_LABEL" = "פעיל לאחרונה: %@";
 
 /* {{Short Date}} when device was linked. */
@@ -717,11 +717,11 @@
 /* Section title for the 'domain fronting country' view. */
 "DOMAIN_FRONTING_COUNTRY_VIEW_SECTION_HEADER" = "מיקום עקיפת צנזורה";
 
-/* Alert body for when the user has just tried to edit a contacts after declining to give RAAPP contacts permissions */
+/* Alert body for when the user has just tried to edit a contacts after declining to give OfficeApp contacts permissions */
 "EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_BODY" = "אתה יכול לתת גישה בהגדרות המכשיר.";
 
-/* Alert title for when the user has just tried to edit a contacts after declining to give RAAPP contacts permissions */
-"EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_TITLE" = "RAAPP צריך גישה לאנשי הקשר כדי לערוך מידע איש קשר";
+/* Alert title for when the user has just tried to edit a contacts after declining to give OfficeApp contacts permissions */
+"EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_TITLE" = "OfficeApp צריך גישה לאנשי הקשר כדי לערוך מידע איש קשר";
 
 /* table cell label in conversation settings */
 "EDIT_GROUP_ACTION" = "ערוך קבוצה";
@@ -756,11 +756,11 @@
 /* No comment provided by engineer. */
 "EDIT_TXT" = "ערוך";
 
-/* body of email sent to contacts when inviting to install RAAPP. Embeds {{link to install RAAPP}} and {{link to the RAAPP home page}} */
-"EMAIL_INVITE_BODY" = "שלום,\n\nלאחרונה אני משתמש ב-RAAPP כדי לשמור על השיחות ב-iPhone שלי פרטיות. אני רוצה שגם תתקין אותו, ככה שנוכל להיות בטוחים שרק אתה ואני יכולים לקרוא את ההודעות שלנו או לשמוע את השיחות שלנו.\n\nRAAPP זמין עבור iPhone ו-Android. השג אותו כאן: %@\n\nRAAPP עובד כמו יישום ההתכתבויות הקיים שלך. אנחנו יכולים לשלוח תמונות ווידיאוים, לבצע שיחות ולהתחיל התכתבויות קבוצתיות. החלק הכי טוב הוא שאף אחד לא יכול לראות שום דבר מזה, אפילו לא האנשים שיוצרים את RAAPP!\n\nאתה יכול לקרוא עוד אודות Open Whisper Systems, האנשים שיוצרים את RAAPP, כאן: %@";
+/* body of email sent to contacts when inviting to install OfficeApp. Embeds {{link to install OfficeApp}} and {{link to the OfficeApp home page}} */
+"EMAIL_INVITE_BODY" = "שלום,\n\nלאחרונה אני משתמש ב-OfficeApp כדי לשמור על השיחות ב-iPhone שלי פרטיות. אני רוצה שגם תתקין אותו, ככה שנוכל להיות בטוחים שרק אתה ואני יכולים לקרוא את ההודעות שלנו או לשמוע את השיחות שלנו.\n\nOfficeApp זמין עבור iPhone ו-Android. השג אותו כאן: %@\n\nOfficeApp עובד כמו יישום ההתכתבויות הקיים שלך. אנחנו יכולים לשלוח תמונות ווידיאוים, לבצע שיחות ולהתחיל התכתבויות קבוצתיות. החלק הכי טוב הוא שאף אחד לא יכול לראות שום דבר מזה, אפילו לא האנשים שיוצרים את OfficeApp!\n\nאתה יכול לקרוא עוד אודות Open Whisper Systems, האנשים שיוצרים את OfficeApp, כאן: %@";
 
-/* subject of email sent to contacts when inviting to install RAAPP */
-"EMAIL_INVITE_SUBJECT" = "בוא נחליף אל RAAPP";
+/* subject of email sent to contacts when inviting to install OfficeApp */
+"EMAIL_INVITE_SUBJECT" = "בוא נחליף אל OfficeApp";
 
 /* Body text an existing user sees when viewing an empty archive */
 "EMPTY_ARCHIVE_TEXT" = "אתה יכול לארכב שיחות בלתי־פעילות למועד מאוחר יותר מתיבת הדואר הנכנס שלך.";
@@ -769,7 +769,7 @@
 "EMPTY_ARCHIVE_TITLE" = "נקה את השיחות שלך.";
 
 /* Full width label displayed when attempting to compose message */
-"EMPTY_CONTACTS_LABEL_LINE1" = "לאף אחד מאנשי הקשר שלך אין RAAPP.";
+"EMPTY_CONTACTS_LABEL_LINE1" = "לאף אחד מאנשי הקשר שלך אין OfficeApp.";
 
 /* Full width label displayed when attempting to compose message */
 "EMPTY_CONTACTS_LABEL_LINE2" = "למה אינך מזמין מישהו?";
@@ -778,7 +778,7 @@
 "EMPTY_INBOX_NEW_USER_TEXT" = "הקש על הכפתור חַבֵּר";
 
 /* Header text a new user sees when viewing an empty inbox */
-"EMPTY_INBOX_NEW_USER_TITLE" = "התחל את שיחת RAAPP הראשונה שלך!";
+"EMPTY_INBOX_NEW_USER_TITLE" = "התחל את שיחת OfficeApp הראשונה שלך!";
 
 /* Body text an existing user sees when viewing an empty inbox */
 "EMPTY_INBOX_TEXT" = "כלום. אפס. שום דבר.";
@@ -808,13 +808,13 @@
 "ENABLE_2FA_VIEW_PIN_DOES_NOT_MATCH" = "PIN אינו תואם.";
 
 /* Indicates that user should select a 'two factor auth pin'. */
-"ENABLE_2FA_VIEW_SELECT_PIN_INSTRUCTIONS" = "הכנס PIN נעילת הרשמה. תתבקש להכניס PIN זה בפעם הבאה שתירשם עם מספר טלפון זה ב־RAAPP.";
+"ENABLE_2FA_VIEW_SELECT_PIN_INSTRUCTIONS" = "הכנס PIN נעילת הרשמה. תתבקש להכניס PIN זה בפעם הבאה שתירשם עם מספר טלפון זה ב־OfficeApp.";
 
 /* Indicates that user has 'two factor auth pin' disabled. */
-"ENABLE_2FA_VIEW_STATUS_DISABLED_INSTRUCTIONS" = "למען אבטחה מוגברת, אפשר PIN נעילת הרשמה שיידרש על מנת להירשם שוב עם מספר טלפון זה ב־RAAPP.";
+"ENABLE_2FA_VIEW_STATUS_DISABLED_INSTRUCTIONS" = "למען אבטחה מוגברת, אפשר PIN נעילת הרשמה שיידרש על מנת להירשם שוב עם מספר טלפון זה ב־OfficeApp.";
 
 /* Indicates that user has 'two factor auth pin' enabled. */
-"ENABLE_2FA_VIEW_STATUS_ENABLED_INSTRUCTIONS" = "נעילת הרשמה מאופשרת. תצטרך להכניס את ה־PIN שלך כשתירשם שוב עם מספר הטלפון שלך שוב ב־RAAPP.";
+"ENABLE_2FA_VIEW_STATUS_ENABLED_INSTRUCTIONS" = "נעילת הרשמה מאופשרת. תצטרך להכניס את ה־PIN שלך כשתירשם שוב עם מספר הטלפון שלך שוב ב־OfficeApp.";
 
 /* Title for the 'enable two factor auth PIN' views. */
 "ENABLE_2FA_VIEW_TITLE" = "נעילת הרשמה";
@@ -840,8 +840,8 @@
 /* Error message indicating that message send failed due to failed attachment write */
 "ERROR_DESCRIPTION_MESSAGE_SEND_FAILED_DUE_TO_FAILED_ATTACHMENT_WRITE" = "נכשל עקב כתיבת כושלת של צרופה.";
 
-/* Generic error used whenever RAAPP can't contact the server */
-"ERROR_DESCRIPTION_NO_INTERNET" = "RAAPP לא היה מסוגל להתחבר לאינטרנט. אנא נסה מרשת WiFi אחרת או השתמש בנתונים סלולריים.";
+/* Generic error used whenever OfficeApp can't contact the server */
+"ERROR_DESCRIPTION_NO_INTERNET" = "OfficeApp לא היה מסוגל להתחבר לאינטרנט. אנא נסה מרשת WiFi אחרת או השתמש בנתונים סלולריים.";
 
 /* Error indicating that an outgoing message had no valid recipients. */
 "ERROR_DESCRIPTION_NO_VALID_RECIPIENTS" = "שליחת ההודעה נכשלה עקב העדר מקבלים תקפים.";
@@ -856,7 +856,7 @@
 "ERROR_DESCRIPTION_RESPONSE_FAILED" = "תגובה בלתי תקפה משירות.";
 
 /* Error message when attempting to send message */
-"ERROR_DESCRIPTION_SENDING_UNAUTHORIZED" = "המכשיר שלך אינו רשום עוד עבור מספר הטלפון שלך. אתה חייב להסיר ולהתקין מחדש את RAAPP.";
+"ERROR_DESCRIPTION_SENDING_UNAUTHORIZED" = "המכשיר שלך אינו רשום עוד עבור מספר הטלפון שלך. אתה חייב להסיר ולהתקין מחדש את OfficeApp.";
 
 /* Generic server error */
 "ERROR_DESCRIPTION_SERVER_FAILURE" = "שגיאת שרת. נסה שוב מאוחר יותר.";
@@ -865,10 +865,10 @@
 "ERROR_DESCRIPTION_UNKNOWN_ERROR" = "התרחשה שגיאה לא ידועה";
 
 /* Error message when attempting to send message */
-"ERROR_DESCRIPTION_UNREGISTERED_RECIPIENT" = "איש הקשר הוא אינו משתמש RAAPP.";
+"ERROR_DESCRIPTION_UNREGISTERED_RECIPIENT" = "איש הקשר הוא אינו משתמש OfficeApp.";
 
 /* Error message when unable to receive an attachment because the sending client is too old. */
-"ERROR_MESSAGE_ATTACHMENT_FROM_OLD_CLIENT" = "כישלון: בקש מהשולח לעדכן את RAAPP ולשלוח מחדש.";
+"ERROR_MESSAGE_ATTACHMENT_FROM_OLD_CLIENT" = "כישלון: בקש מהשולח לעדכן את OfficeApp ולשלוח מחדש.";
 
 /* No comment provided by engineer. */
 "ERROR_MESSAGE_DUPLICATE_MESSAGE" = "התקבלה הודעה כפולה.";
@@ -1027,7 +1027,7 @@
 "HOME_VIEW_TITLE_ARCHIVE" = "ארכיון";
 
 /* Title for the home view's default mode. */
-"HOME_VIEW_TITLE_INBOX" = "RAAPP";
+"HOME_VIEW_TITLE_INBOX" = "OfficeApp";
 
 /* Call setup status label */
 "IN_CALL_CONNECTING" = "מתחבר...";
@@ -1069,13 +1069,13 @@
 "INVALID_AUDIO_FILE_ALERT_ERROR_MESSAGE" = "קובץ שמע בלתי תקף.";
 
 /* Alert body when contacts disabled while trying to invite contacts to signal */
-"INVITE_FLOW_REQUIRES_CONTACT_ACCESS_BODY" = "כדי להזמין את אנשי הקשר שלך, אתה צריך להתיר אל RAAPP גישה אל אנשי הקשר שלך ביישום ההגדרות.";
+"INVITE_FLOW_REQUIRES_CONTACT_ACCESS_BODY" = "כדי להזמין את אנשי הקשר שלך, אתה צריך להתיר אל OfficeApp גישה אל אנשי הקשר שלך ביישום ההגדרות.";
 
 /* Alert title when contacts disabled while trying to invite contacts to signal */
 "INVITE_FLOW_REQUIRES_CONTACT_ACCESS_TITLE" = "אפשר גישה לאנשי קשר";
 
 /* Label for the cell that presents the 'invite contacts' workflow. */
-"INVITE_FRIENDS_CONTACT_TABLE_BUTTON" = "הזמן חברים אל RAAPP";
+"INVITE_FRIENDS_CONTACT_TABLE_BUTTON" = "הזמן חברים אל OfficeApp";
 
 /* Search */
 "INVITE_FRIENDS_PICKER_SEARCHBAR_PLACEHOLDER" = "חיפוש";
@@ -1251,7 +1251,7 @@
 /* status message for read messages */
 "MESSAGE_STATUS_READ" = "נקרא";
 
-/* message status if message delivery to a recipient is skipped. We skip delivering group messages to users who have left the group or unregistered their RAAPP account. */
+/* message status if message delivery to a recipient is skipped. We skip delivering group messages to users who have left the group or unregistered their OfficeApp account. */
 "MESSAGE_STATUS_RECIPIENT_SKIPPED" = "מדולג";
 
 /* Label indicating that a message failed to send. */
@@ -1313,17 +1313,17 @@
 
 /* Alert body
    Alert body when camera is not authorized */
-"MISSING_CAMERA_PERMISSION_MESSAGE" = "RAAPP צריך גישה למצלמה שלך עבור שיחות וידיאו. אתה יכול להעניק הרשאה זו ביישום הגדרות >> פרטיות >> מצלמה >> RAAPP";
+"MISSING_CAMERA_PERMISSION_MESSAGE" = "OfficeApp צריך גישה למצלמה שלך עבור שיחות וידיאו. אתה יכול להעניק הרשאה זו ביישום הגדרות >> פרטיות >> מצלמה >> OfficeApp";
 
 /* Alert title
    Alert title when camera is not authorized */
-"MISSING_CAMERA_PERMISSION_TITLE" = "RAAPP צריך לקבל גישה למצלמה שלך.";
+"MISSING_CAMERA_PERMISSION_TITLE" = "OfficeApp צריך לקבל גישה למצלמה שלך.";
 
 /* Alert body when user has previously denied media library access */
 "MISSING_MEDIA_LIBRARY_PERMISSION_MESSAGE" = "אתה יכול להעניק הרשאה זו ביישום הגדרות.";
 
 /* Alert title when user has previously denied media library access */
-"MISSING_MEDIA_LIBRARY_PERMISSION_TITLE" = "RAAPP דורש הרשאה אל סיפריית המדיה שלך כדי לעשות זאת.";
+"MISSING_MEDIA_LIBRARY_PERMISSION_TITLE" = "OfficeApp דורש הרשאה אל סיפריית המדיה שלך כדי לעשות זאת.";
 
 /* notification title. Embeds {{caller's name or phone number}} */
 "MSGVIEW_MISSED_CALL_WITH_NAME" = "שיחה לא נענתה מאת %@.";
@@ -1415,7 +1415,7 @@
 /* No comment provided by engineer. */
 "NOTIFICATIONS_NONE" = "אין שם או תוכן";
 
-/* Table cell switch label. When disabled, RAAPP will not play notification sounds while the app is in the foreground. */
+/* Table cell switch label. When disabled, OfficeApp will not play notification sounds while the app is in the foreground. */
 "NOTIFICATIONS_SECTION_INAPP" = "נגן בזמן שהיישום פתוח";
 
 /* Label for settings UI that allows user to change the notification sound. */
@@ -1442,8 +1442,8 @@
 /* Info Message when {{other user}} updates message expiration to {{time amount}}, see the *_TIME_AMOUNT strings for context. */
 "OTHER_UPDATED_DISAPPEARING_MESSAGES_CONFIGURATION" = "%@ הגדיר את זמן ההודעות הנעלמות אל %@.";
 
-/* Label warning the user that the RAAPP service may be down. */
-"OUTAGE_WARNING" = "RAAPP חווה קשיים טכניים. אנו עובדים קשה כדי לשחזר את השירות מהר ככל האפשר.";
+/* Label warning the user that the OfficeApp service may be down. */
+"OUTAGE_WARNING" = "OfficeApp חווה קשיים טכניים. אנו עובדים קשה כדי לשחזר את השירות מהר ככל האפשר.";
 
 /* No comment provided by engineer. */
 "OUTGOING_CALL" = "שיחה יוצאת";
@@ -1524,19 +1524,19 @@
 "PRIVACY_VERIFICATION_FAILED_MISMATCHED_SAFETY_NUMBERS_IN_CLIPBOARD" = "המספר בלוח העריכה שלך לא נראה כמו מספר הביטחון הנכון עבור שיחה זו.";
 
 /* Alert body for user error */
-"PRIVACY_VERIFICATION_FAILED_NO_SAFETY_NUMBERS_IN_CLIPBOARD" = "RAAPP לא היה יכול למצוא מספר ביטחון כלשהו בלוח העריכה שלך. האם העתקת אותו כראוי?";
+"PRIVACY_VERIFICATION_FAILED_NO_SAFETY_NUMBERS_IN_CLIPBOARD" = "OfficeApp לא היה יכול למצוא מספר ביטחון כלשהו בלוח העריכה שלך. האם העתקת אותו כראוי?";
 
 /* Alert body when verifying with {{contact name}} */
-"PRIVACY_VERIFICATION_FAILED_THEY_HAVE_WRONG_KEY_FOR_ME" = "כל זוג של משתמשי RAAPP משתף מספר ביטחון נבדל. בדוק שוב כי %@ מציג את מספר הביטחון הנבדל *שלך*.";
+"PRIVACY_VERIFICATION_FAILED_THEY_HAVE_WRONG_KEY_FOR_ME" = "כל זוג של משתמשי OfficeApp משתף מספר ביטחון נבדל. בדוק שוב כי %@ מציג את מספר הביטחון הנבדל *שלך*.";
 
 /* alert body */
-"PRIVACY_VERIFICATION_FAILED_WITH_OLD_LOCAL_VERSION" = "אתה מריץ גרסה ישנה של RAAPP. אתה צריך לעדכן גרסה לפני שתוכל לוודא.";
+"PRIVACY_VERIFICATION_FAILED_WITH_OLD_LOCAL_VERSION" = "אתה מריץ גרסה ישנה של OfficeApp. אתה צריך לעדכן גרסה לפני שתוכל לוודא.";
 
 /* alert body */
-"PRIVACY_VERIFICATION_FAILED_WITH_OLD_REMOTE_VERSION" = "השותף שלך מריץ גרסה ישנה של RAAPP. הוא צריך לעדכן גרסה לפני שתוכל לוודא.";
+"PRIVACY_VERIFICATION_FAILED_WITH_OLD_REMOTE_VERSION" = "השותף שלך מריץ גרסה ישנה של OfficeApp. הוא צריך לעדכן גרסה לפני שתוכל לוודא.";
 
 /* alert body */
-"PRIVACY_VERIFICATION_FAILURE_INVALID_QRCODE" = "הקוד הסרוק לא נראה כמו קוד מספר ביטחון. האם שניכם על גרסה מעודכנת של RAAPP?";
+"PRIVACY_VERIFICATION_FAILURE_INVALID_QRCODE" = "הקוד הסרוק לא נראה כמו קוד מספר ביטחון. האם שניכם על גרסה מעודכנת של OfficeApp?";
 
 /* Paragraph(s) shown alongside the safety number when verifying privacy with {{contact name}} */
 "PRIVACY_VERIFICATION_INSTRUCTIONS" = "אם אתה רוצה לוודא את האבטחה של הצפנת קצה-אל-הקצה שלך עם %@, השווה את המספרים למעלה עם המספרים במכשיר שלו.\n\nלחלופין, אתה יכול לסרוק את הקוד בטלפון שלו, או לבקש ממנו לסרוק את הקוד שלך.";
@@ -1644,7 +1644,7 @@
 "REGISTER_2FA_FORGOT_PIN" = "שכחתי את ה־PIN שלי.";
 
 /* Alert message explaining what happens if you forget your 'two-factor auth pin'. */
-"REGISTER_2FA_FORGOT_PIN_ALERT_MESSAGE" = "הרשמת מספר טלפון זה תהיה אפשרית ללא PIN נעילת ההרשמה שלך בחלוף 7 ימים מאז שמספר הטלפון היה פעיל ב־RAAPP.";
+"REGISTER_2FA_FORGOT_PIN_ALERT_MESSAGE" = "הרשמת מספר טלפון זה תהיה אפשרית ללא PIN נעילת ההרשמה שלך בחלוף 7 ימים מאז שמספר הטלפון היה פעיל ב־OfficeApp.";
 
 /* Instructions to enter the 'two-factor auth pin' in the 2FA registration view. */
 "REGISTER_2FA_INSTRUCTIONS" = "לטלפון זה יש נעילת הרשמה מאופשרת. אנא הכנס את PIN נעילת ההרשמה שלך.\n\nPIN נעילת ההרשמה שלך נפרד מקוד הוידוא האוטומטי שנשלח אל הטלפון שלך במהלך השלב האחרון.";
@@ -1683,19 +1683,19 @@
 "REGISTRATION_ERROR_BLANK_VERIFICATION_CODE" = "אנחנו לא יכולים לשפעל את החשבון שלך עד שלא תוודא את הקוד ששלחנו אליך.";
 
 /* alert body when registering an iPad */
-"REGISTRATION_IPAD_CONFIRM_BODY" = "רישום עכשיו ישבית את RAAPP על מכשיר אחר כלשהו הרשום כרגע עם מספר טלפון זה.";
+"REGISTRATION_IPAD_CONFIRM_BODY" = "רישום עכשיו ישבית את OfficeApp על מכשיר אחר כלשהו הרשום כרגע עם מספר טלפון זה.";
 
 /* button text to proceed with registration when on an iPad */
 "REGISTRATION_IPAD_CONFIRM_BUTTON" = "רשום iPad זה";
 
 /* alert title when registering an iPad */
-"REGISTRATION_IPAD_CONFIRM_TITLE" = "יש לך כבר חשבון RAAPP?";
+"REGISTRATION_IPAD_CONFIRM_TITLE" = "יש לך כבר חשבון OfficeApp?";
 
 /* one line label below submit button on registration screen, which links to an external webpage. */
 "REGISTRATION_LEGAL_TERMS_LINK" = "תנאים ומדיניות פרטיות";
 
 /* legal disclaimer, embeds a tappable {{link title}} which is styled as a hyperlink */
-"REGISTRATION_LEGAL_TOP_MATTER_FORMAT" = "ע\"י רישום מכשיר זה, אתה מסכים אל %@ של RAAPP";
+"REGISTRATION_LEGAL_TOP_MATTER_FORMAT" = "ע\"י רישום מכשיר זה, אתה מסכים אל %@ של OfficeApp";
 
 /* embedded in legal topmatter, styled as a link */
 "REGISTRATION_LEGAL_TOP_MATTER_LINK_TITLE" = "תנאים";
@@ -1743,13 +1743,13 @@
 "RELAY_REGISTERED_ERROR_RECOVERY" = "מספר הטלפון שאתה מנסה לרשום כבר נרשם בשרת אחר, אנא בטל רישום משם ונסה שוב.";
 
 /* Body text for when user is periodically prompted to enter their registration lock PIN */
-"REMINDER_2FA_BODY" = "נעילת הרשמה מאופשרת עבור מספר הטלפון שלך. כדי לעזור לך לשנן את PIN נעילת ההרשמה שלך, RAAPP ישאל אותך מדי פעם לאמת אותו.";
+"REMINDER_2FA_BODY" = "נעילת הרשמה מאופשרת עבור מספר הטלפון שלך. כדי לעזור לך לשנן את PIN נעילת ההרשמה שלך, OfficeApp ישאל אותך מדי פעם לאמת אותו.";
 
 /* Body header for when user is periodically prompted to enter their registration lock PIN */
 "REMINDER_2FA_BODY_HEADER" = "תזכורת:";
 
 /* Alert message explaining what happens if you forget your 'two-factor auth pin' */
-"REMINDER_2FA_FORGOT_PIN_ALERT_MESSAGE" = "נעילת הרשמה עוזרת להגן על מספר הטלפון שלך מפני ניסיונות הרשמה בלתי מורשים. מאפיין זה יכול להיות מושבת בכל זמן שהוא בהגדרות הַפְּרָטִיוּת של RAAPP.";
+"REMINDER_2FA_FORGOT_PIN_ALERT_MESSAGE" = "נעילת הרשמה עוזרת להגן על מספר הטלפון שלך מפני ניסיונות הרשמה בלתי מורשים. מאפיין זה יכול להיות מושבת בכל זמן שהוא בהגדרות הַפְּרָטִיוּת של OfficeApp.";
 
 /* Navbar title for when user is periodically prompted to enter their registration lock PIN */
 "REMINDER_2FA_NAV_TITLE" = "הכנס את PIN נעילת ההרשמה שלך";
@@ -1776,7 +1776,7 @@
 "SAFETY_NUMBER_CHANGED_CONFIRM_SEND_ACTION" = "שלח בכל זאת";
 
 /* Snippet to share {{safety number}} with a friend. sent e.g. via SMS */
-"SAFETY_NUMBER_SHARE_FORMAT" = "מספר ביטחון RAAPP שלנו:\n%@";
+"SAFETY_NUMBER_SHARE_FORMAT" = "מספר ביטחון OfficeApp שלנו:\n%@";
 
 /* Action sheet heading */
 "SAFETY_NUMBERS_ACTIONSHEET_TITLE" = "מספר הביטחון שלך עם %@ השתנה. מומלץ לוודא אותו.";
@@ -1808,14 +1808,14 @@
 /* Indicates that Touch ID/Face ID/Phone Passcode passcode is not set. */
 "SCREEN_LOCK_ERROR_LOCAL_AUTHENTICATION_PASSCODE_NOT_SET" = "אתה חייב לאפשר קוד גישה בהגדרות iOS שלך על מנת להשתמש בנעילת מסך.";
 
-/* Description of how and why RAAPP iOS uses Touch ID/Face ID/Phone Passcode to unlock 'screen lock'. */
-"SCREEN_LOCK_REASON_UNLOCK_SCREEN_LOCK" = "אמת כדי לפתוח את RAAPP.";
+/* Description of how and why OfficeApp iOS uses Touch ID/Face ID/Phone Passcode to unlock 'screen lock'. */
+"SCREEN_LOCK_REASON_UNLOCK_SCREEN_LOCK" = "אמת כדי לפתוח את OfficeApp.";
 
 /* Title for alert indicating that screen lock could not be unlocked. */
 "SCREEN_LOCK_UNLOCK_FAILED" = "אימות נכשל";
 
-/* Label for button on lock screen that lets users unlock RAAPP. */
-"SCREEN_LOCK_UNLOCK_SIGNAL" = "בטל נעילת RAAPP";
+/* Label for button on lock screen that lets users unlock OfficeApp. */
+"SCREEN_LOCK_UNLOCK_SIGNAL" = "בטל נעילת OfficeApp";
 
 /* No comment provided by engineer. */
 "SEARCH_BYNAMEORNUMBER_PLACEHOLDER_TEXT" = "חפש לפי שם או מספר";
@@ -1851,16 +1851,16 @@
 "SEND_INVITE_FAILURE" = "שליחת ההזמנה נכשלה, אנא נסה שוב מאוחר יותר.";
 
 /* Alert body after invite succeeded */
-"SEND_INVITE_SUCCESS" = "הזמנת את חברך להשתמש ב-RAAPP!";
+"SEND_INVITE_SUCCESS" = "הזמנת את חברך להשתמש ב-OfficeApp!";
 
-/* Text for button to send a RAAPP invite via SMS. %@ is placeholder for the recipient's phone number. */
+/* Text for button to send a OfficeApp invite via SMS. %@ is placeholder for the recipient's phone number. */
 "SEND_INVITE_VIA_SMS_BUTTON_FORMAT" = "הזמן דרך מסרון: %@";
 
 /* No comment provided by engineer. */
 "SEND_SMS_CONFIRM_TITLE" = "להזמין חבר דרך מסרון בלתי־מאובטח?";
 
 /* No comment provided by engineer. */
-"SEND_SMS_INVITE_TITLE" = "האם תרצה להזמין את המספר הבא אל RAAPP:";
+"SEND_SMS_INVITE_TITLE" = "האם תרצה להזמין את המספר הבא אל OfficeApp:";
 
 /* Navbar title */
 "SETTINGS_ABOUT" = "אודות";
@@ -1881,7 +1881,7 @@
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_COUNTRY_FORMAT" = "מיקום: %@";
 
 /* Table footer for the 'censorship circumvention' section when censorship circumvention can be manually enabled. */
-"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER" = "אם מאופשר, RAAPP ינסה לעקוף צנזורה. אל תאפשר מאפיין זה אלא אם אתה במיקום שבו RAAPP מצונזר.";
+"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER" = "אם מאופשר, OfficeApp ינסה לעקוף צנזורה. אל תאפשר מאפיין זה אלא אם אתה במיקום שבו OfficeApp מצונזר.";
 
 /* Table footer for the 'censorship circumvention' section shown when censorship circumvention has been auto-enabled based on local phone number. */
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_AUTO_ENABLED" = "עקיפת צנזורה שופעלה על סמך מספר הטלפון של חשבונך.";
@@ -1889,8 +1889,8 @@
 /* Table footer for the 'censorship circumvention' section shown when the app is not connected to the internet. */
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_NO_CONNECTION" = "עקיפת צנזורה יכולה להשתפעל בעת התחברות לאינטרנט.";
 
-/* Table footer for the 'censorship circumvention' section shown when the app is connected to the RAAPP service. */
-"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_WEBSOCKET_CONNECTED" = "עקיפת צנזורה אינה הכרחית; אתה מחובר כבר אל השירות RAAPP.";
+/* Table footer for the 'censorship circumvention' section shown when the app is connected to the OfficeApp service. */
+"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_WEBSOCKET_CONNECTED" = "עקיפת צנזורה אינה הכרחית; אתה מחובר כבר אל השירות OfficeApp.";
 
 /* Table header for the 'censorship circumvention' section. */
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_HEADER" = "עקיפת צנזורה";
@@ -1946,8 +1946,8 @@
 /* A label for the 'add phone number' button in the block list table. */
 "SETTINGS_BLOCK_LIST_ADD_BUTTON" = "הוסף משתמש חסום";
 
-/* A label that indicates the user has no RAAPP contacts. */
-"SETTINGS_BLOCK_LIST_NO_CONTACTS" = "אין לך אנשי קשר ב־RAAPP.";
+/* A label that indicates the user has no OfficeApp contacts. */
+"SETTINGS_BLOCK_LIST_NO_CONTACTS" = "אין לך אנשי קשר ב־OfficeApp.";
 
 /* A label that indicates the user's search has no matching results. */
 "SETTINGS_BLOCK_LIST_NO_SEARCH_RESULTS" = "אין תוצאות חיפוש";
@@ -1959,7 +1959,7 @@
 "SETTINGS_CALLING_HIDES_IP_ADDRESS_PREFERENCE_TITLE" = "שדר מחדש שיחות תמיד";
 
 /* User settings section footer, a detailed explanation */
-"SETTINGS_CALLING_HIDES_IP_ADDRESS_PREFERENCE_TITLE_DETAIL" = "שדר מחדש את כל השיחות דרך שרת RAAPP כדי למנוע את חשיפת כתובת ה־IP שלך אל איש הקשר שלך. אפשור יפחית איכות שיחות.";
+"SETTINGS_CALLING_HIDES_IP_ADDRESS_PREFERENCE_TITLE_DETAIL" = "שדר מחדש את כל השיחות דרך שרת OfficeApp כדי למנוע את חשיפת כתובת ה־IP שלך אל איש הקשר שלך. אפשור יפחית איכות שיחות.";
 
 /* No comment provided by engineer. */
 "SETTINGS_CLEAR_HISTORY" = "נקה היסטורית שיחות";
@@ -2040,7 +2040,7 @@
 "SETTINGS_SCREEN_LOCK_ACTIVITY_TIMEOUT" = "פסק זמן לנעילת מסך";
 
 /* Footer for the 'screen lock' section of the privacy settings. */
-"SETTINGS_SCREEN_LOCK_SECTION_FOOTER" = "בטל נעילת מסך RAAPP ע\"י שימוש ב־Touch ID, Face ID, או קוד גישה במכשיר iOS שלך. אתה עדין יכול לענות לשיחות נכנסות ולקבל התראות הודעה בעת שנעילת מסך מאופשרת. הגדרות ההתראה של RAAPP מתירות לך להתאים אישית את המידע המוצג.";
+"SETTINGS_SCREEN_LOCK_SECTION_FOOTER" = "בטל נעילת מסך OfficeApp ע\"י שימוש ב־Touch ID, Face ID, או קוד גישה במכשיר iOS שלך. אתה עדין יכול לענות לשיחות נכנסות ולקבל התראות הודעה בעת שנעילת מסך מאופשרת. הגדרות ההתראה של OfficeApp מתירות לך להתאים אישית את המידע המוצג.";
 
 /* Title for the 'screen lock' section of the privacy settings. */
 "SETTINGS_SCREEN_LOCK_SECTION_TITLE" = "נעילת מסך";
@@ -2052,10 +2052,10 @@
 "SETTINGS_SCREEN_SECURITY" = "אפשר אבטחת מסך";
 
 /* No comment provided by engineer. */
-"SETTINGS_SCREEN_SECURITY_DETAIL" = "מנע מתצוגות מקדימות של RAAPP להופיע במחליף היישומים.";
+"SETTINGS_SCREEN_SECURITY_DETAIL" = "מנע מתצוגות מקדימות של OfficeApp להופיע במחליף היישומים.";
 
 /* Settings table section footer. */
-"SETTINGS_SECTION_CALL_KIT_DESCRIPTION" = "מיזוג שיחות iOS מראה שיחות RAAPP על מסך הנעילה שלך ובהיסטורית השיחות של המערכת שלך. אתה יכול להראות את השם והמספר של איש הקשר שלך. אם iCloud מאופשר, היסטורית שיחות זו תשותף עם Apple.";
+"SETTINGS_SECTION_CALL_KIT_DESCRIPTION" = "מיזוג שיחות iOS מראה שיחות OfficeApp על מסך הנעילה שלך ובהיסטורית השיחות של המערכת שלך. אתה יכול להראות את השם והמספר של איש הקשר שלך. אם iCloud מאופשר, היסטורית שיחות זו תשותף עם Apple.";
 
 /* Label for the notifications section of conversation settings view. */
 "SETTINGS_SECTION_NOTIFICATIONS" = "התראות";
@@ -2103,13 +2103,13 @@
 "SHARE_EXTENSION_LOADING" = "טוען...";
 
 /* Message indicating that the share extension cannot be used until the user has registered in the main app. */
-"SHARE_EXTENSION_NOT_REGISTERED_MESSAGE" = "הפעל את היישום RAAPP כדי להירשם.";
+"SHARE_EXTENSION_NOT_REGISTERED_MESSAGE" = "הפעל את היישום OfficeApp כדי להירשם.";
 
 /* Title indicating that the share extension cannot be used until the user has registered in the main app. */
 "SHARE_EXTENSION_NOT_REGISTERED_TITLE" = "לא רשום";
 
 /* Message indicating that the share extension cannot be used until the main app has been launched at least once. */
-"SHARE_EXTENSION_NOT_YET_MIGRATED_MESSAGE" = "הפעל את היישום RAAPP כדי לעדכן או להירשם.";
+"SHARE_EXTENSION_NOT_YET_MIGRATED_MESSAGE" = "הפעל את היישום OfficeApp כדי לעדכן או להירשם.";
 
 /* Title indicating that the share extension cannot be used until the main app has been launched at least once. */
 "SHARE_EXTENSION_NOT_YET_MIGRATED_TITLE" = "לא מוכן";
@@ -2120,11 +2120,11 @@
 /* Alert title */
 "SHARE_EXTENSION_SENDING_IN_PROGRESS_TITLE" = "מעלה...";
 
-/* Shown when trying to share content to a RAAPP user for the share extension. Followed by failure details. */
+/* Shown when trying to share content to a OfficeApp user for the share extension. Followed by failure details. */
 "SHARE_EXTENSION_UNABLE_TO_BUILD_ATTACHMENT_ALERT_TITLE" = "לא היה ניתן להכין צרופה";
 
 /* Title for the 'share extension' view. */
-"SHARE_EXTENSION_VIEW_TITLE" = "שתף ב־RAAPP";
+"SHARE_EXTENSION_VIEW_TITLE" = "שתף ב־OfficeApp";
 
 /* Action sheet item */
 "SHOW_SAFETY_NUMBER_ACTION" = "הראה מספר ביטחון";
@@ -2132,8 +2132,8 @@
 /* notification action */
 "SHOW_THREAD_BUTTON_TITLE" = "הראה שיחה";
 
-/* body sent to contacts when inviting to Install RAAPP */
-"SMS_INVITE_BODY" = "אני מזמין אותך להתקין RAAPP! הנה הקישור:";
+/* body sent to contacts when inviting to Install OfficeApp */
+"SMS_INVITE_BODY" = "אני מזמין אותך להתקין OfficeApp! הנה הקישור:";
 
 /* Label for the 'no sound' option that allows users to disable sounds for notifications, etc. */
 "SOUNDS_NONE" = "ללא";
@@ -2223,13 +2223,13 @@
 "UNLINK_CONFIRMATION_ALERT_TITLE" = "לבטל קישור \"%@\"?";
 
 /* Alert title when unlinking device fails */
-"UNLINKING_FAILED_ALERT_TITLE" = "RAAPP לא היה יכול לבטל את קישור המכשיר שלך.";
+"UNLINKING_FAILED_ALERT_TITLE" = "OfficeApp לא היה יכול לבטל את קישור המכשיר שלך.";
 
 /* Label text in device manager for a device with no name */
 "UNNAMED_DEVICE" = "מכשיר ללא שם";
 
 /* No comment provided by engineer. */
-"UNREGISTER_SIGNAL_FAIL" = "נכשל בביטול הרישום מ־RAAPP.";
+"UNREGISTER_SIGNAL_FAIL" = "נכשל בביטול הרישום מ־OfficeApp.";
 
 /* No comment provided by engineer. */
 "UNSUPPORTED_ATTACHMENT" = "התקבל סוג בלתי נתמך של צרופה.";
@@ -2265,7 +2265,7 @@
 "UPGRADE_EXPERIENCE_INTRODUCING_PROFILES_BUTTON" = "הגדר את הפרופיל שלך";
 
 /* Description of new profile feature for upgrading (existing) users */
-"UPGRADE_EXPERIENCE_INTRODUCING_PROFILES_DESCRIPTION" = "אתה יכול כעת לשתף תצלום ושם של פרופיל עם חבריך ב-RAAPP.";
+"UPGRADE_EXPERIENCE_INTRODUCING_PROFILES_DESCRIPTION" = "אתה יכול כעת לשתף תצלום ושם של פרופיל עם חבריך ב-OfficeApp.";
 
 /* Header for upgrade experience */
 "UPGRADE_EXPERIENCE_INTRODUCING_PROFILES_TITLE" = "מוכן לתקריב שלך?";
@@ -2280,19 +2280,19 @@
 "UPGRADE_EXPERIENCE_INTRODUCING_READ_RECEIPTS_TITLE" = "היכרות עם אישורי קריאה";
 
 /* Description of video calling to upgrading (existing) users */
-"UPGRADE_EXPERIENCE_VIDEO_DESCRIPTION" = "RAAPP תומך כעת בשיחות וידיאו מאובטחות. פשוט התחל שיחה כרגיל, הקש על כפתור המצלמה, ונופף לשלום.";
+"UPGRADE_EXPERIENCE_VIDEO_DESCRIPTION" = "OfficeApp תומך כעת בשיחות וידיאו מאובטחות. פשוט התחל שיחה כרגיל, הקש על כפתור המצלמה, ונופף לשלום.";
 
 /* Header for upgrade experience */
 "UPGRADE_EXPERIENCE_VIDEO_TITLE" = "שלום שיחות וידיאו מאובטחות!";
 
 /* Message for the alert indicating that user should upgrade iOS. */
-"UPGRADE_IOS_ALERT_MESSAGE" = "RAAPP דורש iOS 9 ומעלה. אנא שדרג את iOS דרך יישום הגדרות >> כללי >> עדכוני תוכנה.";
+"UPGRADE_IOS_ALERT_MESSAGE" = "OfficeApp דורש iOS 9 ומעלה. אנא שדרג את iOS דרך יישום הגדרות >> כללי >> עדכוני תוכנה.";
 
 /* Title for the alert indicating that user should upgrade iOS. */
 "UPGRADE_IOS_ALERT_TITLE" = "שדרג את iOS";
 
 /* No comment provided by engineer. */
-"Upgrading RAAPP ..." = "משדרג את RAAPP ...";
+"Upgrading OfficeApp ..." = "משדרג את OfficeApp ...";
 
 /* button text for back button on verification view */
 "VERIFICATION_BACK_BUTTON" = "הקודם";
@@ -2346,7 +2346,7 @@
 "VOICE_MESSAGE_TOO_SHORT_ALERT_TITLE" = "הודעה קולית";
 
 /* Activity indicator title, shown upon returning to the device manager, until you complete the provisioning process on desktop */
-"WAITING_TO_COMPLETE_DEVICE_LINK_TEXT" = "השלם התקנה ב־RAAPP שולחן עבודה.";
+"WAITING_TO_COMPLETE_DEVICE_LINK_TEXT" = "השלם התקנה ב־OfficeApp שולחן עבודה.";
 
 /* Info Message when you disable disappearing messages */
 "YOU_DISABLED_DISAPPEARING_MESSAGES_CONFIGURATION" = "הִשְׁבַּת הודעות נעלמות.";
