@@ -17,6 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
 @interface CodeVerificationViewController () <UITextFieldDelegate>
 
 @property (nonatomic, readonly) AccountManager *accountManager;
+@property (strong, nonatomic) IBOutlet UILabel *labelVerifyMobileNr;
+@property (strong, nonatomic) IBOutlet UIView *headerView;
+
+@property (nonatomic, strong) IBOutletCollection(UILabel) NSArray *arrDigitLabel;
+
 
 // Where the user enters the verification code they wish to document
 @property (nonatomic) UITextField *challengeTextField;
@@ -38,6 +43,19 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark -
 
 @implementation CodeVerificationViewController
+
+- (instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (!self) {
+        return self;
+    }
+    
+     _accountManager = SignalApp.sharedApp.accountManager;
+    
+    return self;
+}
+
 
 - (nullable instancetype)initWithCoder:(NSCoder *)aDecoder
 {
@@ -82,44 +100,44 @@ NS_ASSUME_NONNULL_BEGIN
     [super viewWillAppear:animated];
     [self enableServerActions:YES];
     [self updatePhoneNumberLabel];
-   
-   
-    
+    //[self setGradientForView:_headerView];
+     [_headerView setGradientForTitleViewWithGradientLayer:[[CAGradientLayer alloc] init]];
+    [self updateDigitControlWithNumber:@""];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
     [_challengeTextField becomeFirstResponder];
-     [self setGradientForView:_header];
+  
 }
 
 #pragma mark -
 
 - (void)createViews
 {
-    self.view.backgroundColor = [UIColor whiteColor];
-    self.view.opaque = YES;
+    //self.view.backgroundColor = [UIColor whiteColor];
+   // self.view.opaque = YES;
 
-    UIColor *signalBlueColor = [UIColor blueColor];//[UIColor ows_signalBrandBlueColor];
+//    UIColor *signalBlueColor = [UIColor blueColor];//[UIColor ows_signalBrandBlueColor];
 
-    _header = [UIView new];
-    _header.backgroundColor = signalBlueColor;
-    [self.view addSubview:_header];
-    [_header autoPinWidthToSuperview];
-    [_header autoPinEdgeToSuperviewEdge:ALEdgeTop];
-    // The header will grow to accomodate the titleLabel's height.
-   
-    
-    UILabel *titleLabel = [UILabel new];
-    titleLabel.textColor = [UIColor whiteColor];
-    titleLabel.text = [self phoneNumberText];
-    titleLabel.font = [UIFont ows_mediumFontWithSize:20.f];
-    [_header addSubview:titleLabel];
-    [titleLabel autoPinToTopLayoutGuideOfViewController:self withInset:0];
-    [titleLabel autoPinEdgeToSuperviewEdge:ALEdgeBottom];
-    [titleLabel autoSetDimension:ALDimensionHeight toSize:40];
-    [titleLabel autoHCenterInSuperview];
+//    _header = [UIView new];
+//    _header.backgroundColor = signalBlueColor;
+//    [self.view addSubview:_header];
+//    [_header autoPinWidthToSuperview];
+//    [_header autoPinEdgeToSuperviewEdge:ALEdgeTop];
+//    // The header will grow to accomodate the titleLabel's height.
+//
+//
+//    UILabel *titleLabel = [UILabel new];
+//    titleLabel.textColor = [UIColor whiteColor];
+//    titleLabel.text = [self phoneNumberText];
+//    titleLabel.font = [UIFont ows_mediumFontWithSize:20.f];
+//    [_header addSubview:titleLabel];
+//    [titleLabel autoPinToTopLayoutGuideOfViewController:self withInset:0];
+//    [titleLabel autoPinEdgeToSuperviewEdge:ALEdgeBottom];
+//    [titleLabel autoSetDimension:ALDimensionHeight toSize:40];
+//    [titleLabel autoHCenterInSuperview];
 
     // This view is used in more than one context.
     //
@@ -128,40 +146,42 @@ NS_ASSUME_NONNULL_BEGIN
     // * It can also be used to re-register from the app's "de-registration"
     //   views, in which case RegistrationViewController is not used and we
     //   do _not_ want a "back" button.
-    if (self.navigationController.viewControllers.count > 1) {
-        UIButton *backButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [backButton
-            setTitle:NSLocalizedString(@"VERIFICATION_BACK_BUTTON", @"button text for back button on verification view")
-            forState:UIControlStateNormal];
-        [backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
-        backButton.titleLabel.font = [UIFont ows_mediumFontWithSize:14.f];
-        [_header addSubview:backButton];
-        [backButton autoPinLeadingToSuperviewMarginWithInset:10.f];
-        [backButton autoAlignAxis:ALAxisHorizontal toSameAxisOfView:titleLabel];
-        [backButton addTarget:self action:@selector(backButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
-    }
+//    if (self.navigationController.viewControllers.count > 1) {
+//        UIButton *backButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//        [backButton
+//            setTitle:NSLocalizedString(@"VERIFICATION_BACK_BUTTON", @"button text for back button on verification view")
+//            forState:UIControlStateNormal];
+//        [backButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+//        backButton.titleLabel.font = [UIFont ows_mediumFontWithSize:14.f];
+//        [_header addSubview:backButton];
+//        [backButton autoPinLeadingToSuperviewMarginWithInset:10.f];
+//        [backButton autoAlignAxis:ALAxisHorizontal toSameAxisOfView:titleLabel];
+//        [backButton addTarget:self action:@selector(backButtonPressed:) forControlEvents:UIControlEventTouchUpInside];
+//    }
+//
+//    _phoneNumberLabel = [UILabel new];
+//    _phoneNumberLabel.textColor = [UIColor ows_darkGrayColor];
+//    _phoneNumberLabel.font = [UIFont ows_regularFontWithSize:20.f];
+//    _phoneNumberLabel.numberOfLines = 2;
+//    _phoneNumberLabel.adjustsFontSizeToFitWidth = YES;
+//    _phoneNumberLabel.textAlignment = NSTextAlignmentCenter;
+//    [self.view addSubview:_phoneNumberLabel];
+//    [_phoneNumberLabel autoPinWidthToSuperviewWithMargin:ScaleFromIPhone5(32)];
+//    [_phoneNumberLabel autoPinEdge:ALEdgeTop
+//                            toEdge:ALEdgeBottom
+//                            ofView:_header
+//                        withOffset:ScaleFromIPhone5To7Plus(30, 100)];
+//
+//    const CGFloat kHMargin = 36;
 
-    _phoneNumberLabel = [UILabel new];
-    _phoneNumberLabel.textColor = [UIColor ows_darkGrayColor];
-    _phoneNumberLabel.font = [UIFont ows_regularFontWithSize:20.f];
-    _phoneNumberLabel.numberOfLines = 2;
-    _phoneNumberLabel.adjustsFontSizeToFitWidth = YES;
-    _phoneNumberLabel.textAlignment = NSTextAlignmentCenter;
-    [self.view addSubview:_phoneNumberLabel];
-    [_phoneNumberLabel autoPinWidthToSuperviewWithMargin:ScaleFromIPhone5(32)];
-    [_phoneNumberLabel autoPinEdge:ALEdgeTop
-                            toEdge:ALEdgeBottom
-                            ofView:_header
-                        withOffset:ScaleFromIPhone5To7Plus(30, 100)];
-
-    const CGFloat kHMargin = 36;
-
-    if (UIDevice.currentDevice.isShorterThanIPhone5) {
-        _challengeTextField = [DismissableTextField new];
-    } else {
-        _challengeTextField = [OWSTextField new];
-    }
-
+//    if (UIDevice.currentDevice.isShorterThanIPhone5) {
+//        _challengeTextField = [DismissableTextField new];
+//    } else {
+//        _challengeTextField = [OWSTextField new];
+//    }
+//
+    
+    _challengeTextField = [OWSTextField new];
     _challengeTextField.textColor = [UIColor blackColor];
     _challengeTextField.placeholder = NSLocalizedString(@"VERIFICATION_CHALLENGE_DEFAULT_TEXT",
         @"Text field placeholder for SMS verification code during registration");
@@ -170,92 +190,93 @@ NS_ASSUME_NONNULL_BEGIN
     _challengeTextField.keyboardType = UIKeyboardTypeNumberPad;
     _challengeTextField.delegate = self;
     [self.view addSubview:_challengeTextField];
-    [_challengeTextField autoPinWidthToSuperviewWithMargin:kHMargin];
-    [_challengeTextField autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:_phoneNumberLabel withOffset:25];
-
-    UIView *underscoreView = [UIView new];
-    underscoreView.backgroundColor = [UIColor colorWithWhite:0.5 alpha:1.f];
-    [self.view addSubview:underscoreView];
-    [underscoreView autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:_challengeTextField withOffset:3];
-    [underscoreView autoPinWidthToSuperviewWithMargin:kHMargin];
-    [underscoreView autoSetDimension:ALDimensionHeight toSize:1.f];
-
-    const CGFloat kSubmitButtonHeight = 47.f;
+    [_challengeTextField setHidden:YES];
+   // [_challengeTextField autoPinWidthToSuperviewWithMargin:kHMargin];
+   // [_challengeTextField autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:_phoneNumberLabel withOffset:25];
+//
+//    UIView *underscoreView = [UIView new];
+//    underscoreView.backgroundColor = [UIColor colorWithWhite:0.5 alpha:1.f];
+//    [self.view addSubview:underscoreView];
+//    [underscoreView autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:_challengeTextField withOffset:3];
+//    [underscoreView autoPinWidthToSuperviewWithMargin:kHMargin];
+//    [underscoreView autoSetDimension:ALDimensionHeight toSize:1.f];
+//
+//    const CGFloat kSubmitButtonHeight = 47.f;
     // NOTE: We use ows_signalBrandBlueColor instead of ows_materialBlueColor
     //       throughout the onboarding flow to be consistent with the headers.
-    OWSFlatButton *submitButton =
-        [OWSFlatButton buttonWithTitle:NSLocalizedString(@"VERIFICATION_CHALLENGE_SUBMIT_CODE",
-                                           @"button text during registration to submit your SMS verification code.")
-                                  font:[OWSFlatButton fontForHeight:kSubmitButtonHeight]
-                            titleColor:[UIColor whiteColor]
-                       backgroundColor:[UIColor ows_signalBrandBlueColor]
-                                target:self
-                              selector:@selector(submitVerificationCode)];
-    self.submitButton = submitButton;
-    [self.view addSubview:_submitButton];
-    [_submitButton autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:underscoreView withOffset:15];
-    [_submitButton autoPinWidthToSuperviewWithMargin:kHMargin];
-    [_submitButton autoSetDimension:ALDimensionHeight toSize:kSubmitButtonHeight];
+//    OWSFlatButton *submitButton =
+//        [OWSFlatButton buttonWithTitle:NSLocalizedString(@"VERIFICATION_CHALLENGE_SUBMIT_CODE",
+//                                           @"button text during registration to submit your SMS verification code.")
+//                                  font:[OWSFlatButton fontForHeight:kSubmitButtonHeight]
+//                            titleColor:[UIColor whiteColor]
+//                       backgroundColor:[UIColor ows_signalBrandBlueColor]
+//                                target:self
+//                              selector:@selector(submitVerificationCode)];
+//    self.submitButton = submitButton;
+//    [self.view addSubview:_submitButton];
+//    [_submitButton autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:underscoreView withOffset:15];
+//    [_submitButton autoPinWidthToSuperviewWithMargin:kHMargin];
+//    [_submitButton autoSetDimension:ALDimensionHeight toSize:kSubmitButtonHeight];
+//
+//    const CGFloat kSpinnerSize = 20;
+//    const CGFloat kSpinnerSpacing = ScaleFromIPhone5To7Plus(5, 15);
+//
+//    _submitCodeSpinner =
+//        [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
+//    [_submitButton addSubview:_submitCodeSpinner];
+//    [_submitCodeSpinner autoSetDimension:ALDimensionWidth toSize:kSpinnerSize];
+//    [_submitCodeSpinner autoSetDimension:ALDimensionHeight toSize:kSpinnerSize];
+//    [_submitCodeSpinner autoVCenterInSuperview];
+//    [_submitCodeSpinner autoPinTrailingToSuperviewMarginWithInset:kSpinnerSpacing];
+//
+//    _sendCodeViaSMSAgainButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//    _sendCodeViaSMSAgainButton.backgroundColor = [UIColor whiteColor];
+//    [_sendCodeViaSMSAgainButton setTitle:NSLocalizedString(@"VERIFICATION_CHALLENGE_SUBMIT_AGAIN",
+//                                             @"button text during registration to request another SMS code be sent")
+//                                forState:UIControlStateNormal];
+//    [_sendCodeViaSMSAgainButton setTitleColor:signalBlueColor forState:UIControlStateNormal];
+//    _sendCodeViaSMSAgainButton.titleLabel.font = [UIFont ows_mediumFontWithSize:14.f];
+//    [_sendCodeViaSMSAgainButton addTarget:self
+//                                   action:@selector(sendCodeViaSMSAction:)
+//                         forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:_sendCodeViaSMSAgainButton];
+//    [_sendCodeViaSMSAgainButton autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:_submitButton withOffset:10];
+//    [_sendCodeViaSMSAgainButton autoPinWidthToSuperviewWithMargin:kHMargin];
+//    [_sendCodeViaSMSAgainButton autoSetDimension:ALDimensionHeight toSize:35];
 
-    const CGFloat kSpinnerSize = 20;
-    const CGFloat kSpinnerSpacing = ScaleFromIPhone5To7Plus(5, 15);
-
-    _submitCodeSpinner =
-        [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-    [_submitButton addSubview:_submitCodeSpinner];
-    [_submitCodeSpinner autoSetDimension:ALDimensionWidth toSize:kSpinnerSize];
-    [_submitCodeSpinner autoSetDimension:ALDimensionHeight toSize:kSpinnerSize];
-    [_submitCodeSpinner autoVCenterInSuperview];
-    [_submitCodeSpinner autoPinTrailingToSuperviewMarginWithInset:kSpinnerSpacing];
-
-    _sendCodeViaSMSAgainButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    _sendCodeViaSMSAgainButton.backgroundColor = [UIColor whiteColor];
-    [_sendCodeViaSMSAgainButton setTitle:NSLocalizedString(@"VERIFICATION_CHALLENGE_SUBMIT_AGAIN",
-                                             @"button text during registration to request another SMS code be sent")
-                                forState:UIControlStateNormal];
-    [_sendCodeViaSMSAgainButton setTitleColor:signalBlueColor forState:UIControlStateNormal];
-    _sendCodeViaSMSAgainButton.titleLabel.font = [UIFont ows_mediumFontWithSize:14.f];
-    [_sendCodeViaSMSAgainButton addTarget:self
-                                   action:@selector(sendCodeViaSMSAction:)
-                         forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:_sendCodeViaSMSAgainButton];
-    [_sendCodeViaSMSAgainButton autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:_submitButton withOffset:10];
-    [_sendCodeViaSMSAgainButton autoPinWidthToSuperviewWithMargin:kHMargin];
-    [_sendCodeViaSMSAgainButton autoSetDimension:ALDimensionHeight toSize:35];
-
-    _requestCodeAgainSpinner =
-        [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    [_sendCodeViaSMSAgainButton addSubview:_requestCodeAgainSpinner];
-    [_requestCodeAgainSpinner autoSetDimension:ALDimensionWidth toSize:kSpinnerSize];
-    [_requestCodeAgainSpinner autoSetDimension:ALDimensionHeight toSize:kSpinnerSize];
-    [_requestCodeAgainSpinner autoVCenterInSuperview];
-    [_requestCodeAgainSpinner autoPinTrailingToSuperviewMarginWithInset:kSpinnerSpacing];
-
-    _sendCodeViaVoiceButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    _sendCodeViaVoiceButton.backgroundColor = [UIColor whiteColor];
-    [_sendCodeViaVoiceButton
-        setTitle:NSLocalizedString(@"VERIFICATION_CHALLENGE_SEND_VIA_VOICE",
-                     @"button text during registration to request phone number verification be done via phone call")
-        forState:UIControlStateNormal];
-    [_sendCodeViaVoiceButton setTitleColor:signalBlueColor forState:UIControlStateNormal];
-    _sendCodeViaVoiceButton.titleLabel.font = [UIFont ows_mediumFontWithSize:14.f];
-    [_sendCodeViaVoiceButton addTarget:self
-                                action:@selector(sendCodeViaVoiceAction:)
-                      forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:_sendCodeViaVoiceButton];
-    [_sendCodeViaVoiceButton autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:_sendCodeViaSMSAgainButton];
-    [_sendCodeViaVoiceButton autoPinWidthToSuperviewWithMargin:kHMargin];
-    [_sendCodeViaVoiceButton autoSetDimension:ALDimensionHeight toSize:35];
-
-    _requestCallSpinner =
-        [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
-    [_sendCodeViaVoiceButton addSubview:_requestCallSpinner];
-    [_requestCallSpinner autoSetDimension:ALDimensionWidth toSize:kSpinnerSize];
-    [_requestCallSpinner autoSetDimension:ALDimensionHeight toSize:kSpinnerSize];
-    [_requestCallSpinner autoVCenterInSuperview];
-    [_requestCallSpinner autoPinTrailingToSuperviewMarginWithInset:kSpinnerSpacing];
-    
-    
+//    _requestCodeAgainSpinner =
+//        [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+//    [_sendCodeViaSMSAgainButton addSubview:_requestCodeAgainSpinner];
+//    [_requestCodeAgainSpinner autoSetDimension:ALDimensionWidth toSize:kSpinnerSize];
+//    [_requestCodeAgainSpinner autoSetDimension:ALDimensionHeight toSize:kSpinnerSize];
+//    [_requestCodeAgainSpinner autoVCenterInSuperview];
+//    [_requestCodeAgainSpinner autoPinTrailingToSuperviewMarginWithInset:kSpinnerSpacing];
+//
+//    _sendCodeViaVoiceButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//    _sendCodeViaVoiceButton.backgroundColor = [UIColor whiteColor];
+//    [_sendCodeViaVoiceButton
+//        setTitle:NSLocalizedString(@"VERIFICATION_CHALLENGE_SEND_VIA_VOICE",
+//                     @"button text during registration to request phone number verification be done via phone call")
+//        forState:UIControlStateNormal];
+//    [_sendCodeViaVoiceButton setTitleColor:signalBlueColor forState:UIControlStateNormal];
+//    _sendCodeViaVoiceButton.titleLabel.font = [UIFont ows_mediumFontWithSize:14.f];
+//    [_sendCodeViaVoiceButton addTarget:self
+//                                action:@selector(sendCodeViaVoiceAction:)
+//                      forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:_sendCodeViaVoiceButton];
+//    [_sendCodeViaVoiceButton autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:_sendCodeViaSMSAgainButton];
+//    [_sendCodeViaVoiceButton autoPinWidthToSuperviewWithMargin:kHMargin];
+//    [_sendCodeViaVoiceButton autoSetDimension:ALDimensionHeight toSize:35];
+//
+//    _requestCallSpinner =
+//        [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+//    [_sendCodeViaVoiceButton addSubview:_requestCallSpinner];
+//    [_requestCallSpinner autoSetDimension:ALDimensionWidth toSize:kSpinnerSize];
+//    [_requestCallSpinner autoSetDimension:ALDimensionHeight toSize:kSpinnerSize];
+//    [_requestCallSpinner autoVCenterInSuperview];
+//    [_requestCallSpinner autoPinTrailingToSuperviewMarginWithInset:kSpinnerSpacing];
+//
+//
 }
 
 - (NSString *)phoneNumberText
@@ -266,10 +287,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)updatePhoneNumberLabel
 {
-    _phoneNumberLabel.text =
-        [NSString stringWithFormat:NSLocalizedString(@"VERIFICATION_PHONE_NUMBER_FORMAT",
-                                       @"Label indicating the phone number currently being verified."),
-                  [self phoneNumberText]];
+//    _phoneNumberLabel.text =
+//        [NSString stringWithFormat:NSLocalizedString(@"VERIFICATION_PHONE_NUMBER_FORMAT",
+//                                       @"Label indicating the phone number currently being verified."),
+//                  [self phoneNumberText]];
+    
+    _labelVerifyMobileNr.text = [NSString stringWithFormat:@"%@ verifizieren", [self phoneNumberText]];
 }
 
 - (void)startActivityIndicator
@@ -285,7 +308,7 @@ NS_ASSUME_NONNULL_BEGIN
     [self.submitCodeSpinner stopAnimating];
 }
 
-- (void)submitVerificationCode
+- (IBAction)submitVerificationCode
 {
     [self startActivityIndicator];
     OWSProdInfo([OWSAnalyticsEvents registrationRegisteringCode]);
@@ -340,6 +363,8 @@ NS_ASSUME_NONNULL_BEGIN
     [alert addAction:[UIAlertAction actionWithTitle:CommonStrings.dismissButton
                                               style:UIAlertActionStyleDefault
                                             handler:^(UIAlertAction *action) {
+                                                self.challengeTextField.text = @"";
+                                                [self updateDigitControlWithNumber:@""];
                                                 [self.challengeTextField becomeFirstResponder];
                                             }]];
 
@@ -413,7 +438,7 @@ NS_ASSUME_NONNULL_BEGIN
     [_sendCodeViaVoiceButton setEnabled:enabled];
 }
 
-- (void)backButtonPressed:(id)sender
+- (IBAction)backButtonPressed:(id)sender
 {
     OWSProdInfo([OWSAnalyticsEvents registrationVerificationBack]);
 
@@ -424,9 +449,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)initializeKeyboardHandlers
 {
-    UITapGestureRecognizer *outsideTabRecognizer =
-        [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboardFromAppropriateSubView)];
-    [self.view addGestureRecognizer:outsideTabRecognizer];
+//    UITapGestureRecognizer *outsideTabRecognizer =
+//        [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboardFromAppropriateSubView)];
+//    [self.view addGestureRecognizer:outsideTabRecognizer];
     self.view.userInteractionEnabled = YES;
 }
 
@@ -488,6 +513,7 @@ NS_ASSUME_NONNULL_BEGIN
         [textField positionFromPosition:textField.beginningOfDocument offset:(NSInteger)newInsertionPoint];
     textField.selectedTextRange = [textField textRangeFromPosition:newPosition toPosition:newPosition];
 
+    [self updateDigitControlWithNumber:[textField.text stringByReplacingOccurrencesOfString:@"-" withString:@""]];
     return NO;
 }
 
@@ -529,6 +555,18 @@ NS_ASSUME_NONNULL_BEGIN
     gradient.colors = [NSArray arrayWithObjects:(id)[green CGColor], [blue CGColor], nil];
     
     [view.layer insertSublayer:gradient atIndex:0];
+}
+
+-(void) updateDigitControlWithNumber:(NSString *)sNumber {
+    for (NSUInteger i=0; i < 6; i++) {
+         UILabel *digitLabel = [self.arrDigitLabel objectAtIndex:i];
+        if ([sNumber length] > i) {
+           
+            digitLabel.text = [sNumber substringWithRange:NSMakeRange(i, 1)];
+        } else {
+            digitLabel.text = @"";
+        }
+    }
 }
 
 @end

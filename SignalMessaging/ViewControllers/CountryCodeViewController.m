@@ -9,10 +9,14 @@
 #import "UIFont+OWS.h"
 #import "UIView+OWS.h"
 #import <SignalMessaging/NSString+OWS.h>
+#import "OWSNavigationController.h"
+
 
 @interface CountryCodeViewController () <OWSTableViewControllerDelegate, UISearchBarDelegate>
 
 @property (nonatomic, readonly) UISearchBar *searchBar;
+@property (nonatomic) UITextField *tfSearch;
+@property (nonatomic) UIView *viewSearchBaseView;
 
 @property (nonatomic) NSArray<NSString *> *countryCodes;
 
@@ -29,32 +33,62 @@
     self.shouldUseTheme = NO;
 
     self.view.backgroundColor = [UIColor whiteColor];
-    self.title = NSLocalizedString(@"COUNTRYCODE_SELECT_TITLE", @"");
-
+    self.title = @"";//NSLocalizedString(@"COUNTRYCODE_SELECT_TITLE", @"");
+    
     self.countryCodes = [PhoneNumberUtil countryCodesForSearchTerm:nil];
 
-    if (!self.isPresentedInNavigationController) {
-        self.navigationItem.leftBarButtonItem =
-            [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemStop
-                                                          target:self
-                                                          action:@selector(dismissWasPressed:)];
-    }
+//    if (!self.isPresentedInNavigationController) {
+//        self.navigationItem.leftBarButtonItem =
+//            [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemStop
+//                                                          target:self
+//                                                          action:@selector(dismissWasPressed:)];
+//
+//    } else {
+//
+//    }
 
+   
+    
     [self createViews];
 }
 
 - (void)createViews
 {
     // Search
-    UISearchBar *searchBar = [OWSSearchBar new];
-    _searchBar = searchBar;
-    searchBar.delegate = self;
-    searchBar.placeholder = NSLocalizedString(@"SEARCH_BYNAMEORNUMBER_PLACEHOLDER_TEXT", @"");
-    [searchBar sizeToFit];
+    
+    UIView *viewSearchBaseView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width - 40, 35)];
 
-    self.tableView.tableHeaderView = searchBar;
+    viewSearchBaseView.layer.cornerRadius = 19.0f;
+    viewSearchBaseView.backgroundColor = [UIColor whiteColor];
+
+    self.tfSearch = [[UITextField alloc] initWithFrame:CGRectMake(50, 5, 270, 25)];
+    self.tfSearch.backgroundColor = [UIColor clearColor];
+    self.tfSearch.placeholder = @"Name oder Nummer suchen";
+    [self.tfSearch addTarget:self
+                      action:@selector(textFieldDidChange:)
+            forControlEvents:UIControlEventEditingChanged];
+
+    [viewSearchBaseView addSubview:self.tfSearch];
+    UIButton *btnCancel = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btnCancel setImage:[UIImage imageNamed:@"quoted-message-cancel.png"] forState:UIControlStateNormal];
+    btnCancel.frame = CGRectMake(5, 3, 30, 30);
+    [btnCancel addTarget:self action:@selector(dismissWasPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [viewSearchBaseView addSubview:btnCancel];
+    
+    
+    self.navigationItem.titleView = viewSearchBaseView;
+    
+//    UISearchBar *searchBar = [OWSSearchBar new];
+//    _searchBar = searchBar;
+//    searchBar.delegate = self;
+//    searchBar.placeholder = NSLocalizedString(@"SEARCH_BYNAMEORNUMBER_PLACEHOLDER_TEXT", @"");
+//    [searchBar sizeToFit];
+//
+//    self.tableView.tableHeaderView = searchBar;
 
     [self updateTableContents];
+    
+    
 }
 
 #pragma mark - Table Contents
@@ -76,11 +110,12 @@
                              itemWithCustomCellBlock:^{
                                  UITableViewCell *cell = [OWSTableItem newCell];
                                  [OWSTableItem configureCell:cell];
+                                 cell.textLabel.font = [UIFont fontWithName:@"Poppins-Regular" size:15.0f];
                                  cell.textLabel.text = [PhoneNumberUtil countryNameFromCountryCode:countryCode];
 
                                  UILabel *countryCodeLabel = [UILabel new];
                                  countryCodeLabel.text = [PhoneNumberUtil callingCodeFromCountryCode:countryCode];
-                                 countryCodeLabel.font = [UIFont ows_regularFontWithSize:16.f];
+                                 countryCodeLabel.font = [UIFont fontWithName:@"Poppins-Regular" size:15.0f];//[UIFont ows_regularFontWithSize:16.f];
                                  countryCodeLabel.textColor = Theme.secondaryColor;
                                  [countryCodeLabel sizeToFit];
                                  cell.accessoryView = countryCodeLabel;
@@ -95,6 +130,12 @@
     [contents addSection:section];
 
     self.contents = contents;
+}
+
+- (void)viewDidAppear:(BOOL)animated {
+    [super viewDidAppear:animated];
+    // [((OWSNavigationController *)self.navigationController) setGradientBackground];
+    
 }
 
 - (void)countryCodeWasSelected:(NSString *)countryCode
@@ -118,6 +159,9 @@
 }
 
 #pragma mark - UISearchBarDelegate
+-(void) textFieldDidChange:(UITextField *) sender {
+    [self searchTextDidChange];
+}
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
@@ -146,7 +190,7 @@
 
 - (void)searchTextDidChange
 {
-    NSString *searchText = [self.searchBar.text ows_stripped];
+    NSString *searchText = [self.tfSearch.text ows_stripped];
 
     self.countryCodes = [PhoneNumberUtil countryCodesForSearchTerm:searchText];
 

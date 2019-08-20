@@ -290,7 +290,7 @@
 
     AvatarImageView *avatarView = [[AvatarImageView alloc] initWithImage:avatarImage];
     if (!localProfileAvatarImage) {
-        avatarView.tintColor = Theme.middleGrayColor;
+        avatarView.tintColor = [UIColor colorWithRGBHex:0x33D49B];//  Theme.middleGrayColor;
     }
     [cell.contentView addSubview:avatarView];
     [avatarView autoVCenterInSuperview];

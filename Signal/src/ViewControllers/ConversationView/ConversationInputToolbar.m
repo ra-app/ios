@@ -119,7 +119,7 @@ const CGFloat kMaxTextViewHeight = 98;
     UIImage *attachmentImage = [UIImage imageNamed:@"ic_circled_plus"];
     [self.attachmentButton setImage:[attachmentImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]
                            forState:UIControlStateNormal];
-    self.attachmentButton.tintColor = Theme.navbarIconColor;
+    self.attachmentButton.tintColor = Theme.toolbarIconColor;
     [self.attachmentButton autoSetDimensionsToSize:CGSizeMake(40, kMinTextViewHeight)];
 
     _sendButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -138,7 +138,7 @@ const CGFloat kMaxTextViewHeight = 98;
     _voiceMemoButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [self.voiceMemoButton setImage:[voiceMemoIcon imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]
                           forState:UIControlStateNormal];
-    self.voiceMemoButton.imageView.tintColor = Theme.navbarIconColor;
+    self.voiceMemoButton.imageView.tintColor = Theme.toolbarIconColor;
     [self.voiceMemoButton autoSetDimensionsToSize:CGSizeMake(40, kMinTextViewHeight)];
 
     // We want to be permissive about the voice message gesture, so we hang

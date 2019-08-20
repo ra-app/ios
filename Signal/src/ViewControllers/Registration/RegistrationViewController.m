@@ -58,7 +58,8 @@ NSString *const kKeychainKey_LastRegisteredPhoneNumber = @"kKeychainKey_LastRegi
     OWSAssertDebug([self.navigationController isKindOfClass:[OWSNavigationController class]]);
     [SignalApp.sharedApp setSignUpFlowNavigationController:(OWSNavigationController *)self.navigationController];
     
-    [self setGradientForView:self.viewHeader];
+    [self.viewHeader setGradientForTitleViewWithGradientLayer:[[CAGradientLayer alloc] init]];
+    // [self setGradientForView:self.viewHeader];
 }
 
 - (void)viewDidLoad
@@ -474,7 +475,7 @@ NSString *const kKeychainKey_LastRegisteredPhoneNumber = @"kKeychainKey_LastRegi
 
             [weakSelf.spinnerView stopAnimating];
 
-            CodeVerificationViewController *vc = [CodeVerificationViewController new];
+            CodeVerificationViewController *vc = [[CodeVerificationViewController alloc] initWithNibName:@"CodeVerificationViewController" bundle:nil];
             [weakSelf.navigationController pushViewController:vc animated:YES];
 
 #ifdef DEBUG
@@ -520,6 +521,9 @@ NSString *const kKeychainKey_LastRegisteredPhoneNumber = @"kKeychainKey_LastRegi
     countryCodeController.countryCodeDelegate = self;
     OWSNavigationController *navigationController =
         [[OWSNavigationController alloc] initWithRootViewController:countryCodeController];
+    
+   // [navigationController setGradientBackground];
+    
     [self presentViewController:navigationController animated:YES completion:nil];
 }
 

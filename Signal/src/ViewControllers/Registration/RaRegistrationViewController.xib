@@ -9,6 +9,17 @@
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <array key="Poppins-Bold.ttf">
+            <string>Poppins-Bold</string>
+        </array>
+        <array key="Poppins-Medium.ttf">
+            <string>Poppins-Medium</string>
+        </array>
+        <array key="Poppins-Regular.ttf">
+            <string>Poppins-Regular</string>
+        </array>
+    </customFonts>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="RegistrationViewController">
             <connections>
@@ -25,27 +36,27 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="GIG-Cf-Pe6" userLabel="ViewHeader">
-                    <rect key="frame" x="0.0" y="0.0" width="414" height="171.5"/>
+                    <rect key="frame" x="0.0" y="0.0" width="414" height="171"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Mobilnummer" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jdb-d4-mE2">
-                            <rect key="frame" x="127.5" y="56" width="159" height="24"/>
+                            <rect key="frame" x="144.5" y="56" width="125" height="24"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="24" id="QKq-ER-13r"/>
                             </constraints>
-                            <fontDescription key="fontDescription" name="HelveticaNeue-Bold" family="Helvetica Neue" pointSize="24"/>
+                            <fontDescription key="fontDescription" name="Poppins-Bold" family="Poppins" pointSize="17"/>
                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Bitte geben Sie Ihre Mobilnummer ein, um einen Verifikationscode zu erhalten. Dabei können Mobillfunkgebühren anfallen." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="3" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bxy-Bn-czn">
-                            <rect key="frame" x="20" y="99" width="374" height="49"/>
-                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
+                            <rect key="frame" x="20" y="99" width="374" height="59"/>
+                            <fontDescription key="fontDescription" name="Poppins-Regular" family="Poppins" pointSize="14"/>
                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                             <nil key="highlightedColor"/>
                         </label>
                     </subviews>
                     <color key="backgroundColor" red="0.098039215690000001" green="0.54117647059999996" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="171.5" id="IQv-wg-vQc"/>
+                        <constraint firstAttribute="height" constant="171" id="IQv-wg-vQc"/>
                         <constraint firstItem="Bxy-Bn-czn" firstAttribute="leading" secondItem="GIG-Cf-Pe6" secondAttribute="leading" constant="20" id="Uea-Rv-et1"/>
                         <constraint firstItem="Bxy-Bn-czn" firstAttribute="top" secondItem="Jdb-d4-mE2" secondAttribute="bottom" constant="19" id="ijG-0r-Bgq"/>
                         <constraint firstItem="Jdb-d4-mE2" firstAttribute="centerX" secondItem="GIG-Cf-Pe6" secondAttribute="centerX" id="nX4-6K-Iux"/>
@@ -54,24 +65,26 @@
                     </constraints>
                 </view>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="IHRE MOBILNUMMER" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HI2-FP-fXM">
-                    <rect key="frame" x="20" y="206" width="131" height="16"/>
-                    <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                    <rect key="frame" x="20" y="205.5" width="133.5" height="20"/>
+                    <fontDescription key="fontDescription" name="Poppins-Medium" family="Poppins" pointSize="14"/>
                     <color key="textColor" red="0.694754958152771" green="0.73165565729141235" blue="0.75455981492996216" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hf3-gp-361">
-                    <rect key="frame" x="20" y="287" width="374" height="42"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="hf3-gp-361" customClass="GradientButton" customModule="RAAPP" customModuleProvider="target">
+                    <rect key="frame" x="20" y="290.5" width="374" height="42"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="42" id="FOn-WM-eCr"/>
                     </constraints>
                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="15"/>
-                    <state key="normal" title="Weiter"/>
+                    <state key="normal" title="Weiter">
+                        <color key="titleColor" red="0.9591724277" green="0.95930999520000004" blue="0.9591422677" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                    </state>
                     <connections>
                         <action selector="didTapRegisterButton" destination="-1" eventType="touchUpInside" id="zma-b4-iiS"/>
                     </connections>
                 </button>
                 <stackView opaque="NO" contentMode="scaleToFill" spacing="10" translatesAutoresizingMaskIntoConstraints="NO" id="HaM-fB-YiJ">
-                    <rect key="frame" x="20" y="232" width="251" height="25"/>
+                    <rect key="frame" x="20" y="235.5" width="251" height="25"/>
                     <subviews>
                         <label opaque="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="DE  +49" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="dpZ-Yh-euO">
                             <rect key="frame" x="0.0" y="0.0" width="80" height="25"/>
@@ -79,7 +92,7 @@
                             <constraints>
                                 <constraint firstAttribute="width" constant="80" id="fMf-hl-8kg"/>
                             </constraints>
-                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
+                            <fontDescription key="fontDescription" name="Poppins-Medium" family="Poppins" pointSize="18"/>
                             <nil key="textColor"/>
                             <nil key="highlightedColor"/>
                             <connections>
@@ -99,7 +112,7 @@
                                 <constraint firstAttribute="width" constant="150" id="FHx-LO-NzK"/>
                             </constraints>
                             <nil key="textColor"/>
-                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
+                            <fontDescription key="fontDescription" name="Poppins-Medium" family="Poppins" pointSize="18"/>
                             <textInputTraits key="textInputTraits" autocorrectionType="no" keyboardType="numberPad" textContentType="tel"/>
                         </textField>
                     </subviews>
@@ -108,7 +121,7 @@
                     </constraints>
                 </stackView>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="dgK-wJ-Lxc">
-                    <rect key="frame" x="20" y="265" width="374" height="1"/>
+                    <rect key="frame" x="20" y="268.5" width="374" height="1"/>
                     <color key="backgroundColor" red="0.2805970311164856" green="0.37518557906150818" blue="0.46492880582809448" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="1" id="cNe-s9-g4f"/>

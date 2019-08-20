@@ -430,11 +430,62 @@
 		45F659821E1BE77000444429 /* NonCallKitCallUIAdaptee.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45F659811E1BE77000444429 /* NonCallKitCallUIAdaptee.swift */; };
 		45FBC5C81DF8575700E9B410 /* CallKitCallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FBC59A1DF8575700E9B410 /* CallKitCallManager.swift */; };
 		45FBC5D11DF8592E00E9B410 /* SignalCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FBC5D01DF8592E00E9B410 /* SignalCall.swift */; };
+		4A2F085D230409B000F600B0 /* GradientExtentionUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A2F085C230409B000F600B0 /* GradientExtentionUIView.swift */; };
+		4A2F085E2304317D00F600B0 /* GradientExtentionUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A2F085C230409B000F600B0 /* GradientExtentionUIView.swift */; };
+		4A2F0860230464E300F600B0 /* HeaderSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A2F085F230464E300F600B0 /* HeaderSearchView.swift */; };
+		4A2F08652304663400F600B0 /* HeaderSearchView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A2F08642304663400F600B0 /* HeaderSearchView.xib */; };
+		4A38B19C230A9DDA0000814A /* WelcomeScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A38B19A230A9DDA0000814A /* WelcomeScreenViewController.swift */; };
+		4A38B19D230A9DDA0000814A /* WelcomeScreenViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B19B230A9DDA0000814A /* WelcomeScreenViewController.xib */; };
+		4A38B1A0230ABDA30000814A /* AGBViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A38B19E230ABDA30000814A /* AGBViewController.swift */; };
+		4A38B1A1230ABDA30000814A /* AGBViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B19F230ABDA30000814A /* AGBViewController.xib */; };
+		4A38B1A3230ABFA50000814A /* CustomHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A38B1A2230ABFA50000814A /* CustomHeaderView.swift */; };
+		4A38B1B8230AD3D00000814A /* Poppins-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1A5230AD3D00000814A /* Poppins-ExtraLight.ttf */; };
+		4A38B1B9230AD3D00000814A /* Poppins-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1A5230AD3D00000814A /* Poppins-ExtraLight.ttf */; };
+		4A38B1BA230AD3D00000814A /* Poppins-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1A6230AD3D00000814A /* Poppins-ThinItalic.ttf */; };
+		4A38B1BB230AD3D00000814A /* Poppins-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1A6230AD3D00000814A /* Poppins-ThinItalic.ttf */; };
+		4A38B1BC230AD3D00000814A /* Poppins-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1A7230AD3D00000814A /* Poppins-ExtraLightItalic.ttf */; };
+		4A38B1BD230AD3D00000814A /* Poppins-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1A7230AD3D00000814A /* Poppins-ExtraLightItalic.ttf */; };
+		4A38B1BE230AD3D00000814A /* Poppins-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1A8230AD3D00000814A /* Poppins-BoldItalic.ttf */; };
+		4A38B1BF230AD3D10000814A /* Poppins-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1A8230AD3D00000814A /* Poppins-BoldItalic.ttf */; };
+		4A38B1C0230AD3D10000814A /* Poppins-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1A9230AD3D00000814A /* Poppins-Light.ttf */; };
+		4A38B1C1230AD3D10000814A /* Poppins-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1A9230AD3D00000814A /* Poppins-Light.ttf */; };
+		4A38B1C2230AD3D10000814A /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1AA230AD3D00000814A /* Poppins-Medium.ttf */; };
+		4A38B1C3230AD3D10000814A /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1AA230AD3D00000814A /* Poppins-Medium.ttf */; };
+		4A38B1C4230AD3D10000814A /* Poppins-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1AB230AD3D00000814A /* Poppins-SemiBoldItalic.ttf */; };
+		4A38B1C5230AD3D10000814A /* Poppins-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1AB230AD3D00000814A /* Poppins-SemiBoldItalic.ttf */; };
+		4A38B1C6230AD3D10000814A /* Poppins-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1AC230AD3D00000814A /* Poppins-ExtraBoldItalic.ttf */; };
+		4A38B1C7230AD3D10000814A /* Poppins-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1AC230AD3D00000814A /* Poppins-ExtraBoldItalic.ttf */; };
+		4A38B1C8230AD3D10000814A /* Poppins-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1AD230AD3D00000814A /* Poppins-ExtraBold.ttf */; };
+		4A38B1C9230AD3D10000814A /* Poppins-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1AD230AD3D00000814A /* Poppins-ExtraBold.ttf */; };
+		4A38B1CA230AD3D10000814A /* Poppins-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1AE230AD3D00000814A /* Poppins-BlackItalic.ttf */; };
+		4A38B1CB230AD3D10000814A /* Poppins-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1AE230AD3D00000814A /* Poppins-BlackItalic.ttf */; };
+		4A38B1CC230AD3D10000814A /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1AF230AD3D00000814A /* OFL.txt */; };
+		4A38B1CD230AD3D10000814A /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1AF230AD3D00000814A /* OFL.txt */; };
+		4A38B1CE230AD3D10000814A /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1B0230AD3D00000814A /* Poppins-Regular.ttf */; };
+		4A38B1CF230AD3D10000814A /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1B0230AD3D00000814A /* Poppins-Regular.ttf */; };
+		4A38B1D0230AD3D10000814A /* Poppins-RegularItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1B1230AD3D00000814A /* Poppins-RegularItalic.ttf */; };
+		4A38B1D1230AD3D10000814A /* Poppins-RegularItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1B1230AD3D00000814A /* Poppins-RegularItalic.ttf */; };
+		4A38B1D2230AD3D10000814A /* Poppins-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1B2230AD3D00000814A /* Poppins-LightItalic.ttf */; };
+		4A38B1D3230AD3D10000814A /* Poppins-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1B2230AD3D00000814A /* Poppins-LightItalic.ttf */; };
+		4A38B1D4230AD3D10000814A /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1B3230AD3D00000814A /* Poppins-Bold.ttf */; };
+		4A38B1D5230AD3D10000814A /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1B3230AD3D00000814A /* Poppins-Bold.ttf */; };
+		4A38B1D6230AD3D10000814A /* Poppins-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1B4230AD3D00000814A /* Poppins-Black.ttf */; };
+		4A38B1D7230AD3D10000814A /* Poppins-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1B4230AD3D00000814A /* Poppins-Black.ttf */; };
+		4A38B1D8230AD3D10000814A /* Poppins-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1B5230AD3D00000814A /* Poppins-Thin.ttf */; };
+		4A38B1D9230AD3D10000814A /* Poppins-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1B5230AD3D00000814A /* Poppins-Thin.ttf */; };
+		4A38B1DA230AD3D10000814A /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1B6230AD3D00000814A /* Poppins-SemiBold.ttf */; };
+		4A38B1DB230AD3D10000814A /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1B6230AD3D00000814A /* Poppins-SemiBold.ttf */; };
+		4A38B1DC230AD3D10000814A /* Poppins-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1B7230AD3D00000814A /* Poppins-MediumItalic.ttf */; };
+		4A38B1DD230AD3D10000814A /* Poppins-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A38B1B7230AD3D00000814A /* Poppins-MediumItalic.ttf */; };
 		4A3D0582230198F500F4CA0D /* ExtentionUINavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3D0581230198F500F4CA0D /* ExtentionUINavigationBar.swift */; };
 		4A3D05832301BE3800F4CA0D /* ExtentionUINavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3D0581230198F500F4CA0D /* ExtentionUINavigationBar.swift */; };
 		4A3D05852301BE8700F4CA0D /* ExtentionUIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3D05842301BE8600F4CA0D /* ExtentionUIColor.swift */; };
 		4A3D05862301BE8700F4CA0D /* ExtentionUIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3D05842301BE8600F4CA0D /* ExtentionUIColor.swift */; };
 		4A3D058D23029C7C00F4CA0D /* RaRegistrationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A3D058923029C7C00F4CA0D /* RaRegistrationViewController.xib */; };
+		4A3D05932303042700F4CA0D /* GradientButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A3D05922303042700F4CA0D /* GradientButton.swift */; };
+		4A45BBCC2305472700FF898C /* CodeVerificationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A45BBCB2305472700FF898C /* CodeVerificationViewController.xib */; };
+		4A45BBCE230562F500FF898C /* ProfileViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A45BBCD230562F500FF898C /* ProfileViewController.xib */; };
+		4A45BBD02305701700FF898C /* RaTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A45BBCF2305701700FF898C /* RaTextField.swift */; };
 		4AC4EA13C8A444455DAB351F /* Pods_SignalMessaging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 264242150E87D10A357DB07B /* Pods_SignalMessaging.framework */; };
 		4C090A1B210FD9C7001FD7F9 /* HapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C090A1A210FD9C7001FD7F9 /* HapticFeedback.swift */; };
 		4C11AA5020FD59C700351FBD /* MessageStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C11AA4F20FD59C700351FBD /* MessageStatusView.swift */; };
@@ -1128,9 +1179,40 @@
 		45F659811E1BE77000444429 /* NonCallKitCallUIAdaptee.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonCallKitCallUIAdaptee.swift; sourceTree = "<group>"; };
 		45FBC59A1DF8575700E9B410 /* CallKitCallManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallKitCallManager.swift; sourceTree = "<group>"; };
 		45FBC5D01DF8592E00E9B410 /* SignalCall.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignalCall.swift; sourceTree = "<group>"; };
+		4A2F085C230409B000F600B0 /* GradientExtentionUIView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientExtentionUIView.swift; sourceTree = "<group>"; };
+		4A2F085F230464E300F600B0 /* HeaderSearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderSearchView.swift; sourceTree = "<group>"; };
+		4A2F08642304663400F600B0 /* HeaderSearchView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = HeaderSearchView.xib; sourceTree = "<group>"; };
+		4A38B19A230A9DDA0000814A /* WelcomeScreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WelcomeScreenViewController.swift; sourceTree = "<group>"; };
+		4A38B19B230A9DDA0000814A /* WelcomeScreenViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WelcomeScreenViewController.xib; sourceTree = "<group>"; };
+		4A38B19E230ABDA30000814A /* AGBViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AGBViewController.swift; sourceTree = "<group>"; };
+		4A38B19F230ABDA30000814A /* AGBViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = AGBViewController.xib; sourceTree = "<group>"; };
+		4A38B1A2230ABFA50000814A /* CustomHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomHeaderView.swift; sourceTree = "<group>"; };
+		4A38B1A5230AD3D00000814A /* Poppins-ExtraLight.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-ExtraLight.ttf"; sourceTree = "<group>"; };
+		4A38B1A6230AD3D00000814A /* Poppins-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-ThinItalic.ttf"; sourceTree = "<group>"; };
+		4A38B1A7230AD3D00000814A /* Poppins-ExtraLightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
+		4A38B1A8230AD3D00000814A /* Poppins-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-BoldItalic.ttf"; sourceTree = "<group>"; };
+		4A38B1A9230AD3D00000814A /* Poppins-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Light.ttf"; sourceTree = "<group>"; };
+		4A38B1AA230AD3D00000814A /* Poppins-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Medium.ttf"; sourceTree = "<group>"; };
+		4A38B1AB230AD3D00000814A /* Poppins-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
+		4A38B1AC230AD3D00000814A /* Poppins-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
+		4A38B1AD230AD3D00000814A /* Poppins-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-ExtraBold.ttf"; sourceTree = "<group>"; };
+		4A38B1AE230AD3D00000814A /* Poppins-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-BlackItalic.ttf"; sourceTree = "<group>"; };
+		4A38B1AF230AD3D00000814A /* OFL.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
+		4A38B1B0230AD3D00000814A /* Poppins-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Regular.ttf"; sourceTree = "<group>"; };
+		4A38B1B1230AD3D00000814A /* Poppins-RegularItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-RegularItalic.ttf"; sourceTree = "<group>"; };
+		4A38B1B2230AD3D00000814A /* Poppins-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-LightItalic.ttf"; sourceTree = "<group>"; };
+		4A38B1B3230AD3D00000814A /* Poppins-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Bold.ttf"; sourceTree = "<group>"; };
+		4A38B1B4230AD3D00000814A /* Poppins-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Black.ttf"; sourceTree = "<group>"; };
+		4A38B1B5230AD3D00000814A /* Poppins-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Thin.ttf"; sourceTree = "<group>"; };
+		4A38B1B6230AD3D00000814A /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-SemiBold.ttf"; sourceTree = "<group>"; };
+		4A38B1B7230AD3D00000814A /* Poppins-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-MediumItalic.ttf"; sourceTree = "<group>"; };
 		4A3D0581230198F500F4CA0D /* ExtentionUINavigationBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExtentionUINavigationBar.swift; sourceTree = "<group>"; };
 		4A3D05842301BE8600F4CA0D /* ExtentionUIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtentionUIColor.swift; sourceTree = "<group>"; };
 		4A3D058923029C7C00F4CA0D /* RaRegistrationViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = RaRegistrationViewController.xib; sourceTree = "<group>"; };
+		4A3D05922303042700F4CA0D /* GradientButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GradientButton.swift; sourceTree = "<group>"; };
+		4A45BBCB2305472700FF898C /* CodeVerificationViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CodeVerificationViewController.xib; sourceTree = "<group>"; };
+		4A45BBCD230562F500FF898C /* ProfileViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ProfileViewController.xib; sourceTree = "<group>"; };
+		4A45BBCF2305701700FF898C /* RaTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RaTextField.swift; sourceTree = "<group>"; };
 		4C090A1A210FD9C7001FD7F9 /* HapticFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HapticFeedback.swift; path = UserInterface/HapticFeedback.swift; sourceTree = "<group>"; };
 		4C11AA4F20FD59C700351FBD /* MessageStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageStatusView.swift; sourceTree = "<group>"; };
 		4C13C9F520E57BA30089A98B /* ColorPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorPickerViewController.swift; sourceTree = "<group>"; };
@@ -1242,7 +1324,7 @@
 		D17BB5C25D615AB49813100C /* Pods_Signal.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Signal.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D2179CFB16BB0B3A0006F3AB /* CoreTelephony.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreTelephony.framework; path = System/Library/Frameworks/CoreTelephony.framework; sourceTree = SDKROOT; };
 		D2179CFD16BB0B480006F3AB /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
-		D221A089169C9E5E00537ABF /* RAAPP.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RAAPP.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D221A089169C9E5E00537ABF /* OfficeApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OfficeApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		D221A08D169C9E5E00537ABF /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
 		D221A08F169C9E5E00537ABF /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		D221A091169C9E5E00537ABF /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -1402,6 +1484,7 @@
 			children = (
 				340FC879204DAC8C007AEB0F /* CodeVerificationViewController.h */,
 				340FC877204DAC8C007AEB0F /* CodeVerificationViewController.m */,
+				4A45BBCB2305472700FF898C /* CodeVerificationViewController.xib */,
 				340FC878204DAC8C007AEB0F /* RegistrationViewController.h */,
 				340FC876204DAC8C007AEB0F /* RegistrationViewController.m */,
 				4A3D058923029C7C00F4CA0D /* RaRegistrationViewController.xib */,
@@ -1501,6 +1584,7 @@
 		34330A581E7875FB00DF2FB9 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				4A38B1A4230AD3D00000814A /* Poppins */,
 				34330A5B1E787A9800DF2FB9 /* dripicons-v2.ttf */,
 				34330A5D1E787BD800DF2FB9 /* ElegantIcons.ttf */,
 				34330A591E7875FB00DF2FB9 /* fontawesome-webfont.ttf */,
@@ -1744,6 +1828,7 @@
 		34B3F8331E8DF1700035BE1A /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
+				4A38B195230A9D710000814A /* WelcomeScreen And AGB */,
 				340FC87A204DAC8C007AEB0F /* AppSettings */,
 				34D5CCA71EAE3D30005515DB /* AvatarViewHelper.h */,
 				34D5CCA81EAE3D30005515DB /* AvatarViewHelper.m */,
@@ -1776,6 +1861,7 @@
 				45D2AC01204885170033C692 /* OWS2FAReminderViewController.swift */,
 				345BC30A2047030600257B7C /* OWS2FASettingsViewController.h */,
 				345BC30B2047030600257B7C /* OWS2FASettingsViewController.m */,
+				4A45BBCD230562F500FF898C /* ProfileViewController.xib */,
 				34CE88E51F2FB9A10098030F /* ProfileViewController.h */,
 				34CE88E61F2FB9A10098030F /* ProfileViewController.m */,
 				340FC875204DAC8C007AEB0F /* Registration */,
@@ -2138,13 +2224,63 @@
 			path = Speakerbox;
 			sourceTree = "<group>";
 		};
+		4A38B195230A9D710000814A /* WelcomeScreen And AGB */ = {
+			isa = PBXGroup;
+			children = (
+				4A38B19A230A9DDA0000814A /* WelcomeScreenViewController.swift */,
+				4A38B19B230A9DDA0000814A /* WelcomeScreenViewController.xib */,
+				4A38B19E230ABDA30000814A /* AGBViewController.swift */,
+				4A38B19F230ABDA30000814A /* AGBViewController.xib */,
+			);
+			path = "WelcomeScreen And AGB";
+			sourceTree = "<group>";
+		};
+		4A38B1A4230AD3D00000814A /* Poppins */ = {
+			isa = PBXGroup;
+			children = (
+				4A38B1A5230AD3D00000814A /* Poppins-ExtraLight.ttf */,
+				4A38B1A6230AD3D00000814A /* Poppins-ThinItalic.ttf */,
+				4A38B1A7230AD3D00000814A /* Poppins-ExtraLightItalic.ttf */,
+				4A38B1A8230AD3D00000814A /* Poppins-BoldItalic.ttf */,
+				4A38B1A9230AD3D00000814A /* Poppins-Light.ttf */,
+				4A38B1AA230AD3D00000814A /* Poppins-Medium.ttf */,
+				4A38B1AB230AD3D00000814A /* Poppins-SemiBoldItalic.ttf */,
+				4A38B1AC230AD3D00000814A /* Poppins-ExtraBoldItalic.ttf */,
+				4A38B1AD230AD3D00000814A /* Poppins-ExtraBold.ttf */,
+				4A38B1AE230AD3D00000814A /* Poppins-BlackItalic.ttf */,
+				4A38B1AF230AD3D00000814A /* OFL.txt */,
+				4A38B1B0230AD3D00000814A /* Poppins-Regular.ttf */,
+				4A38B1B1230AD3D00000814A /* Poppins-RegularItalic.ttf */,
+				4A38B1B2230AD3D00000814A /* Poppins-LightItalic.ttf */,
+				4A38B1B3230AD3D00000814A /* Poppins-Bold.ttf */,
+				4A38B1B4230AD3D00000814A /* Poppins-Black.ttf */,
+				4A38B1B5230AD3D00000814A /* Poppins-Thin.ttf */,
+				4A38B1B6230AD3D00000814A /* Poppins-SemiBold.ttf */,
+				4A38B1B7230AD3D00000814A /* Poppins-MediumItalic.ttf */,
+			);
+			path = Poppins;
+			sourceTree = "<group>";
+		};
 		4A3D0580230198C100F4CA0D /* Extentions */ = {
 			isa = PBXGroup;
 			children = (
 				4A3D05842301BE8600F4CA0D /* ExtentionUIColor.swift */,
 				4A3D0581230198F500F4CA0D /* ExtentionUINavigationBar.swift */,
+				4A2F085C230409B000F600B0 /* GradientExtentionUIView.swift */,
 			);
 			path = Extentions;
+			sourceTree = "<group>";
+		};
+		4A3D05912303041500F4CA0D /* Controls */ = {
+			isa = PBXGroup;
+			children = (
+				4A45BBCF2305701700FF898C /* RaTextField.swift */,
+				4A3D05922303042700F4CA0D /* GradientButton.swift */,
+				4A2F085F230464E300F600B0 /* HeaderSearchView.swift */,
+				4A2F08642304663400F600B0 /* HeaderSearchView.xib */,
+				4A38B1A2230ABFA50000814A /* CustomHeaderView.swift */,
+			);
+			path = Controls;
 			sourceTree = "<group>";
 		};
 		4C3EF8002109184A0007EBF7 /* SSKTests */ = {
@@ -2216,6 +2352,7 @@
 		76EB04C818170B33006006FC /* util */ = {
 			isa = PBXGroup;
 			children = (
+				4A3D05912303041500F4CA0D /* Controls */,
 				4A3D0580230198C100F4CA0D /* Extentions */,
 				B90418E4183E9DD40038554A /* DateUtil.h */,
 				B90418E5183E9DD40038554A /* DateUtil.m */,
@@ -2426,7 +2563,7 @@
 		D221A08A169C9E5E00537ABF /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				D221A089169C9E5E00537ABF /* RAAPP.app */,
+				D221A089169C9E5E00537ABF /* OfficeApp.app */,
 				D221A0AA169C9E5F00537ABF /* SignalTests.xctest */,
 				453518681FC635DD00210559 /* SignalShareExtension.appex */,
 				453518921FC63DBF00210559 /* SignalMessaging.framework */,
@@ -2664,7 +2801,7 @@
 			);
 			name = Signal;
 			productName = RedPhone;
-			productReference = D221A089169C9E5E00537ABF /* RAAPP.app */;
+			productReference = D221A089169C9E5E00537ABF /* OfficeApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 		D221A0A9169C9E5F00537ABF /* SignalTests */ = {
@@ -2852,7 +2989,26 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A38B1D3230AD3D10000814A /* Poppins-LightItalic.ttf in Resources */,
+				4A38B1DD230AD3D10000814A /* Poppins-MediumItalic.ttf in Resources */,
+				4A38B1D5230AD3D10000814A /* Poppins-Bold.ttf in Resources */,
+				4A38B1CD230AD3D10000814A /* OFL.txt in Resources */,
+				4A38B1BD230AD3D00000814A /* Poppins-ExtraLightItalic.ttf in Resources */,
+				4A38B1CB230AD3D10000814A /* Poppins-BlackItalic.ttf in Resources */,
+				4A38B1D7230AD3D10000814A /* Poppins-Black.ttf in Resources */,
+				4A38B1D1230AD3D10000814A /* Poppins-RegularItalic.ttf in Resources */,
+				4A38B1B9230AD3D00000814A /* Poppins-ExtraLight.ttf in Resources */,
+				4A38B1BF230AD3D10000814A /* Poppins-BoldItalic.ttf in Resources */,
+				4A38B1D9230AD3D10000814A /* Poppins-Thin.ttf in Resources */,
+				4A38B1C1230AD3D10000814A /* Poppins-Light.ttf in Resources */,
+				4A38B1C9230AD3D10000814A /* Poppins-ExtraBold.ttf in Resources */,
 				3421981621061A0700C57195 /* JSQMVC-README.md in Resources */,
+				4A38B1C5230AD3D10000814A /* Poppins-SemiBoldItalic.ttf in Resources */,
+				4A38B1CF230AD3D10000814A /* Poppins-Regular.ttf in Resources */,
+				4A38B1DB230AD3D10000814A /* Poppins-SemiBold.ttf in Resources */,
+				4A38B1C7230AD3D10000814A /* Poppins-ExtraBoldItalic.ttf in Resources */,
+				4A38B1BB230AD3D00000814A /* Poppins-ThinItalic.ttf in Resources */,
+				4A38B1C3230AD3D10000814A /* Poppins-Medium.ttf in Resources */,
 				3421981721061A0700C57195 /* JSQMVC-SIGNAL.md in Resources */,
 				3421981221061A0700C57195 /* JSQMVC-LICENSE in Resources */,
 			);
@@ -2874,7 +3030,9 @@
 				B633C5CE1A1D190B0059AC12 /* quit@2x.png in Resources */,
 				AD83FF441A73426500B5C81A /* audio_pause_button.png in Resources */,
 				B6F509971AA53F760068F56A /* Localizable.strings in Resources */,
+				4A38B1B8230AD3D00000814A /* Poppins-ExtraLight.ttf in Resources */,
 				B633C59D1A1D190B0059AC12 /* endcall@2x.png in Resources */,
+				4A38B1C6230AD3D10000814A /* Poppins-ExtraBoldItalic.ttf in Resources */,
 				FC5CDF391A3393DD00B47253 /* error_white@2x.png in Resources */,
 				B633C5D21A1D190B0059AC12 /* savephoto@2x.png in Resources */,
 				B10C9B611A7049EC00ECA2BF /* play_icon.png in Resources */,
@@ -2882,6 +3040,8 @@
 				B66DBF4A19D5BBC8006EA940 /* Images.xcassets in Resources */,
 				34CF0788203E6B78005C4D61 /* ringback_tone_ansi.caf in Resources */,
 				34C3C78F2040A4F70000134C /* sonarping.mp3 in Resources */,
+				4A38B1CE230AD3D10000814A /* Poppins-Regular.ttf in Resources */,
+				4A38B1CC230AD3D10000814A /* OFL.txt in Resources */,
 				AD83FF431A73426500B5C81A /* audio_play_button@2x.png in Resources */,
 				34661FB820C1C0D60056EDD6 /* message_sent.aiff in Resources */,
 				45CB2FA81CB7146C00E1B343 /* Launch Screen.storyboard in Resources */,
@@ -2890,22 +3050,29 @@
 				34C3C78D20409F320000134C /* Opening.m4r in Resources */,
 				FC5CDF3A1A3393DD00B47253 /* warning_white@2x.png in Resources */,
 				B633C58D1A1D190B0059AC12 /* contact_default_feed.png in Resources */,
+				4A38B1C4230AD3D10000814A /* Poppins-SemiBoldItalic.ttf in Resources */,
 				B10C9B621A7049EC00ECA2BF /* play_icon@2x.png in Resources */,
 				B633C5861A1D190B0059AC12 /* call@2x.png in Resources */,
 				B67EBF5D19194AC60084CCFD /* Settings.bundle in Resources */,
 				B10C9B601A7049EC00ECA2BF /* pause_icon@2x.png in Resources */,
 				FC9120411A39EFB70074545C /* qr@2x.png in Resources */,
 				34CF0787203E6B78005C4D61 /* busy_tone_ansi.caf in Resources */,
+				4A38B1D4230AD3D10000814A /* Poppins-Bold.ttf in Resources */,
 				B10C9B5F1A7049EC00ECA2BF /* pause_icon.png in Resources */,
 				AD83FF471A73428300B5C81A /* audio_play_button_blue.png in Resources */,
 				34330A5E1E787BD800DF2FB9 /* ElegantIcons.ttf in Resources */,
 				AD83FF451A73426500B5C81A /* audio_pause_button@2x.png in Resources */,
+				4A2F08652304663400F600B0 /* HeaderSearchView.xib in Resources */,
+				4A38B1D6230AD3D10000814A /* Poppins-Black.ttf in Resources */,
 				45A2F005204473A3002E978A /* NewMessage.aifc in Resources */,
 				45B74A882044AAB600CD42F8 /* aurora.aifc in Resources */,
 				4A3D058D23029C7C00F4CA0D /* RaRegistrationViewController.xib in Resources */,
 				45B74A742044AAB600CD42F8 /* aurora-quiet.aifc in Resources */,
 				45B74A852044AAB600CD42F8 /* bamboo.aifc in Resources */,
+				4A45BBCC2305472700FF898C /* CodeVerificationViewController.xib in Resources */,
 				45B74A782044AAB600CD42F8 /* bamboo-quiet.aifc in Resources */,
+				4A38B1D8230AD3D10000814A /* Poppins-Thin.ttf in Resources */,
+				4A38B1D2230AD3D10000814A /* Poppins-LightItalic.ttf in Resources */,
 				45B74A7B2044AAB600CD42F8 /* chord.aifc in Resources */,
 				45B74A812044AAB600CD42F8 /* chord-quiet.aifc in Resources */,
 				45B74A832044AAB600CD42F8 /* circles.aifc in Resources */,
@@ -2915,16 +3082,29 @@
 				45B74A7E2044AAB600CD42F8 /* complete.aifc in Resources */,
 				45B74A872044AAB600CD42F8 /* complete-quiet.aifc in Resources */,
 				45B74A772044AAB600CD42F8 /* hello.aifc in Resources */,
+				4A38B19D230A9DDA0000814A /* WelcomeScreenViewController.xib in Resources */,
+				4A38B1C2230AD3D10000814A /* Poppins-Medium.ttf in Resources */,
 				45B74A7C2044AAB600CD42F8 /* hello-quiet.aifc in Resources */,
+				4A38B1BC230AD3D00000814A /* Poppins-ExtraLightItalic.ttf in Resources */,
 				45B74A792044AAB600CD42F8 /* input.aifc in Resources */,
 				45B74A8C2044AAB600CD42F8 /* input-quiet.aifc in Resources */,
 				45B74A7A2044AAB600CD42F8 /* keys.aifc in Resources */,
 				45B74A762044AAB600CD42F8 /* keys-quiet.aifc in Resources */,
+				4A38B1BA230AD3D00000814A /* Poppins-ThinItalic.ttf in Resources */,
+				4A45BBCE230562F500FF898C /* ProfileViewController.xib in Resources */,
 				45B74A862044AAB600CD42F8 /* note.aifc in Resources */,
 				45B74A7F2044AAB600CD42F8 /* note-quiet.aifc in Resources */,
+				4A38B1CA230AD3D10000814A /* Poppins-BlackItalic.ttf in Resources */,
+				4A38B1C0230AD3D10000814A /* Poppins-Light.ttf in Resources */,
 				45B74A842044AAB600CD42F8 /* popcorn.aifc in Resources */,
+				4A38B1DC230AD3D10000814A /* Poppins-MediumItalic.ttf in Resources */,
+				4A38B1D0230AD3D10000814A /* Poppins-RegularItalic.ttf in Resources */,
 				45B74A7D2044AAB600CD42F8 /* popcorn-quiet.aifc in Resources */,
+				4A38B1BE230AD3D00000814A /* Poppins-BoldItalic.ttf in Resources */,
+				4A38B1DA230AD3D10000814A /* Poppins-SemiBold.ttf in Resources */,
 				45B74A822044AAB600CD42F8 /* pulse.aifc in Resources */,
+				4A38B1A1230ABDA30000814A /* AGBViewController.xib in Resources */,
+				4A38B1C8230AD3D10000814A /* Poppins-ExtraBold.ttf in Resources */,
 				45B74A802044AAB600CD42F8 /* pulse-quiet.aifc in Resources */,
 				45B74A8B2044AAB600CD42F8 /* synth.aifc in Resources */,
 				45B74A752044AAB600CD42F8 /* synth-quiet.aifc in Resources */,
@@ -3262,6 +3442,7 @@
 				34C82E5220F8E1F300E9688D /* Theme.m in Sources */,
 				3461295B1FD1D74C00532771 /* Environment.m in Sources */,
 				346129D51FD20ADC00532771 /* UIViewController+OWS.m in Sources */,
+				4A2F085E2304317D00F600B0 /* GradientExtentionUIView.swift in Sources */,
 				346129C91FD2072E00532771 /* NSString+OWS.m in Sources */,
 				347850691FD9B78A007B8332 /* AppSetup.m in Sources */,
 				34AC0A14211B39EA00997B47 /* ContactCellView.m in Sources */,
@@ -3337,6 +3518,7 @@
 				343A65981FC4CFE7000477A1 /* ConversationScrollButton.m in Sources */,
 				34386A51207D0C01009F5D9C /* HomeViewController.m in Sources */,
 				34D1F0A91F867BFC0066283D /* ConversationViewCell.m in Sources */,
+				4A3D05932303042700F4CA0D /* GradientButton.swift in Sources */,
 				4505C2BF1E648EA300CEBF41 /* ExperienceUpgrade.swift in Sources */,
 				EF764C351DB67CC5000D9A87 /* UIViewController+Permissions.m in Sources */,
 				45CD81EF1DC030E7004C9430 /* SyncPushTokensJob.swift in Sources */,
@@ -3354,6 +3536,7 @@
 				3430FE181F7751D4000EC51B /* GiphyAPI.swift in Sources */,
 				4C2F454F214C00E1004871FF /* AvatarTableViewCell.swift in Sources */,
 				34A55F3720485465002CC6DE /* OWS2FARegistrationViewController.m in Sources */,
+				4A38B1A3230ABFA50000814A /* CustomHeaderView.swift in Sources */,
 				340FC8AD204DAC8D007AEB0F /* OWSLinkedDevicesTableViewController.m in Sources */,
 				340FC8AA204DAC8D007AEB0F /* NotificationSettingsViewController.m in Sources */,
 				4C090A1B210FD9C7001FD7F9 /* HapticFeedback.swift in Sources */,
@@ -3371,6 +3554,7 @@
 				4C4AEC4520EC343B0020E72B /* DismissableTextField.swift in Sources */,
 				4CB5F26720F6E1E2004D1B42 /* MenuActionsViewController.swift in Sources */,
 				451686AB1F520CDA00AC3D4B /* MultiDeviceProfileKeyUpdateJob.swift in Sources */,
+				4A2F0860230464E300F600B0 /* HeaderSearchView.swift in Sources */,
 				45D231771DC7E8F10034FA89 /* SessionResetJob.swift in Sources */,
 				340FC8A9204DAC8D007AEB0F /* NotificationSettingsOptionsViewController.m in Sources */,
 				452037D11EE84975004E4CDF /* DebugUISessionState.m in Sources */,
@@ -3419,6 +3603,7 @@
 				34DBF003206BD5A500025978 /* OWSMessageTextView.m in Sources */,
 				34D1F0B41F86D31D0066283D /* ConversationCollectionView.m in Sources */,
 				34B3F8821E8DF1700035BE1A /* NewContactThreadViewController.m in Sources */,
+				4A2F085D230409B000F600B0 /* GradientExtentionUIView.swift in Sources */,
 				45D308AD2049A439000189E4 /* PinEntryView.m in Sources */,
 				340FC8B1204DAC8D007AEB0F /* BlockListViewController.m in Sources */,
 				45B5360E206DD8BB00D61655 /* UIResponder+OWS.swift in Sources */,
@@ -3446,6 +3631,7 @@
 				45F659731E1BD99C00444429 /* CallKitCallUIAdaptee.swift in Sources */,
 				34277A5E20751BDC006049F2 /* OWSQuotedMessageView.m in Sources */,
 				458DE9D61DEE3FD00071BB03 /* PeerConnectionClient.swift in Sources */,
+				4A45BBD02305701700FF898C /* RaTextField.swift in Sources */,
 				45DDA6242090CEB500DE97F8 /* ConversationHeaderView.swift in Sources */,
 				4CA5F793211E1F06008C2708 /* Toast.swift in Sources */,
 				45F32C242057297A00A300D5 /* MessageDetailViewController.swift in Sources */,
@@ -3457,6 +3643,7 @@
 				76EB054018170B33006006FC /* AppDelegate.m in Sources */,
 				34D1F0831F8678AA0066283D /* ConversationInputTextView.m in Sources */,
 				340FC8B6204DAC8D007AEB0F /* OWSQRCodeScanningViewController.m in Sources */,
+				4A38B19C230A9DDA0000814A /* WelcomeScreenViewController.swift in Sources */,
 				4CB5F26920F7D060004D1B42 /* MessageActions.swift in Sources */,
 				340FC8B5204DAC8D007AEB0F /* AboutTableViewController.m in Sources */,
 				34BECE2B1F74C12700D7438D /* DebugUIStress.m in Sources */,
@@ -3475,6 +3662,7 @@
 				340FC8B3204DAC8D007AEB0F /* AppSettingsViewController.m in Sources */,
 				34C4E2572118957600BEA353 /* OWSWebRTCDataProtos.pb.swift in Sources */,
 				346B66311F4E29B200E5122F /* CropScaleImageViewController.swift in Sources */,
+				4A38B1A0230ABDA30000814A /* AGBViewController.swift in Sources */,
 				45E5A6991F61E6DE001E4A8A /* MarqueeLabel.swift in Sources */,
 				34A910601FFEB114000C4745 /* OWSBackup.m in Sources */,
 				34D1F0B01F867BFC0066283D /* OWSSystemMessageCell.m in Sources */,
@@ -4014,7 +4202,7 @@
 			baseConfigurationReference = DE2DD605305BC6EFAD731723 /* Pods-Signal.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-RAAPP";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconOfficeApp;
 				CLANG_ADDRESS_SANITIZER_CONTAINER_OVERFLOW = YES;
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
@@ -4054,7 +4242,7 @@
 					"\"$(SRCROOT)/Libraries\"/**",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Signal/Signal-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4063,12 +4251,13 @@
 				LLVM_LTO = NO;
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ramicro.raapp;
-				PRODUCT_NAME = RAAPP;
+				PRODUCT_NAME = OfficeApp;
 				PROVISIONING_PROFILE = "";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "Signal/src/Signal-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "RAAPP-Swift.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
@@ -4083,7 +4272,7 @@
 			baseConfigurationReference = DF728B4B438716EAF95CEC18 /* Pods-Signal.app store release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon-RAAPP";
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIconOfficeApp;
 				CLANG_ADDRESS_SANITIZER_CONTAINER_OVERFLOW = NO;
 				CLANG_ANALYZER_SECURITY_FLOATLOOPCOUNTER = YES;
 				CLANG_ANALYZER_SECURITY_INSECUREAPI_RAND = YES;
@@ -4121,7 +4310,7 @@
 					"\"$(SRCROOT)/Libraries\"/**",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Signal/Signal-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4130,11 +4319,12 @@
 				LLVM_LTO = NO;
 				OTHER_LDFLAGS = "$(inherited)";
 				PRODUCT_BUNDLE_IDENTIFIER = com.ramicro.raapp;
-				PRODUCT_NAME = RAAPP;
+				PRODUCT_NAME = OfficeApp;
 				PROVISIONING_PROFILE = "";
 				RUN_CLANG_STATIC_ANALYZER = YES;
 				SDKROOT = iphoneos;
 				SWIFT_OBJC_BRIDGING_HEADER = "Signal/src/Signal-Bridging-Header.h";
+				SWIFT_OBJC_INTERFACE_HEADER_NAME = "RAAPP-Swift.h";
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
 				TEST_AFTER_BUILD = YES;

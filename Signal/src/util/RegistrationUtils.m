@@ -56,7 +56,7 @@ NS_ASSUME_NONNULL_BEGIN
                               dispatch_async(dispatch_get_main_queue(), ^{
                                   [modalActivityIndicator dismissWithCompletion:^{
                                       CodeVerificationViewController *viewController =
-                                          [CodeVerificationViewController new];
+                                          [[CodeVerificationViewController alloc] initWithNibName:@"CodeVerificationViewController" bundle:nil];
 
                                       OWSNavigationController *navigationController =
                                           [[OWSNavigationController alloc] initWithRootViewController:viewController];

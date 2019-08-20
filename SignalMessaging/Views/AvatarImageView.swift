@@ -35,6 +35,8 @@ public class AvatarImageView: UIImageView {
         self.layer.borderWidth = 0.5
         self.layer.masksToBounds = true
         self.contentMode = .scaleToFill
+        
+        self.image = image
     }
 
     override public func layoutSubviews() {

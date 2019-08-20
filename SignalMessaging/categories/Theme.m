@@ -97,7 +97,11 @@ NSString *const ThemeKeyThemeEnabled = @"ThemeKeyThemeEnabled";
 
 + (UIColor *)navbarIconColor
 {
-    return (Theme.isDarkThemeEnabled ? UIColor.ows_gray25Color : UIColor.ows_gray60Color);
+    return (Theme.isDarkThemeEnabled ? UIColor.ows_gray25Color : UIColor.whiteColor);
+}
+
++(UIColor *) toolbarIconColor {
+    return (Theme.isDarkThemeEnabled ? UIColor.ows_gray25Color : UIColor.ows_gray25Color);
 }
 
 + (UIColor *)navbarTitleColor

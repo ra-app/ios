@@ -558,6 +558,20 @@ static NSTimeInterval launchStartedAt;
     }];
 }
 
+-(void) showWelcomeAndAgbViewCtrl {
+    UIViewController *rootViewController = self.window.rootViewController;
+    
+    [WelcomeScreenViewController showWelcomeAndAGBInViewCtrl:rootViewController completionHandler:^(BOOL bRet) {
+        /*[self ensureRootViewController];*/
+        
+        RegistrationViewController *viewController = [[RegistrationViewController alloc] initWithNibName:@"RaRegistrationViewController" bundle:nil];
+        OWSNavigationController *navigationController =
+        [[OWSNavigationController alloc] initWithRootViewController:viewController];
+        navigationController.navigationBarHidden = YES;
+        self.window.rootViewController = navigationController;
+    }];
+}
+
 - (void)handleActivation
 {
     OWSAssertIsOnMainThread();
@@ -1132,7 +1146,9 @@ static NSTimeInterval launchStartedAt;
     NSTimeInterval startupDuration = CACurrentMediaTime() - launchStartedAt;
     OWSLogInfo(@"Presenting app %.2f seconds after launch started.", startupDuration);
 
-    if ([TSAccountManager isRegistered]) {
+    if (![AGBViewController isAgbAccepted]) {
+            [self showWelcomeAndAgbViewCtrl];
+    } else if ([TSAccountManager isRegistered]) {
         HomeViewController *homeView = [HomeViewController new];
         SignalsNavigationController *navigationController =
             [[SignalsNavigationController alloc] initWithRootViewController:homeView];

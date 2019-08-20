@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="14490.70" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES">
+    <device id="retina6_1" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="14490.49"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <customFonts key="customFonts">
+        <array key="Poppins-Regular.ttf">
+            <string>Poppins-Regular</string>
+        </array>
+    </customFonts>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="HeaderSearchView" customModule="RAAPP" customModuleProvider="target">
+            <connections>
+                <outlet property="btnExit" destination="g9R-yd-h0A" id="aiy-bl-zlZ"/>
+                <outlet property="tfSearch" destination="vRv-Ud-mF9" id="kW4-3e-8Bn"/>
+                <outlet property="view" destination="iN0-l3-epB" id="XbP-WY-vHx"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view contentMode="scaleToFill" id="iN0-l3-epB">
+            <rect key="frame" x="0.0" y="0.0" width="545" height="63"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <stackView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="2i4-mD-eMu">
+                    <rect key="frame" x="0.0" y="0.0" width="545" height="63"/>
+                    <subviews>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Xfi-FS-u61">
+                            <rect key="frame" x="0.0" y="0.0" width="35" height="63"/>
+                            <subviews>
+                                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="g9R-yd-h0A">
+                                    <rect key="frame" x="7.5" y="21.5" width="20" height="20"/>
+                                    <constraints>
+                                        <constraint firstAttribute="height" constant="20" id="0dP-nu-ure"/>
+                                        <constraint firstAttribute="width" constant="20" id="lDW-3n-XaX"/>
+                                    </constraints>
+                                    <state key="normal" image="quoted-message-cancel"/>
+                                </button>
+                            </subviews>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="35" id="1Ih-Zw-fTP"/>
+                                <constraint firstItem="g9R-yd-h0A" firstAttribute="centerX" secondItem="Xfi-FS-u61" secondAttribute="centerX" id="fK9-II-hGc"/>
+                                <constraint firstItem="g9R-yd-h0A" firstAttribute="centerY" secondItem="Xfi-FS-u61" secondAttribute="centerY" id="rcb-RN-oNN"/>
+                            </constraints>
+                        </view>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="thc-tv-fKf">
+                            <rect key="frame" x="35" y="0.0" width="510" height="63"/>
+                            <subviews>
+                                <textField opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="vRv-Ud-mF9">
+                                    <rect key="frame" x="5" y="5" width="500" height="53"/>
+                                    <nil key="textColor"/>
+                                    <fontDescription key="fontDescription" name="Poppins-Regular" family="Poppins" pointSize="15"/>
+                                    <textInputTraits key="textInputTraits"/>
+                                </textField>
+                            </subviews>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                            <constraints>
+                                <constraint firstItem="vRv-Ud-mF9" firstAttribute="top" secondItem="thc-tv-fKf" secondAttribute="top" constant="5" id="LLu-QK-j1T"/>
+                                <constraint firstAttribute="bottom" secondItem="vRv-Ud-mF9" secondAttribute="bottom" constant="5" id="hri-Gc-ufC"/>
+                                <constraint firstItem="vRv-Ud-mF9" firstAttribute="leading" secondItem="thc-tv-fKf" secondAttribute="leading" constant="5" id="mHx-qW-qnF"/>
+                                <constraint firstAttribute="trailing" secondItem="vRv-Ud-mF9" secondAttribute="trailing" constant="5" id="yWP-l1-x0X"/>
+                            </constraints>
+                        </view>
+                    </subviews>
+                </stackView>
+            </subviews>
+            <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+            <constraints>
+                <constraint firstItem="2i4-mD-eMu" firstAttribute="trailing" secondItem="vUN-kp-3ea" secondAttribute="trailing" id="2hx-p6-7fN"/>
+                <constraint firstItem="2i4-mD-eMu" firstAttribute="leading" secondItem="vUN-kp-3ea" secondAttribute="leading" id="OWk-es-3if"/>
+                <constraint firstItem="2i4-mD-eMu" firstAttribute="top" secondItem="iN0-l3-epB" secondAttribute="top" id="k8I-cB-pUC"/>
+                <constraint firstAttribute="bottom" secondItem="2i4-mD-eMu" secondAttribute="bottom" id="od5-mm-ZXC"/>
+            </constraints>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <viewLayoutGuide key="safeArea" id="vUN-kp-3ea"/>
+            <point key="canvasLocation" x="129.71014492753625" y="-244.08482142857142"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="quoted-message-cancel" width="20" height="20"/>
+    </resources>
+</document>

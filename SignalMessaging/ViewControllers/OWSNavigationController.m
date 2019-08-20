@@ -6,6 +6,7 @@
 #import <SignalMessaging/SignalMessaging-Swift.h>
 
 NS_ASSUME_NONNULL_BEGIN
+float kTYStatusBarHeight = 22.0;
 
 @interface UINavigationController (OWSNavigationController) <UINavigationBarDelegate, NavBarLayoutDelegate>
 
@@ -62,6 +63,9 @@ NS_ASSUME_NONNULL_BEGIN
     self.navigationBar.barTintColor = [UINavigationBar appearance].barTintColor;
     self.navigationBar.tintColor = [UINavigationBar appearance].tintColor;
     self.navigationBar.titleTextAttributes = [UINavigationBar appearance].titleTextAttributes;
+    
+    OWSNavigationBar *navbar = (OWSNavigationBar *)self.navigationBar;
+    [self updateLayoutForNavbar:navbar];
 }
 
 - (void)viewDidLoad
@@ -170,8 +174,25 @@ NS_ASSUME_NONNULL_BEGIN
         [self.view layoutSubviews];
     }
     [UIView setAnimationsEnabled:YES];
+   
+    [self.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor]}];
+    [self setGradientBackground];
 }
 
+- (void)viewSafeAreaInsetsDidChange {
+    [super viewSafeAreaInsetsDidChange];
+    if (self.view.safeAreaInsets.top < kTYStatusBarHeight) {
+        self.additionalSafeAreaInsets = UIEdgeInsetsMake(kTYStatusBarHeight, 0, 0, 0);
+    }
+}
+
+-(void) setGradientBackground {
+
+    
+    [self.navigationBar setBackgroundImage:[UIView getGradientLayerForFrameWithFrame:self.navigationBar.bounds] forBarMetrics:UIBarMetricsDefault];
+}
 @end
+
+
 
 NS_ASSUME_NONNULL_END

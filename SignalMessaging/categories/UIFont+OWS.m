@@ -10,27 +10,32 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIFont *)ows_thinFontWithSize:(CGFloat)size
 {
-    return [UIFont systemFontOfSize:size weight:UIFontWeightThin];
+    return [UIFont fontWithName:@"Poppins-Thin" size:size];
+    //return [UIFont systemFontOfSize:size weight:UIFontWeightThin];
 }
 
 + (UIFont *)ows_lightFontWithSize:(CGFloat)size
 {
-    return [UIFont systemFontOfSize:size weight:UIFontWeightLight];
+    return [UIFont fontWithName:@"Poppins-Light" size:size];
+    //return [UIFont systemFontOfSize:size weight:UIFontWeightLight];
 }
 
 + (UIFont *)ows_regularFontWithSize:(CGFloat)size
 {
-    return [UIFont systemFontOfSize:size weight:UIFontWeightRegular];
+    return [UIFont fontWithName:@"Poppins-Regular" size:size];
+    //return [UIFont systemFontOfSize:size weight:UIFontWeightRegular];
 }
 
 + (UIFont *)ows_mediumFontWithSize:(CGFloat)size
 {
-    return [UIFont systemFontOfSize:size weight:UIFontWeightMedium];
+    return [UIFont fontWithName:@"Poppins-Medium" size:size];
+    //return [UIFont systemFontOfSize:size weight:UIFontWeightMedium];
 }
 
 + (UIFont *)ows_boldFontWithSize:(CGFloat)size
 {
-    return [UIFont boldSystemFontOfSize:size];
+    return [UIFont fontWithName:@"Poppins-Bold" size:size];
+    //return [UIFont boldSystemFontOfSize:size];
 }
 
 #pragma mark - Icon Fonts
@@ -126,7 +131,8 @@ NS_ASSUME_NONNULL_BEGIN
     //
     // But this doesn't seem to work in practice on iOS 11 using UIFontWeightMedium.
 
-    UIFont *derivedFont = [UIFont systemFontOfSize:self.pointSize weight:UIFontWeightMedium];
+    //UIFont *derivedFont = [UIFont systemFontOfSize:self.pointSize weight:UIFontWeightMedium];
+    UIFont *derivedFont = [UIFont fontWithName:@"Poppins-Medium" size:self.pointSize];
     return derivedFont;
 }
 
