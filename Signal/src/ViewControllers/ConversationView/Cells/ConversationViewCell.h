@@ -1,15 +1,13 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class ConversationStyle;
 @class ConversationViewCell;
-@class ConversationViewItem;
 @class OWSContactOffersInteraction;
 @class OWSContactsManager;
-@class TSAttachmentPointer;
 @class TSAttachmentStream;
 @class TSCall;
 @class TSErrorMessage;
@@ -19,13 +17,23 @@ NS_ASSUME_NONNULL_BEGIN
 @class TSOutgoingMessage;
 @class TSQuotedMessage;
 
+@protocol ConversationViewItem;
+
 @protocol ConversationViewCellDelegate <NSObject>
 
-- (void)conversationCell:(ConversationViewCell *)cell didLongpressTextViewItem:(ConversationViewItem *)viewItem;
-- (void)conversationCell:(ConversationViewCell *)cell didLongpressMediaViewItem:(ConversationViewItem *)viewItem;
-- (void)conversationCell:(ConversationViewCell *)cell didLongpressQuoteViewItem:(ConversationViewItem *)viewItem;
 - (void)conversationCell:(ConversationViewCell *)cell
-    didLongpressSystemMessageViewItem:(ConversationViewItem *)viewItem;
+            shouldAllowReply:(BOOL)shouldAllowReply
+    didLongpressTextViewItem:(id<ConversationViewItem>)viewItem;
+- (void)conversationCell:(ConversationViewCell *)cell
+             shouldAllowReply:(BOOL)shouldAllowReply
+    didLongpressMediaViewItem:(id<ConversationViewItem>)viewItem;
+- (void)conversationCell:(ConversationViewCell *)cell
+             shouldAllowReply:(BOOL)shouldAllowReply
+    didLongpressQuoteViewItem:(id<ConversationViewItem>)viewItem;
+- (void)conversationCell:(ConversationViewCell *)cell
+    didLongpressSystemMessageViewItem:(id<ConversationViewItem>)viewItem;
+- (void)conversationCell:(ConversationViewCell *)cell didLongpressSticker:(id<ConversationViewItem>)viewItem;
+- (void)conversationCell:(ConversationViewCell *)cell didReplyToItem:(id<ConversationViewItem>)viewItem;
 
 #pragma mark - System Cell
 
@@ -68,7 +76,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, nullable, weak) id<ConversationViewCellDelegate> delegate;
 
-@property (nonatomic, nullable) ConversationViewItem *viewItem;
+@property (nonatomic, nullable) id<ConversationViewItem> viewItem;
 
 // Cells are prefetched but expensive cells (e.g. media) should only load
 // when visible and unload when no longer visible.  Non-visible cells can

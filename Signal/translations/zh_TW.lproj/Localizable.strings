@@ -42,7 +42,7 @@
 "ADD_USER_TO_PROFILE_WHITELIST_OFFER" = "你是否願意將個人資訊讓此使用者看見？";
 
 /* The label for the 'discard' button in alerts and action sheets. */
-"ALERT_DISCARD_BUTTON" = "取消";
+"ALERT_DISCARD_BUTTON" = "放棄";
 
 /* The label for the 'don't save' button in action sheets. */
 "ALERT_DONT_SAVE" = "不要儲存";
@@ -53,23 +53,14 @@
 /* The label for the 'save' button in action sheets. */
 "ALERT_SAVE" = "儲存";
 
-/* No comment provided by engineer. */
+/* notification action */
 "ANSWER_CALL_BUTTON_TITLE" = "接聽";
 
-/* No comment provided by engineer. */
+/* notification body */
 "APN_Message" = "新訊息！";
 
-/* No comment provided by engineer. */
-"APN_MESSAGE_FROM" = "訊息來自";
-
-/* No comment provided by engineer. */
-"APN_MESSAGE_IN_GROUP" = "群組訊息";
-
-/* No comment provided by engineer. */
-"APN_MESSAGE_IN_GROUP_DETAILED" = "%@在群組%@：%@";
-
 /* Message for the 'app launch failed' alert. */
-"APP_LAUNCH_FAILURE_ALERT_MESSAGE" = "Signal 無法啓動。請將您的偵錯日誌檔傳送給我們團隊，以便我們幫助您解決此問題。";
+"APP_LAUNCH_FAILURE_ALERT_MESSAGE" = "Signal 無法啟動。請將除錯日誌傳送到 support@signal.org ，以便我們解決這個問題。";
 
 /* Title for the 'app launch failed' alert. */
 "APP_LAUNCH_FAILURE_ALERT_TITLE" = "錯誤";
@@ -84,7 +75,7 @@
 "APP_UPDATE_NAG_ALERT_MESSAGE_FORMAT" = "第%@版已經在App Store 上架";
 
 /* Title for the 'new app version available' alert. */
-"APP_UPDATE_NAG_ALERT_TITLE" = "有新版的Signal 已提供下載";
+"APP_UPDATE_NAG_ALERT_TITLE" = "有新版本的 Signal 提供下載";
 
 /* Label for the 'update' button in the 'new app version available' alert. */
 "APP_UPDATE_NAG_ALERT_UPDATE_BUTTON" = "更新";
@@ -98,8 +89,14 @@
 /* No comment provided by engineer. */
 "ATTACHMENT" = "附件";
 
-/* One line label indicating the user can add no more text to the attachment caption. */
-"ATTACHMENT_APPROVAL_CAPTION_LENGTH_LIMIT_REACHED" = "已達到訊息限制。";
+/* One-line label indicating the user can add no more text to the attachment caption. */
+"ATTACHMENT_APPROVAL_CAPTION_LENGTH_LIMIT_REACHED" = "標題字數已達限制。";
+
+/* placeholder text for an empty captioning field */
+"ATTACHMENT_APPROVAL_CAPTION_PLACEHOLDER" = "新增標題...";
+
+/* Title for 'caption' mode of the attachment approval view. */
+"ATTACHMENT_APPROVAL_CAPTION_TITLE" = "字幕";
 
 /* Format string for file extension label in call interstitial view */
 "ATTACHMENT_APPROVAL_FILE_EXTENSION_FORMAT" = "檔案類型：%@";
@@ -114,40 +111,34 @@
 "ATTACHMENT_DEFAULT_FILENAME" = "附件";
 
 /* Status label when an attachment download has failed. */
-"ATTACHMENT_DOWNLOADING_STATUS_FAILED" = "失敗！點擊重試。";
-
-/* Status label when an attachment is currently downloading */
-"ATTACHMENT_DOWNLOADING_STATUS_IN_PROGRESS" = "下載中...";
-
-/* Status label when an attachment is enqueued, but hasn't yet started downloading */
-"ATTACHMENT_DOWNLOADING_STATUS_QUEUED" = "已排程";
+"ATTACHMENT_DOWNLOADING_STATUS_FAILED" = "下載失敗。請點擊再試一次。";
 
 /* The title of the 'attachment error' alert. */
 "ATTACHMENT_ERROR_ALERT_TITLE" = "附件傳送錯誤";
 
 /* Attachment error message for image attachments which could not be converted to JPEG */
-"ATTACHMENT_ERROR_COULD_NOT_CONVERT_TO_JPEG" = "無法調整附件圖片大小。";
+"ATTACHMENT_ERROR_COULD_NOT_CONVERT_TO_JPEG" = "無法轉換照片。";
 
 /* Attachment error message for video attachments which could not be converted to MP4 */
 "ATTACHMENT_ERROR_COULD_NOT_CONVERT_TO_MP4" = "無法處理此影片。";
 
 /* Attachment error message for image attachments which cannot be parsed */
-"ATTACHMENT_ERROR_COULD_NOT_PARSE_IMAGE" = "無法讀取附件中的圖片。";
+"ATTACHMENT_ERROR_COULD_NOT_PARSE_IMAGE" = "無法解析照片。";
 
 /* Attachment error message for image attachments in which metadata could not be removed */
 "ATTACHMENT_ERROR_COULD_NOT_REMOVE_METADATA" = "無法從影像檔中移除數據資料。";
 
 /* Attachment error message for image attachments which could not be resized */
-"ATTACHMENT_ERROR_COULD_NOT_RESIZE_IMAGE" = "無法調整影像尺寸。";
+"ATTACHMENT_ERROR_COULD_NOT_RESIZE_IMAGE" = "無法調整照片尺寸。";
 
 /* Attachment error message for attachments whose data exceed file size limits */
 "ATTACHMENT_ERROR_FILE_SIZE_TOO_LARGE" = "附件太大。";
 
 /* Attachment error message for attachments with invalid data */
-"ATTACHMENT_ERROR_INVALID_DATA" = "附檔含有無效的內容。";
+"ATTACHMENT_ERROR_INVALID_DATA" = "附檔包含了無效的內容。";
 
 /* Attachment error message for attachments with an invalid file format */
-"ATTACHMENT_ERROR_INVALID_FILE_FORMAT" = "附件含有無效的檔案格式。";
+"ATTACHMENT_ERROR_INVALID_FILE_FORMAT" = "附檔含有一個無效的檔案格式。";
 
 /* Attachment error message for attachments without any data */
 "ATTACHMENT_ERROR_MISSING_DATA" = "附件是空白的。";
@@ -165,7 +156,7 @@
 "ATTACHMENT_PICKER_DOCUMENTS_FAILED_ALERT_TITLE" = "選取文件失敗。";
 
 /* Alert body when picking a document fails because user picked a directory/bundle */
-"ATTACHMENT_PICKER_DOCUMENTS_PICKED_DIRECTORY_FAILED_ALERT_BODY" = "Signal 無法處理此類型檔案。請試著在傳送前壓縮此檔。";
+"ATTACHMENT_PICKER_DOCUMENTS_PICKED_DIRECTORY_FAILED_ALERT_BODY" = "請將檔案或資料夾創建為壓縮檔，並再嘗試發送該檔案。";
 
 /* Alert title when picking a document fails because user picked a directory/bundle */
 "ATTACHMENT_PICKER_DOCUMENTS_PICKED_DIRECTORY_FAILED_ALERT_TITLE" = "不支援的檔案類型。";
@@ -176,7 +167,7 @@
 /* action sheet button title to enable built in speaker during a call */
 "AUDIO_ROUTE_BUILT_IN_SPEAKER" = "揚聲器";
 
-/* button text for back button */
+/* return to the previous screen */
 "BACK_BUTTON" = "返回";
 
 /* Error indicating the backup export could not export the user's data. */
@@ -184,9 +175,6 @@
 
 /* Error indicating that the app received an invalid response from CloudKit. */
 "BACKUP_EXPORT_ERROR_INVALID_CLOUDKIT_RESPONSE" = "無效的服務回應";
-
-/* Error indicating the backup export failed to save a file to the cloud. */
-"BACKUP_EXPORT_ERROR_SAVE_FILE_TO_CLOUD_FAILED" = "備份資料無法被上傳。";
 
 /* Indicates that the cloud is being cleaned up. */
 "BACKUP_EXPORT_PHASE_CLEAN_UP" = "清除備份";
@@ -224,32 +212,47 @@
 /* Indicates that the backup import data is being restored. */
 "BACKUP_IMPORT_PHASE_RESTORING_FILES" = "回復檔案";
 
+/* Label for the backup restore decision section. */
+"BACKUP_RESTORE_DECISION_TITLE" = "提供備份";
+
+/* Label for the backup restore description. */
+"BACKUP_RESTORE_DESCRIPTION" = "回復備份";
+
+/* Label for the backup restore progress. */
+"BACKUP_RESTORE_PROGRESS" = "過程";
+
+/* Label for the backup restore status. */
+"BACKUP_RESTORE_STATUS" = "狀態";
+
+/* Error shown when backup fails due to an unexpected error. */
+"BACKUP_UNEXPECTED_ERROR" = "未預期的備份錯誤";
+
 /* An explanation of the consequences of blocking a group. */
-"BLOCK_GROUP_BEHAVIOR_EXPLANATION" = "You will no longer receive messages or updates from this group.";
+"BLOCK_GROUP_BEHAVIOR_EXPLANATION" = "你將無法從此群組收到訊息或更新。";
 
 /* Button label for the 'block' button */
 "BLOCK_LIST_BLOCK_BUTTON" = "封鎖";
 
 /* A format for the 'block group' action sheet title. Embeds the {{group name}}. */
-"BLOCK_LIST_BLOCK_GROUP_TITLE_FORMAT" = "Block and Leave the \"%@\" Group?";
+"BLOCK_LIST_BLOCK_GROUP_TITLE_FORMAT" = "封鎖及離開\"%@\"群組?";
 
 /* A format for the 'block user' action sheet title. Embeds {{the blocked user's name or phone number}}. */
-"BLOCK_LIST_BLOCK_USER_TITLE_FORMAT" = "Block %@?";
+"BLOCK_LIST_BLOCK_USER_TITLE_FORMAT" = "封鎖 %@?";
 
 /* Section header for groups that have been blocked */
-"BLOCK_LIST_BLOCKED_GROUPS_SECTION" = "Blocked Groups";
+"BLOCK_LIST_BLOCKED_GROUPS_SECTION" = "已封鎖群組";
 
 /* Section header for users that have been blocked */
-"BLOCK_LIST_BLOCKED_USERS_SECTION" = "Blocked Users";
+"BLOCK_LIST_BLOCKED_USERS_SECTION" = "已封鎖聯絡人";
 
 /* Button label for the 'unblock' button */
 "BLOCK_LIST_UNBLOCK_BUTTON" = "解除封鎖";
 
 /* Action sheet body when confirming you want to unblock a group */
-"BLOCK_LIST_UNBLOCK_GROUP_BODY" = "Existing members will be able to add you to the group again.";
+"BLOCK_LIST_UNBLOCK_GROUP_BODY" = "現存的組員將可以再次將你加入群組。";
 
 /* Action sheet title when confirming you want to unblock a group. */
-"BLOCK_LIST_UNBLOCK_GROUP_TITLE" = "Unblock This Group?";
+"BLOCK_LIST_UNBLOCK_GROUP_TITLE" = "解除封鎖此群組？";
 
 /* A format for the 'unblock conversation' action sheet title. Embeds the {{conversation title}}. */
 "BLOCK_LIST_UNBLOCK_TITLE_FORMAT" = "要解除封鎖 %@嗎？";
@@ -258,13 +261,13 @@
 "BLOCK_LIST_VIEW_BLOCK_BUTTON" = "封鎖";
 
 /* The message format of the 'conversation blocked' alert. Embeds the {{conversation title}}. */
-"BLOCK_LIST_VIEW_BLOCKED_ALERT_MESSAGE_FORMAT" = "%@ has been blocked.";
+"BLOCK_LIST_VIEW_BLOCKED_ALERT_MESSAGE_FORMAT" = "%@ 已被封鎖。";
 
 /* The title of the 'user blocked' alert. */
 "BLOCK_LIST_VIEW_BLOCKED_ALERT_TITLE" = "使用者已被封鎖";
 
 /* The title of the 'group blocked' alert. */
-"BLOCK_LIST_VIEW_BLOCKED_GROUP_ALERT_TITLE" = "Group Blocked";
+"BLOCK_LIST_VIEW_BLOCKED_GROUP_ALERT_TITLE" = "群組已被封鎖";
 
 /* The message of the 'You can't block yourself' alert. */
 "BLOCK_LIST_VIEW_CANT_BLOCK_SELF_ALERT_MESSAGE" = "你不能封鎖自己。";
@@ -273,10 +276,10 @@
 "BLOCK_LIST_VIEW_CANT_BLOCK_SELF_ALERT_TITLE" = "錯誤";
 
 /* Alert title after unblocking a group or 1:1 chat. Embeds the {{conversation title}}. */
-"BLOCK_LIST_VIEW_UNBLOCKED_ALERT_TITLE_FORMAT" = "%@ has been unblocked.";
+"BLOCK_LIST_VIEW_UNBLOCKED_ALERT_TITLE_FORMAT" = "%@ 已被解除封鎖。";
 
 /* Alert body after unblocking a group. */
-"BLOCK_LIST_VIEW_UNBLOCKED_GROUP_ALERT_BODY" = "Existing members can now add you to the group again.";
+"BLOCK_LIST_VIEW_UNBLOCKED_GROUP_ALERT_BODY" = "現存的組員可以立刻再次將你加入群組。";
 
 /* Action sheet that will block an unknown user. */
 "BLOCK_OFFER_ACTIONSHEET_BLOCK_ACTION" = "封鎖";
@@ -285,13 +288,16 @@
 "BLOCK_OFFER_ACTIONSHEET_TITLE_FORMAT" = "封鎖 %@";
 
 /* An explanation of the consequences of blocking another user. */
-"BLOCK_USER_BEHAVIOR_EXPLANATION" = "Blocked users will not be able to call you or send you messages.";
+"BLOCK_USER_BEHAVIOR_EXPLANATION" = "已封鎖的聯絡人將無法撥電話或傳訊息給你。";
 
 /* Label for 'continue' button. */
 "BUTTON_CONTINUE" = "繼續";
 
 /* Label for generic done button. */
 "BUTTON_DONE" = "完成";
+
+/* Label for the 'next' button. */
+"BUTTON_NEXT" = "下一步";
 
 /* Button text to enable batch selection mode */
 "BUTTON_SELECT" = "選擇";
@@ -300,16 +306,25 @@
 "CALL_AGAIN_BUTTON_TITLE" = "重撥電話";
 
 /* Alert message when calling and permissions for microphone are missing */
-"CALL_AUDIO_PERMISSION_MESSAGE" = "Signal 須要使用你的麥克風來撥打電話及錄製語音訊息。你可以在設定裡允許此權限。";
+"CALL_AUDIO_PERMISSION_MESSAGE" = "你可以在iOS 設定中允許取用麥克風，以便在 Signal 中撥打電話及錄製語音訊息。";
 
 /* Alert title when calling and permissions for microphone are missing */
 "CALL_AUDIO_PERMISSION_TITLE" = "須要使用麥克風";
 
+/* notification body */
+"CALL_INCOMING_NOTIFICATION_BODY" = "來電";
+
 /* Accessibility label for placing call button */
 "CALL_LABEL" = "撥出";
 
+/* notification body */
+"CALL_MISSED_BECAUSE_OF_IDENTITY_CHANGE_NOTIFICATION_BODY" = "未接來電，因為來電者的安全碼改變。";
+
+/* notification body */
+"CALL_MISSED_NOTIFICATION_BODY" = "未接來電";
+
 /* Call setup status label after outgoing call times out */
-"CALL_SCREEN_STATUS_NO_ANSWER" = "無人接聽";
+"CALL_SCREEN_STATUS_NO_ANSWER" = "沒有回應";
 
 /* embeds {{Call Status}} in call screen label. For ongoing calls, {{Call Status}} is a seconds timer like 01:23, otherwise {{Call Status}} is a short text like 'Ringing', 'Busy', or 'Failed Call' */
 "CALL_STATUS_FORMAT" = "Signal %@";
@@ -332,6 +347,9 @@
 /* Accessibility label for declining incoming calls */
 "CALL_VIEW_DECLINE_INCOMING_CALL_LABEL" = "拒絕來電";
 
+/* tooltip label when remote party has enabled their video */
+"CALL_VIEW_ENABLE_VIDEO_HINT" = "點擊此處以開啟你的影片";
+
 /* Accessibility label for hang up call */
 "CALL_VIEW_HANGUP_LABEL" = "結束通話";
 
@@ -339,10 +357,10 @@
 "CALL_VIEW_MUTE_LABEL" = "靜音通知";
 
 /* Reminder to the user of the benefits of enabling CallKit and disabling CallKit privacy. */
-"CALL_VIEW_SETTINGS_NAG_DESCRIPTION_ALL" = "你可以設定直接在鎖定螢幕上接聽電話及看見來電者的名字與號碼。\n\n查看隱私權設定以獲得更多細節。";
+"CALL_VIEW_SETTINGS_NAG_DESCRIPTION_ALL" = "你可以在 Signal 隱私權設定中啟動 iOS 通話整合，以便從鎖定螢幕中回覆來電。";
 
 /* Reminder to the user of the benefits of disabling CallKit privacy. */
-"CALL_VIEW_SETTINGS_NAG_DESCRIPTION_PRIVACY" = "如果變更設定，你可以看見來電者的名字與電話號碼。\n\n查看隱私權設定以獲得更多細節。";
+"CALL_VIEW_SETTINGS_NAG_DESCRIPTION_PRIVACY" = "你可以在 Signal 隱私權設定中啟動 iOS 電話整合，以顯示來電者的名字與電話號碼。";
 
 /* Label for button that dismiss the call view's settings nag. */
 "CALL_VIEW_SETTINGS_NAG_NOT_NOW_BUTTON" = "稍後";
@@ -350,7 +368,7 @@
 /* Label for button that shows the privacy settings. */
 "CALL_VIEW_SETTINGS_NAG_SHOW_CALL_SETTINGS" = "顯示隱私權設定";
 
-/* Accessibility label to toggle front vs. rear facing camera */
+/* Accessibility label to toggle front- vs. rear-facing camera */
 "CALL_VIEW_SWITCH_CAMERA_DIRECTION" = "變換相機方向";
 
 /* Accessibility label to switch to audio only */
@@ -368,6 +386,12 @@
 /* The generic name used for calls if CallKit privacy is enabled */
 "CALLKIT_ANONYMOUS_CONTACT_NAME" = "Signal 使用者";
 
+/* Accessibility hint describing what you can do with the camera button */
+"CAMERA_BUTTON_HINT" = "拍一張照片然後傳送出去";
+
+/* Accessibility label for camera button. */
+"CAMERA_BUTTON_LABEL" = "相機";
+
 /* Message for alert explaining that a user cannot be verified. */
 "CANT_VERIFY_IDENTITY_ALERT_MESSAGE" = "此使用者無法驗證直到你與他們交換訊息。";
 
@@ -377,14 +401,35 @@
 /* Title for the 'censorship circumvention country' view. */
 "CENSORSHIP_CIRCUMVENTION_COUNTRY_VIEW_TITLE" = "選擇國家";
 
-/* Error indicating that the app could not determine that user's CloudKit account status */
-"CLOUDKIT_STATUS_COULD_NOT_DETERMINE" = "與iCloud 連結備份時發生一個錯誤。";
+/* The label for the 'do not restore backup' button. */
+"CHECK_FOR_BACKUP_DO_NOT_RESTORE" = "不復原？";
+
+/* Message for alert shown when the app failed to check for an existing backup. */
+"CHECK_FOR_BACKUP_FAILED_MESSAGE" = "無法判定是否有備份可供復原。";
+
+/* Title for alert shown when the app failed to check for an existing backup. */
+"CHECK_FOR_BACKUP_FAILED_TITLE" = "錯誤";
+
+/* The label for the 'restore backup' button. */
+"CHECK_FOR_BACKUP_RESTORE" = "復原";
+
+/* Error indicating that the app could not determine that user's iCloud account status */
+"CLOUDKIT_STATUS_COULD_NOT_DETERMINE" = "Signal 無法確定你 iCloud 帳號狀況。請在iOS 設定中登入你的 iCloud 帳號並備份你的 Signal 資料。";
 
 /* Error indicating that user does not have an iCloud account. */
-"CLOUDKIT_STATUS_NO_ACCOUNT" = "你沒有iCloud 帳號來備份。";
+"CLOUDKIT_STATUS_NO_ACCOUNT" = "沒有 iCloud 帳號。請從 iOS 設定中登入 iCloud 帳號並備份你 Signal 的資料。";
 
-/* Error indicating that the app was prevented from accessing the user's CloudKit account. */
-"CLOUDKIT_STATUS_RESTRICTED" = "Signal 並不被允許連結你的 iCloud 帳號來備份。";
+/* Error indicating that the app was prevented from accessing the user's iCloud account. */
+"CLOUDKIT_STATUS_RESTRICTED" = "Signal 被 iCloud 帳號拒絕連結備份。請在 iOS設定中授權Signal 連結你的 iCloud 帳號以備份 Signal 資料。";
+
+/* The first of two messages demonstrating the chosen conversation color, by rendering this message in an outgoing message bubble. */
+"COLOR_PICKER_DEMO_MESSAGE_1" = "選擇在此對話中要發出訊息的顏色。";
+
+/* The second of two messages demonstrating the chosen conversation color, by rendering this message in an incoming message bubble. */
+"COLOR_PICKER_DEMO_MESSAGE_2" = "只有你可看到你所選的顏色。";
+
+/* Modal Sheet title when picking a conversation color. */
+"COLOR_PICKER_SHEET_TITLE" = "對話的顏色";
 
 /* Activity Sheet label */
 "COMPARE_SAFETY_NUMBER_ACTION" = "和剪貼簿比對";
@@ -399,10 +444,10 @@
 "COMPOSE_MESSAGE_INVITE_SECTION_TITLE" = "邀請";
 
 /* Multi-line label explaining why compose-screen contact picker is empty. */
-"COMPOSE_SCREEN_MISSING_CONTACTS_PERMISSION" = "要查看哪個聯絡人是Signal 使用者，請在設定中允許存取聯絡資訊。";
+"COMPOSE_SCREEN_MISSING_CONTACTS_PERMISSION" = "你可以在 iOS 設定中允許取用聯絡資訊，以確認哪位聯絡人是 Signal 的使用者。";
 
 /* No comment provided by engineer. */
-"CONFIRM_ACCOUNT_DESTRUCTION_TEXT" = "這將刪除你的訊息和取消你在伺服器的註冊，應用程式將會重新設定。應用程式將在資料刪除後關閉。";
+"CONFIRM_ACCOUNT_DESTRUCTION_TEXT" = "這將會透過刪除你的訊息及自伺服器取消註冊來重置應用程式。在這個過程完成後，本應用程式將關閉。";
 
 /* No comment provided by engineer. */
 "CONFIRM_ACCOUNT_DESTRUCTION_TITLE" = "你確定要刪除你的帳號嗎？";
@@ -515,6 +560,21 @@
 /* Indicates that a contact has no name. */
 "CONTACT_WITHOUT_NAME" = "取消命名聯絡人";
 
+/* Message for the 'conversation delete confirmation' alert. */
+"CONVERSATION_DELETE_CONFIRMATION_ALERT_MESSAGE" = "此無法被撤銷。";
+
+/* Title for the 'conversation delete confirmation' alert. */
+"CONVERSATION_DELETE_CONFIRMATION_ALERT_TITLE" = "刪除對話？";
+
+/* keyboard toolbar label when no messages match the search string */
+"CONVERSATION_SEARCH_NO_RESULTS" = "不相符";
+
+/* keyboard toolbar label when exactly 1 message matches the search string */
+"CONVERSATION_SEARCH_ONE_RESULT" = "1 項相符";
+
+/* keyboard toolbar label when more than 1 message matches the search string. Embeds {{number/position of the 'currently viewed' result}} and the {{total number of results}} */
+"CONVERSATION_SEARCH_RESULTS_FORMAT" = "%d 之 %d 個相符";
+
 /* title for conversation settings screen */
 "CONVERSATION_SETTINGS" = "對話設定";
 
@@ -522,16 +582,16 @@
 "CONVERSATION_SETTINGS_ADD_TO_EXISTING_CONTACT" = "加入現有的聯絡人";
 
 /* table cell label in conversation settings */
-"CONVERSATION_SETTINGS_BLOCK_THIS_GROUP" = "Block This Group";
+"CONVERSATION_SETTINGS_BLOCK_THIS_GROUP" = "封鎖這個群組";
 
 /* table cell label in conversation settings */
-"CONVERSATION_SETTINGS_BLOCK_THIS_USER" = "Block This User";
+"CONVERSATION_SETTINGS_BLOCK_THIS_USER" = "封鎖這個聯絡人";
 
 /* Navbar title when viewing settings for a 1-on-1 thread */
 "CONVERSATION_SETTINGS_CONTACT_INFO_TITLE" = "使用者資訊";
 
 /* Label for table cell which leads to picking a new conversation color */
-"CONVERSATION_SETTINGS_CONVERSATION_COLOR" = "顏色";
+"CONVERSATION_SETTINGS_CONVERSATION_COLOR" = "對話顏色";
 
 /* Navbar title when viewing settings for a group thread */
 "CONVERSATION_SETTINGS_GROUP_INFO_TITLE" = "群組資訊";
@@ -566,6 +626,9 @@
 /* Label for 'new contact' button in conversation settings view. */
 "CONVERSATION_SETTINGS_NEW_CONTACT" = "建立新聯絡人";
 
+/* Table cell label in conversation settings which returns the user to the conversation with 'search mode' activated */
+"CONVERSATION_SETTINGS_SEARCH" = "搜尋對話";
+
 /* Label for button that opens conversation settings. */
 "CONVERSATION_SETTINGS_TAP_TO_CHANGE" = "點擊以變更";
 
@@ -591,16 +654,16 @@
 "CONVERSATION_VIEW_ADD_TO_CONTACTS_OFFER" = "新增到聯絡資訊";
 
 /* Message shown in conversation view that offers to share your profile with a user. */
-"CONVERSATION_VIEW_ADD_USER_TO_PROFILE_WHITELIST_OFFER" = "分享你的個人資訊給此使用者";
+"CONVERSATION_VIEW_ADD_USER_TO_PROFILE_WHITELIST_OFFER" = "與這個使用者分享你的個人資訊";
 
 /* Title for the group of buttons show for unknown contacts offering to add them to contacts, etc. */
 "CONVERSATION_VIEW_CONTACTS_OFFER_TITLE" = "此使用者不在聯絡資訊中";
 
 /* Indicates that the app is loading more messages in this conversation. */
-"CONVERSATION_VIEW_LOADING_MORE_MESSAGES" = "讀取更多的訊息...";
+"CONVERSATION_VIEW_LOADING_MORE_MESSAGES" = "讀取更多的訊息中...";
 
 /* Indicator on truncated text messages that they can be tapped to see the entire text message. */
-"CONVERSATION_VIEW_OVERSIZE_TEXT_TAP_FOR_MORE" = "點擊以獲得更多資訊";
+"CONVERSATION_VIEW_OVERSIZE_TEXT_TAP_FOR_MORE" = "點擊已獲得更多資訊";
 
 /* Message shown in conversation view that offers to block an unknown user. */
 "CONVERSATION_VIEW_UNKNOWN_CONTACT_BLOCK_OFFER" = "封鎖此使用者";
@@ -675,6 +738,9 @@
    Title of the debug log alert. */
 "DEBUG_LOG_ALERT_TITLE" = "再一個步驟";
 
+/* Error indicating that the app could not launch the Email app. */
+"DEBUG_LOG_COULD_NOT_EMAIL" = "無法開啟電子郵件軟體。";
+
 /* Message of the alert before redirecting to GitHub Issues. */
 "DEBUG_LOG_GITHUB_ISSUE_ALERT_MESSAGE" = "本連結已複製至剪貼簿。你現在將導至 GitHub 錯誤回報列表。";
 
@@ -718,7 +784,7 @@
 "DOMAIN_FRONTING_COUNTRY_VIEW_SECTION_HEADER" = "審查規避";
 
 /* Alert body for when the user has just tried to edit a contacts after declining to give Signal contacts permissions */
-"EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_BODY" = "你可以在設定中授予存取的權限。";
+"EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_BODY" = "你可以在 iOS 設定中允許取用。";
 
 /* Alert title for when the user has just tried to edit a contacts after declining to give Signal contacts permissions */
 "EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_TITLE" = "Signal 須要存取聯絡資訊以編輯聯絡人資訊";
@@ -736,7 +802,7 @@
 "EDIT_GROUP_MEMBERS_ADD_MEMBER" = "新增...";
 
 /* a title for the members section of the 'new/update group' view. */
-"EDIT_GROUP_MEMBERS_SECTION_TITLE" = "成員";
+"EDIT_GROUP_MEMBERS_SECTION_TITLE" = "組員";
 
 /* An indicator that a user is a new member of the group. */
 "EDIT_GROUP_NEW_MEMBER_LABEL" = "已新增";
@@ -745,7 +811,7 @@
 "EDIT_GROUP_UPDATE_BUTTON" = "更新";
 
 /* The alert message if user tries to exit update group view without saving changes. */
-"EDIT_GROUP_VIEW_UNSAVED_CHANGES_MESSAGE" = "你已變更此群組設定，你要儲存變更嗎？";
+"EDIT_GROUP_VIEW_UNSAVED_CHANGES_MESSAGE" = "你要儲存對這個群組的變更嗎？";
 
 /* The alert title if user tries to exit update group view without saving changes. */
 "EDIT_GROUP_VIEW_UNSAVED_CHANGES_TITLE" = "未儲存的變更";
@@ -762,29 +828,11 @@
 /* subject of email sent to contacts when inviting to install Signal */
 "EMAIL_INVITE_SUBJECT" = "讓我們改用 Signal";
 
-/* Body text an existing user sees when viewing an empty archive */
-"EMPTY_ARCHIVE_TEXT" = "你可以將不再活動的對話紀錄從收件夾中封存起來。";
-
-/* Header text an existing user sees when viewing an empty archive */
-"EMPTY_ARCHIVE_TITLE" = "清除你的對話。";
-
 /* Full width label displayed when attempting to compose message */
 "EMPTY_CONTACTS_LABEL_LINE1" = "你的聯絡資訊中沒有人使用 Signal。";
 
 /* Full width label displayed when attempting to compose message */
 "EMPTY_CONTACTS_LABEL_LINE2" = "為什麼不邀請朋友呢？";
-
-/* Body text a new user sees when viewing an empty inbox */
-"EMPTY_INBOX_NEW_USER_TEXT" = "點擊撰寫按鈕";
-
-/* Header text a new user sees when viewing an empty inbox */
-"EMPTY_INBOX_NEW_USER_TITLE" = "開始你的第一個Signal 對話！";
-
-/* Body text an existing user sees when viewing an empty inbox */
-"EMPTY_INBOX_TEXT" = "沒有任何訊息！";
-
-/* Header text an existing user sees when viewing an empty inbox */
-"EMPTY_INBOX_TITLE" = "所有訊息已清除。";
 
 /* Indicates that user should confirm their 'two factor auth pin'. */
 "ENABLE_2FA_VIEW_CONFIRM_PIN_INSTRUCTIONS" = "確認你的 PIN 碼。";
@@ -832,16 +880,16 @@
 "ERROR_DESCRIPTION_CLIENT_SENDING_FAILURE" = "訊息傳送失敗。";
 
 /* Error message indicating that message send is disabled due to prekey update failures */
-"ERROR_DESCRIPTION_MESSAGE_SEND_DISABLED_PREKEY_UPDATE_FAILURES" = "無法傳送，因隱私資料太舊。";
+"ERROR_DESCRIPTION_MESSAGE_SEND_DISABLED_PREKEY_UPDATE_FAILURES" = "因過舊的密鑰資料而無法傳送。";
 
 /* Error message indicating that message send failed due to block list */
 "ERROR_DESCRIPTION_MESSAGE_SEND_FAILED_DUE_TO_BLOCK_LIST" = "無法傳送訊息給此人，因為被你封鎖了。";
 
 /* Error message indicating that message send failed due to failed attachment write */
-"ERROR_DESCRIPTION_MESSAGE_SEND_FAILED_DUE_TO_FAILED_ATTACHMENT_WRITE" = "失敗，因附件寫入失敗。";
+"ERROR_DESCRIPTION_MESSAGE_SEND_FAILED_DUE_TO_FAILED_ATTACHMENT_WRITE" = "無法撰寫及傳送附檔。";
 
 /* Generic error used whenever Signal can't contact the server */
-"ERROR_DESCRIPTION_NO_INTERNET" = "Signal 無法連結到網際網路。請改試其他的 WiFi  或行動網路。";
+"ERROR_DESCRIPTION_NO_INTERNET" = "Signal 無法連接網際網路，請再重試一遍。";
 
 /* Error indicating that an outgoing message had no valid recipients. */
 "ERROR_DESCRIPTION_NO_VALID_RECIPIENTS" = "訊息無法傳送，因為沒有有效的傳送對象。";
@@ -856,7 +904,7 @@
 "ERROR_DESCRIPTION_RESPONSE_FAILED" = "服務的無效回應。";
 
 /* Error message when attempting to send message */
-"ERROR_DESCRIPTION_SENDING_UNAUTHORIZED" = "你的電話號碼不再註冊於此裝置。你必須移除並重新安裝 Signal。";
+"ERROR_DESCRIPTION_SENDING_UNAUTHORIZED" = "你的電話號碼不再註冊於本裝置。請重新安裝 Signal。";
 
 /* Generic server error */
 "ERROR_DESCRIPTION_SERVER_FAILURE" = "伺服器錯誤。請稍候再試。";
@@ -867,11 +915,14 @@
 /* Error message when attempting to send message */
 "ERROR_DESCRIPTION_UNREGISTERED_RECIPIENT" = "此聯絡人不是 Signal 使用者。";
 
+/* Error message indicating that attachment download(s) failed. */
+"ERROR_MESSAGE_ATTACHMENT_DOWNLOAD_FAILED" = "附件下載失敗。";
+
 /* Error message when unable to receive an attachment because the sending client is too old. */
-"ERROR_MESSAGE_ATTACHMENT_FROM_OLD_CLIENT" = "失敗：請要求發送者更新 Signal後再重新傳送。";
+"ERROR_MESSAGE_ATTACHMENT_FROM_OLD_CLIENT" = "附檔失敗：請要求此聯絡人更新到Signal最新版本，並再重傳一次。";
 
 /* No comment provided by engineer. */
-"ERROR_MESSAGE_DUPLICATE_MESSAGE" = "收到重複的訊息。";
+"ERROR_MESSAGE_DUPLICATE_MESSAGE" = "接收到重複的訊息。";
 
 /* No comment provided by engineer. */
 "ERROR_MESSAGE_INVALID_KEY_EXCEPTION" = "接收者的金鑰無效。";
@@ -880,7 +931,7 @@
 "ERROR_MESSAGE_INVALID_MESSAGE" = "收到的訊息沒有被同步。";
 
 /* No comment provided by engineer. */
-"ERROR_MESSAGE_INVALID_VERSION" = "收到的訊息與此版本不相容。";
+"ERROR_MESSAGE_INVALID_VERSION" = "接收到的訊息並不相容於此版本。";
 
 /* No comment provided by engineer. */
 "ERROR_MESSAGE_NO_SESSION" = "沒有對象的會話。";
@@ -897,14 +948,32 @@
 /* No comment provided by engineer. */
 "ERROR_MESSAGE_WRONG_TRUSTED_IDENTITY_KEY" = "安全碼已變更。";
 
+/* Error indicating a send failure due to an expired application. */
+"ERROR_SENDING_EXPIRED" = "你的 Signal 版本已過期。請更新以傳送訊息。";
+
 /* Format string for 'unregistered user' error. Embeds {{the unregistered user's name or signal id}}. */
 "ERROR_UNREGISTERED_USER_FORMAT" = "未註冊的使用者: %@";
 
+/* Button to dismiss/ignore the one time splash screen that appears after upgrading */
+"EXPERIENCE_UPGRADE_DISMISS_BUTTON" = "稍後";
+
+/* Button to dismiss/ignore the one time splash screen that appears after upgrading */
+"EXPERIENCE_UPGRADE_LETS_GO_BUTTON" = "讓我們開始吧";
+
+/* Label notifying the user that the app has expired. */
+"EXPIRATION_ERROR" = "你的 Signal 版本已過期！訊息將無法成功傳送。點擊以更新到最新版本。";
+
+/* Label warning the user that the app will expire soon. */
+"EXPIRATION_WARNING_SOON" = "您的 Signal 版本將於 %d 日內到期，請更新至最新版本。";
+
+/* Label warning the user that the app will expire today. */
+"EXPIRATION_WARNING_TODAY" = "您的 Signal 版本今日到期，請更新至最新版本。";
+
 /* action sheet header when re-sending message which failed because of too many attempts */
-"FAILED_SENDING_BECAUSE_RATE_LIMIT" = "此聯絡人失敗太多次。請稍候再試。";
+"FAILED_SENDING_BECAUSE_RATE_LIMIT" = "此聯繫人失敗太多次，請稍後再試。";
 
 /* action sheet header when re-sending message which failed because of untrusted identity keys */
-"FAILED_SENDING_BECAUSE_UNTRUSTED_IDENTITY_KEY" = "你與%@的安全碼最近改變。 請在重新傳送訊息前再次驗證。";
+"FAILED_SENDING_BECAUSE_UNTRUSTED_IDENTITY_KEY" = "你與%@的安全碼最近已改變。請與對方驗證後再重傳一次訊息。";
 
 /* alert title */
 "FAILED_VERIFICATION_TITLE" = "驗證安全碼失敗！";
@@ -922,10 +991,10 @@
 "GALLERY_TILES_EMPTY_GALLERY" = "你在此對話中沒有任何多媒體檔案。";
 
 /* Label indicating loading is in progress */
-"GALLERY_TILES_LOADING_MORE_RECENT_LABEL" = "讀取較新的多媒體檔案...";
+"GALLERY_TILES_LOADING_MORE_RECENT_LABEL" = "讀取較新的媒體檔中...";
 
 /* Label indicating loading is in progress */
-"GALLERY_TILES_LOADING_OLDER_LABEL" = "讀取較舊的多媒體檔案...";
+"GALLERY_TILES_LOADING_OLDER_LABEL" = "讀取較舊的媒體檔中...";
 
 /* A label for generic attachments. */
 "GENERIC_ATTACHMENT_LABEL" = "附件";
@@ -961,7 +1030,7 @@
 "GROUP_CREATED" = "群組已建立。";
 
 /* Message shown in conversation view that indicates there were issues with group creation. */
-"GROUP_CREATION_FAILED" = "不是所有的成員都可以加入此群組。請點擊重試。";
+"GROUP_CREATION_FAILED" = "不是所有的組員都可以加入此群組。請點擊重試。";
 
 /* Conversation settings table section title */
 "GROUP_MANAGEMENT_SECTION" = "群組管理";
@@ -979,13 +1048,13 @@
 "GROUP_MEMBERS_CALL" = "撥打";
 
 /* Label for the button that clears all verification errors in the 'group members' view. */
-"GROUP_MEMBERS_RESET_NO_LONGER_VERIFIED" = "清除所有人的驗證訊息";
+"GROUP_MEMBERS_RESET_NO_LONGER_VERIFIED" = "清除所有人的驗證";
 
 /* Label for the 'reset all no-longer-verified group members' confirmation alert. */
-"GROUP_MEMBERS_RESET_NO_LONGER_VERIFIED_ALERT_MESSAGE" = "這會清除群組中所有自最後一次驗證以來安全碼改變的成員的驗證。";
+"GROUP_MEMBERS_RESET_NO_LONGER_VERIFIED_ALERT_MESSAGE" = "這會清除群組中所有自最後一次驗證以來安全碼改變的組員的驗證。";
 
 /* Title for the 'members' section of the 'group members' view. */
-"GROUP_MEMBERS_SECTION_TITLE_MEMBERS" = "成員";
+"GROUP_MEMBERS_SECTION_TITLE_MEMBERS" = "組員";
 
 /* Title for the 'no longer verified' section of the 'group members' view. */
 "GROUP_MEMBERS_SECTION_TITLE_NO_LONGER_VERIFIED" = "不再標示為已驗證";
@@ -995,12 +1064,6 @@
 
 /* Button label for the 'show contact info' button */
 "GROUP_MEMBERS_VIEW_CONTACT_INFO" = "聯絡人資訊";
-
-/* Modal text when removing a group */
-"GROUP_REMOVING" = "離開群組%@";
-
-/* Title of alert indicating that group deletion failed. */
-"GROUP_REMOVING_FAILED" = "無法離開群組";
 
 /* No comment provided by engineer. */
 "GROUP_TITLE_CHANGED" = "稱謂已改為‘%@’";
@@ -1015,10 +1078,22 @@
 "HOME_VIEW_ARCHIVED_CONVERSATIONS" = "封存對話";
 
 /* Table cell subtitle label for a conversation the user has blocked. */
-"HOME_VIEW_BLOCKED_CONVERSATION" = "Blocked";
+"HOME_VIEW_BLOCKED_CONVERSATION" = "已封鎖";
 
 /* Placeholder text for search bar which filters conversations. */
 "HOME_VIEW_CONVERSATION_SEARCHBAR_PLACEHOLDER" = "搜尋";
+
+/* Format string for a label offering to start a new conversation with your contacts, if you have 1 Signal contact.  Embeds {{The name of 1 of your Signal contacts}}. */
+"HOME_VIEW_FIRST_CONVERSATION_OFFER_1_CONTACT_FORMAT" = "有些你的聯絡人已經在使用 Signal了，包括%@。";
+
+/* Format string for a label offering to start a new conversation with your contacts, if you have 2 Signal contacts.  Embeds {{The names of 2 of your Signal contacts}}. */
+"HOME_VIEW_FIRST_CONVERSATION_OFFER_2_CONTACTS_FORMAT" = "有些你的聯絡人已經在使用Signal 了，包括 %@ 及%@。";
+
+/* Format string for a label offering to start a new conversation with your contacts, if you have at least 3 Signal contacts.  Embeds {{The names of 3 of your Signal contacts}}. */
+"HOME_VIEW_FIRST_CONVERSATION_OFFER_3_CONTACTS_FORMAT" = "有些你的聯絡人已經在使用 Signal 了，包括 %@、%@及%@。";
+
+/* A label offering to start a new conversation with your contacts, if you have no Signal contacts. */
+"HOME_VIEW_FIRST_CONVERSATION_OFFER_NO_CONTACTS" = "從這裡開始使用你的第一個對話。";
 
 /* Format string when search returns no results. Embeds {{search term}} */
 "HOME_VIEW_SEARCH_NO_RESULTS_FORMAT" = "找不到有關 '%@' 的結果";
@@ -1028,6 +1103,12 @@
 
 /* Title for the home view's default mode. */
 "HOME_VIEW_TITLE_INBOX" = "Signal";
+
+/* Momentarily shown to the user when attempting to select more images than is allowed. Embeds {{max number of items}} that can be shared. */
+"IMAGE_PICKER_CAN_SELECT_NO_MORE_TOAST_FORMAT" = "你無法分享超過%@個項目。";
+
+/* alert title */
+"IMAGE_PICKER_FAILED_TO_PROCESS_ATTACHMENTS" = "無法選擇附檔。";
 
 /* Call setup status label */
 "IN_CALL_CONNECTING" = "連接中...";
@@ -1045,31 +1126,34 @@
 "IN_CALL_TERMINATED" = "結束通話。";
 
 /* Label reminding the user that they are in archive mode. */
-"INBOX_VIEW_ARCHIVE_MODE_REMINDER" = "這些對話已經封存了。如果收到新的訊息，它們會出現在收件夾中。";
+"INBOX_VIEW_ARCHIVE_MODE_REMINDER" = "這些對話已經封存，並只有在收到新訊息時才會顯示在收件箱中。";
+
+/* Message shown in the home view when the inbox is empty. */
+"INBOX_VIEW_EMPTY_INBOX" = "何不給你的收件夾寫些東西呢？從發個訊息給好友開始吧！";
 
 /* Multi-line label explaining how to show names instead of phone numbers in your inbox */
-"INBOX_VIEW_MISSING_CONTACTS_PERMISSION" = "要查看你聯絡人的名稱，請在系統設定中允許存取聯絡資訊。";
+"INBOX_VIEW_MISSING_CONTACTS_PERMISSION" = "你可以在 iOS設定中允許取用聯絡資訊，以在你的 Signal 對話清單中見到聯絡人名稱。";
 
-/* notification body */
+/* info message text in conversation view */
 "INCOMING_CALL" = "來電...";
-
-/* notification body */
-"INCOMING_CALL_FROM" = "來自%@的電話";
 
 /* info message recorded in conversation history when local user declined a call */
 "INCOMING_DECLINED_CALL" = "你拒絕了來電";
 
-/* No comment provided by engineer. */
+/* info message text in conversation view */
 "INCOMING_INCOMPLETE_CALL" = "來電";
 
 /* info message text shown in conversation view */
-"INFO_MESSAGE_MISSED_CALL_DUE_TO_CHANGED_IDENITY" = "未接來電，因他們的安全碼已改變。";
+"INFO_MESSAGE_MISSED_CALL_DUE_TO_CHANGED_IDENITY" = "未接來電，因聯絡人的安全碼改變。";
+
+/* Shown in inbox and conversation when a user joins Signal, embeds the new user's {{contact name}} */
+"INFO_MESSAGE_USER_JOINED_SIGNAL_BODY_FORMAT" = "%@在 Signal 上!";
 
 /* Message for the alert indicating that an audio file is invalid. */
 "INVALID_AUDIO_FILE_ALERT_ERROR_MESSAGE" = "無效的音訊檔。";
 
 /* Alert body when contacts disabled while trying to invite contacts to signal */
-"INVITE_FLOW_REQUIRES_CONTACT_ACCESS_BODY" = "若要邀請你的聯絡人，你必需在設定中允許 Signal 存取你的聯絡資訊。";
+"INVITE_FLOW_REQUIRES_CONTACT_ACCESS_BODY" = "你可以在 iOS設定中允許取用聯絡資訊來邀請你的朋友加入 Signal。";
 
 /* Alert title when contacts disabled while trying to invite contacts to signal */
 "INVITE_FLOW_REQUIRES_CONTACT_ACCESS_TITLE" = "允許聯絡資訊存取";
@@ -1084,7 +1168,7 @@
 "INVITE_FRIENDS_PICKER_TITLE" = "邀請朋友";
 
 /* Alert warning that sending an invite to multiple users will create a group message whose recipients will be able to see each other. */
-"INVITE_WARNING_MULTIPLE_INVITES_BY_TEXT" = "同時邀請多個使用者將傳送群組訊息，其收件人將能夠看到彼此。";
+"INVITE_WARNING_MULTIPLE_INVITES_BY_TEXT" = "同時邀請多個使用者降啟動群組訊息功能，接收者將因此可以見到對方。";
 
 /* Slider label embeds {{TIME_AMOUNT}}, e.g. '2 hours'. See *_TIME_AMOUNT strings for examples. */
 "KEEP_MESSAGES_DURATION" = "訊息在%@後消毀。";
@@ -1099,13 +1183,13 @@
 "LEAVE_GROUP_ACTION" = "離開群組";
 
 /* report an invalid linking code */
-"LINK_DEVICE_INVALID_CODE_BODY" = "QR  code 無效，請確認你掃描裝置上的 QR code 是你想要連結的。";
+"LINK_DEVICE_INVALID_CODE_BODY" = "這個 QR 碼無效。請確定您正在掃描要連接的裝置上顯示的QR碼。";
 
 /* report an invalid linking code */
 "LINK_DEVICE_INVALID_CODE_TITLE" = "裝置連結失敗";
 
 /* confirm the users intent to link a new device */
-"LINK_DEVICE_PERMISSION_ALERT_BODY" = "本裝置可以看見你的群組及聯絡資訊、讀取你所有的訊息，並以你的名義發送訊息。";
+"LINK_DEVICE_PERMISSION_ALERT_BODY" = "本裝置將可見到你的群組、聯絡人、連接你的對話及以你的名字傳送訊息。";
 
 /* confirm the users intent to link a new device */
 "LINK_DEVICE_PERMISSION_ALERT_TITLE" = "連結裝置？";
@@ -1114,13 +1198,16 @@
 "LINK_DEVICE_RESTART" = "重試";
 
 /* QR Scanning screen instructions, placed alongside a camera view for scanning QR Codes */
-"LINK_DEVICE_SCANNING_INSTRUCTIONS" = "掃描欲連結裝置上的QR code";
+"LINK_DEVICE_SCANNING_INSTRUCTIONS" = "請掃描要連接的裝置上顯示的 QR 碼。";
 
 /* Subheading for 'Link New Device' navigation */
 "LINK_NEW_DEVICE_SUBTITLE" = "掃描 QR code";
 
 /* Navigation title when scanning QR code to add new device. */
 "LINK_NEW_DEVICE_TITLE" = "連結新的裝置";
+
+/* Label for link previews with an unknown host. */
+"LINK_PREVIEW_UNKNOWN_DOMAIN" = "連結預覽";
 
 /* Menu item and navbar title for the device manager */
 "LINKED_DEVICES_TITLE" = "已連結的裝置";
@@ -1129,7 +1216,7 @@
 "LINKING_DEVICE_FAILED_TITLE" = "裝置連結失敗";
 
 /* table cell label in conversation settings */
-"LIST_GROUP_MEMBERS_ACTION" = "群組成員";
+"LIST_GROUP_MEMBERS_ACTION" = "群組組員";
 
 /* No comment provided by engineer. */
 "LOGGING_SECTION" = "紀錄中";
@@ -1155,6 +1242,12 @@
 /* Confirmation button text to delete selected media message from the gallery */
 "MEDIA_GALLERY_DELETE_SINGLE_MESSAGE" = "刪除訊息";
 
+/* embeds {{sender name}} and {{sent datetime}}, e.g. 'Sarah on 10/30/18, 3:29' */
+"MEDIA_GALLERY_LANDSCAPE_TITLE_FORMAT" = "%@在 %@";
+
+/* Format for the 'more items' indicator for media galleries. Embeds {{the number of additional items}}. */
+"MEDIA_GALLERY_MORE_ITEMS_FORMAT" = "+%@";
+
 /* Short sender label for media sent by you */
 "MEDIA_GALLERY_SENDER_NAME_YOU" = "你";
 
@@ -1171,13 +1264,13 @@
 "MESSAGE_ACTION_DELETE_MESSAGE" = "刪除此訊息";
 
 /* Action sheet button subtitle */
-"MESSAGE_ACTION_DELETE_MESSAGE_SUBTITLE" = "僅在此裝置上刪除";
+"MESSAGE_ACTION_DELETE_MESSAGE_SUBTITLE" = "這將只在本裝置上刪除。";
 
 /* Action sheet button title */
 "MESSAGE_ACTION_DETAILS" = "更多資訊";
 
 /* Action sheet button title */
-"MESSAGE_ACTION_REPLY" = "回覆此訊息";
+"MESSAGE_ACTION_REPLY" = "回覆這個訊息";
 
 /* Action sheet button title */
 "MESSAGE_ACTION_SAVE_MEDIA" = "儲存媒體檔案";
@@ -1196,9 +1289,6 @@
 
 /* Label for the MIME type of attachments in the 'message metadata' view. */
 "MESSAGE_METADATA_VIEW_ATTACHMENT_MIME_TYPE" = "MIME 類型";
-
-/* Label for 'not yet downloaded' attachments in the 'message metadata' view. */
-"MESSAGE_METADATA_VIEW_ATTACHMENT_NOT_YET_DOWNLOADED" = "還未下載";
 
 /* Status label for messages which are delivered. */
 "MESSAGE_METADATA_VIEW_MESSAGE_STATUS_DELIVERED" = "已傳送";
@@ -1228,7 +1318,7 @@
 "MESSAGE_METADATA_VIEW_RECEIVED_DATE_TIME" = "已接收";
 
 /* Label for the 'sender' field of the 'message metadata' view. */
-"MESSAGE_METADATA_VIEW_SENDER" = "發送者";
+"MESSAGE_METADATA_VIEW_SENDER" = "發件人";
 
 /* Label for the 'sent date & time' field of the 'message metadata' view. */
 "MESSAGE_METADATA_VIEW_SENT_DATE_TIME" = "已送出";
@@ -1241,6 +1331,9 @@
 
 /* message status for message delivered to their recipient. */
 "MESSAGE_STATUS_DELIVERED" = "已傳送";
+
+/* message status while message is downloading. */
+"MESSAGE_STATUS_DOWNLOADING" = "下載中...";
 
 /* status message for failed messages */
 "MESSAGE_STATUS_FAILED" = "傳送失敗";
@@ -1266,6 +1359,9 @@
 /* status message while attachment is uploading */
 "MESSAGE_STATUS_UPLOADING" = "上傳中...";
 
+/* placeholder text for the editable message field */
+"MESSAGE_TEXT_FIELD_PLACEHOLDER" = "新訊息";
+
 /* Indicates that one member of this group conversation is no longer verified. Embeds {{user's name or phone number}}. */
 "MESSAGES_VIEW_1_MEMBER_NO_LONGER_VERIFIED_FORMAT" = "%@已不再標記為已驗證。點擊開啟選項。";
 
@@ -1276,19 +1372,19 @@
 "MESSAGES_VIEW_CONTACT_NO_LONGER_VERIFIED_FORMAT" = "%@已不再標記為已驗證。點擊開啟選項。";
 
 /* Indicates that a single member of this group has been blocked. */
-"MESSAGES_VIEW_GROUP_1_MEMBER_BLOCKED" = "You Blocked 1 Member of This Group";
+"MESSAGES_VIEW_GROUP_1_MEMBER_BLOCKED" = "你封鎖了此群組的一個組員";
 
 /* Indicates that this group conversation has been blocked. */
-"MESSAGES_VIEW_GROUP_BLOCKED" = "You Blocked This Group";
+"MESSAGES_VIEW_GROUP_BLOCKED" = "你已封鎖了這個群組";
 
 /* Indicates that some members of this group has been blocked. Embeds {{the number of blocked users in this group}}. */
-"MESSAGES_VIEW_GROUP_N_MEMBERS_BLOCKED_FORMAT" = "You Blocked %@ Members of This Group";
+"MESSAGES_VIEW_GROUP_N_MEMBERS_BLOCKED_FORMAT" = "你封鎖了此群組中的 %@個組員";
 
 /* Text for banner in group conversation view that offers to share your profile with this group. */
 "MESSAGES_VIEW_GROUP_PROFILE_WHITELIST_BANNER" = "同意共享個人資訊給該此群組嗎？";
 
 /* Indicates that more than one member of this group conversation is no longer verified. */
-"MESSAGES_VIEW_N_MEMBERS_NO_LONGER_VERIFIED" = "此群組中多個成員不再標記為已驗證。點擊開啟選項。";
+"MESSAGES_VIEW_N_MEMBERS_NO_LONGER_VERIFIED" = "此群組中多個組員不再標記為已驗證。點擊開啟選項。";
 
 /* The subtitle for the messages view title indicates that the title can be tapped to access settings for this conversation. */
 "MESSAGES_VIEW_TITLE_SUBTITLE" = "點擊這裡前往設定";
@@ -1302,37 +1398,28 @@
 /* Messages that indicates that there are more unseen messages including safety number changes. */
 "MESSAGES_VIEW_UNREAD_INDICATOR_HAS_MORE_UNSEEN_MESSAGES_AND_SAFETY_NUMBER_CHANGES" = "尚有未讀的訊息(包括安全碼變更)。";
 
-/* notification title */
+/* info message text in conversation view */
 "MISSED_CALL" = "未接來電";
-
-/* notification title. Embeds {{caller's name or phone number}} */
-"MISSED_CALL_WITH_CHANGED_IDENTITY_BODY_WITH_CALLER_NAME" = "來自%@的未接來電，因他們的安全碼已經改變。";
-
-/* notification title */
-"MISSED_CALL_WITH_CHANGED_IDENTITY_BODY_WITHOUT_CALLER_NAME" = "未接來電，因來電者的安全碼已經改變。";
 
 /* Alert body
    Alert body when camera is not authorized */
-"MISSING_CAMERA_PERMISSION_MESSAGE" = "Signal要求允許使用你的相機來操作視訊電話。你可以透過以下步驟允許：設定 >> 隱私權 >> 相機 >> Signal。";
+"MISSING_CAMERA_PERMISSION_MESSAGE" = "你可以在 iOS 設定中允許取用相機以在 Signal 中使用影像電話。";
 
 /* Alert title
    Alert title when camera is not authorized */
 "MISSING_CAMERA_PERMISSION_TITLE" = "Signal要求使用你的相機";
 
 /* Alert body when user has previously denied media library access */
-"MISSING_MEDIA_LIBRARY_PERMISSION_MESSAGE" = "你可以在\"設定\"中允許此權限。";
+"MISSING_MEDIA_LIBRARY_PERMISSION_MESSAGE" = "你可以在 iOS 設定中允許此權限。";
 
 /* Alert title when user has previously denied media library access */
-"MISSING_MEDIA_LIBRARY_PERMISSION_TITLE" = "Signal 需要連結你的\"媒體庫\"來執行此動作。";
-
-/* notification title. Embeds {{caller's name or phone number}} */
-"MSGVIEW_MISSED_CALL_WITH_NAME" = "來自%@的未接來電。";
+"MISSING_MEDIA_LIBRARY_PERMISSION_TITLE" = "Signal 要求取用你的照片才能使用此功能。";
 
 /* alert title: cannot link - reached max linked devices */
 "MULTIDEVICE_PAIRING_MAX_DESC" = "你無法連結更多的裝置。";
 
 /* alert body: cannot link - reached max linked devices */
-"MULTIDEVICE_PAIRING_MAX_RECOVERY" = "你已經達到帳號可連結最大的裝置數量。請移除一個裝置，並稍後再重試連結一次。";
+"MULTIDEVICE_PAIRING_MAX_RECOVERY" = "你已達到目前可以與本帳戶連結的裝置最大數量。 請刪除一個裝置，然後重試。";
 
 /* An explanation of the consequences of muting a thread. */
 "MUTE_BEHAVIOR_EXPLANATION" = "你將無法自禁言的對話收到通知。";
@@ -1341,7 +1428,7 @@
 "NAVIGATION_ITEM_SKIP_BUTTON" = "跳過";
 
 /* No comment provided by engineer. */
-"NETWORK_ERROR_RECOVERY" = "請檢查你是否已連上網路並再試一次。";
+"NETWORK_ERROR_RECOVERY" = "請確認是否在線上，並再重試。";
 
 /* Indicates to the user that censorship circumvention has been activated. */
 "NETWORK_STATUS_CENSORSHIP_CIRCUMVENTION_ACTIVE" = "審查規避：開啟";
@@ -1377,7 +1464,10 @@
 "NEW_GROUP_DEFAULT_TITLE" = "新群組";
 
 /* An indicator that a user is a member of the new group. */
-"NEW_GROUP_MEMBER_LABEL" = "成員";
+"NEW_GROUP_MEMBER_LABEL" = "組員";
+
+/* notification title. Embeds {{author name}} and {{group name}} */
+"NEW_GROUP_MESSAGE_NOTIFICATION_TITLE" = "%@ 傳送至 %@";
 
 /* Placeholder text for group name field */
 "NEW_GROUP_NAMEGROUP_REQUEST_DEFAULT" = "為此群組命名";
@@ -1403,11 +1493,11 @@
 /* Label for a button that lets users search for contacts by phone number */
 "NO_CONTACTS_SEARCH_BY_PHONE_NUMBER" = "透過手機號碼搜尋聯絡人";
 
+/* Label for 1:1 conversation with yourself. */
+"NOTE_TO_SELF" = "給自己的筆記";
+
 /* Lock screen notification text presented after user powers on their device without unlocking. Embeds {{device model}} (either 'iPad' or 'iPhone') */
 "NOTIFICATION_BODY_PHONE_LOCKED_FORMAT" = "當你的%@重新起動時，你還是可以接收訊息。";
-
-/* No comment provided by engineer. */
-"NOTIFICATION_SEND_FAILED" = "你給%@的訊息傳送失敗。";
 
 /* No comment provided by engineer. */
 "NOTIFICATIONS_FOOTER_WARNING" = "由於蘋果推播通知的已知錯誤，訊息只有在發送的30秒內被接收才會顯示預覽。因此應用程式圖示上的顯示可能不準確。";
@@ -1433,6 +1523,99 @@
 /* No comment provided by engineer. */
 "OK" = "OK";
 
+/* Label indicating that the 2fa pin is exhausted in the 'onboarding 2fa' view. */
+"ONBOARDING_2FA_ATTEMPTS_EXHAUSTED" = "你已嘗試太多次PIN碼，你可以嘗試於7天內再次註冊。";
+
+/* The first explanation in the 'onboarding 2FA' view. */
+"ONBOARDING_2FA_EXPLANATION_1" = "此電話號碼已啟用註冊鎖定。請輸入註冊鎖定 PIN 碼。";
+
+/* The first explanation in the 'onboarding 2FA' view. */
+"ONBOARDING_2FA_EXPLANATION_2" = "你的註冊鎖定PIN碼與你上一步驟傳到你手機的驗證碼是不同的。";
+
+/* Label for the 'forgot 2FA PIN' link in the 'onboarding 2FA' view. */
+"ONBOARDING_2FA_FORGOT_PIN_LINK" = "我忘記自己的 PIN碼。";
+
+/* Label indicating that the 2fa pin is invalid in the 'onboarding 2fa' view. */
+"ONBOARDING_2FA_INVALID_PIN" = "錯誤的 PIN 碼";
+
+/* Label indicating that the 2fa pin is invalid with a retry count in the 'onboarding 2fa' view. */
+"ONBOARDING_2FA_INVALID_PIN_FORMAT" = "錯誤的 PIN 碼，你還剩 %lu 次嘗試。";
+
+/* Title of the 'onboarding 2FA' view. */
+"ONBOARDING_2FA_TITLE" = "註冊鎖定";
+
+/* Title of the 'onboarding Captcha' view. */
+"ONBOARDING_CAPTCHA_TITLE" = "為你的訊息增加一點人性。";
+
+/* Label for the 'give access' button in the 'onboarding permissions' view. */
+"ONBOARDING_PERMISSIONS_ENABLE_PERMISSIONS_BUTTON" = "開啟權限";
+
+/* Explanation in the 'onboarding permissions' view. */
+"ONBOARDING_PERMISSIONS_EXPLANATION" = "你的聯絡人資訊間的傳輸永遠是安全的。";
+
+/* Label for the 'not now' button in the 'onboarding permissions' view. */
+"ONBOARDING_PERMISSIONS_NOT_NOW_BUTTON" = "稍後";
+
+/* Title of the 'onboarding permissions' view. */
+"ONBOARDING_PERMISSIONS_TITLE" = "Signal 可以讓你知道你甚麼時候收到訊息(及誰傳訊息給你)";
+
+/* Title of the 'onboarding phone number' view. */
+"ONBOARDING_PHONE_NUMBER_TITLE" = "輸入你的電話號碼即可開始使用。";
+
+/* Label indicating that the phone number is invalid in the 'onboarding phone number' view. */
+"ONBOARDING_PHONE_NUMBER_VALIDATION_WARNING" = "無效號碼";
+
+/* Explanation in the 'onboarding profile' view. */
+"ONBOARDING_PROFILE_EXPLANATION" = "Signal 資訊是點對點加密，及Signal 的服務絕不會觸及到這些資訊。";
+
+/* Placeholder text for the profile name in the 'onboarding profile' view. */
+"ONBOARDING_PROFILE_NAME_PLACEHOLDER" = "你的名稱";
+
+/* Title of the 'onboarding profile' view. */
+"ONBOARDING_PROFILE_TITLE" = "設定你的資訊";
+
+/* Link to the 'terms and privacy policy' in the 'onboarding splash' view. */
+"ONBOARDING_SPLASH_TERM_AND_PRIVACY_POLICY" = "服務條款與隱私政策";
+
+/* Title of the 'onboarding splash' view. */
+"ONBOARDING_SPLASH_TITLE" = "保護你的隱私。\n在每個訊息中做你自己。";
+
+/* Label for the link that lets users change their phone number in the onboarding views. */
+"ONBOARDING_VERIFICATION_BACK_LINK" = "錯誤的號碼？";
+
+/* Format for the label of the 'sent code' label of the 'onboarding verification' view. Embeds {{the time until the code can be resent}}. */
+"ONBOARDING_VERIFICATION_CODE_COUNTDOWN_FORMAT" = "我沒有收到驗證碼(由%@提供)";
+
+/* action sheet item shown after a number of failures to receive a verificaiton SMS during registration */
+"ONBOARDING_VERIFICATION_EMAIL_SIGNAL_SUPPORT" = "聯絡 Signal 支援";
+
+/* Label indicating that the verification code is incorrect in the 'onboarding verification' view. */
+"ONBOARDING_VERIFICATION_INVALID_CODE" = "這個驗證碼是不正確的。";
+
+/* Label for link that can be used when the original code did not arrive. */
+"ONBOARDING_VERIFICATION_ORIGINAL_CODE_MISSING_LINK" = "我沒有收到驗證碼。";
+
+/* Message for the 'resend code' alert in the 'onboarding verification' view. */
+"ONBOARDING_VERIFICATION_RESEND_CODE_ALERT_MESSAGE" = "請確認你的手機網路服務可以收到 SMS訊息。";
+
+/* Title for the 'resend code' alert in the 'onboarding verification' view. */
+"ONBOARDING_VERIFICATION_RESEND_CODE_ALERT_TITLE" = "沒有收到驗證碼？";
+
+/* Label for the 'resend code by SMS' button in the 'onboarding verification' view. */
+"ONBOARDING_VERIFICATION_RESEND_CODE_BY_SMS_BUTTON" = "重新傳送認證碼";
+
+/* Label for the 'resend code by voice' button in the 'onboarding verification' view. */
+"ONBOARDING_VERIFICATION_RESEND_CODE_BY_VOICE_BUTTON" = "改用電話撥給我";
+
+/* Label for link that can be used when the resent code did not arrive. */
+"ONBOARDING_VERIFICATION_RESENT_CODE_MISSING_LINK" = "還是沒有收到驗證碼？";
+
+/* Format for the title of the 'onboarding verification' view. Embeds {{the user's phone number}}. */
+"ONBOARDING_VERIFICATION_TITLE_DEFAULT_FORMAT" = "請輸入我們傳送給 %@ 的驗證碼。";
+
+/* Format for the title of the 'onboarding verification' view after the verification code has been resent. Embeds {{the user's phone number}}. */
+"ONBOARDING_VERIFICATION_TITLE_RESENT_FORMAT" = "我們剛重傳一個驗證碼給 %@";
+
 /* Button text which opens the settings app */
 "OPEN_SETTINGS_BUTTON" = "設定";
 
@@ -1443,12 +1626,12 @@
 "OTHER_UPDATED_DISAPPEARING_MESSAGES_CONFIGURATION" = "%@設定訊息銷毀時間為%@。";
 
 /* Label warning the user that the Signal service may be down. */
-"OUTAGE_WARNING" = "Signal 正面臨技術上的問題。我們正在盡力的盡快地回復服務。";
+"OUTAGE_WARNING" = "Signal 正面臨技術上的問題。我們正在盡力的盡快地恢復服務。";
 
-/* No comment provided by engineer. */
+/* info message text in conversation view */
 "OUTGOING_CALL" = "撥出電話";
 
-/* No comment provided by engineer. */
+/* info message text in conversation view */
 "OUTGOING_INCOMPLETE_CALL" = "撥出電話";
 
 /* info message recorded in conversation history when local user tries and fails to call another user. */
@@ -1456,6 +1639,30 @@
 
 /* A display format for oversize text messages. */
 "OVERSIZE_TEXT_DISPLAY_FORMAT" = "%@...";
+
+/* Error indicating that a PDF could not be displayed. */
+"PDF_VIEW_COULD_NOT_RENDER" = "PDF 無法顯示";
+
+/* Navbar title for for PDF view. */
+"PDF_VIEW_TITLE" = "PDF";
+
+/* Label that indicates that 'view-once' is active. */
+"PER_MESSAGE_EXPIRATION_ACTIVE_INDICATOR" = "銷毀照片";
+
+/* Label for view-once messages that have invalid content. */
+"PER_MESSAGE_EXPIRATION_INVALID_CONTENT" = "在處理來訊時出現錯誤";
+
+/* Notification for incoming disappearing photo. */
+"PER_MESSAGE_EXPIRATION_NOTIFICATION" = "銷毀照片";
+
+/* Label for outgoing view-once messages. */
+"PER_MESSAGE_EXPIRATION_OUTGOING_MESSAGE" = "照片";
+
+/* Label for view-once messages indicating that user can tap to view the message's contents. */
+"PER_MESSAGE_EXPIRATION_TAP_TO_VIEW" = "查看照片";
+
+/* Label for view-once messages indicating that the local user has viewed the message's contents. */
+"PER_MESSAGE_EXPIRATION_VIEWED" = "已查看";
 
 /* A format for a label showing an example phone number. Embeds {{the example phone number}}. */
 "PHONE_NUMBER_EXAMPLE_FORMAT" = "範例：%@";
@@ -1496,6 +1703,18 @@
 /* Label for 'Work FAX' phone numbers. */
 "PHONE_NUMBER_TYPE_WORK_FAX" = "工作傳真";
 
+/* alert title, generic error preventing user from capturing a photo */
+"PHOTO_CAPTURE_GENERIC_ERROR" = "無法擷取圖片。";
+
+/* alert title */
+"PHOTO_CAPTURE_UNABLE_TO_CAPTURE_IMAGE" = "無法擷取圖片。";
+
+/* alert title */
+"PHOTO_CAPTURE_UNABLE_TO_INITIALIZE_CAMERA" = "無法設定相機。";
+
+/* label for system photo collections which have no name. */
+"PHOTO_PICKER_UNNAMED_COLLECTION" = "未命名的相簿";
+
 /* Accessibility label for button to start media playback */
 "PLAY_BUTTON_ACCESSABILITY_LABEL" = "播放媒體";
 
@@ -1533,10 +1752,10 @@
 "PRIVACY_VERIFICATION_FAILED_WITH_OLD_LOCAL_VERSION" = "你使用的 Signal 版本太舊。你必須更新後再驗證。";
 
 /* alert body */
-"PRIVACY_VERIFICATION_FAILED_WITH_OLD_REMOTE_VERSION" = "你朋友使用的 Signal版本太舊。他們必須升級後才能驗證。";
+"PRIVACY_VERIFICATION_FAILED_WITH_OLD_REMOTE_VERSION" = "你朋友使用的Signal版本太舊，必須升級後才能驗證。";
 
 /* alert body */
-"PRIVACY_VERIFICATION_FAILURE_INVALID_QRCODE" = "掃描的碼看起來不是安全碼。你確定雙方都使用最新版的 Signal？";
+"PRIVACY_VERIFICATION_FAILURE_INVALID_QRCODE" = "你所掃描的碼似乎不是安全碼。請確認雙方都使用最新的版本。";
 
 /* Paragraph(s) shown alongside the safety number when verifying privacy with {{contact name}} */
 "PRIVACY_VERIFICATION_INSTRUCTIONS" = "如須確認你和 %@點對點加密的安全性，請在雙方裝置上比較上述數字。\n\n或者可以透過掃描雙方的QR code進行驗證。";
@@ -1586,16 +1805,13 @@
 /* Button to save the profile view in the profile view. */
 "PROFILE_VIEW_SAVE_BUTTON" = "儲存";
 
-/* Alert title that indicates the user's profile view is being saved. */
-"PROFILE_VIEW_SAVING" = "儲存中...";
-
 /* Title for the profile view. */
 "PROFILE_VIEW_TITLE" = "個人資訊";
 
-/* No comment provided by engineer. */
+/* Notification action button title */
 "PUSH_MANAGER_MARKREAD" = "標記為已讀";
 
-/* No comment provided by engineer. */
+/* Notification action button title */
 "PUSH_MANAGER_REPLY" = "回覆";
 
 /* Title of alert shown when push tokens sync job succeeds. */
@@ -1616,7 +1832,7 @@
 /* message header label when quoting yourself */
 "QUOTED_REPLY_AUTHOR_INDICATOR_YOURSELF" = "回覆給你自己";
 
-/* Footer label that appears below quoted messages when the quoted content was note derived locally. When the local user doesn't have a copy of the message being quoted, e.g. if it had since been deleted, we instead show the content specified by the sender. */
+/* Footer label that appears below quoted messages when the quoted content was not derived locally. When the local user doesn't have a copy of the message being quoted, e.g. if it had since been deleted, we instead show the content specified by the sender. */
 "QUOTED_REPLY_CONTENT_FROM_REMOTE_SOURCE" = "找不到原始訊息。";
 
 /* Toast alert text shown when tapping on a quoted message which we cannot scroll to because the local copy of the message was since deleted. */
@@ -1646,12 +1862,6 @@
 /* Alert message explaining what happens if you forget your 'two-factor auth pin'. */
 "REGISTER_2FA_FORGOT_PIN_ALERT_MESSAGE" = "如果你沒有註冊鎖定 PIN 碼，在此電話號碼，最後活躍於 Signal 的 7 天過後，才可以註冊此電話號碼。";
 
-/* Instructions to enter the 'two-factor auth pin' in the 2FA registration view. */
-"REGISTER_2FA_INSTRUCTIONS" = "此電話號碼有啟動註冊鎖定功能。請輸入註冊鎖定 PIN 碼。\n\n你的註冊鎖定 PIN 碼與最後一步驟發送至你手機的簡訊驗證碼是分開的。";
-
-/* Title for alert indicating that attempt to register with 'two-factor auth' failed. */
-"REGISTER_2FA_REGISTRATION_FAILED_ALERT_TITLE" = "註冊失敗";
-
 /* Label for 'submit' button in the 2FA registration view. */
 "REGISTER_2FA_SUBMIT_BUTTON" = "提交";
 
@@ -1664,14 +1874,14 @@
 /* No comment provided by engineer. */
 "REGISTER_RATE_LIMITING_BODY" = "你嘗試過於頻繁，請等一分鐘後再試。";
 
+/* No comment provided by engineer. */
+"REGISTER_RATE_LIMITING_ERROR" = "你嘗試了太多次，請稍後再試一次。";
+
 /* Title of alert shown when push tokens sync job fails. */
 "REGISTRATION_BODY" = "重新註冊推播通知失敗。";
 
 /* Label for the country code field */
 "REGISTRATION_DEFAULT_COUNTRY_NAME" = "國碼";
-
-/* Navigation title shown when user is re-registering after having enabled registration lock */
-"REGISTRATION_ENTER_LOCK_PIN_NAV_TITLE" = "註冊鎖定";
 
 /* Placeholder text for the phone number textfield */
 "REGISTRATION_ENTERNUMBER_DEFAULT_TEXT" = "輸入號碼";
@@ -1691,15 +1901,6 @@
 /* alert title when registering an iPad */
 "REGISTRATION_IPAD_CONFIRM_TITLE" = "已經有 Signal 帳號了嗎？";
 
-/* one line label below submit button on registration screen, which links to an external webpage. */
-"REGISTRATION_LEGAL_TERMS_LINK" = "條款和隱私政策";
-
-/* legal disclaimer, embeds a tappable {{link title}} which is styled as a hyperlink */
-"REGISTRATION_LEGAL_TOP_MATTER_FORMAT" = "透過註冊這個裝置，表示你同意 Signal 的 %@";
-
-/* embedded in legal topmatter, styled as a link */
-"REGISTRATION_LEGAL_TOP_MATTER_LINK_TITLE" = "條款";
-
 /* No comment provided by engineer. */
 "REGISTRATION_NON_VALID_NUMBER" = "不支援這個電話號碼的格式，請聯繫支援部門。";
 
@@ -1707,10 +1908,7 @@
 "REGISTRATION_PHONENUMBER_BUTTON" = "電話號碼";
 
 /* No comment provided by engineer. */
-"REGISTRATION_RESTRICTED_MESSAGE" = "有人發給你第一個訊息！你只須註冊也可以發送。";
-
-/* No comment provided by engineer. */
-"REGISTRATION_TITLE_LABEL" = "你的電話號碼";
+"REGISTRATION_RESTRICTED_MESSAGE" = "你必須先註冊才能傳送訊息。";
 
 /* Alert view title */
 "REGISTRATION_VERIFICATION_FAILED_TITLE" = "驗證失敗";
@@ -1720,9 +1918,6 @@
 
 /* Error message indicating that registration failed due to a missing or incorrect 2FA PIN. */
 "REGISTRATION_VERIFICATION_FAILED_WRONG_PIN" = "不正確的註冊鎖定 PIN 碼。";
-
-/* No comment provided by engineer. */
-"REGISTRATION_VERIFY_DEVICE" = "註冊";
 
 /* Message of alert indicating that users needs to enter a valid phone number to register. */
 "REGISTRATION_VIEW_INVALID_PHONE_NUMBER_ALERT_MESSAGE" = "請輸入有效的電話號碼來註冊。";
@@ -1736,7 +1931,7 @@
 /* Title of alert indicating that users needs to enter a phone number to register. */
 "REGISTRATION_VIEW_NO_PHONE_NUMBER_ALERT_TITLE" = "電話號碼無效";
 
-/* No comment provided by engineer. */
+/* notification action */
 "REJECT_CALL_BUTTON_TITLE" = "拒絕";
 
 /* No comment provided by engineer. */
@@ -1844,17 +2039,32 @@
 /* No comment provided by engineer. */
 "SEND_AGAIN_BUTTON" = "再次傳送";
 
-/* Label for the send button in the conversation view. */
+/* Label for the button to send a message */
 "SEND_BUTTON_TITLE" = "傳送";
+
+/* notification body */
+"SEND_FAILED_NOTIFICATION_BODY" = "你的訊息傳送失敗。";
 
 /* Alert body after invite failed */
 "SEND_INVITE_FAILURE" = "邀請寄出失敗，稍後再試一次。";
 
 /* Alert body after invite succeeded */
-"SEND_INVITE_SUCCESS" = "你已經邀請朋友使用 Signal！";
+"SEND_INVITE_SUCCESS" = "你已邀請你的朋友來使用 Signal！";
 
 /* Text for button to send a Signal invite via SMS. %@ is placeholder for the recipient's phone number. */
 "SEND_INVITE_VIA_SMS_BUTTON_FORMAT" = "透過簡訊邀請：%@";
+
+/* alert title when user attempts to leave the send media flow when they have an in-progress album */
+"SEND_MEDIA_ABANDON_TITLE" = "放棄媒體檔案？";
+
+/* alert action, confirming the user wants to exit the media flow and abandon any photos they've taken */
+"SEND_MEDIA_CONFIRM_ABANDON_ALBUM" = "放棄媒體檔案。";
+
+/* alert action when the user decides not to cancel the media flow after all. */
+"SEND_MEDIA_RETURN_TO_CAMERA" = "回到照相機功能";
+
+/* alert action when the user decides not to cancel the media flow after all. */
+"SEND_MEDIA_RETURN_TO_MEDIA_LIBRARY" = "回到我的相簿";
 
 /* No comment provided by engineer. */
 "SEND_SMS_CONFIRM_TITLE" = "透過未加密的簡訊邀請朋友？";
@@ -1886,6 +2096,9 @@
 /* Table footer for the 'censorship circumvention' section shown when censorship circumvention has been auto-enabled based on local phone number. */
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_AUTO_ENABLED" = "已根據你的電話號碼啟動審查規避。";
 
+/* Table footer for the 'censorship circumvention' section shown when censorship circumvention has been manually disabled. */
+"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_MANUALLY_DISABLED" = "你已經手動關閉規避審查。";
+
 /* Table footer for the 'censorship circumvention' section shown when the app is not connected to the internet. */
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_NO_CONNECTION" = "審查規避只能在連上網路時啟動。";
 
@@ -1894,9 +2107,6 @@
 
 /* Table header for the 'censorship circumvention' section. */
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_HEADER" = "審查規避";
-
-/* Label for setting that enables dark theme. */
-"SETTINGS_ADVANCED_DARK_THEME" = "黑暗主題";
 
 /* No comment provided by engineer. */
 "SETTINGS_ADVANCED_DEBUGLOG" = "啟用除錯日誌";
@@ -1922,13 +2132,28 @@
 /* Label for switch in settings that controls whether or not backup is enabled. */
 "SETTINGS_BACKUP_ENABLING_SWITCH" = "備份功能啟動";
 
+/* Label for iCloud status row in the in the backup settings view. */
+"SETTINGS_BACKUP_ICLOUD_STATUS" = "iCloud 狀態。";
+
+/* Indicates that the last backup restore failed. */
+"SETTINGS_BACKUP_IMPORT_STATUS_FAILED" = "復原備份失敗";
+
+/* Indicates that app is not restoring up. */
+"SETTINGS_BACKUP_IMPORT_STATUS_IDLE" = "備份復原閒置中";
+
+/* Indicates that app is restoring up. */
+"SETTINGS_BACKUP_IMPORT_STATUS_IN_PROGRESS" = "正在進行復原備份";
+
+/* Indicates that the last backup restore succeeded. */
+"SETTINGS_BACKUP_IMPORT_STATUS_SUCCEEDED" = "復原備份成功";
+
 /* Label for phase row in the in the backup settings view. */
 "SETTINGS_BACKUP_PHASE" = "階段";
 
 /* Label for phase row in the in the backup settings view. */
 "SETTINGS_BACKUP_PROGRESS" = "過程";
 
-/* Label for status row in the in the backup settings view. */
+/* Label for backup status row in the in the backup settings view. */
 "SETTINGS_BACKUP_STATUS" = "狀態";
 
 /* Indicates that the last backup failed. */
@@ -1944,7 +2169,7 @@
 "SETTINGS_BACKUP_STATUS_SUCCEEDED" = "備份成功";
 
 /* A label for the 'add phone number' button in the block list table. */
-"SETTINGS_BLOCK_LIST_ADD_BUTTON" = "Add Blocked User";
+"SETTINGS_BLOCK_LIST_ADD_BUTTON" = "新增封鎖的聯絡人";
 
 /* A label that indicates the user has no Signal contacts. */
 "SETTINGS_BLOCK_LIST_NO_CONTACTS" = "你沒有使用Signal的連絡人。";
@@ -1965,7 +2190,7 @@
 "SETTINGS_CLEAR_HISTORY" = "清除對話紀錄";
 
 /* No comment provided by engineer. */
-"SETTINGS_COPYRIGHT" = "版權所有 Open Whisper Systems\n根據 GPLv3授權";
+"SETTINGS_COPYRIGHT" = "Copyright Signal Messenger\n Licensed under the GPLv3";
 
 /* No comment provided by engineer. */
 "SETTINGS_DELETE_ACCOUNT_BUTTON" = "刪除帳戶";
@@ -1974,7 +2199,7 @@
 "SETTINGS_DELETE_DATA_BUTTON" = "刪除所有資料";
 
 /* Alert message before user confirms clearing history */
-"SETTINGS_DELETE_HISTORYLOG_CONFIRMATION" = "你確定要刪除所有歷史資訊 (訊息、附件、通話紀錄...)？這個操作將無法取消。";
+"SETTINGS_DELETE_HISTORYLOG_CONFIRMATION" = "你確定要刪除所有的歷史紀錄(包括訊息、附檔、電話等等？)此操作將無法被還原。";
 
 /* Confirmation text for button which deletes all message, calling, attachments, etc. */
 "SETTINGS_DELETE_HISTORYLOG_CONFIRMATION_BUTTON" = "刪除所有內容記錄";
@@ -2000,6 +2225,15 @@
 /* table cell label */
 "SETTINGS_LEGAL_TERMS_CELL" = "條款和隱私政策";
 
+/* Setting for enabling & disabling link previews. */
+"SETTINGS_LINK_PREVIEWS" = "傳送連結預覽";
+
+/* Footer for setting for enabling & disabling link previews. */
+"SETTINGS_LINK_PREVIEWS_FOOTER" = "預覽功能支援 Imgur、 Instagram、 Pinterest、 Reddit 及 YouTube的連結。";
+
+/* Header for setting for enabling & disabling link previews. */
+"SETTINGS_LINK_PREVIEWS_HEADER" = "連結預覽";
+
 /* Title for settings activity */
 "SETTINGS_NAV_BAR_TITLE" = "設定";
 
@@ -2009,11 +2243,17 @@
 /* table section header */
 "SETTINGS_NOTIFICATION_CONTENT_TITLE" = "通知欄內容";
 
+/* When the local device discovers a contact has recently installed signal, the app can generates a message encouraging the local user to say hello. Turning this switch off disables that feature. */
+"SETTINGS_NOTIFICATION_EVENTS_CONTACT_JOINED_SIGNAL" = "聯絡已加入的 Signal";
+
+/* table section header */
+"SETTINGS_NOTIFICATION_EVENTS_SECTION_TITLE" = "事件";
+
 /* No comment provided by engineer. */
 "SETTINGS_NOTIFICATIONS" = "通知";
 
 /* Label for 'CallKit privacy' preference */
-"SETTINGS_PRIVACY_CALLKIT_PRIVACY_TITLE" = "顯示撥打者的名字與號碼";
+"SETTINGS_PRIVACY_CALLKIT_PRIVACY_TITLE" = "顯示來電者的名字與號碼";
 
 /* Settings table section footer. */
 "SETTINGS_PRIVACY_CALLKIT_SYSTEM_CALL_LOG_PREFERENCE_DESCRIPTION" = "顯示來電於 iOS 電話中的通話紀錄。";
@@ -2049,7 +2289,7 @@
 "SETTINGS_SCREEN_LOCK_SWITCH_LABEL" = "螢幕鎖定";
 
 /* No comment provided by engineer. */
-"SETTINGS_SCREEN_SECURITY" = "開啟螢幕鎖定功能";
+"SETTINGS_SCREEN_SECURITY" = "開啟程式切換時隱藏畫面功能";
 
 /* No comment provided by engineer. */
 "SETTINGS_SCREEN_SECURITY_DETAIL" = "避免Signal預覽畫面在應用軟體切換時顯示。";
@@ -2083,6 +2323,30 @@
 
 /* Title for the 'two factor auth' section of the privacy settings. */
 "SETTINGS_TWO_FACTOR_AUTH_TITLE" = "註冊鎖定";
+
+/* Label for the 'typing indicators' setting. */
+"SETTINGS_TYPING_INDICATORS" = "打字狀態";
+
+/* An explanation of the 'typing indicators' setting. */
+"SETTINGS_TYPING_INDICATORS_FOOTER" = "查看並分享正在輸入的訊息。這個設定是選擇性及適用於所有對話。";
+
+/* Label for a link to more info about unidentified delivery. */
+"SETTINGS_UNIDENTIFIED_DELIVERY_LEARN_MORE" = "了解更多";
+
+/* table section label */
+"SETTINGS_UNIDENTIFIED_DELIVERY_SECTION_TITLE" = "密封發件人";
+
+/* switch label */
+"SETTINGS_UNIDENTIFIED_DELIVERY_SHOW_INDICATORS" = "顯示指標";
+
+/* table section footer */
+"SETTINGS_UNIDENTIFIED_DELIVERY_SHOW_INDICATORS_FOOTER" = "在使用密封發件人傳遞的訊息上選擇“更多訊息”時顯示狀態圖示。";
+
+/* switch label */
+"SETTINGS_UNIDENTIFIED_DELIVERY_UNRESTRICTED_ACCESS" = "允許任何人";
+
+/* table section footer */
+"SETTINGS_UNIDENTIFIED_DELIVERY_UNRESTRICTED_ACCESS_FOOTER" = "啟用密封發件人對來自非聯絡人及其他人傳來的訊息，將不會對其分享你的個人資訊。";
 
 /* No comment provided by engineer. */
 "SETTINGS_VERSION" = "版本";
@@ -2138,6 +2402,51 @@
 /* Label for the 'no sound' option that allows users to disable sounds for notifications, etc. */
 "SOUNDS_NONE" = "靜音";
 
+/* Preview text shown in notifications and home view for sticker messages. */
+"STICKER_MESSAGE_PREVIEW" = "貼圖訊息";
+
+/* Tooltip indicating that a sticker pack was installed. */
+"STICKER_PACK_INSTALLED_TOOLTIP" = "貼圖包已安裝";
+
+/* Label for a sticker that failed to download. */
+"STICKERS_FAILED_DOWNLOAD" = "貼圖";
+
+/* Label for the 'install sticker pack' button. */
+"STICKERS_INSTALL_BUTTON" = "安裝";
+
+/* Title for the 'available built-in stickers' section of the 'manage stickers' view. */
+"STICKERS_MANAGE_VIEW_AVAILABLE_BUILT_IN_PACKS_SECTION_TITLE" = "Signal 藝術家系列";
+
+/* Title for the 'available known stickers' section of the 'manage stickers' view. */
+"STICKERS_MANAGE_VIEW_AVAILABLE_KNOWN_PACKS_SECTION_TITLE" = "你收到的貼圖";
+
+/* Title for the 'installed stickers' section of the 'manage stickers' view. */
+"STICKERS_MANAGE_VIEW_INSTALLED_PACKS_SECTION_TITLE" = "已裝的貼圖";
+
+/* Label indicating that the user has no installed sticker packs. */
+"STICKERS_MANAGE_VIEW_NO_INSTALLED_PACKS" = "沒有貼圖被安裝";
+
+/* Label indicating that the user has no known sticker packs. */
+"STICKERS_MANAGE_VIEW_NO_KNOWN_PACKS" = "你收到的貼圖訊息將顯示在這裡";
+
+/* Title for the 'manage stickers' view. */
+"STICKERS_MANAGE_VIEW_TITLE" = "貼圖";
+
+/* Default title for sticker packs. */
+"STICKERS_PACK_DEFAULT_TITLE" = "貼圖包";
+
+/* Error message shown when a sticker pack failed to install. */
+"STICKERS_PACK_INSTALL_FAILED" = "貼圖包安裝失敗。";
+
+/* Title of the 'share sticker pack' view. */
+"STICKERS_PACK_SHARE_VIEW_TITLE" = "分享貼圖包";
+
+/* The default title for the 'sticker pack' view. */
+"STICKERS_PACK_VIEW_DEFAULT_TITLE" = "貼圖包";
+
+/* Label for the 'uninstall sticker pack' button. */
+"STICKERS_UNINSTALL_BUTTON" = "移除";
+
 /* Alert body after verifying privacy with {{other user's name}} */
 "SUCCESSFUL_VERIFICATION_DESCRIPTION" = "你與 %@的安全碼相符合。你可以將此聯絡人標記為已驗證。";
 
@@ -2146,9 +2455,6 @@
 
 /* Label for button to verify a user's safety number. */
 "SYSTEM_MESSAGE_ACTION_VERIFY_SAFETY_NUMBER" = "驗證安全碼";
-
-/* No comment provided by engineer. */
-"THEME_SECTION" = "主題";
 
 /* {{number of days}} embedded in strings, e.g. 'Alice updated disappearing messages expiration to {{5 days}}'. See other *_TIME_AMOUNT strings */
 "TIME_AMOUNT_DAYS" = "%@天";
@@ -2201,14 +2507,35 @@
 /* Pressing this button moves an archived thread from the archive back to the inbox */
 "UNARCHIVE_ACTION" = "解除封存";
 
-/* In Inbox view, last message label for thread with corrupted attachment. */
-"UNKNOWN_ATTACHMENT_LABEL" = "未知的附件檔案";
-
 /* Message shown in conversation view that offers to block an unknown user. */
 "UNKNOWN_CONTACT_BLOCK_OFFER" = "此使用者不在你的聯絡資訊名單中，是否要封鎖該使用者？";
 
 /* Displayed if for some reason we can't determine a contacts phone number *or* name */
 "UNKNOWN_CONTACT_NAME" = "未知的聯絡人";
+
+/* Label for unknown countries. */
+"UNKNOWN_COUNTRY_NAME" = "未知的國家";
+
+/* Info message recorded in conversation history when local user receives an unknown message from a linked device and needs to upgrade. */
+"UNKNOWN_PROTOCOL_VERSION_NEED_TO_UPGRADE_FROM_LINKED_DEVICE" = "你的某個裝置傳送了一則無法處理或顯示的訊息，因為它使用了新的 Signal 功能。";
+
+/* Info message recorded in conversation history when local user receives an unknown message and needs to upgrade. Embeds {{user's name or phone number}}. */
+"UNKNOWN_PROTOCOL_VERSION_NEED_TO_UPGRADE_WITH_NAME_FORMAT" = "%@ 發送了一條無法處理或顯示的訊息，因為它使用了新的Signal 功能。";
+
+/* Info message recorded in conversation history when local user receives an unknown message and needs to upgrade. */
+"UNKNOWN_PROTOCOL_VERSION_NEED_TO_UPGRADE_WITHOUT_NAME" = "您收到一條無法處理或顯示的消息，因為它使用了新的 Signal 功能。";
+
+/* Label for button that lets users upgrade the app. */
+"UNKNOWN_PROTOCOL_VERSION_UPGRADE_BUTTON" = "請立即更新 Signal ";
+
+/* Info message recorded in conversation history when local user has received an unknown unknown message from a linked device and has upgraded. */
+"UNKNOWN_PROTOCOL_VERSION_UPGRADE_COMPLETE_FROM_LINKED_DEVICE" = "已更新至最新版本的Signal。你現在可以在裝置上接收此訊息類型。";
+
+/* Info message recorded in conversation history when local user has received an unknown message and has upgraded. Embeds {{user's name or phone number}}. */
+"UNKNOWN_PROTOCOL_VERSION_UPGRADE_COMPLETE_WITH_NAME_FORMAT" = "你現在可以要求 %@ 重新傳送這個訊息因你已經使用最新版本的 Signal。";
+
+/* Info message recorded in conversation history when local user has received an unknown message and has upgraded. */
+"UNKNOWN_PROTOCOL_VERSION_UPGRADE_COMPLETE_WITHOUT_NAME" = "你現在可以要求對方重新傳送這個訊息因你已經使用最新版本的 Signal。";
 
 /* Indicates an unknown or unrecognizable value. */
 "UNKNOWN_VALUE" = "未知";
@@ -2217,7 +2544,7 @@
 "UNLINK_ACTION" = "取消連結";
 
 /* Alert message to confirm unlinking a device */
-"UNLINK_CONFIRMATION_ALERT_BODY" = "取消裝置連結後，將不能再寄出或接收訊息。";
+"UNLINK_CONFIRMATION_ALERT_BODY" = "如果取消連結，本裝置將無法傳送或接收訊息了。";
 
 /* Alert title for confirming device deletion */
 "UNLINK_CONFIRMATION_ALERT_TITLE" = "取消和「%@」的連結？";
@@ -2238,79 +2565,22 @@
 "UNSUPPORTED_FEATURE_ERROR" = "你的裝置不支援這項功能。";
 
 /* Title for alert indicating that group members can't be removed. */
-"UPDATE_GROUP_CANT_REMOVE_MEMBERS_ALERT_MESSAGE" = "你無法移除群組成員。只能讓他們自行退出，或者你可以建立一個不含該成員的新群組。";
+"UPDATE_GROUP_CANT_REMOVE_MEMBERS_ALERT_MESSAGE" = "你無法移除群組組員。只能讓他們自行退出，或者你可以建立一個不含該組員的新群組。";
 
 /* Title for alert indicating that group members can't be removed. */
-"UPDATE_GROUP_CANT_REMOVE_MEMBERS_ALERT_TITLE" = "不允許";
+"UPDATE_GROUP_CANT_REMOVE_MEMBERS_ALERT_TITLE" = "不支援";
 
-/* Description of CallKit to upgrading (existing) users */
-"UPGRADE_EXPERIENCE_CALLKIT_DESCRIPTION" = "iOS通話整合可以幫助你簡單的從鎖定螢幕回應來電。預設會隱藏來電者的訊息，所以訊息也會保密。";
+/* Body text for stickers splash screen */
+"UPGRADE_EXPERIENCE_INTRODUCING_STICKERS_DESCRIPTION" = "當你可以使用貼圖的時候，為什麼要用文字呢？點擊你鍵盤上的這個圖示：";
 
-/* button label shown once when when user upgrades app, in context of call kit */
-"UPGRADE_EXPERIENCE_CALLKIT_PRIVACY_SETTINGS_BUTTON" = "更多訊息可見於隱私權設定。";
-
-/* Header for upgrade experience */
-"UPGRADE_EXPERIENCE_CALLKIT_TITLE" = "滑動來回覆";
-
-/* Description for notification audio customization */
-"UPGRADE_EXPERIENCE_INTRODUCING_NOTIFICATION_AUDIO_DESCRIPTION" = "您現在可以選擇預設和每個會話通知音效，並且通話將使用您為每個系統聯繫人選擇的鈴聲。";
-
-/* button label shown one time, after upgrade */
-"UPGRADE_EXPERIENCE_INTRODUCING_NOTIFICATION_AUDIO_SETTINGS_BUTTON" = "檢視通知設定";
-
-/* Header for upgrade experience */
-"UPGRADE_EXPERIENCE_INTRODUCING_NOTIFICATION_AUDIO_TITLE" = "電話及訊息音效已更新";
-
-/* button label shown one time, after user upgrades app */
-"UPGRADE_EXPERIENCE_INTRODUCING_PROFILES_BUTTON" = "設定你的個人資料";
-
-/* Description of new profile feature for upgrading (existing) users */
-"UPGRADE_EXPERIENCE_INTRODUCING_PROFILES_DESCRIPTION" = "你可以在Signal上分享你的個人資料照片與名稱給朋友。";
-
-/* Header for upgrade experience */
-"UPGRADE_EXPERIENCE_INTRODUCING_PROFILES_TITLE" = "準備好來張特寫了嗎？";
-
-/* Description of new profile feature for upgrading (existing) users */
-"UPGRADE_EXPERIENCE_INTRODUCING_READ_RECEIPTS_DESCRIPTION" = "你現在可以在讀取訊息的同時，擁有查看與分享的選項。";
-
-/* button label shown one time, after upgrade */
-"UPGRADE_EXPERIENCE_INTRODUCING_READ_RECEIPTS_PRIVACY_SETTINGS" = "在隱私權設定中啟用已讀回執的功能。";
-
-/* Header for upgrade experience */
-"UPGRADE_EXPERIENCE_INTRODUCING_READ_RECEIPTS_TITLE" = "啟用已讀回執功能";
-
-/* Description of video calling to upgrading (existing) users */
-"UPGRADE_EXPERIENCE_VIDEO_DESCRIPTION" = "Signal 已支援安全的視訊通話。正常的開始通話，接通後點擊攝影機圖示按鈕，雙方即可看到對方。";
-
-/* Header for upgrade experience */
-"UPGRADE_EXPERIENCE_VIDEO_TITLE" = "現推出安全的視訊通話！";
+/* Header for stickers splash screen */
+"UPGRADE_EXPERIENCE_INTRODUCING_STICKERS_TITLE" = "介紹貼圖";
 
 /* Message for the alert indicating that user should upgrade iOS. */
-"UPGRADE_IOS_ALERT_MESSAGE" = "Signal 需要 iOS 9及以後的版本。請在\"設定\">>\"一般\">>\"軟體更新\"中升級 iOS。";
+"UPGRADE_IOS_ALERT_MESSAGE" = "Signal 將要求 iOS 10 以上才能使用。請在 \"設定\" >> \"一般\" >> \"軟體更新\" 中升級。";
 
 /* Title for the alert indicating that user should upgrade iOS. */
 "UPGRADE_IOS_ALERT_TITLE" = "更新 iOS";
-
-/* No comment provided by engineer. */
-"Upgrading Signal ..." = "更新Signal...";
-
-/* button text for back button on verification view */
-"VERIFICATION_BACK_BUTTON" = "退後";
-
-/* Text field placeholder for SMS verification code during registration */
-"VERIFICATION_CHALLENGE_DEFAULT_TEXT" = "驗證碼";
-
-/* button text during registration to request phone number verification be done via phone call */
-"VERIFICATION_CHALLENGE_SEND_VIA_VOICE" = "改用電話撥給我";
-
-/* button text during registration to request another SMS code be sent */
-"VERIFICATION_CHALLENGE_SUBMIT_AGAIN" = "重新透過簡訊傳送認證碼";
-
-/* button text during registration to submit your SMS verification code. */
-"VERIFICATION_CHALLENGE_SUBMIT_CODE" = "提交";
-
-/* Label indicating the phone number currently being verified. */
-"VERIFICATION_PHONE_NUMBER_FORMAT" = "輸入我們傳送給 %@的認證碼。";
 
 /* Format for info message indicating that the verification state was unverified on this device. Embeds {{user's name or phone number}}. */
 "VERIFICATION_STATE_CHANGE_FORMAT_NOT_VERIFIED_LOCAL" = "你已將 %@標示為未驗證。";

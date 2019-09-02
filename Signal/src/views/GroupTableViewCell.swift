@@ -7,6 +7,14 @@ import SignalServiceKit
 
 @objc class GroupTableViewCell: UITableViewCell {
 
+    // MARK: - Dependencies
+
+    private var contactsManager: OWSContactsManager {
+        return Environment.shared.contactsManager
+    }
+
+    // MARK: -
+
     private let avatarView = AvatarImageView()
     private let nameLabel = UILabel()
     private let subtitleLabel = UILabel()
@@ -22,7 +30,7 @@ import SignalServiceKit
 
         // Layout
 
-        avatarView.autoSetDimension(.width, toSize: CGFloat(kContactCellAvatarSize))
+        avatarView.autoSetDimension(.width, toSize: CGFloat(kStandardAvatarSize))
         avatarView.autoPinToSquareAspectRatio()
 
         let textRows = UIStackView(arrangedSubviews: [nameLabel, subtitleLabel])
@@ -43,7 +51,7 @@ import SignalServiceKit
     }
 
     @objc
-    public func configure(thread: TSGroupThread, contactsManager: OWSContactsManager) {
+    public func configure(thread: TSGroupThread) {
         OWSTableItem.configureCell(self)
 
         if let groupName = thread.groupModel.groupName, !groupName.isEmpty {
@@ -58,7 +66,7 @@ import SignalServiceKit
         }.joined(separator: ", ")
         self.subtitleLabel.text = groupMemberNames
 
-        self.avatarView.image = OWSAvatarBuilder.buildImage(thread: thread, diameter: kContactCellAvatarSize, contactsManager: contactsManager)
+        self.avatarView.image = OWSAvatarBuilder.buildImage(thread: thread, diameter: kStandardAvatarSize)
     }
 
 }

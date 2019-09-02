@@ -1,10 +1,10 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "UIColor+OWS.h"
 #import "OWSMath.h"
-#import <SignalServiceKit/Cryptography.h>
+#import <SignalCoreKit/Cryptography.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -33,7 +33,7 @@ NS_ASSUME_NONNULL_BEGIN
     return [UIColor colorWithRed:81.f / 255.f green:81.f / 255.f blue:81.f / 255.f alpha:1.f];
 }
 
-+ (UIColor *)ows_darkBackgroundColor
++ (UIColor *)ows_darkThemeBackgroundColor
 {
     return [UIColor colorWithRed:35.f / 255.f green:31.f / 255.f blue:32.f / 255.f alpha:1.f];
 }
@@ -119,6 +119,7 @@ NS_ASSUME_NONNULL_BEGIN
         [otherColor getRed:&r1 green:&g1 blue:&b1 alpha:&a1];
     OWSAssertDebug(result);
 
+    alpha = CGFloatClamp01(alpha);
     return [UIColor colorWithRed:CGFloatLerp(r0, r1, alpha)
                            green:CGFloatLerp(g0, g1, alpha)
                             blue:CGFloatLerp(b0, b1, alpha)
@@ -159,6 +160,16 @@ NS_ASSUME_NONNULL_BEGIN
     return [UIColor colorWithRGBHex:0xEEEFEF];
 }
 
++ (UIColor *)ows_gray10Color
+{
+    return [UIColor colorWithRGBHex:0xE1E2E3];
+}
+
++ (UIColor *)ows_gray15Color
+{
+    return [UIColor colorWithRGBHex:0xD5D6D6];
+}
+
 + (UIColor *)ows_gray25Color
 {
     return [UIColor colorWithRGBHex:0xBBBDBE];
@@ -171,12 +182,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIColor *)ows_gray60Color
 {
-    return [UIColor colorWithRGBHex:0x636467];
+    return [UIColor colorWithRGBHex:0x6B6D70];
 }
 
 + (UIColor *)ows_gray75Color
 {
     return [UIColor colorWithRGBHex:0x3D3E44];
+}
+
++ (UIColor *)ows_gray85Color
+{
+    return [UIColor colorWithRGBHex:0x23252A];
 }
 
 + (UIColor *)ows_gray90Color
@@ -194,105 +210,11 @@ NS_ASSUME_NONNULL_BEGIN
     return [UIColor colorWithRGBHex:0x000000];
 }
 
-#pragma mark - Conversation Colors
-
-+ (UIColor *)ows_red700Color
-{
-    return [UIColor colorWithRGBHex:0xd32f2f];
-}
-
-+ (UIColor *)ows_pink600Color
-{
-    return [UIColor colorWithRGBHex:0xd81b60];
-}
-
-+ (UIColor *)ows_purple600Color
-{
-    return [UIColor colorWithRGBHex:0x8e24aa];
-}
-
-+ (UIColor *)ows_indigo600Color
-{
-    return [UIColor colorWithRGBHex:0x3949ab];
-}
-
-+ (UIColor *)ows_blue700Color
-{
-    return [UIColor colorWithRGBHex:0x1976d2];
-}
-
-+ (UIColor *)ows_cyan800Color
-{
-    return [UIColor colorWithRGBHex:0x00838f];
-}
-
-+ (UIColor *)ows_teal700Color
-{
-    return [UIColor colorWithRGBHex:0x00796b];
-}
-
-+ (UIColor *)ows_green800Color
-{
-    return [UIColor colorWithRGBHex:0x2e7d32];
-}
-
-+ (UIColor *)ows_deepOrange900Color
-{
-    return [UIColor colorWithRGBHex:0xbf360c];
-}
-
-+ (UIColor *)ows_grey600Color
-{
-    return [UIColor colorWithRGBHex:0x757575];
-}
-
+// TODO: Remove
 + (UIColor *)ows_darkSkyBlueColor
 {
+    // HEX 0xc2090EA
     return [UIColor colorWithRed:32.f / 255.f green:144.f / 255.f blue:234.f / 255.f alpha:1.f];
-}
-
-+ (NSDictionary<NSString *, UIColor *> *)ows_conversationColorMap
-{
-    static NSDictionary<NSString *, UIColor *> *colorMap;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        colorMap = @{
-            @"red" : self.ows_red700Color,
-            @"pink" : self.ows_pink600Color,
-            @"purple" : self.ows_purple600Color,
-            @"indigo" : self.ows_indigo600Color,
-            @"blue" : self.ows_blue700Color,
-            @"cyan" : self.ows_cyan800Color,
-            @"teal" : self.ows_teal700Color,
-            @"green" : self.ows_green800Color,
-            @"deep_orange" : self.ows_deepOrange900Color,
-            @"grey" : self.ows_grey600Color
-        };
-    });
-
-    return colorMap;
-}
-
-+ (NSArray<NSString *> *)ows_conversationColorNames
-{
-    return self.ows_conversationColorMap.allKeys;
-}
-
-+ (NSArray<UIColor *> *)ows_conversationColors
-{
-    return self.ows_conversationColorMap.allValues;
-}
-
-+ (nullable UIColor *)ows_conversationColorForColorName:(NSString *)colorName
-{
-    OWSAssertDebug(colorName.length > 0);
-
-    return [self.ows_conversationColorMap objectForKey:colorName];
-}
-
-+ (nullable NSString *)ows_conversationColorNameForColor:(UIColor *)color
-{
-    return [self.ows_conversationColorMap allKeysForObject:color].firstObject;
 }
 
 @end

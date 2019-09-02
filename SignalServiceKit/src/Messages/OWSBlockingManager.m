@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSBlockingManager.h"
@@ -13,6 +13,7 @@
 #import "TSContactThread.h"
 #import "TSGroupThread.h"
 #import "YapDatabaseConnection+OWS.h"
+#import <SignalServiceKit/SignalServiceKit-Swift.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -387,11 +388,12 @@ NSString *const kOWSBlockingManager_SyncedBlockedGroupIdsKey = @"kOWSBlockingMan
     OWSBlockedPhoneNumbersMessage *message =
         [[OWSBlockedPhoneNumbersMessage alloc] initWithPhoneNumbers:blockedPhoneNumbers groupIds:blockedGroupIds];
 
-    [self.messageSender enqueueMessage:message
+    [self.messageSender sendMessage:message
         success:^{
             OWSLogInfo(@"Successfully sent blocked phone numbers sync message");
 
-            // Record the last set of "blocked phone numbers" which we successfully synced.
+            // DURABLE CLEANUP - we could replace the custom durability logic in this class
+            // with a durable JobQueue.
             [self saveSyncedBlockListWithPhoneNumbers:blockedPhoneNumbers groupIds:blockedGroupIds];
         }
         failure:^(NSError *error) {
@@ -421,7 +423,7 @@ NSString *const kOWSBlockingManager_SyncedBlockedGroupIdsKey = @"kOWSBlockingMan
 {
     OWSAssertIsOnMainThread();
 
-    [AppReadiness runNowOrWhenAppIsReady:^{
+    [AppReadiness runNowOrWhenAppDidBecomeReady:^{
         @synchronized(self)
         {
             [self syncBlockListIfNecessary];

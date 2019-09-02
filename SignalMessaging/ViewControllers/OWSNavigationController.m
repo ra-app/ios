@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSNavigationController.h"
@@ -24,28 +24,30 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation OWSNavigationController
 
+- (instancetype)init
+{
+    return [self initWithOWSNavbar];
+}
+
 - (instancetype)initWithRootViewController:(UIViewController *)rootViewController
 {
-    self = [self initWithNavigationBarClass:[OWSNavigationBar class] toolbarClass:nil];
+
+    self = [self initWithOWSNavbar];
     if (!self) {
         return self;
     }
-
     [self pushViewController:rootViewController animated:NO];
 
-    if (![self.navigationBar isKindOfClass:[OWSNavigationBar class]]) {
-        OWSFailDebug(@"navigationBar was unexpected class: %@", self.navigationBar);
+    return self;
+}
+
+- (instancetype)initWithOWSNavbar
+{
+    self = [super initWithNavigationBarClass:[OWSNavigationBar class] toolbarClass:nil];
+    if (!self) {
         return self;
     }
-
-    OWSNavigationBar *navbar = (OWSNavigationBar *)self.navigationBar;
-    navbar.navBarLayoutDelegate = self;
-    [self updateLayoutForNavbar:navbar];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(themeDidChange:)
-                                                 name:ThemeDidChangeNotification
-                                               object:nil];
+    [self setupNavbar];
 
     return self;
 }
@@ -54,6 +56,8 @@ NS_ASSUME_NONNULL_BEGIN
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
+
+#pragma mark -
 
 - (void)themeDidChange:(NSNotification *)notification
 {
@@ -71,7 +75,31 @@ NS_ASSUME_NONNULL_BEGIN
     self.interactivePopGestureRecognizer.delegate = self;
 }
 
+- (BOOL)prefersStatusBarHidden
+{
+    if (self.ows_prefersStatusBarHidden) {
+        return self.ows_prefersStatusBarHidden.boolValue;
+    }
+    return [super prefersStatusBarHidden];
+}
+
 #pragma mark - UINavigationBarDelegate
+
+- (void)setupNavbar
+{
+    if (![self.navigationBar isKindOfClass:[OWSNavigationBar class]]) {
+        OWSFailDebug(@"navigationBar was unexpected class: %@", self.navigationBar);
+        return;
+    }
+    OWSNavigationBar *navbar = (OWSNavigationBar *)self.navigationBar;
+    navbar.navBarLayoutDelegate = self;
+    [self updateLayoutForNavbar:navbar];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(themeDidChange:)
+                                                 name:ThemeDidChangeNotification
+                                               object:nil];
+}
 
 // All OWSNavigationController serve as the UINavigationBarDelegate for their navbar.
 // We override shouldPopItem: in order to cancel some back button presses - for example,
@@ -136,11 +164,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (UIStatusBarStyle)preferredStatusBarStyle
 {
-    if (OWSWindowManager.sharedManager.hasCall) {
+    if (!CurrentAppContext().isMainApp) {
+        return super.preferredStatusBarStyle;
+    } else if (OWSWindowManager.sharedManager.hasCall) {
         // Status bar is overlaying the green "call banner"
         return UIStatusBarStyleLightContent;
     } else {
-        return (Theme.isDarkThemeEnabled ? UIStatusBarStyleLightContent : super.preferredStatusBarStyle);
+        UIViewController *presentedViewController = self.presentedViewController;
+        if (presentedViewController) {
+            return presentedViewController.preferredStatusBarStyle;
+        } else {
+            return (Theme.isDarkThemeEnabled ? UIStatusBarStyleLightContent : super.preferredStatusBarStyle);
+        }
     }
 }
 
@@ -151,7 +186,9 @@ NS_ASSUME_NONNULL_BEGIN
     [UIView setAnimationsEnabled:NO];
 
     if (@available(iOS 11.0, *)) {
-        if (OWSWindowManager.sharedManager.hasCall) {
+        if (!CurrentAppContext().isMainApp) {
+            self.additionalSafeAreaInsets = UIEdgeInsetsZero;
+        } else if (OWSWindowManager.sharedManager.hasCall) {
             self.additionalSafeAreaInsets = UIEdgeInsetsMake(20, 0, 0, 0);
         } else {
             self.additionalSafeAreaInsets = UIEdgeInsetsZero;
@@ -170,6 +207,25 @@ NS_ASSUME_NONNULL_BEGIN
         [self.view layoutSubviews];
     }
     [UIView setAnimationsEnabled:YES];
+}
+
+#pragma mark - Orientation
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+    if (self.visibleViewController) {
+        if (@available(iOS 10, *)) {
+            // do nothing
+        } else {
+            // Avoid crash in SAE on iOS9
+            if (!CurrentAppContext().isMainApp) {
+                return UIInterfaceOrientationMaskAllButUpsideDown;
+            }
+        }
+        return self.visibleViewController.supportedInterfaceOrientations;
+    } else {
+        return UIInterfaceOrientationMaskAllButUpsideDown;
+    }
 }
 
 @end

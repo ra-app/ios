@@ -1,8 +1,17 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 NS_ASSUME_NONNULL_BEGIN
+
+static inline BOOL OWSIsDebugBuild()
+{
+#ifdef DEBUG
+    return YES;
+#else
+    return NO;
+#endif
+}
 
 // These are fired whenever the corresponding "main app" or "app extension"
 // notification is fired.
@@ -33,6 +42,8 @@ NSString *NSStringForUIApplicationState(UIApplicationState value);
 @property (nonatomic, readonly) BOOL isRTL;
 
 @property (nonatomic, readonly) BOOL isRunningTests;
+
+@property (nonatomic, readonly) NSDate *buildTime;
 
 @property (atomic, nullable) UIWindow *mainWindow;
 
@@ -87,10 +98,6 @@ NSString *NSStringForUIApplicationState(UIApplicationState value);
 // Returns nil if isMainApp is NO
 @property (nullable, nonatomic, readonly) UIAlertAction *openSystemSettingsAction;
 
-// Should only be called if isMainApp is YES,
-// but should only be necessary to call if isMainApp is YES.
-- (void)doMultiDeviceUpdateWithProfileKey:(OWSAES256Key *)profileKey;
-
 // Should be a NOOP if isMainApp is NO.
 - (void)setNetworkActivityIndicatorVisible:(BOOL)value;
 
@@ -103,6 +110,8 @@ NSString *NSStringForUIApplicationState(UIApplicationState value);
 - (NSString *)appDocumentDirectoryPath;
 
 - (NSString *)appSharedDataDirectoryPath;
+
+- (NSUserDefaults *)appUserDefaults;
 
 @end
 

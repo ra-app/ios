@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
@@ -13,21 +13,36 @@ import SignalServiceKit
 @objc
 public class AccountManager: NSObject {
 
-    let textSecureAccountManager: TSAccountManager
-    let networkManager: TSNetworkManager
-    let preferences: OWSPreferences
+    // MARK: - Dependencies
 
-    var pushManager: PushManager {
-        // dependency injection hack since PushManager has *alot* of dependencies, and would induce a cycle.
-        return PushManager.shared()
+    var profileManager: OWSProfileManager {
+        return OWSProfileManager.shared()
     }
 
-    @objc
-    public required init(textSecureAccountManager: TSAccountManager, preferences: OWSPreferences) {
-        self.networkManager = textSecureAccountManager.networkManager
-        self.textSecureAccountManager = textSecureAccountManager
-        self.preferences = preferences
+    private var networkManager: TSNetworkManager {
+        return SSKEnvironment.shared.networkManager
+    }
 
+    private var preferences: OWSPreferences {
+        return Environment.shared.preferences
+    }
+
+    private var tsAccountManager: TSAccountManager {
+        return TSAccountManager.sharedInstance()
+    }
+
+    private var accountServiceClient: AccountServiceClient {
+        return AccountServiceClient.shared
+    }
+
+    var pushRegistrationManager: PushRegistrationManager {
+        return AppEnvironment.shared.pushRegistrationManager
+    }
+
+    // MARK: -
+
+    @objc
+    public override init() {
         super.init()
 
         SwiftSingletons.register(self)
@@ -35,13 +50,67 @@ public class AccountManager: NSObject {
 
     // MARK: registration
 
-    @objc func register(verificationCode: String,
-                        pin: String?) -> AnyPromise {
-        return AnyPromise(register(verificationCode: verificationCode, pin: pin))
+    @objc
+    func requestAccountVerificationObjC(recipientId: String, captchaToken: String?, isSMS: Bool) -> AnyPromise {
+        return AnyPromise(requestAccountVerification(recipientId: recipientId, captchaToken: captchaToken, isSMS: isSMS))
     }
 
-    func register(verificationCode: String,
-                  pin: String?) -> Promise<Void> {
+    func requestAccountVerification(recipientId: String, captchaToken: String?, isSMS: Bool) -> Promise<Void> {
+        let transport: TSVerificationTransport = isSMS ? .SMS : .voice
+
+        return firstly { () -> Promise<String?> in
+            guard !self.tsAccountManager.isRegistered else {
+                throw OWSErrorMakeAssertionError("requesting account verification when already registered")
+            }
+
+            self.tsAccountManager.phoneNumberAwaitingVerification = recipientId
+
+            return self.getPreauthChallenge(recipientId: recipientId)
+        }.then { (preauthChallenge: String?) -> Promise<Void> in
+            self.accountServiceClient.requestVerificationCode(recipientId: recipientId,
+                                                              preauthChallenge: preauthChallenge,
+                                                              captchaToken: captchaToken,
+                                                              transport: transport)
+        }
+    }
+
+    func getPreauthChallenge(recipientId: String) -> Promise<String?> {
+        return firstly {
+            return self.pushRegistrationManager.requestPushTokens()
+        }.then { (_: String, voipToken: String) -> Promise<String?> in
+            let (pushPromise, pushResolver) = Promise<String>.pending()
+            self.pushRegistrationManager.preauthChallengeResolver = pushResolver
+
+            return self.accountServiceClient.requestPreauthChallenge(recipientId: recipientId, pushToken: voipToken).then { () -> Promise<String?> in
+                let timeout: TimeInterval
+                if OWSIsDebugBuild() && IsUsingProductionService() {
+                    // won't receive production voip in debug build, don't wait for long
+                    timeout = 0.5
+                } else {
+                    timeout = 5
+                }
+
+                return pushPromise.nilTimeout(seconds: timeout)
+            }
+        }.recover { (error: Error) -> Promise<String?> in
+            switch error {
+            case PushRegistrationError.pushNotSupported(description: let description):
+                Logger.warn("Push not supported: \(description)")
+            case let networkError as NetworkManagerError:
+                // not deployed to production yet.
+                if networkError.statusCode == 404, IsUsingProductionService() {
+                    Logger.warn("404 while requesting preauthChallenge: \(error)")
+                } else {
+                    fallthrough
+                }
+            default:
+                owsFailDebug("error while requesting preauthChallenge: \(error)")
+            }
+            return Promise.value(nil)
+        }
+    }
+
+    func register(verificationCode: String, pin: String?) -> Promise<Void> {
         guard verificationCode.count > 0 else {
             let error = OWSErrorWithCodeDescription(.userError,
                                                     NSLocalizedString("REGISTRATION_ERROR_BLANK_VERIFICATION_CODE",
@@ -52,20 +121,20 @@ public class AccountManager: NSObject {
         Logger.debug("registering with signal server")
         let registrationPromise: Promise<Void> = firstly {
             return self.registerForTextSecure(verificationCode: verificationCode, pin: pin)
-        }.then {
-            return self.syncPushTokens()
-        }.recover { (error) -> Promise<Void> in
-            switch error {
-            case PushRegistrationError.pushNotSupported(let description):
-                // This can happen with:
-                // - simulators, none of which support receiving push notifications
-                // - on iOS11 devices which have disabled "Allow Notifications" and disabled "Enable Background Refresh" in the system settings.
-                Logger.info("Recovered push registration error. Registering for manual message fetcher because push not supported: \(description)")
-                return self.registerForManualMessageFetching()
-            default:
-                throw error
+        }.then { _ -> Promise<Void> in
+            return self.syncPushTokens().recover { (error) -> Promise<Void> in
+                switch error {
+                case PushRegistrationError.pushNotSupported(let description):
+                    // This can happen with:
+                    // - simulators, none of which support receiving push notifications
+                    // - on iOS11 devices which have disabled "Allow Notifications" and disabled "Enable Background Refresh" in the system settings.
+                    Logger.info("Recovered push registration error. Registering for manual message fetcher because push not supported: \(description)")
+                    return self.enableManualMessageFetching()
+                default:
+                    throw error
+                }
             }
-        }.then {
+        }.done { (_) -> Void in
             self.completeRegistration()
         }
 
@@ -76,11 +145,11 @@ public class AccountManager: NSObject {
 
     private func registerForTextSecure(verificationCode: String,
                                        pin: String?) -> Promise<Void> {
-        return Promise { fulfill, reject in
-            self.textSecureAccountManager.verifyAccount(withCode: verificationCode,
-                                                        pin: pin,
-                                                        success: fulfill,
-                                                        failure: reject)
+        return Promise { resolver in
+            tsAccountManager.verifyAccount(withCode: verificationCode,
+                                           pin: pin,
+                                           success: { resolver.fulfill(()) },
+                                           failure: resolver.reject)
         }
     }
 
@@ -93,48 +162,56 @@ public class AccountManager: NSObject {
 
     private func completeRegistration() {
         Logger.info("")
-        self.textSecureAccountManager.didRegister()
+        tsAccountManager.didRegister()
     }
 
     // MARK: Message Delivery
 
     func updatePushTokens(pushToken: String, voipToken: String) -> Promise<Void> {
-        return Promise { fulfill, reject in
-            self.textSecureAccountManager.registerForPushNotifications(pushToken: pushToken,
-                                                                       voipToken: voipToken,
-                                                                       success: fulfill,
-                                                                       failure: reject)
+        return Promise { resolver in
+            tsAccountManager.registerForPushNotifications(pushToken: pushToken,
+                                                          voipToken: voipToken,
+                                                          success: { resolver.fulfill(()) },
+                                                          failure: resolver.reject)
         }
     }
 
-    func registerForManualMessageFetching() -> Promise<Void> {
-        return Promise { fulfill, reject in
-            self.textSecureAccountManager.registerForManualMessageFetching(success: fulfill, failure: reject)
-        }
+    func enableManualMessageFetching() -> Promise<Void> {
+        tsAccountManager.setIsManualMessageFetchEnabled(true)
+        return Promise(tsAccountManager.performUpdateAccountAttributes()).asVoid()
     }
 
     // MARK: Turn Server
 
     func getTurnServerInfo() -> Promise<TurnServerInfo> {
-        return Promise { fulfill, reject in
+        return Promise { resolver in
             self.networkManager.makeRequest(OWSRequestFactory.turnServerInfoRequest(),
                                             success: { (_: URLSessionDataTask, responseObject: Any?) in
                                                 guard responseObject != nil else {
-                                                    return reject(OWSErrorMakeUnableToProcessServerResponseError())
+                                                    return resolver.reject(OWSErrorMakeUnableToProcessServerResponseError())
                                                 }
 
                                                 if let responseDictionary = responseObject as? [String: AnyObject] {
                                                     if let turnServerInfo = TurnServerInfo(attributes: responseDictionary) {
-                                                        return fulfill(turnServerInfo)
+                                                        return resolver.fulfill(turnServerInfo)
                                                     }
                                                     Logger.error("unexpected server response:\(responseDictionary)")
                                                 }
-                                                return reject(OWSErrorMakeUnableToProcessServerResponseError())
+                                                return resolver.reject(OWSErrorMakeUnableToProcessServerResponseError())
             },
                                             failure: { (_: URLSessionDataTask, error: Error) in
-                                                    return reject(error)
+                                                    return resolver.reject(error)
             })
         }
     }
+}
 
+extension Promise {
+    func nilTimeout(seconds: TimeInterval) -> Promise<T?> {
+        let timeout: Promise<T?> = after(seconds: seconds).map {
+            return nil
+        }
+
+        return race(self.map { $0 }, timeout)
+    }
 }

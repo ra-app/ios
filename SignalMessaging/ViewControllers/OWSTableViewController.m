@@ -1,9 +1,10 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSTableViewController.h"
 #import "OWSNavigationController.h"
+#import "Theme.h"
 #import "UIColor+OWS.h"
 #import "UIFont+OWS.h"
 #import "UIView+OWS.h"
@@ -169,12 +170,40 @@ const CGFloat kOWSTable_DefaultCellHeight = 45.f;
     return [self itemWithText:text actionBlock:actionBlock accessoryType:UITableViewCellAccessoryDisclosureIndicator];
 }
 
++ (OWSTableItem *)disclosureItemWithText:(NSString *)text
+                 accessibilityIdentifier:(nullable NSString *)accessibilityIdentifier
+                             actionBlock:(nullable OWSTableActionBlock)actionBlock
+{
+    return [self itemWithText:text
+        accessibilityIdentifier:accessibilityIdentifier
+                    actionBlock:actionBlock
+                  accessoryType:UITableViewCellAccessoryDisclosureIndicator];
+}
+
 + (OWSTableItem *)checkmarkItemWithText:(NSString *)text actionBlock:(nullable OWSTableActionBlock)actionBlock
 {
-    return [self itemWithText:text actionBlock:actionBlock accessoryType:UITableViewCellAccessoryCheckmark];
+    return [self checkmarkItemWithText:text accessibilityIdentifier:nil actionBlock:actionBlock];
+}
+
++ (OWSTableItem *)checkmarkItemWithText:(NSString *)text
+                accessibilityIdentifier:(nullable NSString *)accessibilityIdentifier
+                            actionBlock:(nullable OWSTableActionBlock)actionBlock
+{
+    return [self itemWithText:text
+        accessibilityIdentifier:accessibilityIdentifier
+                    actionBlock:actionBlock
+                  accessoryType:UITableViewCellAccessoryCheckmark];
 }
 
 + (OWSTableItem *)itemWithText:(NSString *)text
+                   actionBlock:(nullable OWSTableActionBlock)actionBlock
+                 accessoryType:(UITableViewCellAccessoryType)accessoryType
+{
+    return [self itemWithText:text accessibilityIdentifier:nil actionBlock:actionBlock accessoryType:accessoryType];
+}
+
++ (OWSTableItem *)itemWithText:(NSString *)text
+       accessibilityIdentifier:(nullable NSString *)accessibilityIdentifier
                    actionBlock:(nullable OWSTableActionBlock)actionBlock
                  accessoryType:(UITableViewCellAccessoryType)accessoryType
 {
@@ -187,6 +216,7 @@ const CGFloat kOWSTable_DefaultCellHeight = 45.f;
         UITableViewCell *cell = [OWSTableItem newCell];
         cell.textLabel.text = text;
         cell.accessoryType = accessoryType;
+        cell.accessibilityIdentifier = accessibilityIdentifier;
         return cell;
     };
     return item;
@@ -196,15 +226,35 @@ const CGFloat kOWSTable_DefaultCellHeight = 45.f;
                          customRowHeight:(CGFloat)customRowHeight
                              actionBlock:(nullable OWSTableActionBlock)actionBlock
 {
+    return [self disclosureItemWithText:text
+                accessibilityIdentifier:nil
+                        customRowHeight:customRowHeight
+                            actionBlock:actionBlock];
+}
+
++ (OWSTableItem *)disclosureItemWithText:(NSString *)text
+                 accessibilityIdentifier:(nullable NSString *)accessibilityIdentifier
+                         customRowHeight:(CGFloat)customRowHeight
+                             actionBlock:(nullable OWSTableActionBlock)actionBlock
+{
     OWSAssertDebug(customRowHeight > 0 || customRowHeight == UITableViewAutomaticDimension);
 
-    OWSTableItem *item = [self disclosureItemWithText:text actionBlock:actionBlock];
+    OWSTableItem *item =
+        [self disclosureItemWithText:text accessibilityIdentifier:accessibilityIdentifier actionBlock:actionBlock];
     item.customRowHeight = @(customRowHeight);
     return item;
 }
 
 + (OWSTableItem *)disclosureItemWithText:(NSString *)text
                               detailText:(NSString *)detailText
+                             actionBlock:(nullable OWSTableActionBlock)actionBlock
+{
+    return [self disclosureItemWithText:text detailText:detailText accessibilityIdentifier:nil actionBlock:actionBlock];
+}
+
++ (OWSTableItem *)disclosureItemWithText:(NSString *)text
+                              detailText:(NSString *)detailText
+                 accessibilityIdentifier:(nullable NSString *)accessibilityIdentifier
                              actionBlock:(nullable OWSTableActionBlock)actionBlock
 {
     OWSAssertDebug(text.length > 0);
@@ -219,6 +269,7 @@ const CGFloat kOWSTable_DefaultCellHeight = 45.f;
         cell.textLabel.text = text;
         cell.detailTextLabel.text = detailText;
         [cell setAccessoryType:UITableViewCellAccessoryDisclosureIndicator];
+        cell.accessibilityIdentifier = accessibilityIdentifier;
         return cell;
     };
     return item;
@@ -262,6 +313,13 @@ const CGFloat kOWSTable_DefaultCellHeight = 45.f;
 
 + (OWSTableItem *)actionItemWithText:(NSString *)text actionBlock:(nullable OWSTableActionBlock)actionBlock
 {
+    return [self actionItemWithText:text accessibilityIdentifier:nil actionBlock:actionBlock];
+}
+
++ (OWSTableItem *)actionItemWithText:(NSString *)text
+             accessibilityIdentifier:(nullable NSString *)accessibilityIdentifier
+                         actionBlock:(nullable OWSTableActionBlock)actionBlock
+{
     OWSAssertDebug(text.length > 0);
     OWSAssertDebug(actionBlock);
 
@@ -270,6 +328,7 @@ const CGFloat kOWSTable_DefaultCellHeight = 45.f;
     item.customCellBlock = ^{
         UITableViewCell *cell = [OWSTableItem newCell];
         cell.textLabel.text = text;
+        cell.accessibilityIdentifier = accessibilityIdentifier;
         return cell;
     };
     return item;
@@ -345,14 +404,58 @@ const CGFloat kOWSTable_DefaultCellHeight = 45.f;
     return item;
 }
 
-+ (OWSTableItem *)switchItemWithText:(NSString *)text isOn:(BOOL)isOn target:(id)target selector:(SEL)selector
++ (OWSTableItem *)longDisclosureItemWithText:(NSString *)text actionBlock:(nullable OWSTableActionBlock)actionBlock
 {
-    return [self switchItemWithText:text isOn:isOn isEnabled:YES target:target selector:selector];
+    OWSAssertDebug(text.length > 0);
+
+    OWSTableItem *item = [OWSTableItem new];
+    item.customCellBlock = ^{
+        UITableViewCell *cell = [OWSTableItem newCell];
+
+        cell.textLabel.text = text;
+        cell.textLabel.numberOfLines = 0;
+        cell.textLabel.lineBreakMode = NSLineBreakByWordWrapping;
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+
+        return cell;
+    };
+    item.customRowHeight = @(UITableViewAutomaticDimension);
+    item.actionBlock = actionBlock;
+    return item;
 }
 
 + (OWSTableItem *)switchItemWithText:(NSString *)text
-                                isOn:(BOOL)isOn
-                           isEnabled:(BOOL)isEnabled
+                           isOnBlock:(OWSTableSwitchBlock)isOnBlock
+                              target:(id)target
+                            selector:(SEL)selector
+{
+    return [self switchItemWithText:text
+                          isOnBlock:(OWSTableSwitchBlock)isOnBlock
+                     isEnabledBlock:^{
+                         return YES;
+                     }
+                             target:target
+                           selector:selector];
+}
+
++ (OWSTableItem *)switchItemWithText:(NSString *)text
+                           isOnBlock:(OWSTableSwitchBlock)isOnBlock
+                      isEnabledBlock:(OWSTableSwitchBlock)isEnabledBlock
+                              target:(id)target
+                            selector:(SEL)selector
+{
+    return [self switchItemWithText:text
+            accessibilityIdentifier:nil
+                          isOnBlock:isOnBlock
+                     isEnabledBlock:isEnabledBlock
+                             target:target
+                           selector:selector];
+}
+
++ (OWSTableItem *)switchItemWithText:(NSString *)text
+             accessibilityIdentifier:(nullable NSString *)accessibilityIdentifier
+                           isOnBlock:(OWSTableSwitchBlock)isOnBlock
+                      isEnabledBlock:(OWSTableSwitchBlock)isEnabledBlock
                               target:(id)target
                             selector:(SEL)selector
 {
@@ -368,9 +471,10 @@ const CGFloat kOWSTable_DefaultCellHeight = 45.f;
 
         UISwitch *cellSwitch = [UISwitch new];
         cell.accessoryView = cellSwitch;
-        [cellSwitch setOn:isOn];
+        [cellSwitch setOn:isOnBlock()];
         [cellSwitch addTarget:weakTarget action:selector forControlEvents:UIControlEventValueChanged];
-        cellSwitch.enabled = isEnabled;
+        cellSwitch.enabled = isEnabledBlock();
+        cellSwitch.accessibilityIdentifier = accessibilityIdentifier;
 
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
@@ -471,7 +575,8 @@ NSString *const kOWSTableCellIdentifier = @"kOWSTableCellIdentifier";
         // won't adjust our content insets.
         [self.tableView autoPinToTopLayoutGuideOfViewController:self withInset:0];
         [self.tableView autoPinToBottomLayoutGuideOfViewController:self withInset:0];
-        [self.tableView autoPinWidthToSuperview];
+        [self.tableView autoPinEdgeToSuperviewSafeArea:ALEdgeLeading];
+        [self.tableView autoPinEdgeToSuperviewSafeArea:ALEdgeTrailing];
 
         // We don't need a top or bottom insets, since we pin to the top and bottom layout guides.
         self.automaticallyAdjustsScrollViewInsets = NO;

@@ -1,11 +1,11 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "SignalBaseTest.h"
-#import <Curve25519Kit/Randomness.h>
+#import <SignalCoreKit/NSData+OWS.h>
+#import <SignalCoreKit/Randomness.h>
 #import <SignalServiceKit/ContactsManagerProtocol.h>
-#import <SignalServiceKit/NSData+OWS.h>
 #import <SignalServiceKit/OWSContactsOutputStream.h>
 #import <SignalServiceKit/OWSGroupsOutputStream.h>
 #import <SignalServiceKit/SignalAccount.h>
@@ -60,6 +60,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable UIImage *)avatarImageForCNContactId:(nullable NSString *)contactId
 {
+    return nil;
+}
+
+- (nonnull NSString *)displayNameForPhoneIdentifier:(NSString * _Nullable)recipientId transaction:(nonnull YapDatabaseReadTransaction *)transaction {
     return nil;
 }
 

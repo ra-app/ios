@@ -1,10 +1,12 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSMessageServiceParams.h"
-#import "NSData+OWS.h"
 #import "TSConstants.h"
+#import <SignalCoreKit/NSData+OWS.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 @implementation OWSMessageServiceParams
 
@@ -18,6 +20,7 @@
                       device:(int)deviceId
                      content:(NSData *)content
                     isSilent:(BOOL)isSilent
+                    isOnline:(BOOL)isOnline
               registrationId:(int)registrationId
 {
     self = [super init];
@@ -32,8 +35,11 @@
     _destinationRegistrationId = registrationId;
     _content = [content base64EncodedString];
     _silent = isSilent;
+    _online = isOnline;
 
     return self;
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

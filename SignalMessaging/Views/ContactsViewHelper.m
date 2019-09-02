@@ -1,21 +1,20 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "ContactsViewHelper.h"
 #import "Environment.h"
-#import "NSString+OWS.h"
 #import "UIUtil.h"
+#import <ContactsUI/ContactsUI.h>
 #import <SignalMessaging/OWSProfileManager.h>
 #import <SignalMessaging/SignalMessaging-Swift.h>
 #import <SignalServiceKit/AppContext.h>
 #import <SignalServiceKit/Contact.h>
+#import <SignalServiceKit/NSString+SSK.h>
 #import <SignalServiceKit/OWSBlockingManager.h>
 #import <SignalServiceKit/PhoneNumber.h>
 #import <SignalServiceKit/SignalAccount.h>
 #import <SignalServiceKit/TSAccountManager.h>
-
-@import ContactsUI;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -32,7 +31,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic) BOOL shouldNotifyDelegateOfUpdatedContacts;
 @property (nonatomic) BOOL hasUpdatedContactsAtLeastOnce;
 @property (nonatomic) OWSProfileManager *profileManager;
-@property (nonatomic, readonly) ConversationSearcher *conversationSearcher;
+@property (nonatomic, readonly) FullTextSearcher *fullTextSearcher;
 
 @end
 
@@ -54,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
     _blockListCache = [OWSBlockListCache new];
     [_blockListCache startObservingAndSyncStateWithDelegate:self];
 
-    _conversationSearcher = ConversationSearcher.shared;
+    _fullTextSearcher = FullTextSearcher.shared;
 
     _contactsManager = Environment.shared.contactsManager;
     _profileManager = [OWSProfileManager sharedManager];
@@ -206,7 +205,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSArray<SignalAccount *> *)signalAccountsMatchingSearchString:(NSString *)searchText
 {
-    return [self.conversationSearcher filterSignalAccounts:self.signalAccounts withSearchText:searchText];
+    // Check for matches against "Note to Self".
+    NSMutableArray<SignalAccount *> *signalAccountsToSearch = [self.signalAccounts mutableCopy];
+    SignalAccount *selfAccount = [[SignalAccount alloc] initWithRecipientId:self.localNumber];
+    [signalAccountsToSearch addObject:selfAccount];
+    return [self.fullTextSearcher filterSignalAccounts:signalAccountsToSearch withSearchText:searchText];
 }
 
 - (BOOL)doesContact:(Contact *)contact matchSearchTerm:(NSString *)searchTerm
@@ -258,8 +261,37 @@ NS_ASSUME_NONNULL_BEGIN
     }]];
 }
 
+- (void)warmNonSignalContactsCacheAsync
+{
+    OWSAssertIsOnMainThread();
+    if (self.nonSignalContacts != nil) {
+        return;
+    }
+
+    NSMutableSet<Contact *> *nonSignalContactSet = [NSMutableSet new];
+    __block NSArray<Contact *> *nonSignalContacts;
+
+    [OWSPrimaryStorage.dbReadConnection
+        asyncReadWithBlock:^(YapDatabaseReadTransaction *transaction) {
+            for (Contact *contact in self.contactsManager.allContactsMap.allValues) {
+                NSArray<SignalRecipient *> *signalRecipients = [contact signalRecipientsWithTransaction:transaction];
+                if (signalRecipients.count < 1) {
+                    [nonSignalContactSet addObject:contact];
+                }
+            }
+            nonSignalContacts = [nonSignalContactSet.allObjects
+                sortedArrayUsingComparator:^NSComparisonResult(Contact *_Nonnull left, Contact *_Nonnull right) {
+                    return [left.fullName compare:right.fullName];
+                }];
+        }
+        completionBlock:^{
+            self.nonSignalContacts = nonSignalContacts;
+        }];
+}
+
 - (nullable NSArray<Contact *> *)nonSignalContacts
 {
+    OWSAssertIsOnMainThread();
     if (!_nonSignalContacts) {
         NSMutableSet<Contact *> *nonSignalContacts = [NSMutableSet new];
         [OWSPrimaryStorage.dbReadConnection readWithBlock:^(YapDatabaseReadTransaction *transaction) {
@@ -288,7 +320,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)presentMissingContactAccessAlertControllerFromViewController:(UIViewController *)viewController
 {
-    UIAlertController *alertController = [UIAlertController
+    UIAlertController *alert = [UIAlertController
         alertControllerWithTitle:NSLocalizedString(@"EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_TITLE", comment
                                                    : @"Alert title for when the user has just tried to edit a "
                                                      @"contacts after declining to give Signal contacts "
@@ -299,18 +331,18 @@ NS_ASSUME_NONNULL_BEGIN
                                                      @"permissions")
                   preferredStyle:UIAlertControllerStyleAlert];
 
-    [alertController
-        addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"AB_PERMISSION_MISSING_ACTION_NOT_NOW",
-                                                     @"Button text to dismiss missing contacts permission alert")
-                                           style:UIAlertActionStyleCancel
-                                         handler:nil]];
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"AB_PERMISSION_MISSING_ACTION_NOT_NOW",
+                                                        @"Button text to dismiss missing contacts permission alert")
+                            accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"not_now")
+                                              style:UIAlertActionStyleCancel
+                                            handler:nil]];
 
     UIAlertAction *_Nullable openSystemSettingsAction = CurrentAppContext().openSystemSettingsAction;
     if (openSystemSettingsAction) {
-        [alertController addAction:openSystemSettingsAction];
+        [alert addAction:openSystemSettingsAction];
     }
 
-    [viewController presentViewController:alertController animated:YES completion:nil];
+    [viewController presentAlert:alert];
 }
 
 - (void)presentContactViewControllerForRecipientId:(NSString *)recipientId
@@ -409,6 +441,7 @@ NS_ASSUME_NONNULL_BEGIN
                                          style:UIBarButtonItemStylePlain
                                         target:fromViewController
                                         action:@selector(didFinishEditingContact)];
+    contactViewController.edgesForExtendedLayout = UIRectEdgeNone;
 
     OWSNavigationController *modal = [[OWSNavigationController alloc] initWithRootViewController:contactViewController];
 

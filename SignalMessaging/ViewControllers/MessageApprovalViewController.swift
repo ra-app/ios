@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
@@ -50,8 +50,7 @@ public class MessageApprovalViewController: OWSViewController, UITextViewDelegat
                                                       comment: "Title for the 'message approval' dialog.")
 
         self.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(cancelPressed))
-        sendButton = UIBarButtonItem(title: NSLocalizedString("SEND_BUTTON_TITLE",
-                                                              comment: "Label for the send button in the conversation view."),
+        sendButton = UIBarButtonItem(title: MessageStrings.sendButton,
                                      style: .plain,
                                      target: self,
                                      action: #selector(sendPressed))
@@ -78,7 +77,8 @@ public class MessageApprovalViewController: OWSViewController, UITextViewDelegat
         // Recipient Row
         let recipientRow = createRecipientRow()
         view.addSubview(recipientRow)
-        recipientRow.autoPinWidthToSuperview()
+        recipientRow.autoPinEdge(toSuperviewSafeArea: .leading)
+        recipientRow.autoPinEdge(toSuperviewSafeArea: .trailing)
         recipientRow.autoPin(toTopLayoutGuideOf: self, withInset: 0)
 
         // Text View
@@ -91,7 +91,8 @@ public class MessageApprovalViewController: OWSViewController, UITextViewDelegat
         textView.contentInset = UIEdgeInsets(top: 0.0, left: 0.0, bottom: 0.0, right: 0.0)
         textView.textContainerInset = UIEdgeInsets(top: 10.0, left: 10.0, bottom: 10.0, right: 10.0)
         view.addSubview(textView)
-        textView.autoPinWidthToSuperview()
+        textView.autoPinEdge(toSuperviewSafeArea: .leading)
+        textView.autoPinEdge(toSuperviewSafeArea: .trailing)
         textView.autoPinEdge(.top, to: .bottom, of: recipientRow)
         textView.autoPin(toBottomLayoutGuideOf: self, withInset: 0)
     }

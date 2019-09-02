@@ -1,12 +1,12 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSOutgoingCallMessage.h"
-#import "NSDate+OWS.h"
 #import "ProtoUtils.h"
 #import "SignalRecipient.h"
 #import "TSContactThread.h"
+#import <SignalCoreKit/NSDate+OWS.h>
 #import <SignalServiceKit/SignalServiceKit-Swift.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -15,8 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithThread:(TSThread *)thread
 {
-    // These records aren't saved, but their timestamp is used in the event
-    // of a failing message send to insert the error at the appropriate place.
+    // MJK TODO - safe to remove senderTimestamp
     self = [super initOutgoingMessageWithTimestamp:[NSDate ows_millisecondTimeStamp]
                                           inThread:thread
                                        messageBody:nil
@@ -26,7 +25,10 @@ NS_ASSUME_NONNULL_BEGIN
                                     isVoiceMessage:NO
                                   groupMetaMessage:TSGroupMetaMessageUnspecified
                                      quotedMessage:nil
-                                      contactShare:nil];
+                                      contactShare:nil
+                                       linkPreview:nil
+                                    messageSticker:nil
+                                 isViewOnceMessage:NO];
     if (!self) {
         return self;
     }
@@ -54,18 +56,6 @@ NS_ASSUME_NONNULL_BEGIN
     }
 
     _answerMessage = answerMessage;
-
-    return self;
-}
-
-- (instancetype)initWithThread:(TSThread *)thread iceUpdateMessage:(SSKProtoCallMessageIceUpdate *)iceUpdateMessage
-{
-    self = [self initWithThread:thread];
-    if (!self) {
-        return self;
-    }
-
-    _iceUpdateMessages = @[ iceUpdateMessage ];
 
     return self;
 }
@@ -125,7 +115,7 @@ NS_ASSUME_NONNULL_BEGIN
 {
     OWSAssertDebug(recipient);
 
-    SSKProtoContentBuilder *builder = [SSKProtoContentBuilder new];
+    SSKProtoContentBuilder *builder = [SSKProtoContent builder];
     [builder setCallMessage:[self buildCallMessage:recipient.recipientId]];
     
     NSError *error;
@@ -139,7 +129,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable SSKProtoCallMessage *)buildCallMessage:(NSString *)recipientId
 {
-    SSKProtoCallMessageBuilder *builder = [SSKProtoCallMessageBuilder new];
+    SSKProtoCallMessageBuilder *builder = [SSKProtoCallMessage builder];
 
     if (self.offerMessage) {
         [builder setOffer:self.offerMessage];
@@ -189,7 +179,7 @@ NS_ASSUME_NONNULL_BEGIN
     } else if (self.answerMessage) {
         payload = @"answerMessage";
     } else if (self.iceUpdateMessages.count > 0) {
-        payload = @"iceUpdateMessage";
+        payload = [NSString stringWithFormat:@"iceUpdateMessages: %lu", (unsigned long)self.iceUpdateMessages.count];
     } else if (self.hangupMessage) {
         payload = @"hangupMessage";
     } else if (self.busyMessage) {

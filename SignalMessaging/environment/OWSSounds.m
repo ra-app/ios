@@ -1,12 +1,14 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSSounds.h"
+#import "Environment.h"
 #import "OWSAudioPlayer.h"
 #import <SignalMessaging/SignalMessaging-Swift.h>
 #import <SignalServiceKit/OWSFileSystem.h>
 #import <SignalServiceKit/OWSPrimaryStorage.h>
+#import <SignalServiceKit/SignalServiceKit-Swift.h>
 #import <SignalServiceKit/TSThread.h>
 #import <SignalServiceKit/YapDatabaseConnection+OWS.h>
 #import <YapDatabase/YapDatabase.h>
@@ -23,6 +25,8 @@ NSString *const kOWSSoundsStorageGlobalNotificationKey = @"kOWSSoundsStorageGlob
 - (instancetype)initWithURL:(NSURL *)url NS_DESIGNATED_INITIALIZER;
 
 @end
+
+#pragma mark -
 
 @implementation OWSSystemSound
 
@@ -68,19 +72,9 @@ NSString *const kOWSSoundsStorageGlobalNotificationKey = @"kOWSSoundsStorageGlob
 
 + (instancetype)sharedManager
 {
-    static OWSSounds *instance = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        instance = [[self alloc] initDefault];
-    });
-    return instance;
-}
+    OWSAssertDebug(Environment.shared.sounds);
 
-- (instancetype)initDefault
-{
-    OWSPrimaryStorage *primaryStorage = [OWSPrimaryStorage sharedManager];
-
-    return [self initWithPrimaryStorage:primaryStorage];
+    return Environment.shared.sounds;
 }
 
 - (instancetype)initWithPrimaryStorage:(OWSPrimaryStorage *)primaryStorage
@@ -170,7 +164,7 @@ NSString *const kOWSSoundsStorageGlobalNotificationKey = @"kOWSSoundsStorageGlob
             return @"Call Outboung Ringing";
         case OWSSound_CallBusy:
             return @"Call Busy";
-        case OWSSound_CallFailure:
+        case OWSSound_CallEnded:
             return @"Call Failure";
         case OWSSound_MessageSent:
             return @"Message Sent";
@@ -229,12 +223,12 @@ NSString *const kOWSSoundsStorageGlobalNotificationKey = @"kOWSSoundsStorageGlob
 
             // Calls
         case OWSSound_CallConnecting:
-            return @"sonarping.mp3";
+            return @"ringback_tone_ansi.caf";
         case OWSSound_CallOutboundRinging:
             return @"ringback_tone_ansi.caf";
         case OWSSound_CallBusy:
             return @"busy_tone_ansi.caf";
-        case OWSSound_CallFailure:
+        case OWSSound_CallEnded:
             return @"end_call_tone_cept.caf";
         case OWSSound_MessageSent:
             return @"message_sent.aiff";
@@ -383,18 +377,13 @@ NSString *const kOWSSoundsStorageGlobalNotificationKey = @"kOWSSoundsStorageGlob
     return (sound == OWSSound_CallConnecting || sound == OWSSound_CallOutboundRinging);
 }
 
-+ (nullable OWSAudioPlayer *)audioPlayerForSound:(OWSSound)sound
++ (nullable OWSAudioPlayer *)audioPlayerForSound:(OWSSound)sound audioBehavior:(OWSAudioBehavior)audioBehavior
 {
-    return [self audioPlayerForSound:sound quiet:NO];
-}
-
-+ (nullable OWSAudioPlayer *)audioPlayerForSound:(OWSSound)sound quiet:(BOOL)quiet
-{
-    NSURL *_Nullable soundURL = [OWSSounds soundURLForSound:sound quiet:(BOOL)quiet];
+    NSURL *_Nullable soundURL = [OWSSounds soundURLForSound:sound quiet:NO];
     if (!soundURL) {
         return nil;
     }
-    OWSAudioPlayer *player = [[OWSAudioPlayer alloc] initWithMediaUrl:soundURL];
+    OWSAudioPlayer *player = [[OWSAudioPlayer alloc] initWithMediaUrl:soundURL audioBehavior:audioBehavior];
     if ([self shouldAudioPlayerLoopForSound:sound]) {
         player.isLooping = YES;
     }

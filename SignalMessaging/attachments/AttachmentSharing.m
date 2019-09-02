@@ -4,13 +4,26 @@
 
 #import "AttachmentSharing.h"
 #import "UIUtil.h"
+#import <SignalCoreKit/Threading.h>
 #import <SignalServiceKit/AppContext.h>
 #import <SignalServiceKit/TSAttachmentStream.h>
-#import <SignalServiceKit/Threading.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @implementation AttachmentSharing
+
++ (void)showShareUIForAttachments:(NSArray<TSAttachmentStream *> *)attachmentStreams
+                       completion:(nullable AttachmentSharingCompletion)completion
+{
+    OWSAssertDebug(attachmentStreams.count > 0);
+
+    NSMutableArray<NSURL *> *urls = [NSMutableArray new];
+    for (TSAttachmentStream *attachmentStream in attachmentStreams) {
+        [urls addObject:attachmentStream.originalMediaURL];
+    }
+
+    [AttachmentSharing showShareUIForActivityItems:urls completion:completion];
+}
 
 + (void)showShareUIForAttachment:(TSAttachmentStream *)stream
 {
@@ -27,10 +40,18 @@ NS_ASSUME_NONNULL_BEGIN
 + (void)showShareUIForURL:(NSURL *)url completion:(nullable AttachmentSharingCompletion)completion
 {
     OWSAssertDebug(url);
-
+    
     [AttachmentSharing showShareUIForActivityItems:@[
-        url,
-    ]
+                                                     url,
+                                                     ]
+                                        completion:completion];
+}
+
++ (void)showShareUIForURLs:(NSArray<NSURL *> *)urls completion:(nullable AttachmentSharingCompletion)completion
+{
+    OWSAssertDebug(urls.count > 0);
+    
+    [AttachmentSharing showShareUIForActivityItems:urls
                                         completion:completion];
 }
 

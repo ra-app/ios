@@ -1,16 +1,18 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "MainAppContext.h"
-#import "RAAPP-Swift.h"
+#import "Signal-Swift.h"
+#import <SignalCoreKit/Threading.h>
 #import <SignalMessaging/Environment.h>
 #import <SignalMessaging/OWSProfileManager.h>
 #import <SignalMessaging/SignalMessaging-Swift.h>
 #import <SignalServiceKit/OWSIdentityManager.h>
-#import <SignalServiceKit/Threading.h>
 
 NS_ASSUME_NONNULL_BEGIN
+
+NSString *const ReportedApplicationStateDidChangeNotification = @"ReportedApplicationStateDidChangeNotification";
 
 @interface MainAppContext ()
 
@@ -26,6 +28,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @synthesize mainWindow = _mainWindow;
 @synthesize appLaunchTime = _appLaunchTime;
+@synthesize buildTime = _buildTime;
 
 - (instancetype)init
 {
@@ -73,6 +76,20 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 #pragma mark - Notifications
+
+- (void)setReportedApplicationState:(UIApplicationState)reportedApplicationState
+{
+    OWSAssertIsOnMainThread();
+
+    if (_reportedApplicationState == reportedApplicationState) {
+        return;
+    }
+    _reportedApplicationState = reportedApplicationState;
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:ReportedApplicationStateDidChangeNotification
+                                                        object:nil
+                                                      userInfo:nil];
+}
 
 - (void)applicationWillEnterForeground:(NSNotification *)notification
 {
@@ -214,25 +231,36 @@ NS_ASSUME_NONNULL_BEGIN
 - (nullable UIAlertAction *)openSystemSettingsAction
 {
     return [UIAlertAction actionWithTitle:CommonStrings.openSettingsButton
+                  accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"system_settings")
                                     style:UIAlertActionStyleDefault
                                   handler:^(UIAlertAction *_Nonnull action) {
                                       [UIApplication.sharedApplication openSystemSettings];
                                   }];
 }
 
-- (void)doMultiDeviceUpdateWithProfileKey:(OWSAES256Key *)profileKey
-{
-    OWSAssertDebug(profileKey);
-
-    [MultiDeviceProfileKeyUpdateJob runWithProfileKey:profileKey
-                                      identityManager:OWSIdentityManager.sharedManager
-                                        messageSender:SSKEnvironment.shared.messageSender
-                                       profileManager:OWSProfileManager.sharedManager];
-}
-
 - (BOOL)isRunningTests
 {
     return getenv("runningTests_dontStartApp");
+}
+
+- (NSDate *)buildTime
+{
+    if (!_buildTime) {
+        NSInteger buildTimestamp =
+        [[[NSBundle mainBundle] objectForInfoDictionaryKey:@"BuildDetails"][@"Timestamp"] integerValue];
+
+        if (buildTimestamp == 0) {
+            // Production builds should _always_ expire, ensure that here.
+            OWSAssert(OWSIsDebugBuild());
+
+            OWSLogDebug(@"No build timestamp, assuming app never expires.");
+            _buildTime = [NSDate distantFuture];
+        } else {
+            _buildTime = [NSDate dateWithTimeIntervalSince1970:buildTimestamp];
+        }
+    }
+
+    return _buildTime;
 }
 
 - (void)setNetworkActivityIndicatorVisible:(BOOL)value
@@ -301,6 +329,11 @@ NS_ASSUME_NONNULL_BEGIN
     NSURL *groupContainerDirectoryURL =
         [[NSFileManager defaultManager] containerURLForSecurityApplicationGroupIdentifier:SignalApplicationGroup];
     return [groupContainerDirectoryURL path];
+}
+
+- (NSUserDefaults *)appUserDefaults
+{
+    return [[NSUserDefaults alloc] initWithSuiteName:SignalApplicationGroup];
 }
 
 @end

@@ -1,16 +1,19 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "TSPreKeyManager.h"
 #import "AppContext.h"
-#import "NSDate+OWS.h"
 #import "NSURLSessionDataTask+StatusCode.h"
 #import "OWSIdentityManager.h"
-#import "OWSPrimaryStorage+SignedPreKeyStore.h"
+#import "SSKEnvironment.h"
+#import "SSKSignedPreKeyStore.h"
 #import "TSNetworkManager.h"
 #import "TSStorageHeaders.h"
+#import <SignalCoreKit/NSDate+OWS.h>
 #import <SignalServiceKit/SignalServiceKit-Swift.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 // Time before deletion of signed prekeys (measured in seconds)
 #define kSignedPreKeysDeletionTime (7 * kDayInterval)
@@ -36,38 +39,53 @@ static const NSUInteger kMaxPrekeyUpdateFailureCount = 5;
 
 @implementation TSPreKeyManager
 
+#pragma mark - Dependencies
+
++ (TSAccountManager *)tsAccountManager
+{
+    OWSAssertDebug(SSKEnvironment.shared.tsAccountManager);
+    
+    return SSKEnvironment.shared.tsAccountManager;
+}
+
++ (SSKSignedPreKeyStore *)signedPreKeyStore
+{
+    return SSKEnvironment.shared.signedPreKeyStore;
+}
+
 #pragma mark - State Tracking
 
 + (BOOL)isAppLockedDueToPreKeyUpdateFailures
 {
+    // PERF TODO use a single transaction / take in a transaction
+
     // Only disable message sending if we have failed more than N times
     // over a period of at least M days.
-    OWSPrimaryStorage *primaryStorage = [OWSPrimaryStorage sharedManager];
-    return ([primaryStorage prekeyUpdateFailureCount] >= kMaxPrekeyUpdateFailureCount &&
-        [primaryStorage firstPrekeyUpdateFailureDate] != nil
-        && fabs([[primaryStorage firstPrekeyUpdateFailureDate] timeIntervalSinceNow])
+    return ([self.signedPreKeyStore prekeyUpdateFailureCount] >= kMaxPrekeyUpdateFailureCount &&
+        [self.signedPreKeyStore firstPrekeyUpdateFailureDate] != nil
+        && fabs([[self.signedPreKeyStore firstPrekeyUpdateFailureDate] timeIntervalSinceNow])
             >= kSignedPreKeyUpdateFailureMaxFailureDuration);
 }
 
 + (void)incrementPreKeyUpdateFailureCount
 {
+    // PERF TODO use a single transaction / take in a transaction
+
     // Record a prekey update failure.
-    OWSPrimaryStorage *primaryStorage = [OWSPrimaryStorage sharedManager];
-    int failureCount = [primaryStorage incrementPrekeyUpdateFailureCount];
-    OWSLogInfo(@"new failureCount: %d", failureCount);
-    
-    if (failureCount == 1 || ![primaryStorage firstPrekeyUpdateFailureDate]) {
+    NSInteger failureCount = [self.signedPreKeyStore incrementPrekeyUpdateFailureCount];
+    OWSLogInfo(@"new failureCount: %ld", (unsigned long)failureCount);
+
+    if (failureCount == 1 || ![self.signedPreKeyStore firstPrekeyUpdateFailureDate]) {
         // If this is the "first" failure, record the timestamp of that
         // failure.
-        [primaryStorage setFirstPrekeyUpdateFailureDate:[NSDate new]];
+        [self.signedPreKeyStore setFirstPrekeyUpdateFailureDate:[NSDate new]];
     }
 }
 
 + (void)clearPreKeyUpdateFailureCount
 {
-    OWSPrimaryStorage *primaryStorage = [OWSPrimaryStorage sharedManager];
-    [primaryStorage clearFirstPrekeyUpdateFailureDate];
-    [primaryStorage clearPrekeyUpdateFailureCount];
+    [self.signedPreKeyStore clearFirstPrekeyUpdateFailureDate];
+    [self.signedPreKeyStore clearPrekeyUpdateFailureCount];
 }
 
 + (void)refreshPreKeysDidSucceed
@@ -97,12 +115,10 @@ static const NSUInteger kMaxPrekeyUpdateFailureCount = 5;
 
 + (void)checkPreKeysIfNecessary
 {
-    if (!CurrentAppContext().isMainApp) {
+    if (!CurrentAppContext().isMainAppAndActive) {
         return;
     }
-    OWSAssertDebug(CurrentAppContext().isMainAppAndActive);
-
-    if (!TSAccountManager.isRegistered) {
+    if (!self.tsAccountManager.isRegisteredAndReady) {
         return;
     }
 
@@ -123,9 +139,8 @@ static const NSUInteger kMaxPrekeyUpdateFailureCount = 5;
 
     __weak SSKRotateSignedPreKeyOperation *weakRotationOperation = rotationOperation;
     NSBlockOperation *checkIfRotationNecessaryOperation = [NSBlockOperation blockOperationWithBlock:^{
-        OWSPrimaryStorage *primaryStorage = [OWSPrimaryStorage sharedManager];
-        SignedPreKeyRecord *_Nullable signedPreKey = [primaryStorage currentSignedPreKey];
-        
+        SignedPreKeyRecord *_Nullable signedPreKey = [self.signedPreKeyStore currentSignedPreKey];
+
         BOOL shouldCheck
         = !signedPreKey || fabs(signedPreKey.generatedAt.timeIntervalSinceNow) >= kSignedPreKeyRotationTime;
         if (!shouldCheck) {
@@ -146,6 +161,8 @@ static const NSUInteger kMaxPrekeyUpdateFailureCount = 5;
 
 + (void)createPreKeysWithSuccess:(void (^)(void))successHandler failure:(void (^)(NSError *error))failureHandler
 {
+    OWSAssertDebug(!self.tsAccountManager.isRegisteredAndReady);
+
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         SSKCreatePreKeysOperation *operation = [SSKCreatePreKeysOperation new];
         [self.operationQueue addOperations:@[ operation ] waitUntilFinished:YES];
@@ -165,6 +182,8 @@ static const NSUInteger kMaxPrekeyUpdateFailureCount = 5;
 
 + (void)rotateSignedPreKeyWithSuccess:(void (^)(void))successHandler failure:(void (^)(NSError *error))failureHandler
 {
+    OWSAssertDebug(self.tsAccountManager.isRegisteredAndReady);
+
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
         SSKRotateSignedPreKeyOperation *operation = [SSKRotateSignedPreKeyOperation new];
         [self.operationQueue addOperations:@[ operation ] waitUntilFinished:YES];
@@ -187,14 +206,16 @@ static const NSUInteger kMaxPrekeyUpdateFailureCount = 5;
     if (!CurrentAppContext().isMainApp) {
         return;
     }
+    if (!self.tsAccountManager.isRegisteredAndReady) {
+        return;
+    }
 
     SSKRefreshPreKeysOperation *operation = [SSKRefreshPreKeysOperation new];
     [self.operationQueue addOperation:operation];
 }
 
 + (void)clearSignedPreKeyRecords {
-    OWSPrimaryStorage *primaryStorage = [OWSPrimaryStorage sharedManager];
-    NSNumber *_Nullable currentSignedPrekeyId = [primaryStorage currentSignedPrekeyId];
+    NSNumber *_Nullable currentSignedPrekeyId = [self.signedPreKeyStore currentSignedPrekeyId];
     [self clearSignedPreKeyRecordsWithKeyId:currentSignedPrekeyId];
 }
 
@@ -207,12 +228,11 @@ static const NSUInteger kMaxPrekeyUpdateFailureCount = 5;
         return;
     }
 
-    OWSPrimaryStorage *primaryStorage = [OWSPrimaryStorage sharedManager];
-    SignedPreKeyRecord *currentRecord = [primaryStorage loadSignedPrekeyOrNil:keyId.intValue];
+    SignedPreKeyRecord *_Nullable currentRecord = [self.signedPreKeyStore loadSignedPreKey:keyId.intValue];
     if (!currentRecord) {
         OWSFailDebug(@"Couldn't find signed prekey for id: %@", keyId);
     }
-    NSArray *allSignedPrekeys = [primaryStorage loadSignedPreKeys];
+    NSArray *allSignedPrekeys = [self.signedPreKeyStore loadSignedPreKeys];
     NSArray *oldSignedPrekeys
         = (currentRecord != nil ? [self removeCurrentRecord:currentRecord fromRecords:allSignedPrekeys]
                                 : allSignedPrekeys);
@@ -265,7 +285,7 @@ static const NSUInteger kMaxPrekeyUpdateFailureCount = 5;
         }
 
         oldSignedPreKeyCount--;
-        [primaryStorage removeSignedPreKey:signedPrekey.Id];
+        [self.signedPreKeyStore removeSignedPreKey:signedPrekey.Id];
     }
 }
 
@@ -282,3 +302,5 @@ static const NSUInteger kMaxPrekeyUpdateFailureCount = 5;
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

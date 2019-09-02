@@ -1,21 +1,51 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSRequestFactory.h"
-#import "NSData+OWS.h"
 #import "OWS2FAManager.h"
 #import "OWSDevice.h"
-#import "TSAttributes.h"
+#import "ProfileManagerProtocol.h"
+#import "RemoteAttestation.h"
+#import "SSKEnvironment.h"
+#import "TSAccountManager.h"
 #import "TSConstants.h"
 #import "TSRequest.h"
 #import <AxolotlKit/NSData+keyVersionByte.h>
 #import <AxolotlKit/SignedPreKeyRecord.h>
 #import <Curve25519Kit/Curve25519.h>
+#import <SignalCoreKit/Cryptography.h>
+#import <SignalCoreKit/NSData+OWS.h>
+#import <SignalMetadataKit/SignalMetadataKit-Swift.h>
+#import <SignalServiceKit/SignalServiceKit-Swift.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @implementation OWSRequestFactory
+
+#pragma mark - Dependencies
+
++ (TSAccountManager *)tsAccountManager
+{
+    return TSAccountManager.sharedInstance;
+}
+
++ (OWS2FAManager *)ows2FAManager
+{
+    return OWS2FAManager.sharedManager;
+}
+
++ (id<ProfileManagerProtocol>)profileManager
+{
+    return SSKEnvironment.shared.profileManager;
+}
+
++ (id<OWSUDManager>)udManager
+{
+    return SSKEnvironment.shared.udManager;
+}
+
+#pragma mark -
 
 + (TSRequest *)enable2FARequestWithPin:(NSString *)pin
 {
@@ -33,12 +63,37 @@ NS_ASSUME_NONNULL_BEGIN
     return [TSRequest requestWithUrl:[NSURL URLWithString:textSecure2FAAPI] method:@"DELETE" parameters:@{}];
 }
 
++ (TSRequest *)enableRegistrationLockV2RequestWithToken:(NSString *)token
+{
+    OWSAssertDebug(token.length > 0);
+
+    return [TSRequest requestWithUrl:[NSURL URLWithString:textSecureRegistrationLockV2API]
+                              method:@"PUT"
+                          parameters:@{
+                                       @"registrationLock" : token,
+                                       }];
+}
+
++ (TSRequest *)disableRegistrationLockV2Request
+{
+    return [TSRequest requestWithUrl:[NSURL URLWithString:textSecureRegistrationLockV2API] method:@"DELETE" parameters:@{}];
+}
+
 + (TSRequest *)acknowledgeMessageDeliveryRequestWithSource:(NSString *)source timestamp:(UInt64)timestamp
 {
     OWSAssertDebug(source.length > 0);
     OWSAssertDebug(timestamp > 0);
 
     NSString *path = [NSString stringWithFormat:@"v1/messages/%@/%llu", source, timestamp];
+
+    return [TSRequest requestWithUrl:[NSURL URLWithString:path] method:@"DELETE" parameters:@{}];
+}
+
++ (TSRequest *)acknowledgeMessageDeliveryRequestWithServerGuid:(NSString *)serverGuid
+{
+    OWSAssertDebug(serverGuid.length > 0);
+
+    NSString *path = [NSString stringWithFormat:@"v1/messages/uuid/%@", serverGuid];
 
     return [TSRequest requestWithUrl:[NSURL URLWithString:path] method:@"DELETE" parameters:@{}];
 }
@@ -84,11 +139,16 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 + (TSRequest *)getProfileRequestWithRecipientId:(NSString *)recipientId
+                                    udAccessKey:(nullable SMKUDAccessKey *)udAccessKey
 {
     OWSAssertDebug(recipientId.length > 0);
 
     NSString *path = [NSString stringWithFormat:textSecureProfileAPIFormat, recipientId];
-    return [TSRequest requestWithUrl:[NSURL URLWithString:path] method:@"GET" parameters:@{}];
+    TSRequest *request = [TSRequest requestWithUrl:[NSURL URLWithString:path] method:@"GET" parameters:@{}];
+    if (udAccessKey != nil) {
+        [self useUDAuthWithRequest:request accessKey:udAccessKey];
+    }
+    return request;
 }
 
 + (TSRequest *)turnServerInfoRequest
@@ -98,8 +158,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (TSRequest *)allocAttachmentRequest
 {
-    NSString *path = [NSString stringWithFormat:@"%@", textSecureAttachmentsAPI];
-    return [TSRequest requestWithUrl:[NSURL URLWithString:path] method:@"GET" parameters:@{}];
+    return [TSRequest requestWithUrl:[NSURL URLWithString:@"v2/attachments/form/upload"] method:@"GET" parameters:@{}];
 }
 
 + (TSRequest *)attachmentRequestWithAttachmentId:(UInt64)attachmentId
@@ -141,13 +200,20 @@ NS_ASSUME_NONNULL_BEGIN
     return [TSRequest requestWithUrl:[NSURL URLWithString:path] method:@"GET" parameters:@{}];
 }
 
-+ (TSRequest *)recipientPrekeyRequestWithRecipient:(NSString *)recipientNumber deviceId:(NSString *)deviceId
++ (TSRequest *)recipientPrekeyRequestWithRecipient:(NSString *)recipientNumber
+                                          deviceId:(NSString *)deviceId
+                                       udAccessKey:(nullable SMKUDAccessKey *)udAccessKey
 {
     OWSAssertDebug(recipientNumber.length > 0);
     OWSAssertDebug(deviceId.length > 0);
 
     NSString *path = [NSString stringWithFormat:@"%@/%@/%@", textSecureKeysAPI, recipientNumber, deviceId];
-    return [TSRequest requestWithUrl:[NSURL URLWithString:path] method:@"GET" parameters:@{}];
+
+    TSRequest *request = [TSRequest requestWithUrl:[NSURL URLWithString:path] method:@"GET" parameters:@{}];
+    if (udAccessKey != nil) {
+        [self useUDAuthWithRequest:request accessKey:udAccessKey];
+    }
+    return request;
 }
 
 + (TSRequest *)registerForPushRequestWithPushIdentifier:(NSString *)identifier voipIdentifier:(NSString *)voipId
@@ -165,15 +231,17 @@ NS_ASSUME_NONNULL_BEGIN
                           }];
 }
 
-+ (TSRequest *)updateAttributesRequestWithManualMessageFetching:(BOOL)enableManualMessageFetching
++ (TSRequest *)updateAttributesRequest
 {
-    NSString *path = [textSecureAccountsAPI stringByAppendingString:textSecureAttributesAPI];
-    NSString *_Nullable pin = [OWS2FAManager.sharedManager pinCode];
-    return [TSRequest
-        requestWithUrl:[NSURL URLWithString:path]
-                method:@"PUT"
-            parameters:[TSAttributes attributesFromStorageWithManualMessageFetching:enableManualMessageFetching
-                                                                                pin:pin]];
+    NSString *authKey = self.tsAccountManager.storedServerAuthToken;
+    OWSAssertDebug(authKey.length > 0);
+    NSString *_Nullable pin = [self.ows2FAManager pinCode];
+
+    NSDictionary<NSString *, id> *accountAttributes = [self accountAttributesWithPin:pin authKey:authKey];
+
+    return [TSRequest requestWithUrl:[NSURL URLWithString:textSecureAttributesAPI]
+                              method:@"PUT"
+                          parameters:accountAttributes];
 }
 
 + (TSRequest *)unregisterAccountRequest
@@ -182,17 +250,74 @@ NS_ASSUME_NONNULL_BEGIN
     return [TSRequest requestWithUrl:[NSURL URLWithString:path] method:@"DELETE" parameters:@{}];
 }
 
++ (TSRequest *)requestPreauthChallengeRequestWithRecipientId:(NSString *)recipientId pushToken:(NSString *)pushToken
+{
+    OWSAssertDebug(recipientId.length > 0);
+    OWSAssertDebug(pushToken.length > 0);
+
+    NSString *path = [NSString stringWithFormat:@"v1/accounts/apn/preauth/%@/%@", pushToken, recipientId];
+    NSURL *url = [NSURL URLWithString:path];
+
+    return [TSRequest requestWithUrl:url method:@"GET" parameters:@{}];
+}
+
 + (TSRequest *)requestVerificationCodeRequestWithPhoneNumber:(NSString *)phoneNumber
+                                            preauthChallenge:(nullable NSString *)preauthChallenge
+                                                captchaToken:(nullable NSString *)captchaToken
                                                    transport:(TSVerificationTransport)transport
 {
     OWSAssertDebug(phoneNumber.length > 0);
-    NSString *path = [NSString stringWithFormat:@"%@/%@/code/%@?client=ios",
-                               textSecureAccountsAPI,
-                               [self stringForTransport:transport],
-                               phoneNumber];
-    TSRequest *request = [TSRequest requestWithUrl:[NSURL URLWithString:path] method:@"GET" parameters:@{}];
+
+    NSMutableArray<NSURLQueryItem *> *queryItems = [NSMutableArray new];
+    [queryItems addObject:[NSURLQueryItem queryItemWithName:@"client" value:@"ios"]];
+
+    if (captchaToken.length > 0) {
+        [queryItems addObject:[NSURLQueryItem queryItemWithName:@"captcha" value:captchaToken]];
+    }
+
+    if (preauthChallenge.length > 0) {
+        [queryItems addObject:[NSURLQueryItem queryItemWithName:@"challenge" value:preauthChallenge]];
+    }
+
+    NSString *path = [NSString
+        stringWithFormat:@"%@/%@/code/%@", textSecureAccountsAPI, [self stringForTransport:transport], phoneNumber];
+
+    NSURLComponents *components = [[NSURLComponents alloc] initWithString:path];
+    components.queryItems = queryItems;
+
+    TSRequest *request = [TSRequest requestWithUrl:components.URL method:@"GET" parameters:@{}];
     request.shouldHaveAuthorizationHeaders = NO;
+
+    if (transport == TSVerificationTransportVoice) {
+        NSString *_Nullable localizationHeader = [self voiceCodeLocalizationHeader];
+        if (localizationHeader.length > 0) {
+            [request setValue:localizationHeader forHTTPHeaderField:@"Accept-Language"];
+        }
+    }
+
     return request;
+}
+
++ (nullable NSString *)voiceCodeLocalizationHeader
+{
+    NSLocale *locale = [NSLocale currentLocale];
+    NSString *_Nullable languageCode = [locale objectForKey:NSLocaleLanguageCode];
+    NSString *_Nullable countryCode = [locale objectForKey:NSLocaleCountryCode];
+
+    if (!languageCode) {
+        return nil;
+    }
+
+    OWSAssertDebug([languageCode rangeOfString:@"-"].location == NSNotFound);
+
+    if (!countryCode) {
+        // In the absence of a country code, just send a language code.
+        return languageCode;
+    }
+
+    OWSAssertDebug(languageCode.length == 2);
+    OWSAssertDebug(countryCode.length == 2);
+    return [NSString stringWithFormat:@"%@-%@", languageCode, countryCode];
 }
 
 + (NSString *)stringForTransport:(TSVerificationTransport)transport
@@ -205,9 +330,72 @@ NS_ASSUME_NONNULL_BEGIN
     }
 }
 
++ (TSRequest *)verifyCodeRequestWithVerificationCode:(NSString *)verificationCode
+                                           forNumber:(NSString *)phoneNumber
+                                                 pin:(nullable NSString *)pin
+                                             authKey:(NSString *)authKey
+{
+    OWSAssertDebug(verificationCode.length > 0);
+    OWSAssertDebug(phoneNumber.length > 0);
+    OWSAssertDebug(authKey.length > 0);
+
+    NSString *path = [NSString stringWithFormat:@"%@/code/%@", textSecureAccountsAPI, verificationCode];
+
+    NSMutableDictionary<NSString *, id> *accountAttributes =
+        [[self accountAttributesWithPin:pin authKey:authKey] mutableCopy];
+    [accountAttributes removeObjectForKey:@"AuthKey"];
+
+    TSRequest *request =
+        [TSRequest requestWithUrl:[NSURL URLWithString:path] method:@"PUT" parameters:accountAttributes];
+    // The "verify code" request handles auth differently.
+    request.authUsername = phoneNumber;
+    request.authPassword = authKey;
+    return request;
+}
+
++ (NSDictionary<NSString *, id> *)accountAttributesWithPin:(nullable NSString *)pin
+                                                   authKey:(NSString *)authKey
+{
+    OWSAssertDebug(authKey.length > 0);
+    uint32_t registrationId = [self.tsAccountManager getOrGenerateRegistrationId];
+
+    BOOL isManualMessageFetchEnabled = self.tsAccountManager.isManualMessageFetchEnabled;
+
+    OWSAES256Key *profileKey = [self.profileManager localProfileKey];
+    NSError *error;
+    SMKUDAccessKey *_Nullable udAccessKey = [[SMKUDAccessKey alloc] initWithProfileKey:profileKey.keyData error:&error];
+    if (error || udAccessKey.keyData.length < 1) {
+        // Crash app if UD cannot be enabled.
+        OWSFail(@"Could not determine UD access key: %@.", error);
+    }
+    BOOL allowUnrestrictedUD = [self.udManager shouldAllowUnrestrictedAccessLocal] && udAccessKey != nil;
+
+    // We no longer include the signalingKey.
+    NSMutableDictionary *accountAttributes = [@{
+        @"AuthKey" : authKey,
+        @"voice" : @(YES), // all Signal-iOS clients support voice
+        @"video" : @(YES), // all Signal-iOS clients support WebRTC-based voice and video calls.
+        @"fetchesMessages" : @(isManualMessageFetchEnabled), // devices that don't support push must tell the server
+                                                             // they fetch messages manually
+        @"registrationId" : [NSString stringWithFormat:@"%i", registrationId],
+        @"unidentifiedAccessKey" : udAccessKey.keyData.base64EncodedString,
+        @"unrestrictedUnidentifiedAccess" : @(allowUnrestrictedUD),
+    } mutableCopy];
+
+    NSString *_Nullable registrationLockToken = [OWSKeyBackupService deriveRegistrationLockToken];
+    if (registrationLockToken.length > 0) {
+        accountAttributes[@"registrationLock"] = registrationLockToken;
+    } else if (pin.length > 0) {
+        accountAttributes[@"pin"] = pin;
+    }
+
+    return [accountAttributes copy];
+}
+
 + (TSRequest *)submitMessageRequestWithRecipient:(NSString *)recipientId
                                         messages:(NSArray *)messages
                                        timeStamp:(uint64_t)timeStamp
+                                     udAccessKey:(nullable SMKUDAccessKey *)udAccessKey
 {
     // NOTE: messages may be empty; See comments in OWSDeviceManager.
     OWSAssertDebug(recipientId.length > 0);
@@ -219,7 +407,11 @@ NS_ASSUME_NONNULL_BEGIN
         @"timestamp" : @(timeStamp),
     };
 
-    return [TSRequest requestWithUrl:[NSURL URLWithString:path] method:@"PUT" parameters:parameters];
+    TSRequest *request = [TSRequest requestWithUrl:[NSURL URLWithString:path] method:@"PUT" parameters:parameters];
+    if (udAccessKey != nil) {
+        [self useUDAuthWithRequest:request accessKey:udAccessKey];
+    }
+    return request;
 }
 
 + (TSRequest *)registerSignedPrekeyRequestWithSignedPreKeyRecord:(SignedPreKeyRecord *)signedPreKey
@@ -272,18 +464,20 @@ NS_ASSUME_NONNULL_BEGIN
     };
 }
 
-+ (TSRequest *)remoteAttestationRequest:(ECKeyPair *)keyPair
-                              enclaveId:(NSString *)enclaveId
-                           authUsername:(NSString *)authUsername
-                           authPassword:(NSString *)authPassword
+#pragma mark - Remote Attestation
+
++ (TSRequest *)remoteAttestationRequestForService:(RemoteAttestationService)service
+                                      withKeyPair:(ECKeyPair *)keyPair
+                                      enclaveName:(NSString *)enclaveName
+                                     authUsername:(NSString *)authUsername
+                                     authPassword:(NSString *)authPassword
 {
     OWSAssertDebug(keyPair);
-    OWSAssertDebug(enclaveId.length > 0);
+    OWSAssertDebug(enclaveName.length > 0);
     OWSAssertDebug(authUsername.length > 0);
     OWSAssertDebug(authPassword.length > 0);
 
-    NSString *path =
-        [NSString stringWithFormat:@"https://api.contact-discovery.acton-signal.org/v1/attestation/%@", enclaveId];
+    NSString *path = [NSString stringWithFormat:@"v1/attestation/%@", enclaveName];
     TSRequest *request = [TSRequest requestWithUrl:[NSURL URLWithString:path]
                                             method:@"PUT"
                                         parameters:@{
@@ -293,21 +487,53 @@ NS_ASSUME_NONNULL_BEGIN
     request.authUsername = authUsername;
     request.authPassword = authPassword;
 
+    switch (service) {
+        case RemoteAttestationServiceContactDiscovery:
+            request.customHost = contactDiscoveryURL;
+            request.customCensorshipCircumventionPrefix = contactDiscoveryCensorshipPrefix;
+            break;
+        case RemoteAttestationServiceKeyBackup:
+            request.customHost = keyBackupURL;
+            request.customCensorshipCircumventionPrefix = keyBackupCensorshipPrefix;
+            break;
+    }
+
+    // Don't bother with the default cookie store;
+    // these cookies are ephemeral.
+    //
+    // NOTE: TSNetworkManager now separately disables default cookie handling for all requests.
+    [request setHTTPShouldHandleCookies:NO];
+
     return request;
 }
 
-+ (TSRequest *)enclaveContactDiscoveryRequestWithId:(NSData *)requestId
-                                       addressCount:(NSUInteger)addressCount
-                               encryptedAddressData:(NSData *)encryptedAddressData
-                                            cryptIv:(NSData *)cryptIv
-                                           cryptMac:(NSData *)cryptMac
-                                          enclaveId:(NSString *)enclaveId
-                                       authUsername:(NSString *)authUsername
-                                       authPassword:(NSString *)authPassword
-                                            cookies:(NSArray<NSHTTPCookie *> *)cookies
++ (TSRequest *)remoteAttestationAuthRequestForService:(RemoteAttestationService)service
 {
-    NSString *path =
-        [NSString stringWithFormat:@"https://api.contact-discovery.acton-signal.org/v1/discovery/%@", enclaveId];
+    NSString *path;
+    switch (service) {
+        case RemoteAttestationServiceContactDiscovery:
+            path = @"v1/directory/auth";
+            break;
+        case RemoteAttestationServiceKeyBackup:
+            path = @"v1/storage/auth";
+            break;
+    }
+    return [TSRequest requestWithUrl:[NSURL URLWithString:path] method:@"GET" parameters:@{}];
+}
+
+#pragma mark - CDS
+
++ (TSRequest *)cdsEnclaveRequestWithRequestId:(NSData *)requestId
+                                 addressCount:(NSUInteger)addressCount
+                         encryptedAddressData:(NSData *)encryptedAddressData
+                                      cryptIv:(NSData *)cryptIv
+                                     cryptMac:(NSData *)cryptMac
+                                  enclaveName:(NSString *)enclaveName
+                                 authUsername:(NSString *)authUsername
+                                 authPassword:(NSString *)authPassword
+                                      cookies:(NSArray<NSHTTPCookie *> *)cookies
+{
+    NSString *path = [NSString stringWithFormat:@"v1/discovery/%@", enclaveName];
 
     TSRequest *request = [TSRequest requestWithUrl:[NSURL URLWithString:path]
                                             method:@"PUT"
@@ -321,26 +547,128 @@ NS_ASSUME_NONNULL_BEGIN
 
     request.authUsername = authUsername;
     request.authPassword = authPassword;
+    request.customHost = contactDiscoveryURL;
+    request.customCensorshipCircumventionPrefix = contactDiscoveryCensorshipPrefix;
 
-    NSDictionary<NSString *, NSString *> *cookieHeaders = [NSHTTPCookie requestHeaderFieldsWithCookies:cookies];
-    for (NSString *cookieHeader in cookieHeaders) {
-        NSString *cookieValue = cookieHeaders[cookieHeader];
-        [request setValue:cookieValue forHTTPHeaderField:cookieHeader];
-    }
+    // Don't bother with the default cookie store;
+    // these cookies are ephemeral.
+    //
+    // NOTE: TSNetworkManager now separately disables default cookie handling for all requests.
+    [request setHTTPShouldHandleCookies:NO];
+    // Set the cookie header.
+    OWSAssertDebug(request.allHTTPHeaderFields.count == 0);
+    [request setAllHTTPHeaderFields:[NSHTTPCookie requestHeaderFieldsWithCookies:cookies]];
 
     return request;
 }
 
-+ (TSRequest *)remoteAttestationAuthRequest
++ (TSRequest *)cdsFeedbackRequestWithStatus:(NSString *)status
+                                     reason:(nullable NSString *)reason
 {
-    NSString *path = @"/v1/directory/auth";
+
+    NSDictionary<NSString *, NSString *> *parameters;
+    if (reason == nil) {
+        parameters = @{};
+    } else {
+        const NSUInteger kServerReasonLimit = 1000;
+        NSString *limitedReason;
+        if (reason.length < kServerReasonLimit) {
+            limitedReason = reason;
+        } else {
+            OWSFailDebug(@"failure: reason should be under 1000");
+            limitedReason = [reason substringToIndex:kServerReasonLimit - 1];
+        }
+        parameters = @{ @"reason": limitedReason };
+    }
+    NSString *path = [NSString stringWithFormat:@"v1/directory/feedback-v3/%@", status];
+    return [TSRequest requestWithUrl:[NSURL URLWithString:path] method:@"PUT" parameters:parameters];
+}
+
+#pragma mark - KBS
+
++ (TSRequest *)kbsEnclaveNonceRequestWithEnclaveName:(NSString *)enclaveName
+                                        authUsername:(NSString *)authUsername
+                                        authPassword:(NSString *)authPassword
+                                             cookies:(NSArray<NSHTTPCookie *> *)cookies
+{
+    NSString *path = [NSString stringWithFormat:@"v1/nonce/%@", enclaveName];
+
+    TSRequest *request = [TSRequest requestWithUrl:[NSURL URLWithString:path] method:@"GET" parameters:@{}];
+
+    request.authUsername = authUsername;
+    request.authPassword = authPassword;
+    request.customHost = keyBackupURL;
+    request.customCensorshipCircumventionPrefix = keyBackupCensorshipPrefix;
+
+    // Don't bother with the default cookie store;
+    // these cookies are ephemeral.
+    //
+    // NOTE: TSNetworkManager now separately disables default cookie handling for all requests.
+    [request setHTTPShouldHandleCookies:NO];
+    // Set the cookie header.
+    OWSAssertDebug(request.allHTTPHeaderFields.count == 0);
+    [request setAllHTTPHeaderFields:[NSHTTPCookie requestHeaderFieldsWithCookies:cookies]];
+
+    return request;
+}
+
++ (TSRequest *)kbsEnclaveRequestWithRequestId:(NSData *)requestId
+                                         data:(NSData *)data
+                                      cryptIv:(NSData *)cryptIv
+                                     cryptMac:(NSData *)cryptMac
+                                  enclaveName:(NSString *)enclaveName
+                                 authUsername:(NSString *)authUsername
+                                 authPassword:(NSString *)authPassword
+                                      cookies:(NSArray<NSHTTPCookie *> *)cookies
+{
+    NSString *path = [NSString stringWithFormat:@"v1/backup/%@", enclaveName];
+
+    TSRequest *request = [TSRequest requestWithUrl:[NSURL URLWithString:path]
+                                            method:@"PUT"
+                                        parameters:@{
+                                            @"requestId" : requestId.base64EncodedString,
+                                            @"data" : data.base64EncodedString,
+                                            @"iv" : cryptIv.base64EncodedString,
+                                            @"mac" : cryptMac.base64EncodedString,
+                                        }];
+
+    request.authUsername = authUsername;
+    request.authPassword = authPassword;
+    request.customHost = keyBackupURL;
+    request.customCensorshipCircumventionPrefix = keyBackupCensorshipPrefix;
+
+    // Don't bother with the default cookie store;
+    // these cookies are ephemeral.
+    //
+    // NOTE: TSNetworkManager now separately disables default cookie handling for all requests.
+    [request setHTTPShouldHandleCookies:NO];
+    // Set the cookie header.
+    OWSAssertDebug(request.allHTTPHeaderFields.count == 0);
+    [request setAllHTTPHeaderFields:[NSHTTPCookie requestHeaderFieldsWithCookies:cookies]];
+
+    return request;
+}
+
+#pragma mark - UD
+
++ (TSRequest *)udSenderCertificateRequest
+{
+    NSString *path = @"v1/certificate/delivery";
     return [TSRequest requestWithUrl:[NSURL URLWithString:path] method:@"GET" parameters:@{}];
 }
 
-+ (TSRequest *)cdsFeedbackRequestWithResult:(NSString *)result
++ (void)useUDAuthWithRequest:(TSRequest *)request accessKey:(SMKUDAccessKey *)udAccessKey
 {
-    NSString *path = [NSString stringWithFormat:@"/v1/directory/feedback/%@", result];
-    return [TSRequest requestWithUrl:[NSURL URLWithString:path] method:@"PUT" parameters:@{}];
+    OWSAssertDebug(request);
+    OWSAssertDebug(udAccessKey);
+
+    // Suppress normal auth headers.
+    request.shouldHaveAuthorizationHeaders = NO;
+
+    // Add UD auth header.
+    [request setValue:[udAccessKey.keyData base64EncodedString] forHTTPHeaderField:@"Unidentified-Access-Key"];
+
+    request.isUDRequest = YES;
 }
 
 @end

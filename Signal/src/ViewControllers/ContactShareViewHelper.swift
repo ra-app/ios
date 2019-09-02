@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
@@ -86,8 +86,7 @@ public class ContactShareViewHelper: NSObject, CNContactViewControllerDelegate {
             return
         }
 
-        let inviteFlow =
-            InviteFlow(presentingViewController: fromViewController, contactsManager: contactsManager)
+        let inviteFlow = InviteFlow(presentingViewController: fromViewController)
         inviteFlow.sendSMSTo(phoneNumbers: phoneNumbers)
     }
 
@@ -109,7 +108,7 @@ public class ContactShareViewHelper: NSObject, CNContactViewControllerDelegate {
         })
         actionSheet.addAction(OWSAlerts.cancelAction)
 
-        fromViewController.present(actionSheet, animated: true)
+        fromViewController.presentAlert(actionSheet)
     }
 
     private func showPhoneNumberPicker(phoneNumbers: [String], fromViewController: UIViewController, completion :@escaping ((String) -> Void)) {
@@ -124,7 +123,7 @@ public class ContactShareViewHelper: NSObject, CNContactViewControllerDelegate {
         }
         actionSheet.addAction(OWSAlerts.cancelAction)
 
-        fromViewController.present(actionSheet, animated: true)
+        fromViewController.presentAlert(actionSheet)
     }
 
     func didPressCreateNewContact(contactShare: ContactShareViewModel, fromViewController: UIViewController) {

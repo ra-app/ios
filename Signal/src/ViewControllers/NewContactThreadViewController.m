@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "NewContactThreadViewController.h"
@@ -45,7 +45,7 @@ NS_ASSUME_NONNULL_BEGIN
     MFMessageComposeViewControllerDelegate>
 
 @property (nonatomic, readonly) ContactsViewHelper *contactsViewHelper;
-@property (nonatomic, readonly) ConversationSearcher *conversationSearcher;
+@property (nonatomic, readonly) FullTextSearcher *fullTextSearcher;
 
 @property (nonatomic, readonly) UIView *noSignalContactsView;
 
@@ -54,6 +54,8 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) UILocalizedIndexedCollation *collation;
 
 @property (nonatomic, readonly) UISearchBar *searchBar;
+@property (nonatomic) ComposeScreenSearchResultSet *searchResults;
+@property (nonatomic, nullable) OWSInviteFlow *inviteFlow;
 
 // A list of possible phone numbers parsed from the search text as
 // E164 values.
@@ -71,26 +73,49 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation NewContactThreadViewController
 
+
+#pragma mark - Dependencies
+
+- (FullTextSearcher *)fullTextSearcher
+{
+    return FullTextSearcher.shared;
+}
+
+- (YapDatabaseConnection *)uiDatabaseConnection
+{
+    return OWSPrimaryStorage.sharedManager.uiDatabaseConnection;
+}
+
+- (OWSContactsManager *)contactsManager
+{
+    return Environment.shared.contactsManager;
+}
+
+#pragma mark -
+
 - (void)loadView
 {
     [super loadView];
 
+    _searchResults = ComposeScreenSearchResultSet.empty;
     _contactsViewHelper = [[ContactsViewHelper alloc] initWithDelegate:self];
-    _conversationSearcher = [ConversationSearcher shared];
     _nonContactAccountSet = [NSMutableSet set];
     _collation = [UILocalizedIndexedCollation currentCollation];
 
     self.navigationItem.leftBarButtonItem =
         [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemStop
                                                       target:self
-                                                      action:@selector(dismissPressed)];
+                                                      action:@selector(dismissPressed)
+                                     accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"stop")];
     // TODO: We should use separate RTL and LTR flavors of this asset.
     UIImage *newGroupImage = [UIImage imageNamed:@"btnGroup--white"];
     OWSAssertDebug(newGroupImage);
-    UIBarButtonItem *newGroupButton = [[UIBarButtonItem alloc] initWithImage:newGroupImage
-                                                                       style:UIBarButtonItemStylePlain
-                                                                      target:self
-                                                                      action:@selector(showNewGroupView:)];
+    UIBarButtonItem *newGroupButton =
+        [[UIBarButtonItem alloc] initWithImage:newGroupImage
+                                         style:UIBarButtonItemStylePlain
+                                        target:self
+                                        action:@selector(showNewGroupView:)
+                       accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"new_group")];
     newGroupButton.accessibilityLabel
         = NSLocalizedString(@"CREATE_NEW_GROUP", @"Accessibility label for the create group new group button");
     self.navigationItem.rightBarButtonItem = newGroupButton;
@@ -101,6 +126,8 @@ NS_ASSUME_NONNULL_BEGIN
     searchBar.delegate = self;
     searchBar.placeholder = NSLocalizedString(@"SEARCH_BYNAMEORNUMBER_PLACEHOLDER_TEXT", @"");
     [searchBar sizeToFit];
+    SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, searchBar);
+    searchBar.textField.accessibilityIdentifier = ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"contact_search");
 
     _tableViewController = [OWSTableViewController new];
     _tableViewController.delegate = self;
@@ -112,7 +139,8 @@ NS_ASSUME_NONNULL_BEGIN
     [self addChildViewController:self.tableViewController];
     [self.view insertSubview:self.tableViewController.view atIndex:0];
 
-    [_tableViewController.view autoPinWidthToSuperview];
+    [self.tableViewController.view autoPinEdgeToSuperviewSafeArea:ALEdgeLeading];
+    [self.tableViewController.view autoPinEdgeToSuperviewSafeArea:ALEdgeTrailing];
     [_tableViewController.view autoPinEdgeToSuperviewEdge:ALEdgeTop];
 
     self.tableViewController.tableView.rowHeight = UITableViewAutomaticDimension;
@@ -127,6 +155,7 @@ NS_ASSUME_NONNULL_BEGIN
     [self.noSignalContactsView autoPinWidthToSuperview];
     [self.noSignalContactsView autoPinEdgeToSuperviewEdge:ALEdgeTop];
     [self.noSignalContactsView autoPinToBottomLayoutGuideOfViewController:self withInset:0];
+    SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, _noSignalContactsView);
 
     UIRefreshControl *pullToRefreshView = [UIRefreshControl new];
     pullToRefreshView.tintColor = [UIColor grayColor];
@@ -134,6 +163,7 @@ NS_ASSUME_NONNULL_BEGIN
                           action:@selector(pullToRefreshPerformed:)
                 forControlEvents:UIControlEventValueChanged];
     [self.tableViewController.tableView insertSubview:pullToRefreshView atIndex:0];
+    SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, pullToRefreshView);
 
     [self updateTableContents];
 
@@ -154,13 +184,12 @@ NS_ASSUME_NONNULL_BEGIN
 {
     OWSAssertIsOnMainThread();
 
-    [self.contactsViewHelper.contactsManager
-        userRequestedSystemContactsRefreshWithCompletion:^(NSError *_Nullable error) {
-            if (error) {
-                OWSLogError(@"refreshing contacts failed with error: %@", error);
-            }
-            [refreshControl endRefreshing];
-        }];
+    [self.contactsManager userRequestedSystemContactsRefreshWithCompletion:^(NSError *_Nullable error) {
+        if (error) {
+            OWSLogError(@"refreshing contacts failed with error: %@", error);
+        }
+        [refreshControl endRefreshing];
+    }];
 }
 
 - (void)showSearchBar:(BOOL)isVisible
@@ -233,6 +262,7 @@ NS_ASSUME_NONNULL_BEGIN
                              action:@selector(presentInviteFlow)
                    forControlEvents:UIControlEventTouchUpInside];
     lastSubview = inviteContactsButton;
+    SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, inviteContactsButton);
 
     UIButton *searchByPhoneNumberButton = [UIButton buttonWithType:UIButtonTypeCustom];
     [searchByPhoneNumberButton setTitle:NSLocalizedString(@"NO_CONTACTS_SEARCH_BY_PHONE_NUMBER",
@@ -247,6 +277,7 @@ NS_ASSUME_NONNULL_BEGIN
                                   action:@selector(hideBackgroundView)
                         forControlEvents:UIControlEventTouchUpInside];
     lastSubview = searchByPhoneNumberButton;
+    SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, searchByPhoneNumberButton);
 
     [lastSubview autoPinEdgeToSuperviewMargin:ALEdgeBottom];
 
@@ -256,6 +287,8 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+
+    [self.contactsViewHelper warmNonSignalContactsCacheAsync];
 
     self.title = NSLocalizedString(@"MESSAGE_COMPOSEVIEW_TITLE", @"");
 }
@@ -267,7 +300,7 @@ NS_ASSUME_NONNULL_BEGIN
     // Make sure we have requested contact access at this point if, e.g.
     // the user has no messages in their inbox and they choose to compose
     // a message.
-    [self.contactsViewHelper.contactsManager requestSystemContactsOnce];
+    [self.contactsManager requestSystemContactsOnce];
 
     [self showContactAppropriateViews];
 }
@@ -294,10 +327,10 @@ NS_ASSUME_NONNULL_BEGIN
 
     // App is killed and restarted when the user changes their contact permissions, so need need to "observe" anything
     // to re-render this.
-    if (self.contactsViewHelper.contactsManager.isSystemContactsDenied) {
+    if (self.contactsManager.isSystemContactsDenied) {
         OWSTableItem *contactReminderItem = [OWSTableItem
             itemWithCustomCellBlock:^{
-                UITableViewCell *newCell = [OWSTableItem newCell];
+                UITableViewCell *cell = [OWSTableItem newCell];
 
                 ReminderView *reminderView = [ReminderView
                     nagWithText:NSLocalizedString(@"COMPOSE_SCREEN_MISSING_CONTACTS_PERMISSION",
@@ -305,10 +338,13 @@ NS_ASSUME_NONNULL_BEGIN
                       tapAction:^{
                           [[UIApplication sharedApplication] openSystemSettings];
                       }];
-                [newCell.contentView addSubview:reminderView];
+                [cell.contentView addSubview:reminderView];
                 [reminderView autoPinEdgesToSuperviewEdges];
 
-                return newCell;
+                cell.accessibilityIdentifier
+                    = ACCESSIBILITY_IDENTIFIER_WITH_NAME(NewContactThreadViewController, @"missing_contacts");
+
+                return cell;
             }
                     customRowHeight:UITableViewAutomaticDimension
                         actionBlock:nil];
@@ -324,6 +360,8 @@ NS_ASSUME_NONNULL_BEGIN
     [staticSection
         addItem:[OWSTableItem disclosureItemWithText:NSLocalizedString(@"NEW_CONVERSATION_FIND_BY_PHONE_NUMBER",
                                                          @"A label the cell that lets you add a new member to a group.")
+                             accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(
+                                                         NewContactThreadViewController, @"find_by_phone")
                                      customRowHeight:UITableViewAutomaticDimension
                                          actionBlock:^{
                                              NewNonContactConversationViewController *viewController =
@@ -333,20 +371,22 @@ NS_ASSUME_NONNULL_BEGIN
                                                                                       animated:YES];
                                          }]];
 
-    if (self.contactsViewHelper.contactsManager.isSystemContactsAuthorized) {
+    if (self.contactsManager.isSystemContactsAuthorized) {
         // Invite Contacts
         [staticSection
             addItem:[OWSTableItem
-                        disclosureItemWithText:NSLocalizedString(@"INVITE_FRIENDS_CONTACT_TABLE_BUTTON",
-                                                   @"Label for the cell that presents the 'invite contacts' workflow.")
-                               customRowHeight:UITableViewAutomaticDimension
-                                   actionBlock:^{
-                                       [weakSelf presentInviteFlow];
-                                   }]];
+                         disclosureItemWithText:NSLocalizedString(@"INVITE_FRIENDS_CONTACT_TABLE_BUTTON",
+                                                    @"Label for the cell that presents the 'invite contacts' workflow.")
+                        accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(
+                                                    NewContactThreadViewController, @"invite_contacts")
+                                customRowHeight:UITableViewAutomaticDimension
+                                    actionBlock:^{
+                                        [weakSelf presentInviteFlow];
+                                    }]];
     }
     [contents addSection:staticSection];
 
-    BOOL hasSearchText = [self.searchBar text].length > 0;
+    BOOL hasSearchText = self.searchText.length > 0;
 
     if (hasSearchText) {
         for (OWSTableSection *section in [self contactsSectionsForSearch]) {
@@ -403,7 +443,7 @@ NS_ASSUME_NONNULL_BEGIN
         // No Contacts
         OWSTableSection *contactsSection = [OWSTableSection new];
 
-        if (self.contactsViewHelper.contactsManager.isSystemContactsAuthorized) {
+        if (self.contactsManager.isSystemContactsAuthorized) {
             if (self.contactsViewHelper.hasUpdatedContactsAtLeastOnce) {
 
                 [contactsSection
@@ -427,12 +467,15 @@ NS_ASSUME_NONNULL_BEGIN
                 // hide separator for loading cell. The loading cell doesn't really feel like a cell
                 loadingCell.backgroundView = [UIView new];
 
+                loadingCell.accessibilityIdentifier
+                    = ACCESSIBILITY_IDENTIFIER_WITH_NAME(NewContactThreadViewController, @"loading");
+
                 OWSTableItem *loadingItem =
                     [OWSTableItem itemWithCustomCell:loadingCell customRowHeight:40 actionBlock:nil];
                 [contactsSection addItem:loadingItem];
             }
         }
-        
+
         return @[ contactsSection ];
     }
     __weak NewContactThreadViewController *weakSelf = self;
@@ -462,16 +505,21 @@ NS_ASSUME_NONNULL_BEGIN
         for (SignalAccount *signalAccount in signalAccounts) {
             [contactItems addObject:[OWSTableItem
                                         itemWithCustomCellBlock:^{
+                                            typeof(self) strongSelf = weakSelf;
                                             ContactTableViewCell *cell = [ContactTableViewCell new];
-                                            BOOL isBlocked = [self.contactsViewHelper
+                                            BOOL isBlocked = [strongSelf.contactsViewHelper
                                                 isRecipientIdBlocked:signalAccount.recipientId];
                                             if (isBlocked) {
                                                 cell.accessoryMessage = NSLocalizedString(@"CONTACT_CELL_IS_BLOCKED",
                                                     @"An indicator that a contact has been blocked.");
                                             }
 
-                                            [cell configureWithRecipientId:signalAccount.recipientId
-                                                           contactsManager:self.contactsViewHelper.contactsManager];
+                                            [cell configureWithRecipientId:signalAccount.recipientId];
+
+                                            NSString *cellName = [NSString
+                                                stringWithFormat:@"signal_contact.%@", signalAccount.recipientId];
+                                            cell.accessibilityIdentifier = ACCESSIBILITY_IDENTIFIER_WITH_NAME(
+                                                NewContactThreadViewController, cellName);
 
                                             return cell;
                                         }
@@ -518,7 +566,12 @@ NS_ASSUME_NONNULL_BEGIN
                                     cell.accessoryMessage = NSLocalizedString(
                                         @"CONTACT_CELL_IS_BLOCKED", @"An indicator that a contact has been blocked.");
                                 }
-                                [cell configureWithRecipientId:phoneNumber contactsManager:helper.contactsManager];
+                                [cell configureWithRecipientId:phoneNumber];
+
+                                NSString *cellName = [NSString stringWithFormat:@"non_signal_contact.%@", phoneNumber];
+                                cell.accessibilityIdentifier
+                                    = ACCESSIBILITY_IDENTIFIER_WITH_NAME(NewContactThreadViewController, cellName);
+
                                 return cell;
                             }
                             customRowHeight:UITableViewAutomaticDimension
@@ -530,11 +583,13 @@ NS_ASSUME_NONNULL_BEGIN
                                                             @"Text for button to send a Signal invite via SMS. %@ is "
                                                             @"placeholder for the recipient's phone number."),
                                        phoneNumber];
-            [phoneNumbersSection addItem:[OWSTableItem disclosureItemWithText:text
-                                                              customRowHeight:UITableViewAutomaticDimension
-                                                                  actionBlock:^{
-                                                                      [weakSelf sendTextToPhoneNumber:phoneNumber];
-                                                                  }]];
+            [phoneNumbersSection
+                addItem:[OWSTableItem disclosureItemWithText:text
+                                     accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"invite_via_sms")
+                                             customRowHeight:UITableViewAutomaticDimension
+                                                 actionBlock:^{
+                                                     [weakSelf sendTextToPhoneNumber:phoneNumber];
+                                                 }]];
         }
     }
     if (searchPhoneNumbers.count > 0) {
@@ -566,8 +621,12 @@ NS_ASSUME_NONNULL_BEGIN
                                     @"CONTACT_CELL_IS_BLOCKED", @"An indicator that a contact has been blocked.");
                             }
 
-                            [cell configureWithRecipientId:signalAccount.recipientId
-                                           contactsManager:helper.contactsManager];
+                            [cell configureWithRecipientId:signalAccount.recipientId];
+
+                            NSString *cellName =
+                                [NSString stringWithFormat:@"signal_contact.%@", signalAccount.recipientId];
+                            cell.accessibilityIdentifier
+                                = ACCESSIBILITY_IDENTIFIER_WITH_NAME(NewContactThreadViewController, cellName);
 
                             return cell;
                         }
@@ -591,7 +650,14 @@ NS_ASSUME_NONNULL_BEGIN
         [groupSection addItem:[OWSTableItem
                                   itemWithCustomCellBlock:^{
                                       GroupTableViewCell *cell = [GroupTableViewCell new];
-                                      [cell configureWithThread:thread contactsManager:helper.contactsManager];
+                                      [cell configureWithThread:thread];
+
+                                      // TODO: We need to verify that UUIDs will work for Nancy.
+                                      NSString *cellName =
+                                          [NSString stringWithFormat:@"group.%@", NSUUID.UUID.UUIDString];
+                                      cell.accessibilityIdentifier = ACCESSIBILITY_IDENTIFIER_WITH_NAME(
+                                          NewContactThreadViewController, cellName);
+
                                       return cell;
                                   }
                                   customRowHeight:UITableViewAutomaticDimension
@@ -623,7 +689,9 @@ NS_ASSUME_NONNULL_BEGIN
                                                         @"Text for button to send a Signal invite via SMS. %@ is "
                                                         @"placeholder for the recipient's phone number."),
                                    displayName];
+        NSString *accessibilityIdentifier = [NSString stringWithFormat:@"invite_via_sms.%@", phoneNumber.toE164];
         [inviteeSection addItem:[OWSTableItem disclosureItemWithText:text
+                                             accessibilityIdentifier:accessibilityIdentifier
                                                      customRowHeight:UITableViewAutomaticDimension
                                                          actionBlock:^{
                                                              [weakSelf sendTextToPhoneNumber:phoneNumber.toE164];
@@ -651,25 +719,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSArray<SignalAccount *> *)filteredSignalAccounts
 {
-    NSString *searchString = self.searchBar.text;
-
-    ContactsViewHelper *helper = self.contactsViewHelper;
-    return [helper signalAccountsMatchingSearchString:searchString];
+    return self.searchResults.signalAccounts;
 }
 
 - (NSArray<TSGroupThread *> *)filteredGroupThreads
 {
-    NSMutableArray<TSGroupThread *> *groupThreads = [NSMutableArray new];
-    [TSGroupThread enumerateCollectionObjectsUsingBlock:^(id obj, BOOL *stop) {
-        if (![obj isKindOfClass:[TSGroupThread class]]) {
-            // group and contact threads are in the same collection.
-            return;
-        }
-        TSGroupThread *groupThread = (TSGroupThread *)obj;
-        [groupThreads addObject:groupThread];
-    }];
-
-    return [self.conversationSearcher filterGroupThreads:groupThreads withSearchText:self.searchBar.text];
+    return self.searchResults.groupThreads;
 }
 
 #pragma mark - No Contacts Mode
@@ -683,15 +738,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)presentInviteFlow
 {
-    OWSInviteFlow *inviteFlow =
-        [[OWSInviteFlow alloc] initWithPresentingViewController:self
-                                                contactsManager:self.contactsViewHelper.contactsManager];
-    [self presentViewController:inviteFlow.actionSheetController animated:YES completion:nil];
+    OWSInviteFlow *inviteFlow = [[OWSInviteFlow alloc] initWithPresentingViewController:self];
+    self.inviteFlow = inviteFlow;
+    [inviteFlow presentWithIsAnimated:YES completion:nil];
 }
 
 - (void)showContactAppropriateViews
 {
-    if (self.contactsViewHelper.contactsManager.isSystemContactsAuthorized) {
+    if (self.contactsManager.isSystemContactsAuthorized) {
         if (self.contactsViewHelper.hasUpdatedContactsAtLeastOnce && self.contactsViewHelper.signalAccounts.count < 1
             && ![Environment.shared.preferences hasDeclinedNoContactsView]) {
             self.isNoContactsModeActive = YES;
@@ -732,10 +786,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)sendTextToPhoneNumber:(NSString *)phoneNumber
 {
-
-    OWSInviteFlow *inviteFlow =
-        [[OWSInviteFlow alloc] initWithPresentingViewController:self
-                                                contactsManager:self.contactsViewHelper.contactsManager];
+    OWSInviteFlow *inviteFlow = [[OWSInviteFlow alloc] initWithPresentingViewController:self];
+    self.inviteFlow = inviteFlow;
 
     OWSAssertDebug([phoneNumber length] > 0);
     NSString *confirmMessage = NSLocalizedString(@"SEND_SMS_CONFIRM_TITLE", @"");
@@ -744,25 +796,26 @@ NS_ASSUME_NONNULL_BEGIN
             stringByAppendingString:NSLocalizedString(@"QUESTIONMARK_PUNCTUATION", @"")];
     }
 
-    UIAlertController *alertController =
-        [UIAlertController alertControllerWithTitle:NSLocalizedString(@"CONFIRMATION_TITLE", @"")
-                                            message:confirmMessage
-                                     preferredStyle:UIAlertControllerStyleAlert];
+    UIAlertController *alert = [UIAlertController alertControllerWithTitle:NSLocalizedString(@"CONFIRMATION_TITLE", @"")
+                                                                   message:confirmMessage
+                                                            preferredStyle:UIAlertControllerStyleAlert];
 
     UIAlertAction *okAction = [UIAlertAction
-        actionWithTitle:NSLocalizedString(@"OK", @"")
-                  style:UIAlertActionStyleDefault
-                handler:^(UIAlertAction *action) {
-                    [self.searchBar resignFirstResponder];
-                    if ([MFMessageComposeViewController canSendText]) {
-                        [inviteFlow sendSMSToPhoneNumbers:@[ phoneNumber ]];
-                    } else {
-                        [OWSAlerts showErrorAlertWithMessage:NSLocalizedString(@"UNSUPPORTED_FEATURE_ERROR", @"")];
-                    }
-                }];
+                actionWithTitle:NSLocalizedString(@"OK", @"")
+        accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"ok")
+                          style:UIAlertActionStyleDefault
+                        handler:^(UIAlertAction *action) {
+                            [self.searchBar resignFirstResponder];
+                            if ([MFMessageComposeViewController canSendText]) {
+                                [inviteFlow sendSMSToPhoneNumbers:@[ phoneNumber ]];
+                            } else {
+                                [OWSAlerts
+                                    showErrorAlertWithMessage:NSLocalizedString(@"UNSUPPORTED_FEATURE_ERROR", @"")];
+                            }
+                        }];
 
-    [alertController addAction:[OWSAlerts cancelAction]];
-    [alertController addAction:okAction];
+    [alert addAction:[OWSAlerts cancelAction]];
+    [alert addAction:okAction];
     self.searchBar.text = @"";
     [self searchTextDidChange];
 
@@ -770,10 +823,10 @@ NS_ASSUME_NONNULL_BEGIN
     if ([self presentedViewController]) {
         [self dismissViewControllerAnimated:YES
                                  completion:^{
-                                     [self presentViewController:alertController animated:YES completion:nil];
+                                     [self presentAlert:alert];
                                  }];
     } else {
-        [self presentViewController:alertController animated:YES completion:nil];
+        [self presentAlert:alert];
     }
 }
 
@@ -867,6 +920,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
+    [BenchManager startEventWithTitle:@"Compose Search" eventId:@"Compose Search"];
     [self searchTextDidChange];
 }
 
@@ -892,10 +946,29 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)searchTextDidChange
 {
-    [self updateSearchPhoneNumbers];
+    NSString *searchText = self.searchText;
 
-    [self updateTableContents];
+    __weak __typeof(self) weakSelf = self;
+
+    [self.uiDatabaseConnection
+        asyncReadWithBlock:^(YapDatabaseReadTransaction *_Nonnull transaction) {
+            self.searchResults = [self.fullTextSearcher searchForComposeScreenWithSearchText:searchText
+                                                                                 transaction:transaction
+                                                                             contactsManager:self.contactsManager];
+        }
+        completionBlock:^{
+            __typeof(self) strongSelf = weakSelf;
+            if (!strongSelf) {
+                return;
+            }
+
+            [strongSelf updateSearchPhoneNumbers];
+            [strongSelf updateTableContents];
+            [BenchManager completeEventWithEventId:@"Compose Search"];
+        }];
 }
+
+#pragma mark -
 
 - (NSDictionary<NSString *, NSString *> *)callingCodesToCountryCodeMap
 {
@@ -929,9 +1002,15 @@ NS_ASSUME_NONNULL_BEGIN
     return nil;
 }
 
+- (NSString *)searchText
+{
+    NSString *rawText = self.searchBar.text;
+    return rawText.ows_stripped ?: @"";
+}
+
 - (NSArray<NSString *> *)parsePossibleSearchPhoneNumbers
 {
-    NSString *searchText = self.searchBar.text;
+    NSString *searchText = self.searchText;
 
     if (searchText.length < 8) {
         return @[];

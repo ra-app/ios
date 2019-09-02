@@ -1,26 +1,22 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
-#import "SignalRecipient.h"
 #import "MockSSKEnvironment.h"
 #import "OWSPrimaryStorage.h"
-#import "SSKBaseTest.h"
+#import "SSKBaseTestObjC.h"
+#import "SignalRecipient.h"
 #import "TSAccountManager.h"
 #import "TestAppContext.h"
 #import <SignalServiceKit/SignalServiceKit-Swift.h>
 
-@interface TSAccountManager (Testing)
-
-- (void)storeLocalNumber:(NSString *)localNumber;
-
-@end
-
-@interface SignalRecipientTest : SSKBaseTest
+@interface SignalRecipientTest : SSKBaseTestObjC
 
 @property (nonatomic) NSString *localNumber;
 
 @end
+
+#pragma mark -
 
 @implementation SignalRecipientTest
 
@@ -42,10 +38,22 @@
     // Sanity Check
     XCTAssertNotNil(self.localNumber);
 
-    [self readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+    [self yapWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
         [SignalRecipient markRecipientAsRegisteredAndGet:self.localNumber transaction:transaction];
 
         XCTAssertTrue([SignalRecipient isRegisteredRecipient:self.localNumber transaction:transaction]);
+    }];
+}
+
+- (void)testRecipientWithExistingRecord
+{
+    // Sanity Check
+    XCTAssertNotNil(self.localNumber);
+    NSString *recipientId = @"+15551231234";
+    [self yapWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+        [SignalRecipient markRecipientAsRegisteredAndGet:recipientId transaction:transaction];
+        
+        XCTAssertTrue([SignalRecipient isRegisteredRecipient:recipientId transaction:transaction]);
     }];
 }
 

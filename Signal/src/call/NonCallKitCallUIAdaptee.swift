@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
@@ -11,20 +11,28 @@ import SignalMessaging
  */
 class NonCallKitCallUIAdaptee: NSObject, CallUIAdaptee {
 
-    let notificationsAdapter: CallNotificationsAdapter
+    let notificationPresenter: NotificationPresenter
     let callService: CallService
 
     // Starting/Stopping incoming call ringing is our apps responsibility for the non CallKit interface.
     let hasManualRinger = true
 
-    required init(callService: CallService, notificationsAdapter: CallNotificationsAdapter) {
+    required init(callService: CallService, notificationPresenter: NotificationPresenter) {
         AssertIsOnMainThread()
 
         self.callService = callService
-        self.notificationsAdapter = notificationsAdapter
+        self.notificationPresenter = notificationPresenter
 
         super.init()
     }
+
+    // MARK: Dependencies
+
+    var audioSession: OWSAudioSession {
+        return Environment.shared.audioSession
+    }
+
+    // MARK: 
 
     func startOutgoingCall(handle: String) -> SignalCall {
         AssertIsOnMainThread()
@@ -32,13 +40,10 @@ class NonCallKitCallUIAdaptee: NSObject, CallUIAdaptee {
         let call = SignalCall.outgoingCall(localId: UUID(), remotePhoneNumber: handle)
 
         // make sure we don't terminate audio session during call
-        OWSAudioSession.shared.startAudioActivity(call.audioActivity)
+        let success = self.audioSession.startAudioActivity(call.audioActivity)
+        assert(success)
 
-        self.callService.handleOutgoingCall(call).then {
-            Logger.debug("handleOutgoingCall succeeded")
-        }.catch { error in
-            Logger.error("handleOutgoingCall failed with error: \(error)")
-        }.retainUntilComplete()
+        self.callService.handleOutgoingCall(call).retainUntilComplete()
 
         return call
     }
@@ -54,14 +59,14 @@ class NonCallKitCallUIAdaptee: NSObject, CallUIAdaptee {
         if UIApplication.shared.applicationState == .active {
             Logger.debug("skipping notification since app is already active.")
         } else {
-            notificationsAdapter.presentIncomingCall(call, callerName: callerName)
+            notificationPresenter.presentIncomingCall(call, callerName: callerName)
         }
     }
 
     func reportMissedCall(_ call: SignalCall, callerName: String) {
         AssertIsOnMainThread()
 
-        notificationsAdapter.presentMissedCall(call, callerName: callerName)
+        notificationPresenter.presentMissedCall(call, callerName: callerName)
     }
 
     func answerCall(localId: UUID) {
@@ -88,7 +93,7 @@ class NonCallKitCallUIAdaptee: NSObject, CallUIAdaptee {
             return
         }
 
-        OWSAudioSession.shared.isRTCAudioEnabled = true
+        self.audioSession.isRTCAudioEnabled = true
         self.callService.handleAnswerCall(call)
     }
 
@@ -122,7 +127,7 @@ class NonCallKitCallUIAdaptee: NSObject, CallUIAdaptee {
     func recipientAcceptedCall(_ call: SignalCall) {
         AssertIsOnMainThread()
 
-        OWSAudioSession.shared.isRTCAudioEnabled = true
+        self.audioSession.isRTCAudioEnabled = true
     }
 
     func localHangupCall(_ call: SignalCall) {

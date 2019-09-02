@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
@@ -12,11 +12,18 @@ enum MessageMetadataViewMode: UInt {
     case focusOnMetadata
 }
 
-class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDelegate, OWSMessageBubbleViewDelegate, ContactShareViewHelperDelegate {
+@objc
+protocol MessageDetailViewDelegate: AnyObject {
+    func detailViewMessageWasDeleted(_ messageDetailViewController: MessageDetailViewController)
+}
+
+@objc
+class MessageDetailViewController: OWSViewController {
+
+    @objc
+    weak var delegate: MessageDetailViewDelegate?
 
     // MARK: Properties
-
-    let contactsManager: OWSContactsManager
 
     let uiDatabaseConnection: YapDatabaseConnection
 
@@ -27,21 +34,36 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
     var message: TSMessage
     var wasDeleted: Bool = false
 
-    var messageBubbleView: OWSMessageBubbleView?
-    var messageBubbleViewWidthLayoutConstraint: NSLayoutConstraint?
-    var messageBubbleViewHeightLayoutConstraint: NSLayoutConstraint?
+    var messageView: OWSMessageView?
+    var messageViewWidthLayoutConstraint: NSLayoutConstraint?
+    var messageViewHeightLayoutConstraint: NSLayoutConstraint?
 
     var scrollView: UIScrollView!
     var contentView: UIView?
 
     var attachment: TSAttachment?
-    var dataSource: DataSource?
     var attachmentStream: TSAttachmentStream?
     var messageBody: String?
 
+    lazy var shouldShowUD: Bool = {
+        return self.preferences.shouldShowUnidentifiedDeliveryIndicators()
+    }()
+
     var conversationStyle: ConversationStyle
 
-    private var contactShareViewHelper: ContactShareViewHelper
+    private var contactShareViewHelper: ContactShareViewHelper!
+
+    // MARK: Dependencies
+
+    var preferences: OWSPreferences {
+        return Environment.shared.preferences
+    }
+
+    var contactsManager: OWSContactsManager {
+        return Environment.shared.contactsManager
+    }
+
+    var audioAttachmentPlayer: OWSAudioPlayer?
 
     // MARK: Initializers
 
@@ -52,26 +74,29 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
 
     @objc
     required init(viewItem: ConversationViewItem, message: TSMessage, thread: TSThread, mode: MessageMetadataViewMode) {
-        self.contactsManager = Environment.shared.contactsManager
         self.viewItem = viewItem
         self.message = message
         self.mode = mode
-        self.uiDatabaseConnection = OWSPrimaryStorage.shared().newDatabaseConnection()
-        self.contactShareViewHelper = ContactShareViewHelper(contactsManager: contactsManager)
+        self.uiDatabaseConnection = OWSPrimaryStorage.shared().uiDatabaseConnection
         self.conversationStyle = ConversationStyle(thread: thread)
 
         super.init(nibName: nil, bundle: nil)
-
-        contactShareViewHelper.delegate = self
     }
 
     // MARK: View Lifecycle
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.contactShareViewHelper = ContactShareViewHelper(contactsManager: contactsManager)
+        contactShareViewHelper.delegate = self
 
-        self.uiDatabaseConnection.beginLongLivedReadTransaction()
-        updateDBConnectionAndMessageToLatest()
+        do {
+            try updateMessageToLatest()
+        } catch DetailViewError.messageWasDeleted {
+            self.delegate?.detailViewMessageWasDeleted(self)
+        } catch {
+            owsFailDebug("unexpected error")
+        }
 
         self.conversationStyle.viewWidth = view.width()
 
@@ -83,8 +108,8 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
         self.view.layoutIfNeeded()
 
         NotificationCenter.default.addObserver(self,
-            selector: #selector(yapDatabaseModified),
-            name: NSNotification.Name.YapDatabaseModified,
+            selector: #selector(uiDatabaseDidUpdate),
+            name: .OWSUIDatabaseConnectionDidUpdate,
             object: OWSPrimaryStorage.shared().dbNotificationObject)
     }
 
@@ -99,7 +124,7 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        updateMessageBubbleViewLayout()
+        updateMessageViewLayout()
 
         if mode == .focusOnMetadata {
             if let bubbleView = self.bubbleView {
@@ -151,6 +176,7 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
         contentView.autoPinEdge(toSuperviewEdge: .top)
         contentView.autoPinEdge(toSuperviewEdge: .bottom)
         scrollView.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+        scrollView.contentInset = UIEdgeInsets(top: 20, left: 0, bottom: 20, right: 0)
 
         if hasMediaAttachment {
             let footer = UIToolbar()
@@ -174,7 +200,7 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
     lazy var thread: TSThread = {
         var thread: TSThread?
         self.uiDatabaseConnection.read { transaction in
-            thread = self.message.thread(with: transaction)
+            thread = self.message.thread(transaction: transaction.asAnyRead)
         }
         return thread!
     }()
@@ -191,7 +217,6 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
         }
 
         var rows = [UIView]()
-        let contactsManager = Environment.shared.contactsManager!
 
         // Content
         rows += contentRows()
@@ -238,6 +263,7 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
                         continue
                     }
 
+                    // We use the "short" status message to avoid being redundant with the section title.
                     let (recipientStatus, shortStatusMessage, _) = MessageRecipientStatusUtils.recipientStatusAndStatusMessage(outgoingMessage: outgoingMessage, recipientState: recipientState)
 
                     guard recipientStatus == recipientStatusGroup else {
@@ -257,9 +283,13 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
                     // Table view cells don't layout properly outside the
                     // context of a table view.
                     let cellView = ContactCellView()
-                    // We use the "short" status message to avoid being redundant with the section title.
-                    cellView.accessoryMessage = shortStatusMessage
-                    cellView.configure(withRecipientId: recipientId, contactsManager: self.contactsManager)
+                    if self.shouldShowUD, recipientState.wasSentByUD {
+                        let udAccessoryView = self.buildUDAccessoryView(text: shortStatusMessage)
+                        cellView.setAccessory(udAccessoryView)
+                    } else {
+                        cellView.accessoryMessage = shortStatusMessage
+                    }
+                    cellView.configure(withRecipientId: recipientId)
 
                     let wrapper = UIView()
                     wrapper.layoutMargins = UIEdgeInsets(top: 8, left: 20, bottom: 8, right: 20)
@@ -284,49 +314,52 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
             }
         }
 
-        let sentRow = valueRow(name: NSLocalizedString("MESSAGE_METADATA_VIEW_SENT_DATE_TIME",
-                                                       comment: "Label for the 'sent date & time' field of the 'message metadata' view."),
-                               value: DateUtil.formatPastTimestampRelativeToNow(message.timestamp))
+        let sentText = DateUtil.formatPastTimestampRelativeToNow(message.timestamp)
+        let sentRow: UIStackView = valueRow(name: NSLocalizedString("MESSAGE_METADATA_VIEW_SENT_DATE_TIME",
+                                                                    comment: "Label for the 'sent date & time' field of the 'message metadata' view."),
+                                            value: sentText)
+        if let incomingMessage = message as? TSIncomingMessage {
+            if self.shouldShowUD, incomingMessage.wasReceivedByUD {
+                let icon = #imageLiteral(resourceName: "ic_secret_sender_indicator").withRenderingMode(.alwaysTemplate)
+                let iconView = UIImageView(image: icon)
+                iconView.tintColor = Theme.secondaryColor
+                iconView.setContentHuggingHigh()
+                sentRow.addArrangedSubview(iconView)
+                // keep the icon close to the label.
+                let spacerView = UIView()
+                spacerView.setContentHuggingLow()
+                sentRow.addArrangedSubview(spacerView)
+            }
+        }
+
         sentRow.isUserInteractionEnabled = true
         sentRow.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(didLongPressSent)))
         rows.append(sentRow)
 
-        if message as? TSIncomingMessage != nil {
+        if message is TSIncomingMessage {
             rows.append(valueRow(name: NSLocalizedString("MESSAGE_METADATA_VIEW_RECEIVED_DATE_TIME",
                                                          comment: "Label for the 'received date & time' field of the 'message metadata' view."),
-                                 value: DateUtil.formatPastTimestampRelativeToNow(message.timestampForSorting())))
+                                 value: DateUtil.formatPastTimestampRelativeToNow(message.receivedAtTimestamp)))
         }
 
         rows += addAttachmentMetadataRows()
 
         // TODO: We could include the "disappearing messages" state here.
 
-        var lastRow: UIView?
-        for row in rows {
-            contentView.addSubview(row)
-            row.autoPinLeadingToSuperviewMargin()
-            row.autoPinTrailingToSuperviewMargin()
-
-            if let lastRow = lastRow {
-                row.autoPinEdge(.top, to: .bottom, of: lastRow, withOffset: 5)
-            } else {
-                row.autoPinEdge(toSuperviewEdge: .top, withInset: 20)
-            }
-
-            lastRow = row
-        }
-        if let lastRow = lastRow {
-            lastRow.autoPinEdge(toSuperviewEdge: .bottom, withInset: 20)
-        }
-
-        updateMessageBubbleViewLayout()
+        let rowStack = UIStackView(arrangedSubviews: rows)
+        rowStack.axis = .vertical
+        rowStack.spacing = 5
+        contentView.addSubview(rowStack)
+        rowStack.autoPinEdgesToSuperviewMargins()
+        contentView.layoutIfNeeded()
+        updateMessageViewLayout()
     }
 
     private func displayableTextIfText() -> String? {
         guard viewItem.hasBodyText else {
                 return nil
         }
-        guard let displayableText = viewItem.displayableBodyText() else {
+        guard let displayableText = viewItem.displayableBodyText else {
                 return nil
         }
         let messageBody = displayableText.fullText
@@ -341,31 +374,40 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
     private func contentRows() -> [UIView] {
         var rows = [UIView]()
 
-        if hasMediaAttachment {
-            rows += addAttachmentRows()
+        let messageView: OWSMessageView
+        if viewItem.messageCellType == .stickerMessage {
+            let messageStickerView = OWSMessageStickerView(frame: CGRect.zero)
+            messageStickerView.delegate = self
+            messageView = messageStickerView
+        } else if viewItem.messageCellType == .viewOnce {
+            let messageViewOnceView = OWSMessageViewOnceView(frame: CGRect.zero)
+            messageViewOnceView.delegate = self
+            messageView = messageViewOnceView
+        } else {
+            let messageBubbleView = OWSMessageBubbleView(frame: CGRect.zero)
+            messageBubbleView.delegate = self
+            messageView = messageBubbleView
         }
 
-        let messageBubbleView = OWSMessageBubbleView(frame: CGRect.zero)
-        messageBubbleView.delegate = self
-        messageBubbleView.addTapGestureHandler()
-        self.messageBubbleView = messageBubbleView
-        messageBubbleView.viewItem = viewItem
-        messageBubbleView.cellMediaCache = NSCache()
-        messageBubbleView.conversationStyle = conversationStyle
-        messageBubbleView.configureViews()
-        messageBubbleView.loadContent()
+        messageView.addGestureHandlers()
+        self.messageView = messageView
+        messageView.viewItem = viewItem
+        messageView.cellMediaCache = NSCache()
+        messageView.conversationStyle = conversationStyle
+        messageView.configureViews()
+        messageView.loadContent()
 
-        assert(messageBubbleView.isUserInteractionEnabled)
+        assert(messageView.isUserInteractionEnabled)
 
         let row = UIView()
-        row.addSubview(messageBubbleView)
-        messageBubbleView.autoPinHeightToSuperview()
+        row.addSubview(messageView)
+        messageView.autoPinHeightToSuperview()
 
         let isIncoming = self.message as? TSIncomingMessage != nil
-        messageBubbleView.autoPinEdge(toSuperviewEdge: isIncoming ? .leading : .trailing, withInset: bubbleViewHMargin)
+        messageView.autoPinEdge(toSuperviewEdge: isIncoming ? .leading : .trailing, withInset: bubbleViewHMargin)
 
-        self.messageBubbleViewWidthLayoutConstraint = messageBubbleView.autoSetDimension(.width, toSize: 0)
-        self.messageBubbleViewHeightLayoutConstraint = messageBubbleView.autoSetDimension(.height, toSize: 0)
+        self.messageViewWidthLayoutConstraint = messageView.autoSetDimension(.width, toSize: 0)
+        self.messageViewHeightLayoutConstraint = messageView.autoSetDimension(.height, toSize: 0)
         rows.append(row)
 
         if rows.isEmpty {
@@ -384,35 +426,17 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
     }
 
     private func fetchAttachment(transaction: YapDatabaseReadTransaction) -> TSAttachment? {
+        // TODO: Support multi-image messages.
         guard let attachmentId = message.attachmentIds.firstObject as? String else {
             return nil
         }
 
-        guard let attachment = TSAttachment.fetch(uniqueId: attachmentId, transaction: transaction) else {
+        guard let attachment = TSAttachment.anyFetch(uniqueId: attachmentId, transaction: transaction.asAnyRead) else {
             Logger.warn("Missing attachment. Was it deleted?")
             return nil
         }
 
         return attachment
-    }
-
-    private func addAttachmentRows() -> [UIView] {
-        var rows = [UIView]()
-
-        guard let attachment = self.attachment else {
-            Logger.warn("Missing attachment. Was it deleted?")
-            return rows
-        }
-
-        guard let attachmentStream = attachment as? TSAttachmentStream else {
-            rows.append(valueRow(name: NSLocalizedString("MESSAGE_METADATA_VIEW_ATTACHMENT_NOT_YET_DOWNLOADED",
-                                                         comment: "Label for 'not yet downloaded' attachments in the 'message metadata' view."),
-                                 value: ""))
-            return rows
-        }
-        self.attachmentStream = attachmentStream
-
-        return rows
     }
 
     var hasMediaAttachment: Bool {
@@ -429,6 +453,8 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
         return true
     }
 
+    private let byteCountFormatter: ByteCountFormatter = ByteCountFormatter()
+
     private func addAttachmentMetadataRows() -> [UIView] {
         guard hasMediaAttachment else {
             return []
@@ -437,29 +463,47 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
         var rows = [UIView]()
 
         if let attachment = self.attachment {
-            // Only show MIME types in DEBUG builds.
-            if _isDebugAssertConfiguration() {
-                let contentType = attachment.contentType
-                rows.append(valueRow(name: NSLocalizedString("MESSAGE_METADATA_VIEW_ATTACHMENT_MIME_TYPE",
-                                                             comment: "Label for the MIME type of attachments in the 'message metadata' view."),
-                                     value: contentType))
-            }
-
             if let sourceFilename = attachment.sourceFilename {
                 rows.append(valueRow(name: NSLocalizedString("MESSAGE_METADATA_VIEW_SOURCE_FILENAME",
                                                              comment: "Label for the original filename of any attachment in the 'message metadata' view."),
                                      value: sourceFilename))
             }
-        }
 
-        if let dataSource = self.dataSource {
-            let fileSize = dataSource.dataLength()
-            rows.append(valueRow(name: NSLocalizedString("MESSAGE_METADATA_VIEW_ATTACHMENT_FILE_SIZE",
-                                                         comment: "Label for file size of attachments in the 'message metadata' view."),
-                                 value: OWSFormat.formatFileSize(UInt(fileSize))))
+            if _isDebugAssertConfiguration() {
+                let contentType = attachment.contentType
+                rows.append(valueRow(name: NSLocalizedString("MESSAGE_METADATA_VIEW_ATTACHMENT_MIME_TYPE",
+                                                             comment: "Label for the MIME type of attachments in the 'message metadata' view."),
+                                     value: contentType))
+
+                if let formattedByteCount = byteCountFormatter.string(for: attachment.byteCount) {
+                    rows.append(valueRow(name: NSLocalizedString("MESSAGE_METADATA_VIEW_ATTACHMENT_FILE_SIZE",
+                                                                 comment: "Label for file size of attachments in the 'message metadata' view."),
+                                         value: formattedByteCount))
+                } else {
+                    owsFailDebug("formattedByteCount was unexpectedly nil")
+                }
+            }
         }
 
         return rows
+    }
+
+    private func buildUDAccessoryView(text: String) -> UIView {
+        let label = UILabel()
+        label.textColor = Theme.secondaryColor
+        label.text = text
+        label.textAlignment = .right
+        label.font = UIFont.ows_mediumFont(withSize: 13)
+
+        let image = #imageLiteral(resourceName: "ic_secret_sender_indicator").withRenderingMode(.alwaysTemplate)
+        let imageView = UIImageView(image: image)
+        imageView.tintColor = Theme.middleGrayColor
+
+        let hStack = UIStackView(arrangedSubviews: [imageView, label])
+        hStack.axis = .horizontal
+        hStack.spacing = 8
+
+        return hStack
     }
 
     private func nameLabel(text: String) -> UILabel {
@@ -480,33 +524,22 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
         return label
     }
 
-    private func valueRow(name: String, value: String, subtitle: String = "") -> UIView {
-        let row = UIView.container()
+    private func valueRow(name: String, value: String, subtitle: String = "") -> UIStackView {
         let nameLabel = self.nameLabel(text: name)
         let valueLabel = self.valueLabel(text: value)
-        row.addSubview(nameLabel)
-        row.addSubview(valueLabel)
-        nameLabel.autoPinLeadingToSuperviewMargin(withInset: 20)
-        valueLabel.autoPinTrailingToSuperviewMargin(withInset: 20)
-        valueLabel.autoPinLeading(toTrailingEdgeOf: nameLabel, offset: 10)
-        nameLabel.autoPinEdge(toSuperviewEdge: .top)
-        valueLabel.autoPinEdge(toSuperviewEdge: .top)
+        let hStackView = UIStackView(arrangedSubviews: [nameLabel, valueLabel])
+        hStackView.axis = .horizontal
+        hStackView.spacing = 10
+        hStackView.layoutMargins = UIEdgeInsets(top: 0, left: 20, bottom: 0, right: 20)
+        hStackView.isLayoutMarginsRelativeArrangement = true
 
         if subtitle.count > 0 {
             let subtitleLabel = self.valueLabel(text: subtitle)
             subtitleLabel.textColor = Theme.secondaryColor
-            row.addSubview(subtitleLabel)
-            subtitleLabel.autoPinTrailingToSuperviewMargin()
-            subtitleLabel.autoPinLeading(toTrailingEdgeOf: nameLabel, offset: 10)
-            subtitleLabel.autoPinEdge(.top, to: .bottom, of: valueLabel, withOffset: 1)
-            subtitleLabel.autoPinEdge(toSuperviewEdge: .bottom)
-        } else if value.count > 0 {
-            valueLabel.autoPinEdge(toSuperviewEdge: .bottom)
-        } else {
-            nameLabel.autoPinEdge(toSuperviewEdge: .bottom)
+            hStackView.addArrangedSubview(subtitleLabel)
         }
 
-        return row
+        return hStackView
     }
 
     // MARK: - Actions
@@ -521,39 +554,49 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
 
     // MARK: - Actions
 
+    enum DetailViewError: Error {
+        case messageWasDeleted
+    }
+
     // This method should be called after self.databaseConnection.beginLongLivedReadTransaction().
-    private func updateDBConnectionAndMessageToLatest() {
+    private func updateMessageToLatest() throws {
 
         AssertIsOnMainThread()
 
-        self.uiDatabaseConnection.read { transaction in
+        try self.uiDatabaseConnection.read { transaction in
             guard let uniqueId = self.message.uniqueId else {
                 Logger.error("Message is missing uniqueId.")
                 return
             }
             guard let newMessage = TSInteraction.fetch(uniqueId: uniqueId, transaction: transaction) as? TSMessage else {
-                Logger.error("Couldn't reload message.")
-                return
+                Logger.error("Message was deleted")
+                throw DetailViewError.messageWasDeleted
             }
             self.message = newMessage
             self.attachment = self.fetchAttachment(transaction: transaction)
+            self.attachmentStream = self.attachment as? TSAttachmentStream
         }
     }
 
-    @objc internal func yapDatabaseModified(notification: NSNotification) {
+    @objc internal func uiDatabaseDidUpdate(notification: NSNotification) {
         AssertIsOnMainThread()
 
         guard !wasDeleted else {
-            // Item was deleted. Don't bother re-rendering, it will fail and we'll soon be dismissed.
+            // Item was deleted in the tile view gallery.
+            // Don't bother re-rendering, it will fail and we'll soon be dismissed.
             return
         }
 
-        let notifications = self.uiDatabaseConnection.beginLongLivedReadTransaction()
+        guard let notifications = notification.userInfo?[OWSUIDatabaseConnectionNotificationsKey] as? [Notification] else {
+            owsFailDebug("notifications was unexpectedly nil")
+            return
+        }
 
         guard let uniqueId = self.message.uniqueId else {
             Logger.error("Message is missing uniqueId.")
             return
         }
+
         guard self.uiDatabaseConnection.hasChange(forKey: uniqueId,
                                                  inCollection: TSInteraction.collection(),
                                                  in: notifications) else {
@@ -561,7 +604,16 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
                                                     return
         }
 
-        updateDBConnectionAndMessageToLatest()
+        do {
+            try updateMessageToLatest()
+        } catch DetailViewError.messageWasDeleted {
+            DispatchQueue.main.async {
+                self.delegate?.detailViewMessageWasDeleted(self)
+            }
+            return
+        } catch {
+            owsFailDebug("unexpected error: \(error)")
+        }
         updateContent()
     }
 
@@ -591,38 +643,72 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
         }
     }
 
-    // MARK: - Message Bubble Layout
+    // MARK: - Audio Setup
 
-    private func updateMessageBubbleViewLayout() {
-        guard let messageBubbleView = messageBubbleView else {
-            return
-        }
-        guard let messageBubbleViewWidthLayoutConstraint = messageBubbleViewWidthLayoutConstraint else {
-            return
-        }
-        guard let messageBubbleViewHeightLayoutConstraint = messageBubbleViewHeightLayoutConstraint else {
+    private func prepareAudioPlayer(for viewItem: ConversationViewItem, attachmentStream: TSAttachmentStream) {
+        AssertIsOnMainThread()
+
+        guard let mediaURL = attachmentStream.originalMediaURL else {
+            owsFailDebug("mediaURL was unexpectedly nil for attachment: \(attachmentStream)")
             return
         }
 
-        let messageBubbleSize = messageBubbleView.measureSize()
-        messageBubbleViewWidthLayoutConstraint.constant = messageBubbleSize.width
-        messageBubbleViewHeightLayoutConstraint.constant = messageBubbleSize.height
+        guard FileManager.default.fileExists(atPath: mediaURL.path) else {
+            owsFailDebug("audio file missing at path: \(mediaURL)")
+            return
+        }
+
+        if let audioAttachmentPlayer = self.audioAttachmentPlayer {
+            // Is this player associated with this media adapter?
+            if audioAttachmentPlayer.owner?.isEqual(viewItem.interaction.uniqueId) == true {
+                return
+            }
+            audioAttachmentPlayer.stop()
+            self.audioAttachmentPlayer = nil
+        }
+
+        let audioAttachmentPlayer = OWSAudioPlayer(mediaUrl: mediaURL, audioBehavior: .audioMessagePlayback, delegate: viewItem)
+        self.audioAttachmentPlayer = audioAttachmentPlayer
+
+        // Associate the player with this media adapter.
+        audioAttachmentPlayer.owner = viewItem.interaction.uniqueId as AnyObject
+
+        audioAttachmentPlayer.setupAudioPlayer()
     }
 
-    // MARK: OWSMessageBubbleViewDelegate
+    // MARK: - Message Bubble Layout
+
+    private func updateMessageViewLayout() {
+        guard let messageView = messageView else {
+            return
+        }
+        guard let messageViewWidthLayoutConstraint = messageViewWidthLayoutConstraint else {
+            return
+        }
+        guard let messageViewHeightLayoutConstraint = messageViewHeightLayoutConstraint else {
+            return
+        }
+
+        let messageBubbleSize = messageView.measureSize()
+        messageViewWidthLayoutConstraint.constant = messageBubbleSize.width
+        messageViewHeightLayoutConstraint.constant = messageBubbleSize.height
+    }
+}
+
+extension MessageDetailViewController: OWSMessageBubbleViewDelegate {
 
     func didTapImageViewItem(_ viewItem: ConversationViewItem, attachmentStream: TSAttachmentStream, imageView: UIView) {
-        let mediaGalleryViewController = MediaGalleryViewController(thread: self.thread, uiDatabaseConnection: self.uiDatabaseConnection)
+        let mediaGallery = MediaGallery(thread: self.thread)
 
-        mediaGalleryViewController.addDataSourceDelegate(self)
-        mediaGalleryViewController.presentDetailView(fromViewController: self, mediaMessage: self.message, replacingView: imageView)
+        mediaGallery.addDataSourceDelegate(self)
+        mediaGallery.presentDetailView(fromViewController: self, mediaAttachment: attachmentStream, replacingView: imageView)
     }
 
     func didTapVideoViewItem(_ viewItem: ConversationViewItem, attachmentStream: TSAttachmentStream, imageView: UIView) {
-        let mediaGalleryViewController = MediaGalleryViewController(thread: self.thread, uiDatabaseConnection: self.uiDatabaseConnection)
+        let mediaGallery = MediaGallery(thread: self.thread)
 
-        mediaGalleryViewController.addDataSourceDelegate(self)
-        mediaGalleryViewController.presentDetailView(fromViewController: self, mediaMessage: self.message, replacingView: imageView)
+        mediaGallery.addDataSourceDelegate(self)
+        mediaGallery.presentDetailView(fromViewController: self, mediaAttachment: attachmentStream, replacingView: imageView)
     }
 
     func didTapContactShare(_ viewItem: ConversationViewItem) {
@@ -646,38 +732,40 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
         contactShareViewHelper.showAddToContacts(contactShare: contactShare, fromViewController: self)
     }
 
-    var audioAttachmentPlayer: OWSAudioPlayer?
+    func didTapStickerPack(_ stickerPackInfo: StickerPackInfo) {
+        guard FeatureFlags.stickerAutoEnable || FeatureFlags.stickerSend else {
+            return
+        }
+
+        let packView = StickerPackViewController(stickerPackInfo: stickerPackInfo)
+        present(packView, animated: true)
+    }
 
     func didTapAudioViewItem(_ viewItem: ConversationViewItem, attachmentStream: TSAttachmentStream) {
         AssertIsOnMainThread()
 
-        guard let mediaURL = attachmentStream.originalMediaURL else {
-            owsFailDebug("mediaURL was unexpectedly nil for attachment: \(attachmentStream)")
-            return
-        }
+        self.prepareAudioPlayer(for: viewItem, attachmentStream: attachmentStream)
 
-        guard FileManager.default.fileExists(atPath: mediaURL.path) else {
-            owsFailDebug("audio file missing at path: \(mediaURL)")
-            return
-        }
+        // Resume from where we left off
+        audioAttachmentPlayer?.setCurrentTime(TimeInterval(viewItem.audioProgressSeconds))
 
-        if let audioAttachmentPlayer = self.audioAttachmentPlayer {
-            // Is this player associated with this media adapter?
-            if audioAttachmentPlayer.owner as? ConversationViewItem == viewItem {
-                // Tap to pause & unpause.
-                audioAttachmentPlayer.togglePlayState()
-                return
-            }
-            audioAttachmentPlayer.stop()
-            self.audioAttachmentPlayer = nil
-        }
+        audioAttachmentPlayer?.togglePlayState()
+    }
 
-        let audioAttachmentPlayer = OWSAudioPlayer(mediaUrl: mediaURL, delegate: viewItem)
-        self.audioAttachmentPlayer = audioAttachmentPlayer
+    func didScrubAudioViewItem(_ viewItem: ConversationViewItem, toTime time: TimeInterval, attachmentStream: TSAttachmentStream) {
+        AssertIsOnMainThread()
 
-        // Associate the player with this media adapter.
-        audioAttachmentPlayer.owner = viewItem
-        audioAttachmentPlayer.playWithPlaybackAudioCategory()
+        self.prepareAudioPlayer(for: viewItem, attachmentStream: attachmentStream)
+
+        audioAttachmentPlayer?.setCurrentTime(time)
+    }
+
+    func didTapPdf(for viewItem: ConversationViewItem, attachmentStream: TSAttachmentStream) {
+        AssertIsOnMainThread()
+
+        let pdfView = PdfViewController(attachmentStream: attachmentStream)
+        let navigationController = OWSNavigationController(rootViewController: pdfView)
+        present(navigationController, animated: true)
     }
 
     func didTapTruncatedTextMessage(_ conversationItem: ConversationViewItem) {
@@ -687,10 +775,11 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
         }
 
         let viewController = LongTextViewController(viewItem: viewItem)
+        viewController.delegate = self
         navigationController.pushViewController(viewController, animated: true)
     }
 
-    func didTapFailedIncomingAttachment(_ viewItem: ConversationViewItem, attachmentPointer: TSAttachmentPointer) {
+    func didTapFailedIncomingAttachment(_ viewItem: ConversationViewItem) {
         // no - op
     }
 
@@ -706,6 +795,18 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
         // no - op
     }
 
+    func didTapConversationItem(_ viewItem: ConversationViewItem, linkPreview: OWSLinkPreview) {
+        guard let urlString = linkPreview.urlString else {
+            owsFailDebug("Missing url.")
+            return
+        }
+        guard let url = URL(string: urlString) else {
+            owsFailDebug("Invalid url: \(urlString).")
+            return
+        }
+        UIApplication.shared.openURL(url)
+    }
+
     @objc func didLongPressSent(sender: UIGestureRecognizer) {
         guard sender.state == .began else {
             return
@@ -714,9 +815,14 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
         UIPasteboard.general.string = messageTimestamp
     }
 
-    // MediaGalleryDataSourceDelegate
+    var lastSearchedText: String? {
+        return nil
+    }
+}
 
-    func mediaGalleryDataSource(_ mediaGalleryDataSource: MediaGalleryDataSource, willDelete items: [MediaGalleryItem], initiatedBy: MediaGalleryDataSourceDelegate) {
+extension MessageDetailViewController: MediaGalleryDataSourceDelegate {
+
+    func mediaGalleryDataSource(_ mediaGalleryDataSource: MediaGalleryDataSource, willDelete items: [MediaGalleryItem], initiatedBy: AnyObject) {
         Logger.info("")
 
         guard (items.map({ $0.message }) == [self.message]) else {
@@ -733,11 +839,32 @@ class MessageDetailViewController: OWSViewController, MediaGalleryDataSourceDele
             self.navigationController?.popViewController(animated: true)
         }
     }
+}
 
-    // MARK: - ContactShareViewHelperDelegate
+extension MessageDetailViewController: OWSMessageStickerViewDelegate {
+    public func showStickerPack(_ stickerPackInfo: StickerPackInfo) {
+        let packView = StickerPackViewController(stickerPackInfo: stickerPackInfo)
+        present(packView, animated: true)
+    }
+}
+
+extension MessageDetailViewController: OWSMessageViewOnceViewDelegate {
+    public func didTapViewOnceAttachment(_ viewItem: ConversationViewItem, attachmentStream: TSAttachmentStream) {
+        ViewOnceMessageViewController.tryToPresent(interaction: viewItem.interaction,
+                                                        from: self)
+    }
+}
+
+extension MessageDetailViewController: ContactShareViewHelperDelegate {
 
     public func didCreateOrEditContact() {
         updateContent()
         self.dismiss(animated: true)
+    }
+}
+
+extension MessageDetailViewController: LongTextViewDelegate {
+    func longTextViewMessageWasDeleted(_ longTextViewController: LongTextViewController) {
+        self.delegate?.detailViewMessageWasDeleted(self)
     }
 }

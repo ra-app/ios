@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "NewGroupViewController.h"
@@ -8,19 +8,18 @@
 #import "OWSNavigationController.h"
 #import "RAAPP-Swift.h"
 #import "SignalApp.h"
-#import <Curve25519Kit/Randomness.h>
+#import <SignalCoreKit/NSDate+OWS.h>
+#import <SignalCoreKit/Randomness.h>
 #import <SignalMessaging/BlockListUIUtils.h>
 #import <SignalMessaging/ContactTableViewCell.h>
 #import <SignalMessaging/ContactsViewHelper.h>
 #import <SignalMessaging/Environment.h>
-#import <SignalMessaging/NSString+OWS.h>
 #import <SignalMessaging/OWSContactsManager.h>
 #import <SignalMessaging/OWSTableViewController.h>
-#import <SignalMessaging/SignalKeyingStorage.h>
 #import <SignalMessaging/UIUtil.h>
 #import <SignalMessaging/UIView+OWS.h>
 #import <SignalMessaging/UIViewController+OWS.h>
-#import <SignalServiceKit/NSDate+OWS.h>
+#import <SignalServiceKit/NSString+SSK.h>
 #import <SignalServiceKit/OWSMessageSender.h>
 #import <SignalServiceKit/SignalAccount.h>
 #import <SignalServiceKit/TSGroupModel.h>
@@ -28,8 +27,6 @@
 #import <SignalServiceKit/TSOutgoingMessage.h>
 
 NS_ASSUME_NONNULL_BEGIN
-
-const NSUInteger kNewGroupViewControllerAvatarWidth = 68;
 
 @interface NewGroupViewController () <UIImagePickerControllerDelegate,
     UITextFieldDelegate,
@@ -46,7 +43,10 @@ const NSUInteger kNewGroupViewControllerAvatarWidth = 68;
 
 @property (nonatomic, readonly) OWSTableViewController *tableViewController;
 @property (nonatomic, readonly) AvatarImageView *avatarView;
+@property (nonatomic, readonly) UIImageView *cameraImageView;
 @property (nonatomic, readonly) UITextField *groupNameTextField;
+
+@property (nonatomic, readonly) NSData *groupId;
 
 @property (nonatomic, nullable) UIImage *groupAvatar;
 @property (nonatomic) NSMutableSet<NSString *> *memberRecipientIds;
@@ -86,6 +86,8 @@ const NSUInteger kNewGroupViewControllerAvatarWidth = 68;
 
 - (void)commonInit
 {
+    _groupId = [Randomness generateRandomBytes:kGroupIdLength];
+
     _messageSender = SSKEnvironment.shared.messageSender;
     _contactsViewHelper = [[ContactsViewHelper alloc] initWithDelegate:self];
     _avatarViewHelper = [AvatarViewHelper new];
@@ -104,11 +106,13 @@ const NSUInteger kNewGroupViewControllerAvatarWidth = 68;
 
     self.view.backgroundColor = Theme.backgroundColor;
 
-    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
-        initWithTitle:NSLocalizedString(@"NEW_GROUP_CREATE_BUTTON", @"The title for the 'create group' button.")
-                style:UIBarButtonItemStylePlain
-               target:self
-               action:@selector(createGroup)];
+    self.navigationItem.rightBarButtonItem =
+        [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"NEW_GROUP_CREATE_BUTTON",
+                                                   @"The title for the 'create group' button.")
+                                         style:UIBarButtonItemStylePlain
+                                        target:self
+                                        action:@selector(createGroup)
+                       accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"create")];
     self.navigationItem.rightBarButtonItem.imageInsets = UIEdgeInsetsMake(0, -10, 0, 10);
     self.navigationItem.rightBarButtonItem.accessibilityLabel
         = NSLocalizedString(@"FINISH_GROUP_CREATION_LABEL", @"Accessibility label for finishing new group");
@@ -124,7 +128,8 @@ const NSUInteger kNewGroupViewControllerAvatarWidth = 68;
     _tableViewController = [OWSTableViewController new];
     _tableViewController.delegate = self;
     [self.view addSubview:self.tableViewController.view];
-    [_tableViewController.view autoPinWidthToSuperview];
+    [self.tableViewController.view autoPinEdgeToSuperviewSafeArea:ALEdgeLeading];
+    [self.tableViewController.view autoPinEdgeToSuperviewSafeArea:ALEdgeTrailing];
     [_tableViewController.view autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:firstSection];
     [self autoPinViewToBottomOfViewControllerOrKeyboard:self.tableViewController.view avoidNotch:NO];
     self.tableViewController.tableView.rowHeight = UITableViewAutomaticDimension;
@@ -151,9 +156,22 @@ const NSUInteger kNewGroupViewControllerAvatarWidth = 68;
     [threadInfoView addSubview:avatarView];
     [avatarView autoVCenterInSuperview];
     [avatarView autoPinLeadingToSuperviewMargin];
-    [avatarView autoSetDimension:ALDimensionWidth toSize:kNewGroupViewControllerAvatarWidth];
-    [avatarView autoSetDimension:ALDimensionHeight toSize:kNewGroupViewControllerAvatarWidth];
+    [avatarView autoSetDimension:ALDimensionWidth toSize:kLargeAvatarSize];
+    [avatarView autoSetDimension:ALDimensionHeight toSize:kLargeAvatarSize];
+
+    UIImage *cameraImage = [UIImage imageNamed:@"settings-avatar-camera"];
+    UIImageView *cameraImageView = [[UIImageView alloc] initWithImage:cameraImage];
+    [threadInfoView addSubview:cameraImageView];
+    [cameraImageView autoPinTrailingToEdgeOfView:avatarView];
+    [cameraImageView autoPinEdge:ALEdgeBottom toEdge:ALEdgeBottom ofView:avatarView];
+    _cameraImageView = cameraImageView;
+
     [self updateAvatarView];
+
+    [avatarView
+        addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(avatarTouched:)]];
+    avatarView.userInteractionEnabled = YES;
+    SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, avatarView);
 
     UITextField *groupNameTextField = [OWSTextField new];
     _groupNameTextField = groupNameTextField;
@@ -173,10 +191,7 @@ const NSUInteger kNewGroupViewControllerAvatarWidth = 68;
     [groupNameTextField autoVCenterInSuperview];
     [groupNameTextField autoPinTrailingToSuperviewMargin];
     [groupNameTextField autoPinLeadingToTrailingEdgeOfView:avatarView offset:16.f];
-
-    [avatarView
-        addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(avatarTouched:)]];
-    avatarView.userInteractionEnabled = YES;
+    SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, groupNameTextField);
 
     return firstSectionHeader;
 }
@@ -241,8 +256,12 @@ const NSUInteger kNewGroupViewControllerAvatarWidth = 68;
                                     cell.accessoryMessage = NSLocalizedString(
                                         @"CONTACT_CELL_IS_BLOCKED", @"An indicator that a contact has been blocked.");
                                 }
-                                [cell configureWithRecipientId:recipientId
-                                               contactsManager:contactsViewHelper.contactsManager];
+                                [cell configureWithRecipientId:recipientId];
+
+                                NSString *cellName = [NSString stringWithFormat:@"non_signal_contact.%@", recipientId];
+                                cell.accessibilityIdentifier
+                                    = ACCESSIBILITY_IDENTIFIER_WITH_NAME(NewGroupViewController, cellName);
+
                                 return cell;
                             }
                             customRowHeight:UITableViewAutomaticDimension
@@ -330,8 +349,13 @@ const NSUInteger kNewGroupViewControllerAvatarWidth = 68;
                                         @"CONTACT_CELL_IS_BLOCKED", @"An indicator that a contact has been blocked.");
                                 }
 
-                                [cell configureWithRecipientId:signalAccount.recipientId
-                                               contactsManager:contactsViewHelper.contactsManager];
+                                [cell configureWithRecipientId:signalAccount.recipientId];
+
+                                NSString *cellName =
+                                    [NSString stringWithFormat:@"signal_contact.%@", signalAccount.recipientId];
+                                cell.accessibilityIdentifier
+                                    = ACCESSIBILITY_IDENTIFIER_WITH_NAME(NewGroupViewController, cellName);
+
                                 return cell;
                             }
                             customRowHeight:UITableViewAutomaticDimension
@@ -391,15 +415,16 @@ const NSUInteger kNewGroupViewControllerAvatarWidth = 68;
 {
     __weak NewGroupViewController *weakSelf = self;
     return [OWSTableItem
-        disclosureItemWithText:NSLocalizedString(@"NEW_GROUP_ADD_NON_CONTACT",
-                                   @"A label for the cell that lets you add a new non-contact member to a group.")
-               customRowHeight:UITableViewAutomaticDimension
-                   actionBlock:^{
-                       AddToGroupViewController *viewController = [AddToGroupViewController new];
-                       viewController.addToGroupDelegate = weakSelf;
-                       viewController.hideContacts = YES;
-                       [weakSelf.navigationController pushViewController:viewController animated:YES];
-                   }];
+         disclosureItemWithText:NSLocalizedString(@"NEW_GROUP_ADD_NON_CONTACT",
+                                    @"A label for the cell that lets you add a new non-contact member to a group.")
+        accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(NewGroupViewController, @"add_non_contact")
+                customRowHeight:UITableViewAutomaticDimension
+                    actionBlock:^{
+                        AddToGroupViewController *viewController = [AddToGroupViewController new];
+                        viewController.addToGroupDelegate = weakSelf;
+                        viewController.hideContacts = YES;
+                        [weakSelf.navigationController pushViewController:viewController animated:YES];
+                    }];
 }
 
 - (void)removeRecipientId:(NSString *)recipientId
@@ -437,6 +462,8 @@ const NSUInteger kNewGroupViewControllerAvatarWidth = 68;
 {
     OWSAssertIsOnMainThread();
 
+    [self.groupNameTextField acceptAutocorrectSuggestion];
+
     TSGroupModel *model = [self makeGroup];
 
     __block TSGroupThread *thread;
@@ -462,6 +489,7 @@ const NSUInteger kNewGroupViewControllerAvatarWidth = 68;
 
         // Add an error message to the new group indicating
         // that group creation didn't succeed.
+        // MJK TODO should be safe to remove senderTimestamp and just save immediately
         TSErrorMessage *errorMessage = [[TSErrorMessage alloc] initWithTimestamp:[NSDate ows_millisecondTimeStamp]
                                                                         inThread:thread
                                                                failedMessageType:TSErrorMessageGroupCreationFailed];
@@ -488,13 +516,17 @@ const NSUInteger kNewGroupViewControllerAvatarWidth = 68;
                               NSData *data = UIImagePNGRepresentation(model.groupImage);
                               DataSource *_Nullable dataSource =
                                   [DataSourceValue dataSourceWithData:data fileExtension:@"png"];
-                              [self.messageSender enqueueTemporaryAttachment:dataSource
-                                                                 contentType:OWSMimeTypeImagePng
-                                                                   inMessage:message
-                                                                     success:successHandler
-                                                                     failure:failureHandler];
+                              // CLEANUP DURABLE - Replace with a durable operation e.g. `GroupCreateJob`, which creates
+                              // an error in the thread if group creation fails
+                              [self.messageSender sendTemporaryAttachment:dataSource
+                                                              contentType:OWSMimeTypeImagePng
+                                                                inMessage:message
+                                                                  success:successHandler
+                                                                  failure:failureHandler];
                           } else {
-                              [self.messageSender enqueueMessage:message success:successHandler failure:failureHandler];
+                              // CLEANUP DURABLE - Replace with a durable operation e.g. `GroupCreateJob`, which creates
+                              // an error in the thread if group creation fails
+                              [self.messageSender sendMessage:message success:successHandler failure:failureHandler];
                           }
                       });
                   }];
@@ -505,8 +537,10 @@ const NSUInteger kNewGroupViewControllerAvatarWidth = 68;
     NSString *groupName = [self.groupNameTextField.text ows_stripped];
     NSMutableArray<NSString *> *recipientIds = [self.memberRecipientIds.allObjects mutableCopy];
     [recipientIds addObject:[self.contactsViewHelper localNumber]];
-    NSData *groupId = [Randomness generateRandomBytes:16];
-    return [[TSGroupModel alloc] initWithTitle:groupName memberIds:recipientIds image:self.groupAvatar groupId:groupId];
+    return [[TSGroupModel alloc] initWithTitle:groupName
+                                     memberIds:recipientIds
+                                         image:self.groupAvatar
+                                       groupId:self.groupId];
 }
 
 #pragma mark - Group Avatar
@@ -529,7 +563,17 @@ const NSUInteger kNewGroupViewControllerAvatarWidth = 68;
 
 - (void)updateAvatarView
 {
-    self.avatarView.image = (self.groupAvatar ?: [UIImage imageNamed:@"empty-group-avatar"]);
+    UIImage *_Nullable groupAvatar = self.groupAvatar;
+    self.cameraImageView.hidden = groupAvatar != nil;
+
+    if (!groupAvatar) {
+        NSString *conversationColorName = [TSGroupThread defaultConversationColorNameForGroupId:self.groupId];
+        groupAvatar = [OWSGroupAvatarBuilder defaultAvatarForGroupId:self.groupId
+                                               conversationColorName:conversationColorName
+                                                            diameter:kLargeAvatarSize];
+    }
+
+    self.avatarView.image = groupAvatar;
 }
 
 #pragma mark - Event Handling
@@ -544,7 +588,7 @@ const NSUInteger kNewGroupViewControllerAvatarWidth = 68;
         return;
     }
 
-    UIAlertController *controller = [UIAlertController
+    UIAlertController *alert = [UIAlertController
         alertControllerWithTitle:
             NSLocalizedString(@"NEW_GROUP_VIEW_UNSAVED_CHANGES_TITLE",
                 @"The alert title if user tries to exit the new group view without saving changes.")
@@ -552,15 +596,16 @@ const NSUInteger kNewGroupViewControllerAvatarWidth = 68;
                              NSLocalizedString(@"NEW_GROUP_VIEW_UNSAVED_CHANGES_MESSAGE",
                                  @"The alert message if user tries to exit the new group view without saving changes.")
                   preferredStyle:UIAlertControllerStyleAlert];
-    [controller
+    [alert
         addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"ALERT_DISCARD_BUTTON",
                                                      @"The label for the 'discard' button in alerts and action sheets.")
+                         accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"discard")
                                            style:UIAlertActionStyleDestructive
                                          handler:^(UIAlertAction *action) {
                                              [self.navigationController popViewControllerAnimated:YES];
                                          }]];
-    [controller addAction:[OWSAlerts cancelAction]];
-    [self presentViewController:controller animated:YES completion:nil];
+    [alert addAction:[OWSAlerts cancelAction]];
+    [self presentAlert:alert];
 }
 
 - (void)groupNameDidChange:(id)sender
@@ -597,7 +642,7 @@ const NSUInteger kNewGroupViewControllerAvatarWidth = 68;
 
 #pragma mark - AvatarViewHelperDelegate
 
-- (NSString *)avatarActionSheetTitle
+- (nullable NSString *)avatarActionSheetTitle
 {
     return NSLocalizedString(
         @"NEW_GROUP_ADD_PHOTO_ACTION", @"Action Sheet title prompting the user for a group avatar");

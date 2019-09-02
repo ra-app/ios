@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 //  Originally based on EPContacts
@@ -99,7 +99,10 @@ public class ContactsPicker: OWSViewController, UITableViewDelegate, UITableView
         self.tableView.separatorColor = Theme.cellSeparatorColor
 
         view.addSubview(tableView)
-        tableView.autoPinEdgesToSuperviewEdges()
+        tableView.autoPinEdge(toSuperviewEdge: .top)
+        tableView.autoPinEdge(toSuperviewEdge: .bottom)
+        tableView.autoPinEdge(toSuperviewSafeArea: .leading)
+        tableView.autoPinEdge(toSuperviewSafeArea: .trailing)
         tableView.delegate = self
         tableView.dataSource = self
 
@@ -121,7 +124,7 @@ public class ContactsPicker: OWSViewController, UITableViewDelegate, UITableView
 
         // Auto size cells for dynamic type
         tableView.estimatedRowHeight = 60.0
-        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.estimatedRowHeight = 60
 
         tableView.allowsMultipleSelection = allowsMultipleSelection
@@ -133,7 +136,7 @@ public class ContactsPicker: OWSViewController, UITableViewDelegate, UITableView
         reloadContacts()
         updateSearchResults(searchText: "")
 
-        NotificationCenter.default.addObserver(self, selector: #selector(self.didChangePreferredContentSize), name: NSNotification.Name.UIContentSizeCategoryDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.didChangePreferredContentSize), name: UIContentSizeCategory.didChangeNotification, object: nil)
     }
 
     @objc
@@ -169,7 +172,7 @@ public class ContactsPicker: OWSViewController, UITableViewDelegate, UITableView
                 let title = NSLocalizedString("INVITE_FLOW_REQUIRES_CONTACT_ACCESS_TITLE", comment: "Alert title when contacts disabled while trying to invite contacts to signal")
                 let body = NSLocalizedString("INVITE_FLOW_REQUIRES_CONTACT_ACCESS_BODY", comment: "Alert body when contacts disabled while trying to invite contacts to signal")
 
-                let alert = UIAlertController(title: title, message: body, preferredStyle: UIAlertControllerStyle.alert)
+                let alert = UIAlertController(title: title, message: body, preferredStyle: .alert)
 
                 let dismissText = CommonStrings.cancelButton
 
@@ -186,7 +189,7 @@ public class ContactsPicker: OWSViewController, UITableViewDelegate, UITableView
                 })
                 alert.addAction(openSettingsAction)
 
-                self.present(alert, animated: true, completion: nil)
+                self.presentAlert(alert)
 
             case CNAuthorizationStatus.notDetermined:
                 //This case means the user is prompted for the first time for allowing contacts

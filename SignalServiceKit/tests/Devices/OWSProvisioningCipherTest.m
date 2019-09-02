@@ -1,10 +1,10 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
-#import "SSKBaseTest.h"
+#import "SSKBaseTestObjC.h"
 #import <Curve25519Kit/Curve25519.h>
-#import <SignalServiceKit/Cryptography.h>
+#import <SignalCoreKit/Cryptography.h>
 #import <SignalServiceKit/OWSProvisioningCipher.h>
 
 @interface OWSProvisioningCipher(Testing)
@@ -16,7 +16,7 @@
 
 @end
 
-@interface OWSProvisioningCipherTest : SSKBaseTest
+@interface OWSProvisioningCipherTest : SSKBaseTestObjC
 
 @end
 
@@ -77,10 +77,15 @@
     NSKeyedArchiver *archiver = [NSKeyedArchiver new];
     [archiver encodeBytes:publicKeyBytes length:ECCKeyLength forKey:@"TSECKeyPairPublicKey"];
     [archiver encodeBytes:privateKeyBytes length:ECCKeyLength forKey:@"TSECKeyPairPrivateKey"];
-    NSData *serialized = [archiver encodedData];
-    
-    NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:serialized];
-    return [[ECKeyPair alloc] initWithCoder:unarchiver];
+
+    if (@available(iOS 10.0, *)) {
+        NSData *serialized = [archiver encodedData];
+        NSKeyedUnarchiver *unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:serialized];
+        return [[ECKeyPair alloc] initWithCoder:unarchiver];
+    } else {
+        XCTFail(@"This test is only supported on iOS10+");
+        return [ECKeyPair new];
+    }
 }
 
 - (NSData *)knownData

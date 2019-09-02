@@ -1,8 +1,10 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "UIImage+OWS.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 @implementation UIImage (normalizeImage)
 
@@ -138,7 +140,8 @@
             break;
 
         default:
-            OWSRaiseException(NSInternalInconsistencyException, @"Invalid image orientation");
+            OWSFailDebug(@"Invalid image orientation");
+            return nil;
     }
 
     /////////////////////////////////////////////////////////////////////////////
@@ -235,3 +238,5 @@
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

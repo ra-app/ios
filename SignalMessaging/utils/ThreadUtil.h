@@ -1,20 +1,27 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class OWSBlockingManager;
+@class OWSContact;
 @class OWSContactsManager;
+@class OWSLinkPreviewDraft;
 @class OWSMessageSender;
+@class OWSQuotedReplyModel;
 @class OWSUnreadIndicator;
+@class SDSAnyReadTransaction;
 @class SignalAttachment;
+@class StickerInfo;
 @class TSContactThread;
 @class TSGroupThread;
 @class TSInteraction;
+@class TSOutgoingMessage;
 @class TSThread;
 @class YapDatabaseConnection;
 @class YapDatabaseReadTransaction;
+@class YapDatabaseReadWriteTransaction;
 
 @interface ThreadDynamicInteractions : NSObject
 
@@ -35,47 +42,52 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark -
 
-@class OWSContact;
-@class OWSQuotedReplyModel;
-@class TSOutgoingMessage;
-
 @interface ThreadUtil : NSObject
 
-+ (TSOutgoingMessage *)sendMessageWithText:(NSString *)text
-                                  inThread:(TSThread *)thread
-                          quotedReplyModel:(nullable OWSQuotedReplyModel *)quotedReplyModel
-                             messageSender:(OWSMessageSender *)messageSender
-                                   success:(void (^)(void))successHandler
-                                   failure:(void (^)(NSError *error))failureHandler;
+#pragma mark - Durable Message Enqueue
 
-+ (TSOutgoingMessage *)sendMessageWithText:(NSString *)text
-                                  inThread:(TSThread *)thread
-                          quotedReplyModel:(nullable OWSQuotedReplyModel *)quotedReplyModel
-                             messageSender:(OWSMessageSender *)messageSender;
++ (TSOutgoingMessage *)enqueueMessageWithText:(NSString *)fullMessageText
+                                     inThread:(TSThread *)thread
+                             quotedReplyModel:(nullable OWSQuotedReplyModel *)quotedReplyModel
+                             linkPreviewDraft:(nullable nullable OWSLinkPreviewDraft *)linkPreviewDraft
+                                  transaction:(SDSAnyReadTransaction *)transaction;
 
-+ (TSOutgoingMessage *)sendMessageWithAttachment:(SignalAttachment *)attachment
-                                        inThread:(TSThread *)thread
-                                quotedReplyModel:(nullable OWSQuotedReplyModel *)quotedReplyModel
-                                   messageSender:(OWSMessageSender *)messageSender
-                                      completion:(void (^_Nullable)(NSError *_Nullable error))completion;
++ (TSOutgoingMessage *)enqueueMessageWithText:(nullable NSString *)fullMessageText
+                             mediaAttachments:(NSArray<SignalAttachment *> *)attachments
+                                     inThread:(TSThread *)thread
+                             quotedReplyModel:(nullable OWSQuotedReplyModel *)quotedReplyModel
+                             linkPreviewDraft:(nullable nullable OWSLinkPreviewDraft *)linkPreviewDraft
+                                  transaction:(SDSAnyReadTransaction *)transaction;
 
-// We only should set ignoreErrors in debug or test code.
-+ (TSOutgoingMessage *)sendMessageWithAttachment:(SignalAttachment *)attachment
-                                        inThread:(TSThread *)thread
-                                quotedReplyModel:(nullable OWSQuotedReplyModel *)quotedReplyModel
-                                   messageSender:(OWSMessageSender *)messageSender
-                                    ignoreErrors:(BOOL)ignoreErrors
-                                      completion:(void (^_Nullable)(NSError *_Nullable error))completion;
++ (TSOutgoingMessage *)enqueueMessageWithContactShare:(OWSContact *)contactShare inThread:(TSThread *)thread;
++ (void)enqueueLeaveGroupMessageInThread:(TSGroupThread *)thread;
++ (TSOutgoingMessage *)enqueueMessageWithSticker:(StickerInfo *)stickerInfo inThread:(TSThread *)thread;
 
-+ (TSOutgoingMessage *)sendMessageWithContactShare:(OWSContact *)contactShare
-                                          inThread:(TSThread *)thread
-                                     messageSender:(OWSMessageSender *)messageSender
-                                        completion:(void (^_Nullable)(NSError *_Nullable error))completion;
+#pragma mark - Non-Durable Sending
 
-+ (void)sendLeaveGroupMessageInThread:(TSGroupThread *)thread
-             presentingViewController:(UIViewController *)presentingViewController
-                        messageSender:(OWSMessageSender *)messageSender
-                           completion:(void (^_Nullable)(NSError *_Nullable error))completion;
+// Used by SAE and "reply from lockscreen", otherwise we should use the durable `enqueue` counterpart
++ (TSOutgoingMessage *)sendMessageNonDurablyWithText:(NSString *)fullMessageText
+                                            inThread:(TSThread *)thread
+                                    quotedReplyModel:(nullable OWSQuotedReplyModel *)quotedReplyModel
+                                         transaction:(YapDatabaseReadTransaction *)transaction
+                                       messageSender:(OWSMessageSender *)messageSender
+                                          completion:(void (^)(NSError *_Nullable error))completion;
+
+// Used by SAE, otherwise we should use the durable `enqueue` counterpart
++ (TSOutgoingMessage *)sendMessageNonDurablyWithText:(NSString *)fullMessageText
+                                    mediaAttachments:(NSArray<SignalAttachment *> *)attachments
+                                            inThread:(TSThread *)thread
+                                    quotedReplyModel:(nullable OWSQuotedReplyModel *)quotedReplyModel
+                                         transaction:(YapDatabaseReadTransaction *)transaction
+                                       messageSender:(OWSMessageSender *)messageSender
+                                          completion:(void (^)(NSError *_Nullable error))completion;
+
+// Used by SAE, otherwise we should use the durable `enqueue` counterpart
++ (TSOutgoingMessage *)sendMessageNonDurablyWithContactShare:(OWSContact *)contactShare
+                                                    inThread:(TSThread *)thread
+                                               messageSender:(OWSMessageSender *)messageSender
+                                                  completion:(void (^)(NSError *_Nullable error))completion;
+
 
 #pragma mark - dynamic interactions
 
@@ -100,11 +112,11 @@ NS_ASSUME_NONNULL_BEGIN
 + (ThreadDynamicInteractions *)ensureDynamicInteractionsForThread:(TSThread *)thread
                                                   contactsManager:(OWSContactsManager *)contactsManager
                                                   blockingManager:(OWSBlockingManager *)blockingManager
-                                                     dbConnection:(YapDatabaseConnection *)dbConnection
                                       hideUnreadMessagesIndicator:(BOOL)hideUnreadMessagesIndicator
                                               lastUnreadIndicator:(nullable OWSUnreadIndicator *)lastUnreadIndicator
                                                    focusMessageId:(nullable NSString *)focusMessageId
-                                                     maxRangeSize:(int)maxRangeSize;
+                                                     maxRangeSize:(NSUInteger)maxRangeSize
+                                                      transaction:(SDSAnyReadTransaction *)transaction;
 
 + (BOOL)shouldShowGroupProfileBannerInThread:(TSThread *)thread blockingManager:(OWSBlockingManager *)blockingManager;
 

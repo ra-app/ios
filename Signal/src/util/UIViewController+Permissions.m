@@ -1,13 +1,13 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "UIViewController+Permissions.h"
 #import "RAAPP-Swift.h"
 #import <AVFoundation/AVFoundation.h>
 #import <Photos/Photos.h>
+#import <SignalCoreKit/Threading.h>
 #import <SignalMessaging/UIUtil.h>
-#import <SignalServiceKit/Threading.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -59,7 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
                                                               }];
         [alert addAction:dismissAction];
 
-        [self presentViewController:alert animated:YES completion:nil];
+        [self presentAlert:alert];
     } else if (status == AVAuthorizationStatusAuthorized) {
         callback(YES);
     } else if (status == AVAuthorizationStatusNotDetermined) {
@@ -107,7 +107,7 @@ NS_ASSUME_NONNULL_BEGIN
                                                                   }];
             [alert addAction:dismissAction];
 
-            [self presentViewController:alert animated:YES completion:nil];
+            [self presentAlert:alert];
         });
     };
 

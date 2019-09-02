@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
@@ -44,6 +44,14 @@ public class OWS106EnsureProfileComplete: OWSDatabaseMigration {
      */
     private class CompleteRegistrationFixerJob: NSObject {
 
+        // MARK: - Dependencies
+
+        private var tsAccountManager: TSAccountManager {
+            return TSAccountManager.sharedInstance()
+        }
+
+        // MARK: -
+
         // Duration between retries if update fails.
         let kRetryInterval: TimeInterval = 5
 
@@ -54,17 +62,17 @@ public class OWS106EnsureProfileComplete: OWSDatabaseMigration {
         }
 
         func start() {
-            guard TSAccountManager.isRegistered() else {
+            guard tsAccountManager.isRegistered else {
                 self.completionHandler(true)
                 return
             }
 
-            self.ensureProfileComplete().then { _ -> Void in
+            self.ensureProfileComplete().done {
                 Logger.info("complete. Canceling timer and saving.")
                 self.completionHandler(true)
             }.catch { error in
                 let nserror = error as NSError
-                if nserror.domain == TSNetworkManagerDomain {
+                if nserror.domain == TSNetworkManagerErrorDomain {
                     // Don't retry if we had an unrecoverable error.
                     // In particular, 401 (invalid auth) is unrecoverable.
                     let isUnrecoverableError = nserror.code == 401
@@ -83,35 +91,33 @@ public class OWS106EnsureProfileComplete: OWSDatabaseMigration {
         func ensureProfileComplete() -> Promise<Void> {
             guard let localRecipientId = TSAccountManager.localNumber() else {
                 // local app doesn't think we're registered, so nothing to worry about.
-                return Promise(value: ())
+                return Promise.value(())
             }
 
-            let (promise, fulfill, reject) = Promise<Void>.pending()
-
-            let networkManager = SSKEnvironment.shared.networkManager
-
-            ProfileFetcherJob(networkManager: networkManager).getProfile(recipientId: localRecipientId).then { _ -> Void in
+            return firstly {
+                ProfileFetcherJob().getProfile(recipientId: localRecipientId)
+            }.done { _ in
                 Logger.info("verified recipient profile is in good shape: \(localRecipientId)")
-
-                fulfill(())
-            }.catch { error in
+            }.recover { error -> Promise<Void> in
                 switch error {
                 case SignalServiceProfile.ValidationError.invalidIdentityKey(let description):
                     Logger.warn("detected incomplete profile for \(localRecipientId) error: \(description)")
+
+                    let (promise, resolver) = Promise<Void>.pending()
                     // This is the error condition we're looking for. Update prekeys to properly set the identity key, completing registration.
                     TSPreKeyManager.createPreKeys(success: {
                         Logger.info("successfully uploaded pre-keys. Profile should be fixed.")
-                        fulfill(())
+                        resolver.fulfill(())
                     },
                                                   failure: { _ in
-                                                    reject(OWSErrorWithCodeDescription(.signalServiceFailure, "\(self.logTag) Unknown error"))
+                                                    resolver.reject(OWSErrorWithCodeDescription(.signalServiceFailure, "\(self.logTag) Unknown error"))
                     })
-                default:
-                    reject(error)
-                }
-            }.retainUntilComplete()
 
-            return promise
+                    return promise
+                default:
+                    throw error
+                }
+            }
         }
     }
 }

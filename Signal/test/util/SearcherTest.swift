@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import XCTest
@@ -8,7 +8,10 @@ import XCTest
 
 // TODO: We might be able to merge this with OWSFakeContactsManager.
 @objc
-class ConversationSearcherContactsManager: NSObject, ContactsManagerProtocol {
+class FullTextSearcherContactsManager: NSObject, ContactsManagerProtocol {
+    func displayName(forPhoneIdentifier recipientId: String?, transaction: YapDatabaseReadTransaction) -> String {
+        return self.displayName(forPhoneIdentifier: recipientId)
+    }
 
     func displayName(forPhoneIdentifier phoneNumber: String?) -> String {
         if phoneNumber == aliceRecipientId {
@@ -51,14 +54,14 @@ class ConversationSearcherContactsManager: NSObject, ContactsManagerProtocol {
     }
 }
 
-let bobRecipientId = "+49030183000"
-let aliceRecipientId = "+12345678900"
+private let bobRecipientId = "+49030183000"
+private let aliceRecipientId = "+12345678900"
 
-class ConversationSearcherTest: SignalBaseTest {
+class FullTextSearcherTest: SignalBaseTest {
 
     // MARK: - Dependencies
-    var searcher: ConversationSearcher {
-        return ConversationSearcher.shared
+    var searcher: FullTextSearcher {
+        return FullTextSearcher.shared
     }
 
     var dbConnection: YapDatabaseConnection {
@@ -77,22 +80,22 @@ class ConversationSearcherTest: SignalBaseTest {
         FullTextSearchFinder.ensureDatabaseExtensionRegistered(storage: OWSPrimaryStorage.shared())
 
         // Replace this singleton.
-        SSKEnvironment.shared.contactsManager = ConversationSearcherContactsManager()
+        SSKEnvironment.shared.contactsManager = FullTextSearcherContactsManager()
 
         self.dbConnection.readWrite { transaction in
-            let bookModel = TSGroupModel(title: "Book Club", memberIds: [aliceRecipientId, bobRecipientId], image: nil, groupId: Randomness.generateRandomBytes(16))
+            let bookModel = TSGroupModel(title: "Book Club", memberIds: [aliceRecipientId, bobRecipientId], image: nil, groupId: Randomness.generateRandomBytes(kGroupIdLength))
             let bookClubGroupThread = TSGroupThread.getOrCreateThread(with: bookModel, transaction: transaction)
-            self.bookClubThread = ThreadViewModel(thread: bookClubGroupThread, transaction: transaction)
+            self.bookClubThread = ThreadViewModel(thread: bookClubGroupThread, transaction: transaction.asAnyWrite)
 
-            let snackModel = TSGroupModel(title: "Snack Club", memberIds: [aliceRecipientId], image: nil, groupId: Randomness.generateRandomBytes(16))
+            let snackModel = TSGroupModel(title: "Snack Club", memberIds: [aliceRecipientId], image: nil, groupId: Randomness.generateRandomBytes(kGroupIdLength))
             let snackClubGroupThread = TSGroupThread.getOrCreateThread(with: snackModel, transaction: transaction)
-            self.snackClubThread = ThreadViewModel(thread: snackClubGroupThread, transaction: transaction)
+            self.snackClubThread = ThreadViewModel(thread: snackClubGroupThread, transaction: transaction.asAnyWrite)
 
             let aliceContactThread = TSContactThread.getOrCreateThread(withContactId: aliceRecipientId, transaction: transaction)
-            self.aliceThread = ThreadViewModel(thread: aliceContactThread, transaction: transaction)
+            self.aliceThread = ThreadViewModel(thread: aliceContactThread, transaction: transaction.asAnyWrite)
 
             let bobContactThread = TSContactThread.getOrCreateThread(withContactId: bobRecipientId, transaction: transaction)
-            self.bobEmptyThread = ThreadViewModel(thread: bobContactThread, transaction: transaction)
+            self.bobEmptyThread = ThreadViewModel(thread: bobContactThread, transaction: transaction.asAnyWrite)
 
             let helloAlice = TSOutgoingMessage(in: aliceContactThread, messageBody: "Hello Alice", attachmentId: nil)
             helloAlice.save(with: transaction)
@@ -227,7 +230,7 @@ class ConversationSearcherTest: SignalBaseTest {
     }
 
     func testSearchMessageByBodyContent() {
-        var resultSet: SearchResultSet = .empty
+        var resultSet: HomeScreenSearchResultSet = .empty
 
         resultSet = getResultSet(searchText: "Hello Alice")
         XCTAssertEqual(1, resultSet.messages.count)
@@ -240,7 +243,7 @@ class ConversationSearcherTest: SignalBaseTest {
     }
 
     func testSearchEdgeCases() {
-        var resultSet: SearchResultSet = .empty
+        var resultSet: HomeScreenSearchResultSet = .empty
 
         resultSet = getResultSet(searchText: "Hello Alice")
         XCTAssertEqual(1, resultSet.messages.count)
@@ -291,7 +294,9 @@ class ConversationSearcherTest: SignalBaseTest {
         XCTAssertEqual(["My fax is: 222-333-4444"], bodies(forMessageResults: resultSet.messages))
     }
 
-    func bodies(forMessageResults messageResults: [ConversationSearchResult]) -> [String] {
+    // MARK: Helpers
+
+    func bodies<T>(forMessageResults messageResults: [ConversationSearchResult<T>]) -> [String] {
         var result = [String]()
 
         self.dbConnection.read { transaction in
@@ -319,17 +324,15 @@ class ConversationSearcherTest: SignalBaseTest {
         return result.sorted()
     }
 
-    // MARK: Helpers
-
     private func searchConversations(searchText: String) -> [ThreadViewModel] {
         let results = getResultSet(searchText: searchText)
         return results.conversations.map { $0.thread }
     }
 
-    private func getResultSet(searchText: String) -> SearchResultSet {
-        var results: SearchResultSet!
+    private func getResultSet(searchText: String) -> HomeScreenSearchResultSet {
+        var results: HomeScreenSearchResultSet!
         self.dbConnection.read { transaction in
-            results = self.searcher.results(searchText: searchText, transaction: transaction, contactsManager: SSKEnvironment.shared.contactsManager)
+            results = self.searcher.searchForHomeScreen(searchText: searchText, transaction: transaction, contactsManager: SSKEnvironment.shared.contactsManager)
         }
         return results
     }

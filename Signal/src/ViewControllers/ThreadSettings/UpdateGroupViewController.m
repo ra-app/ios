@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "UpdateGroupViewController.h"
@@ -8,18 +8,17 @@
 #import "OWSNavigationController.h"
 #import "RAAPP-Swift.h"
 #import "ViewControllerUtils.h"
+#import <SignalCoreKit/NSDate+OWS.h>
 #import <SignalMessaging/BlockListUIUtils.h>
 #import <SignalMessaging/ContactTableViewCell.h>
 #import <SignalMessaging/ContactsViewHelper.h>
 #import <SignalMessaging/Environment.h>
-#import <SignalMessaging/NSString+OWS.h>
 #import <SignalMessaging/OWSContactsManager.h>
 #import <SignalMessaging/OWSTableViewController.h>
-#import <SignalMessaging/SignalKeyingStorage.h>
 #import <SignalMessaging/UIUtil.h>
 #import <SignalMessaging/UIView+OWS.h>
 #import <SignalMessaging/UIViewController+OWS.h>
-#import <SignalServiceKit/NSDate+OWS.h>
+#import <SignalServiceKit/NSString+SSK.h>
 #import <SignalServiceKit/OWSMessageSender.h>
 #import <SignalServiceKit/SignalAccount.h>
 #import <SignalServiceKit/TSGroupModel.h>
@@ -43,6 +42,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly) OWSTableViewController *tableViewController;
 @property (nonatomic, readonly) AvatarImageView *avatarView;
+@property (nonatomic, readonly) UIImageView *cameraImageView;
 @property (nonatomic, readonly) UITextField *groupNameTextField;
 
 @property (nonatomic, nullable) UIImage *groupAvatar;
@@ -119,7 +119,8 @@ NS_ASSUME_NONNULL_BEGIN
     _tableViewController = [OWSTableViewController new];
     _tableViewController.delegate = self;
     [self.view addSubview:self.tableViewController.view];
-    [_tableViewController.view autoPinWidthToSuperview];
+    [self.tableViewController.view autoPinEdgeToSuperviewSafeArea:ALEdgeLeading];
+    [self.tableViewController.view autoPinEdgeToSuperviewSafeArea:ALEdgeTrailing];
     [_tableViewController.view autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:firstSection];
     [self autoPinViewToBottomOfViewControllerOrKeyboard:self.tableViewController.view avoidNotch:NO];
     self.tableViewController.tableView.rowHeight = UITableViewAutomaticDimension;
@@ -142,7 +143,8 @@ NS_ASSUME_NONNULL_BEGIN
                                                          @"The title for the 'update group' button.")
                                                style:UIBarButtonItemStylePlain
                                               target:self
-                                              action:@selector(updateGroupPressed)]
+                                              action:@selector(updateGroupPressed)
+                             accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"update")]
             : nil);
 }
 
@@ -179,16 +181,23 @@ NS_ASSUME_NONNULL_BEGIN
     [threadInfoView autoPinWidthToSuperviewWithMargin:16.f];
     [threadInfoView autoPinHeightToSuperviewWithMargin:16.f];
 
-    const CGFloat kAvatarSize = 68.f;
     AvatarImageView *avatarView = [AvatarImageView new];
     _avatarView = avatarView;
 
     [threadInfoView addSubview:avatarView];
     [avatarView autoVCenterInSuperview];
     [avatarView autoPinLeadingToSuperviewMargin];
-    [avatarView autoSetDimension:ALDimensionWidth toSize:kAvatarSize];
-    [avatarView autoSetDimension:ALDimensionHeight toSize:kAvatarSize];
+    [avatarView autoSetDimension:ALDimensionWidth toSize:kLargeAvatarSize];
+    [avatarView autoSetDimension:ALDimensionHeight toSize:kLargeAvatarSize];
     _groupAvatar = self.thread.groupModel.groupImage;
+
+    UIImage *cameraImage = [UIImage imageNamed:@"settings-avatar-camera"];
+    UIImageView *cameraImageView = [[UIImageView alloc] initWithImage:cameraImage];
+    [threadInfoView addSubview:cameraImageView];
+    [cameraImageView autoPinTrailingToEdgeOfView:avatarView];
+    [cameraImageView autoPinEdge:ALEdgeBottom toEdge:ALEdgeBottom ofView:avatarView];
+    _cameraImageView = cameraImageView;
+
     [self updateAvatarView];
 
     UITextField *groupNameTextField = [OWSTextField new];
@@ -206,10 +215,12 @@ NS_ASSUME_NONNULL_BEGIN
     [groupNameTextField autoVCenterInSuperview];
     [groupNameTextField autoPinTrailingToSuperviewMargin];
     [groupNameTextField autoPinLeadingToTrailingEdgeOfView:avatarView offset:16.f];
+    SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, groupNameTextField);
 
     [avatarView
         addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(avatarTouched:)]];
     avatarView.userInteractionEnabled = YES;
+    SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, avatarView);
 
     return firstSectionHeader;
 }
@@ -245,15 +256,17 @@ NS_ASSUME_NONNULL_BEGIN
     section.headerTitle = NSLocalizedString(
         @"EDIT_GROUP_MEMBERS_SECTION_TITLE", @"a title for the members section of the 'new/update group' view.");
 
-    [section addItem:[OWSTableItem
-                         disclosureItemWithText:NSLocalizedString(@"EDIT_GROUP_MEMBERS_ADD_MEMBER",
-                                                    @"Label for the cell that lets you add a new member to a group.")
-                                customRowHeight:UITableViewAutomaticDimension
-                                    actionBlock:^{
-                                        AddToGroupViewController *viewController = [AddToGroupViewController new];
-                                        viewController.addToGroupDelegate = weakSelf;
-                                        [weakSelf.navigationController pushViewController:viewController animated:YES];
-                                    }]];
+    [section
+        addItem:[OWSTableItem
+                     disclosureItemWithText:NSLocalizedString(@"EDIT_GROUP_MEMBERS_ADD_MEMBER",
+                                                @"Label for the cell that lets you add a new member to a group.")
+                    accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(UpdateGroupViewController, @"add_member")
+                            customRowHeight:UITableViewAutomaticDimension
+                                actionBlock:^{
+                                    AddToGroupViewController *viewController = [AddToGroupViewController new];
+                                    viewController.addToGroupDelegate = weakSelf;
+                                    [weakSelf.navigationController pushViewController:viewController animated:YES];
+                                }]];
 
     NSMutableSet *memberRecipientIds = [self.memberRecipientIds mutableCopy];
     [memberRecipientIds removeObject:[contactsViewHelper localNumber]];
@@ -284,8 +297,13 @@ NS_ASSUME_NONNULL_BEGIN
                                     @"An indicator that a user is a new member of the group.");
                             }
 
-                            [cell configureWithRecipientId:recipientId
-                                           contactsManager:contactsViewHelper.contactsManager];
+                            [cell configureWithRecipientId:recipientId];
+
+                            // TODO: Confirm with nancy if this will work.
+                            NSString *cellName = [NSString stringWithFormat:@"member.%@", recipientId];
+                            cell.accessibilityIdentifier
+                                = ACCESSIBILITY_IDENTIFIER_WITH_NAME(UpdateGroupViewController, cellName);
+
                             return cell;
                         }
                         customRowHeight:UITableViewAutomaticDimension
@@ -367,6 +385,8 @@ NS_ASSUME_NONNULL_BEGIN
 {
     OWSAssertDebug(self.conversationSettingsViewDelegate);
 
+    [self.groupNameTextField acceptAutocorrectSuggestion];
+
     NSString *groupName = [self.groupNameTextField.text ows_stripped];
     TSGroupModel *groupModel = [[TSGroupModel alloc] initWithTitle:groupName
                                                          memberIds:self.memberRecipientIds.allObjects
@@ -397,7 +417,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)updateAvatarView
 {
-    self.avatarView.image = (self.groupAvatar ?: [UIImage imageNamed:@"empty-group-avatar"]);
+    UIImage *_Nullable groupAvatar = self.groupAvatar;
+    self.cameraImageView.hidden = groupAvatar != nil;
+
+    if (!groupAvatar) {
+        groupAvatar = [[[OWSGroupAvatarBuilder alloc] initWithThread:self.thread diameter:kLargeAvatarSize] build];
+    }
+
+    self.avatarView.image = groupAvatar;
 }
 
 #pragma mark - Event Handling
@@ -412,31 +439,33 @@ NS_ASSUME_NONNULL_BEGIN
         return;
     }
 
-    UIAlertController *controller = [UIAlertController
+    UIAlertController *alert = [UIAlertController
         alertControllerWithTitle:NSLocalizedString(@"EDIT_GROUP_VIEW_UNSAVED_CHANGES_TITLE",
                                      @"The alert title if user tries to exit update group view without saving changes.")
                          message:
                              NSLocalizedString(@"EDIT_GROUP_VIEW_UNSAVED_CHANGES_MESSAGE",
                                  @"The alert message if user tries to exit update group view without saving changes.")
                   preferredStyle:UIAlertControllerStyleAlert];
-    [controller
-        addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"ALERT_SAVE",
-                                                     @"The label for the 'save' button in action sheets.")
-                                           style:UIAlertActionStyleDefault
-                                         handler:^(UIAlertAction *action) {
-                                             OWSAssertDebug(self.conversationSettingsViewDelegate);
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"ALERT_SAVE",
+                                                        @"The label for the 'save' button in action sheets.")
+                            accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"save")
+                                              style:UIAlertActionStyleDefault
+                                            handler:^(UIAlertAction *action) {
+                                                OWSAssertDebug(self.conversationSettingsViewDelegate);
 
-                                             [self updateGroup];
+                                                [self updateGroup];
 
-                                             [self.conversationSettingsViewDelegate popAllConversationSettingsViews];
-                                         }]];
-    [controller addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"ALERT_DONT_SAVE",
-                                                             @"The label for the 'don't save' button in action sheets.")
-                                                   style:UIAlertActionStyleDestructive
-                                                 handler:^(UIAlertAction *action) {
-                                                     [self.navigationController popViewControllerAnimated:YES];
-                                                 }]];
-    [self presentViewController:controller animated:YES completion:nil];
+                                                [self.conversationSettingsViewDelegate
+                                                    popAllConversationSettingsViewsWithCompletion:nil];
+                                            }]];
+    [alert addAction:[UIAlertAction actionWithTitle:NSLocalizedString(@"ALERT_DONT_SAVE",
+                                                        @"The label for the 'don't save' button in action sheets.")
+                            accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"dont_save")
+                                              style:UIAlertActionStyleDestructive
+                                            handler:^(UIAlertAction *action) {
+                                                [self.navigationController popViewControllerAnimated:YES];
+                                            }]];
+    [self presentAlert:alert];
 }
 
 - (void)updateGroupPressed
@@ -445,7 +474,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     [self updateGroup];
 
-    [self.conversationSettingsViewDelegate popAllConversationSettingsViews];
+    [self.conversationSettingsViewDelegate popAllConversationSettingsViewsWithCompletion:nil];
 }
 
 - (void)groupNameDidChange:(id)sender
@@ -482,7 +511,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - AvatarViewHelperDelegate
 
-- (NSString *)avatarActionSheetTitle
+- (nullable NSString *)avatarActionSheetTitle
 {
     return NSLocalizedString(
         @"NEW_GROUP_ADD_PHOTO_ACTION", @"Action Sheet title prompting the user for a group avatar");

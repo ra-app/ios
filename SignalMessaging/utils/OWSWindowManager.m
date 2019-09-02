@@ -1,8 +1,9 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSWindowManager.h"
+#import "Environment.h"
 #import "UIColor+OWS.h"
 #import "UIFont+OWS.h"
 #import "UIView+OWS.h"
@@ -12,12 +13,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 NSString *const OWSWindowManagerCallDidChangeNotification = @"OWSWindowManagerCallDidChangeNotification";
 
+NSString *const IsScreenBlockActiveDidChangeNotification = @"IsScreenBlockActiveDidChangeNotification";
+
 const CGFloat OWSWindowManagerCallBannerHeight(void)
 {
     if (@available(iOS 11.4, *)) {
         return CurrentAppContext().statusBarHeight + 20;
     }
-
 
     if (![UIDevice currentDevice].hasIPhoneXNotch) {
         return CurrentAppContext().statusBarHeight + 20;
@@ -65,10 +67,13 @@ const UIWindowLevel UIWindowLevel_MessageActions(void)
     return CGFLOAT_MAX - 100;
 }
 
+#pragma mark -
 
 @interface MessageActionsWindow : UIWindow
 
 @end
+
+#pragma mark -
 
 @implementation MessageActionsWindow
 
@@ -83,11 +88,39 @@ const UIWindowLevel UIWindowLevel_MessageActions(void)
 
 @end
 
+#pragma mark -
+
 @implementation OWSWindowRootViewController
 
 - (BOOL)canBecomeFirstResponder
 {
     return YES;
+}
+
+#pragma mark - Orientation
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskAllButUpsideDown;
+}
+
+@end
+
+#pragma mark -
+
+@interface OWSWindowRootNavigationViewController : UINavigationController
+
+@end
+
+#pragma mark -
+
+@implementation OWSWindowRootNavigationViewController : UINavigationController
+
+#pragma mark - Orientation
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+    return UIInterfaceOrientationMaskAllButUpsideDown;
 }
 
 @end
@@ -115,8 +148,6 @@ const UIWindowLevel UIWindowLevel_MessageActions(void)
 // UIWindowLevel_ScreenBlocking() if active.
 @property (nonatomic) UIWindow *screenBlockingWindow;
 
-@property (nonatomic) BOOL isScreenBlockActive;
-
 @property (nonatomic) BOOL shouldShowCallView;
 
 @property (nonatomic, nullable) UIViewController *callViewController;
@@ -129,12 +160,9 @@ const UIWindowLevel UIWindowLevel_MessageActions(void)
 
 + (instancetype)sharedManager
 {
-    static OWSWindowManager *instance = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        instance = [[self alloc] initDefault];
-    });
-    return instance;
+    OWSAssertDebug(Environment.shared.windowManager);
+
+    return Environment.shared.windowManager;
 }
 
 - (instancetype)initDefault
@@ -181,10 +209,17 @@ const UIWindowLevel UIWindowLevel_MessageActions(void)
 
 - (void)didChangeStatusBarFrame:(NSNotification *)notification
 {
+    // Apple bug? Upon returning from landscape, this method *is* fired, but both the notification and [UIApplication
+    // sharedApplication].statusBarFrame still show a height of 0. So to work around we also call
+    // `ensureReturnToCallWindowFrame` before showing the call banner.
+    [self ensureReturnToCallWindowFrame];
+}
+
+- (void)ensureReturnToCallWindowFrame
+{
     CGRect newFrame = self.returnToCallWindow.frame;
     newFrame.size.height = OWSWindowManagerCallBannerHeight();
-
-    OWSLogDebug(@"StatusBar changed frames - updating returnToCallWindowFrame: %@", NSStringFromCGRect(newFrame));
+    OWSLogDebug(@"returnToCallWindowFrame: %@", NSStringFromCGRect(newFrame));
     self.returnToCallWindow.frame = newFrame;
 }
 
@@ -255,8 +290,8 @@ const UIWindowLevel UIWindowLevel_MessageActions(void)
     // It adjusts the size of the navigation bar to reflect the
     // call window.  We don't want those adjustments made within
     // the call window itself.
-    UINavigationController *navigationController =
-        [[UINavigationController alloc] initWithRootViewController:viewController];
+    OWSWindowRootNavigationViewController *navigationController =
+        [[OWSWindowRootNavigationViewController alloc] initWithRootViewController:viewController];
     navigationController.navigationBarHidden = YES;
     OWSAssertDebug(!self.callNavigationController);
     self.callNavigationController = navigationController;
@@ -273,6 +308,34 @@ const UIWindowLevel UIWindowLevel_MessageActions(void)
     _isScreenBlockActive = isScreenBlockActive;
 
     [self ensureWindowState];
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:IsScreenBlockActiveDidChangeNotification
+                                                        object:nil
+                                                      userInfo:nil];
+}
+
+- (BOOL)isAppWindow:(UIWindow *)window
+{
+    OWSAssertDebug(window);
+
+    return (window == self.rootWindow || window == self.returnToCallWindow || window == self.callViewWindow
+        || window == self.menuActionsWindow || window == self.screenBlockingWindow);
+}
+
+- (void)updateWindowFrames
+{
+    OWSAssertIsOnMainThread();
+
+    CGRect windowFrame = [[UIScreen mainScreen] bounds];
+    for (UIWindow *window in @[
+             self.rootWindow,
+             self.callViewWindow,
+             self.screenBlockingWindow,
+         ]) {
+        if (!CGRectEqualToRect(window.frame, windowFrame)) {
+            window.frame = windowFrame;
+        }
+    }
 }
 
 #pragma mark - Message Actions
@@ -327,7 +390,9 @@ const UIWindowLevel UIWindowLevel_MessageActions(void)
     [self.callNavigationController popToRootViewControllerAnimated:NO];
     [self.callNavigationController pushViewController:callViewController animated:NO];
     self.shouldShowCallView = YES;
-
+    // CallViewController only supports portrait, but if we're _already_ landscape it won't
+    // automatically switch.
+    [UIDevice.currentDevice ows_setOrientation:UIInterfaceOrientationPortrait];
     [self ensureWindowState];
 }
 
@@ -447,10 +512,12 @@ const UIWindowLevel UIWindowLevel_MessageActions(void)
         OWSLogInfo(@"showing root window.");
     }
 
-    // By calling makeKeyAndVisible we ensure the rootViewController becomes firt responder.
+    // By calling makeKeyAndVisible we ensure the rootViewController becomes first responder.
     // In the normal case, that means the SignalViewController will call `becomeFirstResponder`
     // on the vc on top of its navigation stack.
     [self.rootWindow makeKeyAndVisible];
+
+    [self fixit_workAroundRotationIssue];
 }
 
 - (void)ensureRootWindowHidden
@@ -472,6 +539,7 @@ const UIWindowLevel UIWindowLevel_MessageActions(void)
         return;
     }
 
+    [self ensureReturnToCallWindowFrame];
     OWSLogInfo(@"showing 'return to call' window.");
     self.returnToCallWindow.hidden = NO;
     [self.returnToCallViewController startAnimating];
@@ -566,6 +634,124 @@ const UIWindowLevel UIWindowLevel_MessageActions(void)
 - (void)returnToCallWasTapped:(ReturnToCallViewController *)viewController
 {
     [self showCallView];
+}
+
+#pragma mark - Fixit
+
+- (void)fixit_workAroundRotationIssue
+{
+    // ### Symptom
+    //
+    // The app can get into a degraded state where the main window will incorrectly remain locked in
+    // portrait mode. Worse yet, the status bar and input window will continue to rotate with respect
+    // to the device orientation. So once you're in this degraded state, the status bar and input
+    // window can be in landscape while simultaneoulsy the view controller behind them is in portrait.
+    //
+    // ### To Reproduce
+    //
+    // On an iPhone6 (not reproducible on an iPhoneX)
+    //
+    // 0. Ensure "screen protection" is enabled (not necessarily screen lock)
+    // 1. Enter Conversation View Controller
+    // 2. Pop Keyboard
+    // 3. Begin dismissing keyboard with one finger, but stopping when it's about 50% dismissed,
+    //    keep your finger there with the keyboard partially dismissed.
+    // 4. With your other hand, hit the home button to leave Signal.
+    // 5. Re-enter Signal
+    // 6. Rotate to landscape
+    //
+    // Expected: Conversation View, Input Toolbar window, and Settings Bar should all rotate to landscape.
+    // Actual: The input toolbar and the settings toolbar rotate to landscape, but the Conversation
+    //         View remains in portrait, this looks super broken.
+    //
+    // ### Background
+    //
+    // Some debugging shows that the `ConversationViewController.view.window.isInterfaceAutorotationDisabled`
+    // is true. This is a private property, whose function we don't exactly know, but it seems like
+    // `interfaceAutorotation` is disabled when certain transition animations begin, and then
+    // re-enabled once the animation completes.
+    //
+    // My best guess is that autorotation is intended to be disabled for the duration of the
+    // interactive-keyboard-dismiss-transition, so when we start the interactive dismiss, autorotation
+    // has been disabled, but because we hide the main app window in the middle of the transition,
+    // autorotation doesn't have a chance to be re-enabled.
+    //
+    // ## So, The Fix
+    //
+    // If we find ourself in a situation where autorotation is disabled while showing the rootWindow,
+    // we re-enable autorotation.
+
+    // NSString *encodedSelectorString1 = @"isInterfaceAutorotationDisabled".encodedForSelector;
+    NSString *encodedSelectorString1 = @"egVaAAZ2BHdydHZSBwYBBAEGcgZ6AQBVegVyc312dQ==";
+    NSString *_Nullable selectorString1 = encodedSelectorString1.decodedForSelector;
+    if (selectorString1 == nil) {
+        OWSFailDebug(@"selectorString1 was unexpectedly nil");
+        return;
+    }
+    SEL selector1 = NSSelectorFromString(selectorString1);
+
+    if (![self.rootWindow respondsToSelector:selector1]) {
+        OWSFailDebug(@"failure: doesn't respond to selector1");
+        return;
+    }
+    IMP imp1 = [self.rootWindow methodForSelector:selector1];
+    BOOL (*func1)(id, SEL) = (void *)imp1;
+    BOOL isDisabled = func1(self.rootWindow, selector1);
+
+    if (isDisabled) {
+        OWSLogInfo(@"autorotation is disabled.");
+
+        // The remainder of this method calls:
+        //   [[UIScrollToDismissSupport supportForScreen:UIScreen.main] finishScrollViewTransition]
+        // after verifying the methods/classes exist.
+
+        // NSString *encodedKlassString = @"UIScrollToDismissSupport".encodedForSelector;
+        NSString *encodedKlassString = @"ZlpkdAQBfX1lAVV6BX56BQVkBwICAQQG";
+        NSString *_Nullable klassString = encodedKlassString.decodedForSelector;
+        if (klassString == nil) {
+            OWSFailDebug(@"klassString was unexpectedly nil");
+            return;
+        }
+        id klass = NSClassFromString(klassString);
+        if (klass == nil) {
+            OWSFailDebug(@"klass was unexpectedly nil");
+            return;
+        }
+
+        // NSString *encodedSelector2String = @"supportForScreen:".encodedForSelector;
+        NSString *encodedSelector2String = @"BQcCAgEEBlcBBGR0BHZ2AEs=";
+        NSString *_Nullable selector2String = encodedSelector2String.decodedForSelector;
+        if (selector2String == nil) {
+            OWSFailDebug(@"selector2String was unexpectedly nil");
+            return;
+        }
+        SEL selector2 = NSSelectorFromString(selector2String);
+        if (![klass respondsToSelector:selector2]) {
+            OWSFailDebug(@"klass didn't respond to selector");
+            return;
+        }
+        IMP imp2 = [klass methodForSelector:selector2];
+        id (*func2)(id, SEL, UIScreen *) = (void *)imp2;
+        id dismissSupport = func2(klass, selector2, UIScreen.mainScreen);
+
+        // NSString *encodedSelector3String = @"finishScrollViewTransition".encodedForSelector;
+        NSString *encodedSelector3String = @"d3oAegV5ZHQEAX19Z3p2CWUEcgAFegZ6AQA=";
+        NSString *_Nullable selector3String = encodedSelector3String.decodedForSelector;
+        if (selector3String == nil) {
+            OWSFailDebug(@"selector3String was unexpectedly nil");
+            return;
+        }
+        SEL selector3 = NSSelectorFromString(selector3String);
+        if (![dismissSupport respondsToSelector:selector3]) {
+            OWSFailDebug(@"dismissSupport didn't respond to selector");
+            return;
+        }
+        IMP imp3 = [dismissSupport methodForSelector:selector3];
+        void (*func3)(id, SEL) = (void *)imp3;
+        func3(dismissSupport, selector3);
+
+        OWSLogInfo(@"finished scrollView transition");
+    }
 }
 
 @end

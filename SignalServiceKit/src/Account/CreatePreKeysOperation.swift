@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
@@ -12,8 +12,12 @@ public class CreatePreKeysOperation: OWSOperation {
         return AccountServiceClient.shared
     }
 
-    private var primaryStorage: OWSPrimaryStorage {
-        return OWSPrimaryStorage.shared()
+    private var preKeyStore: SSKPreKeyStore {
+        return SSKEnvironment.shared.preKeyStore
+    }
+
+    private var signedPreKeyStore: SSKSignedPreKeyStore {
+        return SSKEnvironment.shared.signedPreKeyStore
     }
 
     private var identityKeyManager: OWSIdentityManager {
@@ -27,23 +31,23 @@ public class CreatePreKeysOperation: OWSOperation {
             self.identityKeyManager.generateNewIdentityKey()
         }
         let identityKey: Data = self.identityKeyManager.identityKeyPair()!.publicKey
-        let signedPreKeyRecord: SignedPreKeyRecord = self.primaryStorage.generateRandomSignedRecord()
-        let preKeyRecords: [PreKeyRecord] = self.primaryStorage.generatePreKeyRecords()
+        let signedPreKeyRecord: SignedPreKeyRecord = self.signedPreKeyStore.generateRandomSignedRecord()
+        let preKeyRecords: [PreKeyRecord] = self.preKeyStore.generatePreKeyRecords()
+
+        self.signedPreKeyStore.storeSignedPreKey(signedPreKeyRecord.id, signedPreKeyRecord: signedPreKeyRecord)
+        self.preKeyStore.storePreKeyRecords(preKeyRecords)
 
         firstly {
-            self.primaryStorage.storeSignedPreKey(signedPreKeyRecord.id, signedPreKeyRecord: signedPreKeyRecord)
-            self.primaryStorage.storePreKeyRecords(preKeyRecords)
+            self.accountServiceClient.setPreKeys(identityKey: identityKey, signedPreKeyRecord: signedPreKeyRecord, preKeyRecords: preKeyRecords)
+        }.done {
+            signedPreKeyRecord.markAsAcceptedByService()
+            self.signedPreKeyStore.storeSignedPreKey(signedPreKeyRecord.id, signedPreKeyRecord: signedPreKeyRecord)
+            self.signedPreKeyStore.setCurrentSignedPrekeyId(signedPreKeyRecord.id)
 
-            return self.accountServiceClient.setPreKeys(identityKey: identityKey, signedPreKeyRecord: signedPreKeyRecord, preKeyRecords: preKeyRecords)
-            }.then { () -> Void in
-                signedPreKeyRecord.markAsAcceptedByService()
-                self.primaryStorage.storeSignedPreKey(signedPreKeyRecord.id, signedPreKeyRecord: signedPreKeyRecord)
-                self.primaryStorage.setCurrentSignedPrekeyId(signedPreKeyRecord.id)
-            }.then { () -> Void in
-                Logger.debug("done")
-                self.reportSuccess()
-            }.catch { error in
-                self.reportError(error)
-            }.retainUntilComplete()
+            Logger.debug("done")
+            self.reportSuccess()
+        }.catch { error in
+            self.reportError(error)
+        }.retainUntilComplete()
     }
 }

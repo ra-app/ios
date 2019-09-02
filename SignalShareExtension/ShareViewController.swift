@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import UIKit
@@ -12,10 +12,18 @@ import PromiseKit
 @objc
 public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailedViewDelegate {
 
+    // MARK: - Dependencies
+
+    private var tsAccountManager: TSAccountManager {
+        return TSAccountManager.sharedInstance()
+    }
+
+    // MARK: -
+
     enum ShareViewControllerError: Error {
         case assertionError(description: String)
         case unsupportedMedia
-        case notRegistered()
+        case notRegistered
         case obsoleteShare
     }
 
@@ -26,7 +34,7 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
     private var progressPoller: ProgressPoller?
     var loadViewController: SAELoadViewController?
 
-    let shareViewNavigationController: OWSNavigationController = OWSNavigationController()
+    private var shareViewNavigationController: OWSNavigationController?
 
     override open func loadView() {
         super.loadView()
@@ -70,23 +78,6 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
             return
         }
 
-        let loadViewController = SAELoadViewController(delegate: self)
-        self.loadViewController = loadViewController
-
-        // Don't display load screen immediately, in hopes that we can avoid it altogether.
-        after(seconds: 0.5).then { [weak self] () -> Void in
-            AssertIsOnMainThread()
-
-            guard let strongSelf = self else { return }
-            guard strongSelf.presentedViewController == nil else {
-                Logger.debug("setup completed quickly, no need to present load view controller.")
-                return
-            }
-
-            Logger.debug("setup is slow - showing loading screen")
-            strongSelf.showPrimaryViewController(loadViewController)
-        }.retainUntilComplete()
-
         // We shouldn't set up our environment until after we've consulted isReadyForAppExtensions.
         AppSetup.setupEnvironment(appSpecificSingletonBlock: {
             SSKEnvironment.shared.callMessageHandler = NoopCallMessageHandler()
@@ -102,10 +93,27 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
                                     strongSelf.versionMigrationsDidComplete()
         })
 
-        // We don't need to use "screen protection" in the SAE.
+        let shareViewNavigationController = OWSNavigationController()
+        self.shareViewNavigationController = shareViewNavigationController
 
-        // Ensure OWSContactsSyncing is instantiated.
-        OWSContactsSyncing.sharedManager()
+        let loadViewController = SAELoadViewController(delegate: self)
+        self.loadViewController = loadViewController
+
+        // Don't display load screen immediately, in hopes that we can avoid it altogether.
+        after(seconds: 0.5).done { [weak self] in
+            AssertIsOnMainThread()
+
+            guard let strongSelf = self else { return }
+            guard strongSelf.presentedViewController == nil else {
+                Logger.debug("setup completed quickly, no need to present load view controller.")
+                return
+            }
+
+            Logger.debug("setup is slow - showing loading screen")
+            strongSelf.showPrimaryViewController(loadViewController)
+            }.retainUntilComplete()
+
+        // We don't need to use "screen protection" in the SAE.
 
         NotificationCenter.default.addObserver(self,
                                                selector: #selector(storageIsReady),
@@ -171,12 +179,12 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
 
         // We don't need to use RTCInitializeSSL() in the SAE.
 
-        if TSAccountManager.isRegistered() {
+        if tsAccountManager.isRegistered {
             // At this point, potentially lengthy DB locking migrations could be running.
             // Avoid blocking app launch by putting all further possible DB access in async block
             DispatchQueue.global().async { [weak self] in
-                guard let strongSelf = self else { return }
-                Logger.info("running post launch block for registered user: \(TSAccountManager.localNumber)")
+                guard let _ = self else { return }
+                Logger.info("running post launch block for registered user: \(String(describing: TSAccountManager.localNumber))")
 
                 // We don't need to use OWSDisappearingMessagesJob in the SAE.
 
@@ -192,10 +200,10 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
             // We don't need to prod the TSSocketManager in the SAE.
         }
 
-        if TSAccountManager.isRegistered() {
+        if tsAccountManager.isRegistered {
             DispatchQueue.main.async { [weak self] in
-                guard let strongSelf = self else { return }
-                Logger.info("running post launch block for registered user: \(TSAccountManager.localNumber)")
+                guard let _ = self else { return }
+                Logger.info("running post launch block for registered user: \(String(describing: TSAccountManager.localNumber))")
 
                 // We don't need to use the TSSocketManager in the SAE.
 
@@ -253,8 +261,8 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
         // it will also run all deferred blocks.
         AppReadiness.setAppIsReady()
 
-        if TSAccountManager.isRegistered() {
-            Logger.info("localNumber: \(TSAccountManager.localNumber)")
+        if tsAccountManager.isRegistered {
+            Logger.info("localNumber: \(String(describing: TSAccountManager.localNumber))")
 
             // We don't need to use messageFetcherJob in the SAE.
 
@@ -264,9 +272,6 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
         // We don't need to use DeviceSleepManager in the SAE.
 
         AppVersion.sharedInstance().saeLaunchDidComplete()
-
-        Environment.shared.contactsManager.loadSignalAccountsFromCache()
-        Environment.shared.contactsManager.startObserving()
 
         ensureRootViewController()
 
@@ -288,8 +293,8 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
 
         Logger.debug("")
 
-        if TSAccountManager.isRegistered() {
-            Logger.info("localNumber: \(TSAccountManager.localNumber)")
+        if tsAccountManager.isRegistered {
+            Logger.info("localNumber: \(String(describing: TSAccountManager.localNumber))")
 
             // We don't need to use ExperienceUpgradeFinder in the SAE.
 
@@ -328,7 +333,7 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
 
         Logger.info("Presenting content view")
 
-        if !TSAccountManager.isRegistered() {
+        if !tsAccountManager.isRegistered {
             showNotRegisteredView()
         } else if !OWSProfileManager.shared().localProfileExists() {
             // This is a rare edge case, but we want to ensure that the user
@@ -337,7 +342,7 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
         } else {
             DispatchQueue.main.async { [weak self] in
                 guard let strongSelf = self else { return }
-                strongSelf.buildAttachmentAndPresentConversationPicker()
+                strongSelf.buildAttachmentsAndPresentConversationPicker()
             }
         }
 
@@ -405,7 +410,7 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
         Logger.debug("")
 
         if isReadyForAppExtensions {
-            AppReadiness.runNowOrWhenAppIsReady { [weak self] in
+            AppReadiness.runNowOrWhenAppDidBecomeReady { [weak self] in
                 AssertIsOnMainThread()
                 guard let strongSelf = self else { return }
                 strongSelf.activate()
@@ -454,8 +459,12 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
 
         // If a user unregisters in the main app, the SAE should shut down
         // immediately.
-        guard !TSAccountManager.isRegistered() else {
+        guard !tsAccountManager.isRegistered else {
             // If user is registered, do nothing.
+            return
+        }
+        guard let shareViewNavigationController = shareViewNavigationController else {
+            owsFailDebug("Missing shareViewNavigationController")
             return
         }
         guard let firstViewController = shareViewNavigationController.viewControllers.first else {
@@ -466,7 +475,7 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
             // If root view is an error view, do nothing.
             return
         }
-        throw ShareViewControllerError.notRegistered()
+        throw ShareViewControllerError.notRegistered
     }
 
     // MARK: ShareViewDelegate, SAEFailedViewDelegate
@@ -519,6 +528,10 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
     private func showPrimaryViewController(_ viewController: UIViewController) {
         AssertIsOnMainThread()
 
+        guard let shareViewNavigationController = shareViewNavigationController else {
+            owsFailDebug("Missing shareViewNavigationController")
+            return
+        }
         shareViewNavigationController.setViewControllers([viewController], animated: false)
         if self.presentedViewController == nil {
             Logger.debug("presenting modally: \(viewController)")
@@ -529,10 +542,10 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
         }
     }
 
-    private func buildAttachmentAndPresentConversationPicker() {
+    private func buildAttachmentsAndPresentConversationPicker() {
         AssertIsOnMainThread()
 
-        self.buildAttachment().then { [weak self] attachment -> Void in
+        self.buildAttachments().map { [weak self] attachments in
             AssertIsOnMainThread()
             guard let strongSelf = self else { return }
 
@@ -541,10 +554,10 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
 
             let conversationPicker = SharingThreadPickerViewController(shareViewDelegate: strongSelf)
             Logger.debug("presentConversationPicker: \(conversationPicker)")
-            conversationPicker.attachment = attachment
+            conversationPicker.attachments = attachments
             strongSelf.showPrimaryViewController(conversationPicker)
-            Logger.info("showing picker with attachment: \(attachment)")
-        }.catch {[weak self]  error in
+            Logger.info("showing picker with attachments: \(attachments)")
+        }.catch { [weak self] error in
             AssertIsOnMainThread()
             guard let strongSelf = self else { return }
 
@@ -580,6 +593,11 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
         return firstUtiType == utiType
     }
 
+    private class func isVisualMediaItem(itemProvider: NSItemProvider) -> Bool {
+        return (itemProvider.hasItemConformingToTypeIdentifier(kUTTypeImage as String) ||
+            itemProvider.hasItemConformingToTypeIdentifier(kUTTypeMovie as String))
+    }
+
     private class func isUrlItem(itemProvider: NSItemProvider) -> Bool {
         return itemMatchesSpecificUtiType(itemProvider: itemProvider,
                                           utiType: kUTTypeURL as String)
@@ -604,25 +622,6 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
             UTTypeConformsTo(utiType as CFString, kUTTypeData)
         }
         return matchingUtiType
-    }
-
-    private class func preferredItemProvider(inputItem: NSExtensionItem) -> NSItemProvider? {
-        guard let attachments = inputItem.attachments else {
-            return nil
-        }
-
-        // Prefer a URL provider if available
-        if let preferredAttachment = attachments.first(where: { (attachment: Any) -> Bool in
-            guard let itemProvider = attachment as? NSItemProvider else {
-                return false
-            }
-            return isUrlItem(itemProvider: itemProvider)
-        }) {
-                return preferredAttachment as? NSItemProvider
-        }
-
-        // else return whatever is available
-        return inputItem.attachments?.first as? NSItemProvider
     }
 
     private class func createDataSource(utiType: String, url: URL, customFileName: String?) -> DataSource? {
@@ -656,10 +655,25 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
         }
     }
 
-    private func buildAttachment() -> Promise<SignalAttachment> {
-        guard let inputItem: NSExtensionItem = self.extensionContext?.inputItems.first as? NSExtensionItem else {
-            let error = ShareViewControllerError.assertionError(description: "no input item")
-            return Promise(error: error)
+    private class func preferredItemProviders(inputItem: NSExtensionItem) -> [NSItemProvider]? {
+        guard let attachments = inputItem.attachments else {
+            return nil
+        }
+
+        var visualMediaItemProviders = [NSItemProvider]()
+        var hasNonVisualMedia = false
+        for attachment in attachments {
+            let itemProvider: NSItemProvider = attachment
+            if isVisualMediaItem(itemProvider: itemProvider) {
+                visualMediaItemProviders.append(itemProvider)
+            } else {
+                hasNonVisualMedia = true
+            }
+        }
+        // Only allow multiple-attachment sends if all attachments
+        // are visual media.
+        if visualMediaItemProviders.count > 0 && !hasNonVisualMedia {
+            return visualMediaItemProviders
         }
 
         // A single inputItem can have multiple attachments, e.g. sharing from Firefox gives
@@ -669,10 +683,71 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
         // FIXME: For now, we prefer the URL provider and discard the text provider, since it's more useful to share the URL than the caption
         // but we *should* include both. This will be a bigger change though since our share extension is currently heavily predicated
         // on one itemProvider per share.
-        guard let itemProvider: NSItemProvider = type(of: self).preferredItemProvider(inputItem: inputItem) else {
-            let error = ShareViewControllerError.assertionError(description: "No item provider in input item attachments")
+
+        // Prefer a URL provider if available
+        if let preferredAttachment = attachments.first(where: { (attachment: Any) -> Bool in
+            guard let itemProvider = attachment as? NSItemProvider else {
+                return false
+            }
+            return isUrlItem(itemProvider: itemProvider)
+        }) {
+            return [preferredAttachment]
+        }
+
+        // else return whatever is available
+        if let itemProvider = inputItem.attachments?.first {
+            return [itemProvider]
+        } else {
+            owsFailDebug("Missing attachment.")
+        }
+        return []
+    }
+
+    private func selectItemProviders() -> Promise<[NSItemProvider]> {
+        guard let inputItems = self.extensionContext?.inputItems else {
+            let error = ShareViewControllerError.assertionError(description: "no input item")
             return Promise(error: error)
         }
+
+        for inputItemRaw in inputItems {
+            guard let inputItem = inputItemRaw as? NSExtensionItem else {
+                Logger.error("invalid inputItem \(inputItemRaw)")
+                continue
+            }
+            if let itemProviders = ShareViewController.preferredItemProviders(inputItem: inputItem) {
+                return Promise.value(itemProviders)
+            }
+        }
+        let error = ShareViewControllerError.assertionError(description: "no input item")
+        return Promise(error: error)
+    }
+
+    private
+    struct LoadedItem {
+        let itemProvider: NSItemProvider
+        let itemUrl: URL
+        let utiType: String
+
+        var customFileName: String?
+        var isConvertibleToTextMessage = false
+        var isConvertibleToContactShare = false
+
+        init(itemProvider: NSItemProvider,
+             itemUrl: URL,
+             utiType: String,
+             customFileName: String? = nil,
+             isConvertibleToTextMessage: Bool = false,
+             isConvertibleToContactShare: Bool = false) {
+            self.itemProvider = itemProvider
+            self.itemUrl = itemUrl
+            self.utiType = utiType
+            self.customFileName = customFileName
+            self.isConvertibleToTextMessage = isConvertibleToTextMessage
+            self.isConvertibleToContactShare = isConvertibleToContactShare
+        }
+    }
+
+    private func loadItemProvider(itemProvider: NSItemProvider) -> Promise<LoadedItem> {
         Logger.info("attachment: \(itemProvider)")
 
         // We need to be very careful about which UTI type we use.
@@ -690,43 +765,40 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
         }
         Logger.debug("matched utiType: \(srcUtiType)")
 
-        let (promise, fulfill, reject) = Promise<(itemUrl: URL, utiType: String)>.pending()
-
-        var customFileName: String?
-        var isConvertibleToTextMessage = false
-        var isConvertibleToContactShare = false
+        let (promise, resolver) = Promise<LoadedItem>.pending()
 
         let loadCompletion: NSItemProvider.CompletionHandler = { [weak self]
             (value, error) in
 
-            guard let strongSelf = self else { return }
-
+            guard let _ = self else { return }
             guard error == nil else {
-                reject(error!)
+                resolver.reject(error!)
                 return
             }
 
             guard let value = value else {
                 let missingProviderError = ShareViewControllerError.assertionError(description: "missing item provider")
-                reject(missingProviderError)
+                resolver.reject(missingProviderError)
                 return
             }
 
             Logger.info("value type: \(type(of: value))")
 
             if let data = value as? Data {
+                let customFileName = "Contact.vcf"
+                var isConvertibleToContactShare = false
+
                 // Although we don't support contacts _yet_, when we do we'll want to make
                 // sure they are shared with a reasonable filename.
                 if ShareViewController.itemMatchesSpecificUtiType(itemProvider: itemProvider,
                                                                   utiType: kUTTypeVCard as String) {
-                    customFileName = "Contact.vcf"
 
                     if Contact(vCardData: data) != nil {
                         isConvertibleToContactShare = true
                     } else {
                         Logger.error("could not parse vcard.")
                         let writeError = ShareViewControllerError.assertionError(description: "Could not parse vcard data.")
-                        reject(writeError)
+                        resolver.reject(writeError)
                         return
                     }
                 }
@@ -734,134 +806,182 @@ public class ShareViewController: UIViewController, ShareViewDelegate, SAEFailed
                 let customFileExtension = MIMETypeUtil.fileExtension(forUTIType: srcUtiType)
                 guard let tempFilePath = OWSFileSystem.writeData(toTemporaryFile: data, fileExtension: customFileExtension) else {
                     let writeError = ShareViewControllerError.assertionError(description: "Error writing item data: \(String(describing: error))")
-                    reject(writeError)
+                    resolver.reject(writeError)
                     return
                 }
                 let fileUrl = URL(fileURLWithPath: tempFilePath)
-                fulfill((itemUrl: fileUrl, utiType: srcUtiType))
+                resolver.fulfill(LoadedItem(itemProvider: itemProvider,
+                                            itemUrl: fileUrl,
+                                            utiType: srcUtiType,
+                                            customFileName: customFileName,
+                                            isConvertibleToContactShare: isConvertibleToContactShare))
             } else if let string = value as? String {
                 Logger.debug("string provider: \(string)")
                 guard let data = string.filterStringForDisplay().data(using: String.Encoding.utf8) else {
                     let writeError = ShareViewControllerError.assertionError(description: "Error writing item data: \(String(describing: error))")
-                    reject(writeError)
+                    resolver.reject(writeError)
                     return
                 }
                 guard let tempFilePath = OWSFileSystem.writeData(toTemporaryFile: data, fileExtension: "txt") else {
                     let writeError = ShareViewControllerError.assertionError(description: "Error writing item data: \(String(describing: error))")
-                    reject(writeError)
+                    resolver.reject(writeError)
                     return
                 }
 
                 let fileUrl = URL(fileURLWithPath: tempFilePath)
 
-                isConvertibleToTextMessage = !itemProvider.registeredTypeIdentifiers.contains(kUTTypeFileURL as String)
+                let isConvertibleToTextMessage = !itemProvider.registeredTypeIdentifiers.contains(kUTTypeFileURL as String)
 
                 if UTTypeConformsTo(srcUtiType as CFString, kUTTypeText) {
-                    fulfill((itemUrl: fileUrl, utiType: srcUtiType))
+                    resolver.fulfill(LoadedItem(itemProvider: itemProvider,
+                                                itemUrl: fileUrl,
+                                                utiType: srcUtiType,
+                                                isConvertibleToTextMessage: isConvertibleToTextMessage))
                 } else {
-                    fulfill((itemUrl: fileUrl, utiType:  kUTTypeText as String))
+                    resolver.fulfill(LoadedItem(itemProvider: itemProvider,
+                                                itemUrl: fileUrl,
+                                                utiType: kUTTypeText as String,
+                                                isConvertibleToTextMessage: isConvertibleToTextMessage))
                 }
             } else if let url = value as? URL {
                 // If the share itself is a URL (e.g. a link from Safari), try to send this as a text message.
-                isConvertibleToTextMessage = (itemProvider.registeredTypeIdentifiers.contains(kUTTypeURL as String) &&
+                let isConvertibleToTextMessage = (itemProvider.registeredTypeIdentifiers.contains(kUTTypeURL as String) &&
                     !itemProvider.registeredTypeIdentifiers.contains(kUTTypeFileURL as String))
                 if isConvertibleToTextMessage {
-                    fulfill((itemUrl: url, utiType: kUTTypeURL as String))
+                    resolver.fulfill(LoadedItem(itemProvider: itemProvider,
+                                                itemUrl: url,
+                                                utiType: kUTTypeURL as String,
+                                                isConvertibleToTextMessage: isConvertibleToTextMessage))
                 } else {
-                    fulfill((itemUrl: url, utiType: srcUtiType))
+                    resolver.fulfill(LoadedItem(itemProvider: itemProvider,
+                                                itemUrl: url,
+                                                utiType: srcUtiType,
+                                                isConvertibleToTextMessage: isConvertibleToTextMessage))
                 }
             } else if let image = value as? UIImage {
-                if let data = UIImagePNGRepresentation(image) {
+                if let data = image.pngData() {
                     let tempFilePath = OWSFileSystem.temporaryFilePath(withFileExtension: "png")
                     do {
                         let url = NSURL.fileURL(withPath: tempFilePath)
                         try data.write(to: url)
-                        fulfill((url, srcUtiType))
+                        resolver.fulfill(LoadedItem(itemProvider: itemProvider, itemUrl: url,
+                                                    utiType: srcUtiType))
                     } catch {
-                        reject(ShareViewControllerError.assertionError(description: "couldn't write UIImage: \(String(describing: error))"))
+                        resolver.reject(ShareViewControllerError.assertionError(description: "couldn't write UIImage: \(String(describing: error))"))
                     }
                 } else {
-                    reject(ShareViewControllerError.assertionError(description: "couldn't convert UIImage to PNG: \(String(describing: error))"))
+                    resolver.reject(ShareViewControllerError.assertionError(description: "couldn't convert UIImage to PNG: \(String(describing: error))"))
                 }
             } else {
                 // It's unavoidable that we may sometimes receives data types that we
                 // don't know how to handle.
                 let unexpectedTypeError = ShareViewControllerError.assertionError(description: "unexpected value: \(String(describing: value))")
-                reject(unexpectedTypeError)
+                resolver.reject(unexpectedTypeError)
             }
         }
 
         itemProvider.loadItem(forTypeIdentifier: srcUtiType, options: nil, completionHandler: loadCompletion)
 
-        return promise.then { [weak self] (itemUrl: URL, utiType: String) -> Promise<SignalAttachment> in
+        return promise
+    }
+
+    private func buildAttachment(forLoadedItem loadedItem: LoadedItem) -> Promise<SignalAttachment> {
+        let itemProvider = loadedItem.itemProvider
+        let itemUrl = loadedItem.itemUrl
+        let utiType = loadedItem.utiType
+
+        var url = itemUrl
+        do {
+            if isVideoNeedingRelocation(itemProvider: itemProvider, itemUrl: itemUrl) {
+                url = try SignalAttachment.copyToVideoTempDir(url: itemUrl)
+            }
+        } catch {
+            let error = ShareViewControllerError.assertionError(description: "Could not copy video")
+            return Promise(error: error)
+        }
+
+        Logger.debug("building DataSource with url: \(url), utiType: \(utiType)")
+
+        guard let dataSource = ShareViewController.createDataSource(utiType: utiType, url: url, customFileName: loadedItem.customFileName) else {
+            let error = ShareViewControllerError.assertionError(description: "Unable to read attachment data")
+            return Promise(error: error)
+        }
+
+        // start with base utiType, but it might be something generic like "image"
+        var specificUTIType = utiType
+        if utiType == (kUTTypeURL as String) {
+            // Use kUTTypeURL for URLs.
+        } else if UTTypeConformsTo(utiType as CFString, kUTTypeText) {
+            // Use kUTTypeText for text.
+        } else if url.pathExtension.count > 0 {
+            // Determine a more specific utiType based on file extension
+            if let typeExtension = MIMETypeUtil.utiType(forFileExtension: url.pathExtension) {
+                Logger.debug("utiType based on extension: \(typeExtension)")
+                specificUTIType = typeExtension
+            }
+        }
+
+        guard !SignalAttachment.isInvalidVideo(dataSource: dataSource, dataUTI: specificUTIType) else {
+            // This can happen, e.g. when sharing a quicktime-video from iCloud drive.
+
+            let (promise, exportSession) = SignalAttachment.compressVideoAsMp4(dataSource: dataSource, dataUTI: specificUTIType)
+
+            // TODO: How can we move waiting for this export to the end of the share flow rather than having to do it up front?
+            // Ideally we'd be able to start it here, and not block the UI on conversion unless there's still work to be done
+            // when the user hits "send".
+            if let exportSession = exportSession {
+                let progressPoller = ProgressPoller(timeInterval: 0.1, ratioCompleteBlock: { return exportSession.progress })
+                self.progressPoller = progressPoller
+                progressPoller.startPolling()
+
+                guard let loadViewController = self.loadViewController else {
+                    owsFailDebug("load view controller was unexpectedly nil")
+                    return promise
+                }
+
+                DispatchQueue.main.async {
+                    loadViewController.progress = progressPoller.progress
+                }
+            }
+
+            return promise
+        }
+
+        let attachment = SignalAttachment.attachment(dataSource: dataSource, dataUTI: specificUTIType, imageQuality: .medium)
+        if loadedItem.isConvertibleToContactShare {
+            Logger.info("isConvertibleToContactShare")
+            attachment.isConvertibleToContactShare = true
+        } else if loadedItem.isConvertibleToTextMessage {
+            Logger.info("isConvertibleToTextMessage")
+            attachment.isConvertibleToTextMessage = true
+        }
+        return Promise.value(attachment)
+    }
+
+    private func buildAttachments() -> Promise<[SignalAttachment]> {
+        return selectItemProviders().then {  [weak self] (itemProviders) -> Promise<[SignalAttachment]> in
             guard let strongSelf = self else {
-                let error = ShareViewControllerError.obsoleteShare
+                let error = ShareViewControllerError.assertionError(description: "expired")
                 return Promise(error: error)
             }
 
-            let url: URL = try {
-                if strongSelf.isVideoNeedingRelocation(itemProvider: itemProvider, itemUrl: itemUrl) {
-                    return try SignalAttachment.copyToVideoTempDir(url: itemUrl)
-                } else {
-                    return itemUrl
-                }
-            }()
+            var loadPromises = [Promise<SignalAttachment>]()
 
-            Logger.debug("building DataSource with url: \(url), utiType: \(utiType)")
+            for itemProvider in itemProviders.prefix(SignalAttachment.maxAttachmentsAllowed) {
+                let loadPromise = strongSelf.loadItemProvider(itemProvider: itemProvider)
+                    .then({ (loadedItem) -> Promise<SignalAttachment> in
+                        return strongSelf.buildAttachment(forLoadedItem: loadedItem)
+                    })
 
-            guard let dataSource = ShareViewController.createDataSource(utiType: utiType, url: url, customFileName: customFileName) else {
-                throw ShareViewControllerError.assertionError(description: "Unable to read attachment data")
+                loadPromises.append(loadPromise)
             }
-
-            // start with base utiType, but it might be something generic like "image"
-            var specificUTIType = utiType
-            if utiType == (kUTTypeURL as String) {
-                // Use kUTTypeURL for URLs.
-            } else if UTTypeConformsTo(utiType as CFString, kUTTypeText) {
-                // Use kUTTypeText for text.
-            } else if url.pathExtension.count > 0 {
-                // Determine a more specific utiType based on file extension
-                if let typeExtension = MIMETypeUtil.utiType(forFileExtension: url.pathExtension) {
-                    Logger.debug("utiType based on extension: \(typeExtension)")
-                    specificUTIType = typeExtension
-                }
+            return when(fulfilled: loadPromises)
+        }.map { (signalAttachments) -> [SignalAttachment] in
+            guard signalAttachments.count > 0 else {
+                let error = ShareViewControllerError.assertionError(description: "no valid attachments")
+                throw error
             }
-
-            guard !SignalAttachment.isInvalidVideo(dataSource: dataSource, dataUTI: specificUTIType) else {
-                // This can happen, e.g. when sharing a quicktime-video from iCloud drive.
-
-                let (promise, exportSession) = SignalAttachment.compressVideoAsMp4(dataSource: dataSource, dataUTI: specificUTIType)
-
-                // TODO: How can we move waiting for this export to the end of the share flow rather than having to do it up front?
-                // Ideally we'd be able to start it here, and not block the UI on conversion unless there's still work to be done
-                // when the user hits "send".
-                if let exportSession = exportSession {
-                    let progressPoller = ProgressPoller(timeInterval: 0.1, ratioCompleteBlock: { return exportSession.progress })
-                    strongSelf.progressPoller = progressPoller
-                    progressPoller.startPolling()
-
-                    guard let loadViewController = strongSelf.loadViewController else {
-                        owsFailDebug("load view controller was unexpectedly nil")
-                        return promise
-                    }
-
-                    DispatchQueue.main.async {
-                        loadViewController.progress = progressPoller.progress
-                    }
-                }
-
-                return promise
-            }
-
-            let attachment = SignalAttachment.attachment(dataSource: dataSource, dataUTI: specificUTIType, imageQuality: .medium)
-            if isConvertibleToContactShare {
-                Logger.info("isConvertibleToContactShare")
-                attachment.isConvertibleToContactShare = isConvertibleToContactShare
-            } else if isConvertibleToTextMessage {
-                Logger.info("isConvertibleToTextMessage")
-                attachment.isConvertibleToTextMessage = isConvertibleToTextMessage
-            }
-            return Promise(value: attachment)
+            return signalAttachments
         }
     }
 

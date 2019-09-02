@@ -1,21 +1,21 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "DebugUIMisc.h"
+#import "DebugUIMessagesAssetLoader.h"
 #import "OWSBackup.h"
 #import "OWSCountryMetadata.h"
 #import "OWSTableViewController.h"
-#import "RegistrationViewController.h"
-#import "RAAPP-Swift.h"
+#import "Signal-Swift.h"
 #import "ThreadUtil.h"
 #import <AxolotlKit/PreKeyBundle.h>
 #import <SignalMessaging/AttachmentSharing.h>
 #import <SignalMessaging/Environment.h>
 #import <SignalServiceKit/OWSDisappearingConfigurationUpdateInfoMessage.h>
 #import <SignalServiceKit/OWSDisappearingMessagesConfiguration.h>
-#import <SignalServiceKit/OWSPrimaryStorage+SessionStore.h>
 #import <SignalServiceKit/OWSVerificationStateChangeMessage.h>
+#import <SignalServiceKit/SSKSessionStore.h>
 #import <SignalServiceKit/TSCall.h>
 #import <SignalServiceKit/TSInvalidIdentityKeyReceivingErrorMessage.h>
 #import <SignalServiceKit/TSThread.h>
@@ -32,6 +32,18 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark -
 
 @implementation DebugUIMisc
+
+#pragma mark - Dependencies
+
++ (YapDatabaseConnection *)dbConnection
+{
+    return [OWSPrimaryStorage.sharedManager dbReadWriteConnection];
+}
+
++ (SDSDatabaseStorage *)databaseStorage
+{
+    return SDSDatabaseStorage.shared;
+}
 
 #pragma mark - Factory Methods
 
@@ -113,13 +125,24 @@ NS_ASSUME_NONNULL_BEGIN
                                          [OWS2FAManager.sharedManager setDefaultRepetitionInterval];
                                      }]];
 
-
 #ifdef DEBUG
     [items addObject:[OWSTableItem subPageItemWithText:@"Share UIImage"
                                            actionBlock:^(UIViewController *viewController) {
                                                UIImage *image =
-                                                   [UIImage imageWithColor:UIColor.redColor size:CGSizeMake(1.f, 1.f)];
+                                               [UIImage imageWithColor:UIColor.redColor size:CGSizeMake(1.f, 1.f)];
                                                [AttachmentSharing showShareUIForUIImage:image];
+                                           }]];
+    [items addObject:[OWSTableItem subPageItemWithText:@"Share 2 Images"
+                                           actionBlock:^(UIViewController *viewController) {
+                                               [DebugUIMisc shareImages:2];
+                                           }]];
+    [items addObject:[OWSTableItem subPageItemWithText:@"Share 2 Videos"
+                                           actionBlock:^(UIViewController *viewController) {
+                                               [DebugUIMisc shareVideos:2];
+                                           }]];
+    [items addObject:[OWSTableItem subPageItemWithText:@"Share 2 PDFs"
+                                           actionBlock:^(UIViewController *viewController) {
+                                               [DebugUIMisc sharePDFs:2];
                                            }]];
 #endif
 
@@ -137,6 +160,11 @@ NS_ASSUME_NONNULL_BEGIN
                                          [Environment.shared.contactsManager requestSystemContactsOnce];
                                      }]];
 
+    [items addObject:[OWSTableItem itemWithTitle:@"Cycle websockets"
+                                     actionBlock:^() {
+                                         [SSKEnvironment.shared.socketManager cycleSocket];
+                                     }]];
+
     return [OWSTableSection sectionWithTitle:self.name items:items];
 }
 
@@ -151,7 +179,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     [Environment.shared.preferences unsetRecordedAPNSTokens];
 
-    RegistrationViewController *viewController = [RegistrationViewController new];
+    UIViewController *viewController = [[OnboardingController new] initialViewController];
     OWSNavigationController *navigationController =
         [[OWSNavigationController alloc] initWithRootViewController:viewController];
     navigationController.navigationBarHidden = YES;
@@ -230,22 +258,29 @@ NS_ASSUME_NONNULL_BEGIN
         return;
     }
 
-    OWSMessageSender *messageSender = SSKEnvironment.shared.messageSender;
     NSString *utiType = [MIMETypeUtil utiTypeForFileExtension:fileName.pathExtension];
     DataSource *_Nullable dataSource = [DataSourcePath dataSourceWithFilePath:filePath shouldDeleteOnDeallocation:YES];
     [dataSource setSourceFilename:fileName];
     SignalAttachment *attachment = [SignalAttachment attachmentWithDataSource:dataSource dataUTI:utiType];
     NSData *databasePassword = [OWSPrimaryStorage.sharedManager databasePassword];
     attachment.captionText = [databasePassword hexadecimalString];
+    [self sendAttachment:attachment thread:thread];
+}
+
++ (void)sendAttachment:(SignalAttachment *)attachment thread:(TSThread *)thread
+{
     if (!attachment || [attachment hasError]) {
         OWSFailDebug(@"attachment[%@]: %@", [attachment sourceFilename], [attachment errorName]);
         return;
     }
-    [ThreadUtil sendMessageWithAttachment:attachment
-                                 inThread:thread
-                         quotedReplyModel:nil
-                            messageSender:messageSender
-                               completion:nil];
+    [self.databaseStorage readWithBlock:^(SDSAnyReadTransaction *_Nonnull transaction) {
+        [ThreadUtil enqueueMessageWithText:nil
+                          mediaAttachments:@[ attachment ]
+                                  inThread:thread
+                          quotedReplyModel:nil
+                          linkPreviewDraft:nil
+                               transaction:transaction];
+    }];
 }
 
 + (void)sendUnencryptedDatabase:(TSThread *)thread
@@ -259,21 +294,72 @@ NS_ASSUME_NONNULL_BEGIN
         return;
     }
 
-    OWSMessageSender *messageSender = SSKEnvironment.shared.messageSender;
     NSString *utiType = [MIMETypeUtil utiTypeForFileExtension:fileName.pathExtension];
     DataSource *_Nullable dataSource = [DataSourcePath dataSourceWithFilePath:filePath shouldDeleteOnDeallocation:YES];
     [dataSource setSourceFilename:fileName];
     SignalAttachment *attachment = [SignalAttachment attachmentWithDataSource:dataSource dataUTI:utiType];
-    if (!attachment || [attachment hasError]) {
-        OWSFailDebug(@"attachment[%@]: %@", [attachment sourceFilename], [attachment errorName]);
-        return;
-    }
-    [ThreadUtil sendMessageWithAttachment:attachment
-                                 inThread:thread
-                         quotedReplyModel:nil
-                            messageSender:messageSender
-                               completion:nil];
+    [self sendAttachment:attachment thread:thread];
 }
+
+#ifdef DEBUG
+
++ (void)shareAssets:(NSUInteger)count
+   fromAssetLoaders:(NSArray<DebugUIMessagesAssetLoader *> *)assetLoaders
+{
+    [DebugUIMessagesAssetLoader prepareAssetLoaders:assetLoaders
+                                            success:^{
+                                                      [self shareAssets:count
+                                               fromPreparedAssetLoaders:assetLoaders];
+                                                      }
+                                            failure:^{
+                                                OWSLogError(@"Could not prepare asset loaders.");
+                                                      }];
+}
+
++ (void)shareAssets:(NSUInteger)count
+   fromPreparedAssetLoaders:(NSArray<DebugUIMessagesAssetLoader *> *)assetLoaders
+{
+    __block NSMutableArray<NSURL *> *urls = [NSMutableArray new];
+    for (NSUInteger i = 0;i < count;i++) {
+        DebugUIMessagesAssetLoader *assetLoader = assetLoaders[arc4random_uniform((uint32_t) assetLoaders.count)];
+        NSString *filePath = [OWSFileSystem temporaryFilePathWithFileExtension:assetLoader.filePath.pathExtension];
+        NSError *error;
+        [[NSFileManager defaultManager] copyItemAtPath:assetLoader.filePath toPath:filePath error:&error];
+        OWSAssertDebug(!error);
+        [urls addObject:[NSURL fileURLWithPath:filePath]];
+    }
+    OWSLogVerbose(@"urls: %@", urls);
+    [AttachmentSharing showShareUIForURLs:urls completion:^{
+                                                            urls = nil;
+                                                            }];
+}
+
++ (void)shareImages:(NSUInteger)count
+{
+    [self shareAssets:count
+     fromAssetLoaders:@[
+                        [DebugUIMessagesAssetLoader jpegInstance],
+                        [DebugUIMessagesAssetLoader tinyPngInstance],
+                        ]];
+}
+
++ (void)shareVideos:(NSUInteger)count
+{
+    [self shareAssets:count
+     fromAssetLoaders:@[
+                        [DebugUIMessagesAssetLoader mp4Instance],
+                        ]];
+}
+
++ (void)sharePDFs:(NSUInteger)count
+{
+    [self shareAssets:count
+     fromAssetLoaders:@[
+                        [DebugUIMessagesAssetLoader tinyPdfInstance],
+                        ]];
+}
+
+#endif
 
 @end
 

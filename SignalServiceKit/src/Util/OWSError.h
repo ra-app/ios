@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 NS_ASSUME_NONNULL_BEGIN
@@ -17,7 +17,9 @@ typedef NS_ENUM(NSInteger, OWSErrorCode) {
     OWSErrorCodeFailedToSendOutgoingMessage = 30,
     OWSErrorCodeAssertionFailure = 31,
     OWSErrorCodeFailedToDecryptMessage = 100,
+    OWSErrorCodeFailedToDecryptUDMessage = 101,
     OWSErrorCodeFailedToEncryptMessage = 110,
+    OWSErrorCodeFailedToEncryptUDMessage = 111,
     OWSErrorCodeSignalServiceFailure = 1001,
     OWSErrorCodeSignalServiceRateLimited = 1010,
     OWSErrorCodeUserError = 2001,
@@ -46,18 +48,27 @@ typedef NS_ENUM(NSInteger, OWSErrorCode) {
     OWSErrorCodeMessageRequestFailed = 777421,
     OWSErrorCodeMessageResponseFailed = 777422,
     OWSErrorCodeInvalidMessage = 777423,
+    OWSErrorCodeProfileUpdateFailed = 777424,
+    OWSErrorCodeAvatarWriteFailed = 777425,
+    OWSErrorCodeAvatarUploadFailed = 777426,
+    OWSErrorCodeNoSessionForTransientMessage,
+    OWSErrorCodeUploadFailed,
+    OWSErrorCodeInvalidStickerData,
+    OWSErrorCodeAttachmentDownloadFailed,
+    OWSErrorCodeAppExired,
 };
 
 extern NSString *const OWSErrorRecipientIdentifierKey;
 
 extern NSError *OWSErrorWithCodeDescription(OWSErrorCode code, NSString *description);
+extern NSError *OWSErrorWithUserInfo(OWSErrorCode code, NSDictionary *userInfo);
 extern NSError *OWSErrorMakeUntrustedIdentityError(NSString *description, NSString *recipientId);
 extern NSError *OWSErrorMakeUnableToProcessServerResponseError(void);
 extern NSError *OWSErrorMakeFailedToSendOutgoingMessageError(void);
 extern NSError *OWSErrorMakeNoSuchSignalRecipientError(void);
 extern NSError *OWSErrorMakeAssertionError(NSString *description);
 extern NSError *OWSErrorMakeMessageSendDisabledDueToPreKeyUpdateFailuresError(void);
-extern NSError *OWSErrorMakeMessageSendFailedToBlockListError(void);
+extern NSError *OWSErrorMakeMessageSendFailedDueToBlockListError(void);
 extern NSError *OWSErrorMakeWriteAttachmentDataError(void);
 
 NS_ASSUME_NONNULL_END

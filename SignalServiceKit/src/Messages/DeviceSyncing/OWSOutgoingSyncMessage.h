@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "TSOutgoingMessage.h"
@@ -22,9 +22,12 @@ NS_ASSUME_NONNULL_BEGIN
                                   isVoiceMessage:(BOOL)isVoiceMessage
                                 groupMetaMessage:(TSGroupMetaMessage)groupMetaMessage
                                    quotedMessage:(nullable TSQuotedMessage *)quotedMessage
-                                    contactShare:(nullable OWSContact *)contactShare NS_UNAVAILABLE;
+                                    contactShare:(nullable OWSContact *)contactShare
+                                     linkPreview:(nullable OWSLinkPreview *)linkPreview
+                                  messageSticker:(nullable MessageSticker *)messageSticker NS_UNAVAILABLE;
 
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithTimestamp:(uint64_t)timestamp NS_DESIGNATED_INITIALIZER;
 - (nullable instancetype)initWithCoder:(NSCoder *)coder NS_DESIGNATED_INITIALIZER;
 
 @end

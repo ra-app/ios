@@ -1,11 +1,11 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSOutgoingSyncMessage.h"
-#import "Cryptography.h"
-#import "NSDate+OWS.h"
 #import "ProtoUtils.h"
+#import <SignalCoreKit/Cryptography.h>
+#import <SignalCoreKit/NSDate+OWS.h>
 #import <SignalServiceKit/SignalServiceKit-Swift.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)init
 {
+    // MJK TODO - remove SenderTimestamp
     self = [super initOutgoingMessageWithTimestamp:[NSDate ows_millisecondTimeStamp]
                                           inThread:nil
                                        messageBody:nil
@@ -28,7 +29,33 @@ NS_ASSUME_NONNULL_BEGIN
                                     isVoiceMessage:NO
                                   groupMetaMessage:TSGroupMetaMessageUnspecified
                                      quotedMessage:nil
-                                      contactShare:nil];
+                                      contactShare:nil
+                                       linkPreview:nil
+                                    messageSticker:nil
+                                 isViewOnceMessage:NO];
+
+    if (!self) {
+        return self;
+    }
+
+    return self;
+}
+
+- (instancetype)initWithTimestamp:(uint64_t)timestamp
+{
+    self = [super initOutgoingMessageWithTimestamp:timestamp
+                                          inThread:nil
+                                       messageBody:nil
+                                     attachmentIds:[NSMutableArray new]
+                                  expiresInSeconds:0
+                                   expireStartedAt:0
+                                    isVoiceMessage:NO
+                                  groupMetaMessage:TSGroupMetaMessageUnspecified
+                                     quotedMessage:nil
+                                      contactShare:nil
+                                       linkPreview:nil
+                                    messageSticker:nil
+                                 isViewOnceMessage:NO];
 
     if (!self) {
         return self;
@@ -72,7 +99,7 @@ NS_ASSUME_NONNULL_BEGIN
 {
     OWSAbstractMethod();
 
-    return [SSKProtoSyncMessageBuilder new];
+    return [SSKProtoSyncMessage builder];
 }
 
 - (nullable NSData *)buildPlainTextData:(SignalRecipient *)recipient
@@ -82,7 +109,7 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    SSKProtoContentBuilder *contentBuilder = [SSKProtoContentBuilder new];
+    SSKProtoContentBuilder *contentBuilder = [SSKProtoContent builder];
     [contentBuilder setSyncMessage:syncMessage];
 
     NSError *error;

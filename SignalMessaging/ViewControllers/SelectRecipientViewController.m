@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "SelectRecipientViewController.h"
@@ -9,7 +9,6 @@
 #import <SignalMessaging/ContactTableViewCell.h>
 #import <SignalMessaging/ContactsViewHelper.h>
 #import <SignalMessaging/Environment.h>
-#import <SignalMessaging/OWSContactsManager.h>
 #import <SignalMessaging/OWSTableViewController.h>
 #import <SignalMessaging/SignalMessaging-Swift.h>
 #import <SignalMessaging/UIFont+OWS.h>
@@ -91,7 +90,8 @@ NSString *const kSelectRecipientViewControllerCellIdentifier = @"kSelectRecipien
     _tableViewController = [OWSTableViewController new];
     _tableViewController.delegate = self;
     [self.view addSubview:self.tableViewController.view];
-    [_tableViewController.view autoPinWidthToSuperview];
+    [self.tableViewController.view autoPinEdgeToSuperviewSafeArea:ALEdgeLeading];
+    [self.tableViewController.view autoPinEdgeToSuperviewSafeArea:ALEdgeTrailing];
     [_tableViewController.view autoPinToTopLayoutGuideOfViewController:self withInset:0];
     [_tableViewController.view autoPinEdgeToSuperviewEdge:ALEdgeBottom];
     self.tableViewController.tableView.rowHeight = UITableViewAutomaticDimension;
@@ -123,6 +123,7 @@ NSString *const kSelectRecipientViewControllerCellIdentifier = @"kSelectRecipien
         [_countryCodeButton addTarget:self
                                action:@selector(showCountryCodeView:)
                      forControlEvents:UIControlEventTouchUpInside];
+        SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, _countryCodeButton);
     }
 
     return _countryCodeButton;
@@ -149,6 +150,7 @@ NSString *const kSelectRecipientViewControllerCellIdentifier = @"kSelectRecipien
         _examplePhoneNumberLabel = [UILabel new];
         _examplePhoneNumberLabel.font = [self examplePhoneNumberFont];
         _examplePhoneNumberLabel.textColor = [Theme secondaryColor];
+        SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, _examplePhoneNumberLabel);
     }
 
     return _examplePhoneNumberLabel;
@@ -168,6 +170,7 @@ NSString *const kSelectRecipientViewControllerCellIdentifier = @"kSelectRecipien
         [_phoneNumberTextField addTarget:self
                                   action:@selector(textFieldDidChange:)
                         forControlEvents:UIControlEventEditingChanged];
+        SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, _phoneNumberTextField);
     }
 
     return _phoneNumberTextField;
@@ -186,6 +189,7 @@ NSString *const kSelectRecipientViewControllerCellIdentifier = @"kSelectRecipien
         _phoneNumberButton = button;
         [button autoSetDimension:ALDimensionWidth toSize:140];
         [button autoSetDimension:ALDimensionHeight toSize:kButtonHeight];
+        SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, _phoneNumberButton);
     }
     return _phoneNumberButton;
 }
@@ -414,8 +418,6 @@ NSString *const kSelectRecipientViewControllerCellIdentifier = @"kSelectRecipien
 
 #pragma mark - UITextFieldDelegate
 
-// TODO: This logic resides in both RegistrationViewController and here.
-//       We should refactor it out into a utility function.
 - (BOOL)textField:(UITextField *)textField
     shouldChangeCharactersInRange:(NSRange)range
                 replacementString:(NSString *)insertionText
@@ -423,7 +425,7 @@ NSString *const kSelectRecipientViewControllerCellIdentifier = @"kSelectRecipien
     [ViewControllerUtils phoneNumberTextField:textField
                 shouldChangeCharactersInRange:range
                             replacementString:insertionText
-                                  countryCode:_callingCode];
+                                  callingCode:_callingCode];
 
     [self updatePhoneNumberButtonEnabling];
 
@@ -549,8 +551,7 @@ NSString *const kSelectRecipientViewControllerCellIdentifier = @"kSelectRecipien
                                         cell.accessoryMessage =
                                             [weakSelf.delegate accessoryMessageForSignalAccount:signalAccount];
                                     }
-                                    [cell configureWithRecipientId:signalAccount.recipientId
-                                                   contactsManager:helper.contactsManager];
+                                    [cell configureWithRecipientId:signalAccount.recipientId];
 
                                     if (![weakSelf.delegate canSignalAccountBeSelected:signalAccount]) {
                                         cell.selectionStyle = UITableViewCellSelectionStyleNone;

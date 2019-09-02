@@ -1,20 +1,22 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
-
-@class ConversationStyle;
-@class ConversationViewItem;
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class ConversationStyle;
+
+@protocol ConversationViewItem;
+
 @interface OWSMessageFooterView : UIStackView
 
-- (void)configureWithConversationViewItem:(ConversationViewItem *)viewItem
-                        isOverlayingMedia:(BOOL)isOverlayingMedia
+- (void)configureWithConversationViewItem:(id<ConversationViewItem>)viewItem
                         conversationStyle:(ConversationStyle *)conversationStyle
-                               isIncoming:(BOOL)isIncoming;
+                               isIncoming:(BOOL)isIncoming
+                        isOverlayingMedia:(BOOL)isOverlayingMedia
+                          isOutsideBubble:(BOOL)isOutsideBubble;
 
-- (CGSize)measureWithConversationViewItem:(ConversationViewItem *)viewItem;
+- (CGSize)measureWithConversationViewItem:(id<ConversationViewItem>)viewItem;
 
 - (void)prepareForReuse;
 

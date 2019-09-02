@@ -1,14 +1,21 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSFileSystem.h"
 #import "OWSError.h"
 #import "TSConstants.h"
+#import <SignalCoreKit/NSDate+OWS.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @implementation OWSFileSystem
+
++ (BOOL)fileOrFolderExistsAtPath:(NSString *)path
+{
+    BOOL isDirectory;
+    return [NSFileManager.defaultManager fileExistsAtPath:path isDirectory:&isDirectory];
+}
 
 + (BOOL)protectRecursiveContentsAtPath:(NSString *)path
 {
@@ -191,14 +198,51 @@ NS_ASSUME_NONNULL_BEGIN
     return nil;
 }
 
++ (BOOL)moveFilePath:(NSString *)oldFilePath toFilePath:(NSString *)newFilePath
+{
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if (![fileManager fileExistsAtPath:oldFilePath]) {
+        OWSFailDebug(@"Can't move file or directory; source missing.");
+        return NO;
+    }
+
+    OWSLogInfo(@"Moving file or directory from: %@ to: %@", oldFilePath, newFilePath);
+
+    if ([fileManager fileExistsAtPath:newFilePath]) {
+        OWSFailDebug(@"Can't move file or directory; destination already exists.");
+        return NO;
+    }
+
+    NSError *_Nullable error;
+    BOOL success = [fileManager moveItemAtPath:oldFilePath toPath:newFilePath error:&error];
+    if (!success || error) {
+        OWSFailDebug(@"Could not move file or directory with error: %@", error);
+        return NO;
+    }
+
+    // Ensure all files moved have the proper data protection class.
+    // On large directories this can take a while, so we dispatch async
+    // since we're in the launch path.
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        [self protectRecursiveContentsAtPath:newFilePath];
+    });
+
+    return YES;
+}
+
 + (BOOL)ensureDirectoryExists:(NSString *)dirPath
+{
+    return [self ensureDirectoryExists:dirPath fileProtectionType:NSFileProtectionCompleteUntilFirstUserAuthentication];
+}
+
++ (BOOL)ensureDirectoryExists:(NSString *)dirPath fileProtectionType:(NSFileProtectionType)fileProtectionType
 {
     BOOL isDirectory;
     BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:dirPath isDirectory:&isDirectory];
     if (exists) {
         OWSAssertDebug(isDirectory);
 
-        return [self protectFileOrFolderAtPath:dirPath];
+        return [self protectFileOrFolderAtPath:dirPath fileProtectionType:fileProtectionType];
     } else {
         OWSLogInfo(@"Creating directory at: %@", dirPath);
 
@@ -211,7 +255,7 @@ NS_ASSUME_NONNULL_BEGIN
             OWSFailDebug(@"Failed to create directory: %@, error: %@", dirPath, error);
             return NO;
         }
-        return [self protectFileOrFolderAtPath:dirPath];
+        return [self protectFileOrFolderAtPath:dirPath fileProtectionType:fileProtectionType];
     }
 }
 
@@ -247,6 +291,19 @@ NS_ASSUME_NONNULL_BEGIN
         return YES;
     }
     return [self deleteFile:filePath];
+}
+
++ (void)deleteContentsOfDirectory:(NSString *)dirPath
+{
+    NSError *error;
+    NSArray<NSString *> *_Nullable filePaths = [self allFilesInDirectoryRecursive:dirPath error:&error];
+    if (error != nil || filePaths == nil) {
+        OWSFailDebug(@"Could not retrieve files in directory.");
+        return;
+    }
+    for (NSString *filePath in filePaths) {
+        [self deleteFileIfExists:filePath];
+    }
 }
 
 + (NSArray<NSString *> *_Nullable)allFilesInDirectoryRecursive:(NSString *)dirPath error:(NSError **)error
@@ -288,7 +345,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSString *)temporaryFilePathWithFileExtension:(NSString *_Nullable)fileExtension
 {
-    NSString *temporaryDirectory = NSTemporaryDirectory();
+    NSString *temporaryDirectory = OWSTemporaryDirectory();
     NSString *tempFileName = NSUUID.UUID.UUIDString;
     if (fileExtension.length > 0) {
         tempFileName = [[tempFileName stringByAppendingString:@"."] stringByAppendingString:fileExtension];
@@ -330,5 +387,95 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 @end
+
+#pragma mark -
+
+NSString *OWSTemporaryDirectory(void)
+{
+    static NSString *dirPath;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        NSString *dirName = [NSString stringWithFormat:@"ows_temp_%@", NSUUID.UUID.UUIDString];
+        dirPath = [NSTemporaryDirectory() stringByAppendingPathComponent:dirName];
+        BOOL success = [OWSFileSystem ensureDirectoryExists:dirPath fileProtectionType:NSFileProtectionComplete];
+        OWSCAssert(success);
+    });
+    return dirPath;
+}
+
+NSString *OWSTemporaryDirectoryAccessibleAfterFirstAuth(void)
+{
+    NSString *dirPath = NSTemporaryDirectory();
+    BOOL success = [OWSFileSystem ensureDirectoryExists:dirPath
+                                     fileProtectionType:NSFileProtectionCompleteUntilFirstUserAuthentication];
+    OWSCAssert(success);
+    return dirPath;
+}
+
+void ClearOldTemporaryDirectoriesSync(void)
+{
+    // Ignore the "current" temp directory.
+    NSString *currentTempDirName = OWSTemporaryDirectory().lastPathComponent;
+
+    NSDate *thresholdDate = CurrentAppContext().appLaunchTime;
+    NSString *dirPath = NSTemporaryDirectory();
+    NSError *error;
+    NSArray<NSString *> *fileNames = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:dirPath error:&error];
+    if (error) {
+        OWSCFailDebug(@"contentsOfDirectoryAtPath error: %@", error);
+        return;
+    }
+    for (NSString *fileName in fileNames) {
+        if (!CurrentAppContext().isAppForegroundAndActive) {
+            // Abort if app not active.
+            return;
+        }
+        if ([fileName isEqualToString:currentTempDirName]) {
+            continue;
+        }
+
+        NSString *filePath = [dirPath stringByAppendingPathComponent:fileName];
+
+        // Delete files with either:
+        //
+        // a) "ows_temp" name prefix.
+        // b) modified time before app launch time.
+        if (![fileName hasPrefix:@"ows_temp"]) {
+            NSError *error;
+            NSDictionary *attributes = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:&error];
+            if (!attributes || error) {
+                // This is fine; the file may have been deleted since we found it.
+                OWSLogError(@"Could not get attributes of file or directory at: %@", filePath);
+                continue;
+            }
+            // Don't delete files which were created in the last N minutes.
+            NSDate *creationDate = attributes.fileModificationDate;
+            if ([creationDate isAfterDate:thresholdDate]) {
+                OWSLogInfo(@"Skipping file due to age: %f", fabs([creationDate timeIntervalSinceNow]));
+                continue;
+            }
+        }
+
+        OWSLogVerbose(@"Removing temp file or directory: %@", filePath);
+        if (![OWSFileSystem deleteFile:filePath]) {
+            // This can happen if the app launches before the phone is unlocked.
+            // Clean up will occur when app becomes active.
+            OWSLogWarn(@"Could not delete old temp directory: %@", filePath);
+        }
+    }
+}
+
+// NOTE: We need to call this method on launch _and_ every time the app becomes active,
+//       since file protection may prevent it from succeeding in the background.
+void ClearOldTemporaryDirectories(void)
+{
+    // We use the lowest priority queue for this, and wait N seconds
+    // to avoid interfering with app startup.
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3.f * NSEC_PER_SEC)),
+        dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_BACKGROUND, 0),
+        ^{
+            ClearOldTemporaryDirectoriesSync();
+        });
+}
 
 NS_ASSUME_NONNULL_END

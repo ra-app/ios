@@ -1,9 +1,11 @@
 //
-//  Copyright (c) 2017 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "TSConstants.h"
 #import <Mantle/Mantle.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 /**
  * Contstructs the per-device-message parameters used when submitting a message to
@@ -20,12 +22,16 @@
 @property (nonatomic, readonly) int destinationRegistrationId;
 @property (nonatomic, readonly) NSString *content;
 @property (nonatomic, readonly) BOOL silent;
+@property (nonatomic, readonly) BOOL online;
 
 - (instancetype)initWithType:(TSWhisperMessageType)type
                  recipientId:(NSString *)destination
                       device:(int)deviceId
                      content:(NSData *)content
                     isSilent:(BOOL)isSilent
+                    isOnline:(BOOL)isOnline
               registrationId:(int)registrationId;
 
 @end
+
+NS_ASSUME_NONNULL_END

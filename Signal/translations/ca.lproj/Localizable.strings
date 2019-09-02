@@ -2,20 +2,20 @@
 "AB_PERMISSION_MISSING_ACTION_NOT_NOW" = "Ara no";
 
 /* Action sheet item */
-"ACCEPT_NEW_IDENTITY_ACTION" = "Accepta el nou número de seguretat";
+"ACCEPT_NEW_IDENTITY_ACTION" = "Accepta el número de seguretat nou";
 
 /* Label for 'audio call' button in contact view. */
-"ACTION_AUDIO_CALL" = "Trucada d'audio";
+"ACTION_AUDIO_CALL" = "Trucada Signal";
 
 /* Label for 'invite' button in contact view. */
-"ACTION_INVITE" = "Convida a Signal";
+"ACTION_INVITE" = "Convida al Signal";
 
 /* Label for 'send message' button in contact view.
    Label for button that lets you send a message to a contact. */
-"ACTION_SEND_MESSAGE" = "Envia missatge";
+"ACTION_SEND_MESSAGE" = "Envia-li un missatge";
 
 /* Label for 'share contact' button. */
-"ACTION_SHARE_CONTACT" = "Comparteix contacte";
+"ACTION_SHARE_CONTACT" = "Comparteix el contacte";
 
 /* Label for 'video call' button in contact view. */
 "ACTION_VIDEO_CALL" = "Trucada de video";
@@ -33,7 +33,7 @@
 "ADD_GROUP_MEMBER_VIEW_TITLE" = "Afegeix un membre";
 
 /* Message shown in conversation view that offers to share your profile with a group. */
-"ADD_GROUP_TO_PROFILE_WHITELIST_OFFER" = "Vols compartir el teu perfil amb aquest grup?";
+"ADD_GROUP_TO_PROFILE_WHITELIST_OFFER" = "Voleu compartir el perfil amb aquest grup?";
 
 /* Message shown in conversation view that offers to add an unknown user to your phone's contacts. */
 "ADD_TO_CONTACTS_OFFER" = "Vols afegir aquest usuari als teus contactes?";
@@ -53,23 +53,14 @@
 /* The label for the 'save' button in action sheets. */
 "ALERT_SAVE" = "Desar";
 
-/* No comment provided by engineer. */
+/* notification action */
 "ANSWER_CALL_BUTTON_TITLE" = "Respondre";
 
-/* No comment provided by engineer. */
+/* notification body */
 "APN_Message" = "Nou missatge!";
 
-/* No comment provided by engineer. */
-"APN_MESSAGE_FROM" = "Missatge de";
-
-/* No comment provided by engineer. */
-"APN_MESSAGE_IN_GROUP" = "Missatge en grup";
-
-/* No comment provided by engineer. */
-"APN_MESSAGE_IN_GROUP_DETAILED" = "%@ en el grup %@: %@";
-
 /* Message for the 'app launch failed' alert. */
-"APP_LAUNCH_FAILURE_ALERT_MESSAGE" = "Signal no es pot iniciar. Envia'ns els informes de diagnostic perquè poguem provar de solucionar-ho.";
+"APP_LAUNCH_FAILURE_ALERT_MESSAGE" = "El Signal no es pot iniciar. Envieu els informes de depuració a support@signal.org perquè puguem provar de solucionar-ho.";
 
 /* Title for the 'app launch failed' alert. */
 "APP_LAUNCH_FAILURE_ALERT_TITLE" = "Error";
@@ -84,7 +75,7 @@
 "APP_UPDATE_NAG_ALERT_MESSAGE_FORMAT" = "Ja és disponible la versió %@ a l'App Store.";
 
 /* Title for the 'new app version available' alert. */
-"APP_UPDATE_NAG_ALERT_TITLE" = "Una nova versió de Signal està disponible";
+"APP_UPDATE_NAG_ALERT_TITLE" = "Una nova versió del Signal està disponible";
 
 /* Label for the 'update' button in the 'new app version available' alert. */
 "APP_UPDATE_NAG_ALERT_UPDATE_BUTTON" = "Actualitza";
@@ -98,8 +89,14 @@
 /* No comment provided by engineer. */
 "ATTACHMENT" = "Fitxer adjunt";
 
-/* One line label indicating the user can add no more text to the attachment caption. */
-"ATTACHMENT_APPROVAL_CAPTION_LENGTH_LIMIT_REACHED" = "Has arribat al límit de missatges";
+/* One-line label indicating the user can add no more text to the attachment caption. */
+"ATTACHMENT_APPROVAL_CAPTION_LENGTH_LIMIT_REACHED" = "Limit de descripció assolit";
+
+/* placeholder text for an empty captioning field */
+"ATTACHMENT_APPROVAL_CAPTION_PLACEHOLDER" = "Afegeix una descripció...";
+
+/* Title for 'caption' mode of the attachment approval view. */
+"ATTACHMENT_APPROVAL_CAPTION_TITLE" = "Títol";
 
 /* Format string for file extension label in call interstitial view */
 "ATTACHMENT_APPROVAL_FILE_EXTENSION_FORMAT" = "Tipus de fitxer: %@";
@@ -114,31 +111,25 @@
 "ATTACHMENT_DEFAULT_FILENAME" = "Fitxer adjunt";
 
 /* Status label when an attachment download has failed. */
-"ATTACHMENT_DOWNLOADING_STATUS_FAILED" = "Ha fallat. Toqueu per provar de nou.";
-
-/* Status label when an attachment is currently downloading */
-"ATTACHMENT_DOWNLOADING_STATUS_IN_PROGRESS" = "S'està baixant...";
-
-/* Status label when an attachment is enqueued, but hasn't yet started downloading */
-"ATTACHMENT_DOWNLOADING_STATUS_QUEUED" = "A la cua";
+"ATTACHMENT_DOWNLOADING_STATUS_FAILED" = "Ha fallat la baixada. Toqueu per a provar de nou.";
 
 /* The title of the 'attachment error' alert. */
 "ATTACHMENT_ERROR_ALERT_TITLE" = "Error en enviar l'adjunt";
 
 /* Attachment error message for image attachments which could not be converted to JPEG */
-"ATTACHMENT_ERROR_COULD_NOT_CONVERT_TO_JPEG" = "La imatge adjunta no s'ha pogut redimensionar.";
+"ATTACHMENT_ERROR_COULD_NOT_CONVERT_TO_JPEG" = "No s'ha pogut convertir la imatge.";
 
 /* Attachment error message for video attachments which could not be converted to MP4 */
 "ATTACHMENT_ERROR_COULD_NOT_CONVERT_TO_MP4" = "No s'ha pogut processar el vídeo.";
 
 /* Attachment error message for image attachments which cannot be parsed */
-"ATTACHMENT_ERROR_COULD_NOT_PARSE_IMAGE" = "La imatge adjunta no s'ha pogut analitzar.";
+"ATTACHMENT_ERROR_COULD_NOT_PARSE_IMAGE" = "No s'ha pogut analitzar la imatge.";
 
 /* Attachment error message for image attachments in which metadata could not be removed */
 "ATTACHMENT_ERROR_COULD_NOT_REMOVE_METADATA" = "No s'han pogut esborrar les metadades de la imatge";
 
 /* Attachment error message for image attachments which could not be resized */
-"ATTACHMENT_ERROR_COULD_NOT_RESIZE_IMAGE" = "No s’ha pogut redimensionar la imatge";
+"ATTACHMENT_ERROR_COULD_NOT_RESIZE_IMAGE" = "No s'ha pogut redimensionar la imatge";
 
 /* Attachment error message for attachments whose data exceed file size limits */
 "ATTACHMENT_ERROR_FILE_SIZE_TOO_LARGE" = "El fitxer adjunt és massa gran.";
@@ -165,7 +156,7 @@
 "ATTACHMENT_PICKER_DOCUMENTS_FAILED_ALERT_TITLE" = "No s'ha pogut triar el document.";
 
 /* Alert body when picking a document fails because user picked a directory/bundle */
-"ATTACHMENT_PICKER_DOCUMENTS_PICKED_DIRECTORY_FAILED_ALERT_BODY" = "Signal no pot tractar l’arxiu. Intenta comprimir-lo abans d’enviar-lo";
+"ATTACHMENT_PICKER_DOCUMENTS_PICKED_DIRECTORY_FAILED_ALERT_BODY" = "Creeu un fitxer comprimit d'aquest fitxer o directori i proveu d'enviar millor això.";
 
 /* Alert title when picking a document fails because user picked a directory/bundle */
 "ATTACHMENT_PICKER_DOCUMENTS_PICKED_DIRECTORY_FAILED_ALERT_TITLE" = "Fitxer no compatible";
@@ -176,7 +167,7 @@
 /* action sheet button title to enable built in speaker during a call */
 "AUDIO_ROUTE_BUILT_IN_SPEAKER" = "Altaveu";
 
-/* button text for back button */
+/* return to the previous screen */
 "BACK_BUTTON" = "Enrere";
 
 /* Error indicating the backup export could not export the user's data. */
@@ -184,9 +175,6 @@
 
 /* Error indicating that the app received an invalid response from CloudKit. */
 "BACKUP_EXPORT_ERROR_INVALID_CLOUDKIT_RESPONSE" = "Resposta invàlida del servidor";
-
-/* Error indicating the backup export failed to save a file to the cloud. */
-"BACKUP_EXPORT_ERROR_SAVE_FILE_TO_CLOUD_FAILED" = "La còpia de seguretat no s’ha pogut pujar";
 
 /* Indicates that the cloud is being cleaned up. */
 "BACKUP_EXPORT_PHASE_CLEAN_UP" = "Netejant la còpia de segeuretat";
@@ -224,32 +212,47 @@
 /* Indicates that the backup import data is being restored. */
 "BACKUP_IMPORT_PHASE_RESTORING_FILES" = "Restaurant arxius";
 
+/* Label for the backup restore decision section. */
+"BACKUP_RESTORE_DECISION_TITLE" = "Còpia de seguretat disponible";
+
+/* Label for the backup restore description. */
+"BACKUP_RESTORE_DESCRIPTION" = "Restauració de còpia de seguretat";
+
+/* Label for the backup restore progress. */
+"BACKUP_RESTORE_PROGRESS" = "Progrés";
+
+/* Label for the backup restore status. */
+"BACKUP_RESTORE_STATUS" = "Estat";
+
+/* Error shown when backup fails due to an unexpected error. */
+"BACKUP_UNEXPECTED_ERROR" = "Error durant la còpia de seguretat";
+
 /* An explanation of the consequences of blocking a group. */
-"BLOCK_GROUP_BEHAVIOR_EXPLANATION" = "You will no longer receive messages or updates from this group.";
+"BLOCK_GROUP_BEHAVIOR_EXPLANATION" = "No rebreu missatges ni actualitzacions d'aquest grup.";
 
 /* Button label for the 'block' button */
 "BLOCK_LIST_BLOCK_BUTTON" = "Bloca";
 
 /* A format for the 'block group' action sheet title. Embeds the {{group name}}. */
-"BLOCK_LIST_BLOCK_GROUP_TITLE_FORMAT" = "Block and Leave the \"%@\" Group?";
+"BLOCK_LIST_BLOCK_GROUP_TITLE_FORMAT" = "Voleu blocar i abandonar el grup «%@»?";
 
 /* A format for the 'block user' action sheet title. Embeds {{the blocked user's name or phone number}}. */
-"BLOCK_LIST_BLOCK_USER_TITLE_FORMAT" = "Block %@?";
+"BLOCK_LIST_BLOCK_USER_TITLE_FORMAT" = "Voleu blocar %@?";
 
 /* Section header for groups that have been blocked */
-"BLOCK_LIST_BLOCKED_GROUPS_SECTION" = "Blocked Groups";
+"BLOCK_LIST_BLOCKED_GROUPS_SECTION" = "Grups blocats";
 
 /* Section header for users that have been blocked */
-"BLOCK_LIST_BLOCKED_USERS_SECTION" = "Blocked Users";
+"BLOCK_LIST_BLOCKED_USERS_SECTION" = "Usuaris blocats";
 
 /* Button label for the 'unblock' button */
 "BLOCK_LIST_UNBLOCK_BUTTON" = "Desbloca";
 
 /* Action sheet body when confirming you want to unblock a group */
-"BLOCK_LIST_UNBLOCK_GROUP_BODY" = "Existing members will be able to add you to the group again.";
+"BLOCK_LIST_UNBLOCK_GROUP_BODY" = "Els membres existents us podran afegir de nou al grup.";
 
 /* Action sheet title when confirming you want to unblock a group. */
-"BLOCK_LIST_UNBLOCK_GROUP_TITLE" = "Unblock This Group?";
+"BLOCK_LIST_UNBLOCK_GROUP_TITLE" = "Voleu desblocar el grup?";
 
 /* A format for the 'unblock conversation' action sheet title. Embeds the {{conversation title}}. */
 "BLOCK_LIST_UNBLOCK_TITLE_FORMAT" = "Voleu desblocar %@?";
@@ -258,13 +261,13 @@
 "BLOCK_LIST_VIEW_BLOCK_BUTTON" = "Bloca";
 
 /* The message format of the 'conversation blocked' alert. Embeds the {{conversation title}}. */
-"BLOCK_LIST_VIEW_BLOCKED_ALERT_MESSAGE_FORMAT" = "%@ has been blocked.";
+"BLOCK_LIST_VIEW_BLOCKED_ALERT_MESSAGE_FORMAT" = "S'ha blocat %@.";
 
 /* The title of the 'user blocked' alert. */
 "BLOCK_LIST_VIEW_BLOCKED_ALERT_TITLE" = "Usuari blocat";
 
 /* The title of the 'group blocked' alert. */
-"BLOCK_LIST_VIEW_BLOCKED_GROUP_ALERT_TITLE" = "Group Blocked";
+"BLOCK_LIST_VIEW_BLOCKED_GROUP_ALERT_TITLE" = "S'ha blocat el grup";
 
 /* The message of the 'You can't block yourself' alert. */
 "BLOCK_LIST_VIEW_CANT_BLOCK_SELF_ALERT_MESSAGE" = "No podeu blocar-vos.";
@@ -273,10 +276,10 @@
 "BLOCK_LIST_VIEW_CANT_BLOCK_SELF_ALERT_TITLE" = "Error";
 
 /* Alert title after unblocking a group or 1:1 chat. Embeds the {{conversation title}}. */
-"BLOCK_LIST_VIEW_UNBLOCKED_ALERT_TITLE_FORMAT" = "%@ has been unblocked.";
+"BLOCK_LIST_VIEW_UNBLOCKED_ALERT_TITLE_FORMAT" = "S'ha desblocat %@";
 
 /* Alert body after unblocking a group. */
-"BLOCK_LIST_VIEW_UNBLOCKED_GROUP_ALERT_BODY" = "Existing members can now add you to the group again.";
+"BLOCK_LIST_VIEW_UNBLOCKED_GROUP_ALERT_BODY" = "Els membres existents ara us poden afegir de nou al grup.";
 
 /* Action sheet that will block an unknown user. */
 "BLOCK_OFFER_ACTIONSHEET_BLOCK_ACTION" = "Bloca";
@@ -285,13 +288,16 @@
 "BLOCK_OFFER_ACTIONSHEET_TITLE_FORMAT" = "Voleu blocar %@?";
 
 /* An explanation of the consequences of blocking another user. */
-"BLOCK_USER_BEHAVIOR_EXPLANATION" = "Blocked users will not be able to call you or send you messages.";
+"BLOCK_USER_BEHAVIOR_EXPLANATION" = "Els usuaris blocats no podran telefonar-vos ni enviar-vos missatges.";
 
 /* Label for 'continue' button. */
 "BUTTON_CONTINUE" = "Continuar";
 
 /* Label for generic done button. */
 "BUTTON_DONE" = "Fet";
+
+/* Label for the 'next' button. */
+"BUTTON_NEXT" = "Següent";
 
 /* Button text to enable batch selection mode */
 "BUTTON_SELECT" = "Seleccionar";
@@ -300,16 +306,25 @@
 "CALL_AGAIN_BUTTON_TITLE" = "Torna a trucar";
 
 /* Alert message when calling and permissions for microphone are missing */
-"CALL_AUDIO_PERMISSION_MESSAGE" = "El Signal necessita accés al micròfon per a trucar i enregistrar missatges de veu. Podeu donar-li l'accés a la configuració del sistema.";
+"CALL_AUDIO_PERMISSION_MESSAGE" = "Podeu activar l'accés al micròfon a la Configuració de l'iOS per a poder telefonar i enviar missatges de veu al Signal.";
 
 /* Alert title when calling and permissions for microphone are missing */
 "CALL_AUDIO_PERMISSION_TITLE" = "Es necessita accés al micròfon";
 
+/* notification body */
+"CALL_INCOMING_NOTIFICATION_BODY" = "☎️ Trucada entrant";
+
 /* Accessibility label for placing call button */
 "CALL_LABEL" = "Telefona";
 
+/* notification body */
+"CALL_MISSED_BECAUSE_OF_IDENTITY_CHANGE_NOTIFICATION_BODY" = "☎️ Trucada perduda perquè el número de seguretat de l'emissor ha canviat.";
+
+/* notification body */
+"CALL_MISSED_NOTIFICATION_BODY" = "☎️ Trucada perduda";
+
 /* Call setup status label after outgoing call times out */
-"CALL_SCREEN_STATUS_NO_ANSWER" = "Sense resposta.";
+"CALL_SCREEN_STATUS_NO_ANSWER" = "Sense resposta";
 
 /* embeds {{Call Status}} in call screen label. For ongoing calls, {{Call Status}} is a seconds timer like 01:23, otherwise {{Call Status}} is a short text like 'Ringing', 'Busy', or 'Failed Call' */
 "CALL_STATUS_FORMAT" = "Signal %@";
@@ -332,6 +347,9 @@
 /* Accessibility label for declining incoming calls */
 "CALL_VIEW_DECLINE_INCOMING_CALL_LABEL" = "Rebutja trucades";
 
+/* tooltip label when remote party has enabled their video */
+"CALL_VIEW_ENABLE_VIDEO_HINT" = "Toqueu aquí per activar el vídeo";
+
 /* Accessibility label for hang up call */
 "CALL_VIEW_HANGUP_LABEL" = "Finalitza la trucada";
 
@@ -339,10 +357,10 @@
 "CALL_VIEW_MUTE_LABEL" = "Silencia";
 
 /* Reminder to the user of the benefits of enabling CallKit and disabling CallKit privacy. */
-"CALL_VIEW_SETTINGS_NAG_DESCRIPTION_ALL" = "Podeu contestar telefonades directament des de la pantalla de bloqueig i veure el nom i el telèfon de les telefonades rebudes si canvieu la configuració.\n\nVegeu la configuració de privadesa per a més detalls.";
+"CALL_VIEW_SETTINGS_NAG_DESCRIPTION_ALL" = "Podeu activar la integració amb les telefonades d'iOS a la configuració de privadesa del Signal per a respondre les telefonades entrants des de la pantalla de bloqueig.";
 
 /* Reminder to the user of the benefits of disabling CallKit privacy. */
-"CALL_VIEW_SETTINGS_NAG_DESCRIPTION_PRIVACY" = "Podeu veure el nom i el telèfon de les telefonades rebudes si canvieu la configuració.\n\nVegeu la configuració de privadesa per a més detalls.";
+"CALL_VIEW_SETTINGS_NAG_DESCRIPTION_PRIVACY" = "Podeu activar la integració amb les telefonades d'iOS a la configuració de privadesa del Signal per a veure el nom i el número de les telefonades entrants.";
 
 /* Label for button that dismiss the call view's settings nag. */
 "CALL_VIEW_SETTINGS_NAG_NOT_NOW_BUTTON" = "Ara no";
@@ -350,7 +368,7 @@
 /* Label for button that shows the privacy settings. */
 "CALL_VIEW_SETTINGS_NAG_SHOW_CALL_SETTINGS" = "Mostra la configuració de privadesa";
 
-/* Accessibility label to toggle front vs. rear facing camera */
+/* Accessibility label to toggle front- vs. rear-facing camera */
 "CALL_VIEW_SWITCH_CAMERA_DIRECTION" = "Vanvia direcció de la càmera";
 
 /* Accessibility label to switch to audio only */
@@ -368,6 +386,12 @@
 /* The generic name used for calls if CallKit privacy is enabled */
 "CALLKIT_ANONYMOUS_CONTACT_NAME" = "Usuari del Signal";
 
+/* Accessibility hint describing what you can do with the camera button */
+"CAMERA_BUTTON_HINT" = "Fes una fotografia i envia-la";
+
+/* Accessibility label for camera button. */
+"CAMERA_BUTTON_LABEL" = "Càmera";
+
 /* Message for alert explaining that a user cannot be verified. */
 "CANT_VERIFY_IDENTITY_ALERT_MESSAGE" = "L'usuari no es pot verificar fins que no intercanvieu missatges.";
 
@@ -377,14 +401,35 @@
 /* Title for the 'censorship circumvention country' view. */
 "CENSORSHIP_CIRCUMVENTION_COUNTRY_VIEW_TITLE" = "Seleccioneu un país";
 
-/* Error indicating that the app could not determine that user's CloudKit account status */
-"CLOUDKIT_STATUS_COULD_NOT_DETERMINE" = "Hi ha hagut un error comunicant amb iCloud per les copies de seguretat";
+/* The label for the 'do not restore backup' button. */
+"CHECK_FOR_BACKUP_DO_NOT_RESTORE" = "No restaurar";
+
+/* Message for alert shown when the app failed to check for an existing backup. */
+"CHECK_FOR_BACKUP_FAILED_MESSAGE" = "No es pot determinar si hi ha una còpia de seguretat que es pugui restaurar";
+
+/* Title for alert shown when the app failed to check for an existing backup. */
+"CHECK_FOR_BACKUP_FAILED_TITLE" = "Error";
+
+/* The label for the 'restore backup' button. */
+"CHECK_FOR_BACKUP_RESTORE" = "Restaura";
+
+/* Error indicating that the app could not determine that user's iCloud account status */
+"CLOUDKIT_STATUS_COULD_NOT_DETERMINE" = "Signal no ha pogut determinar l'estat del compte iCloud. Identifica't amb teu compte iCloud als ajustos d'iOS per fer la còpia de seguretat de les dades de Signal";
 
 /* Error indicating that user does not have an iCloud account. */
-"CLOUDKIT_STATUS_NO_ACCOUNT" = "No tens un compte iCloud per còpies de seguretat";
+"CLOUDKIT_STATUS_NO_ACCOUNT" = "No hi ha compte iCloud. Identifica't amb teu compte iCloud als ajustos d'iOS per fer la còpia de seguretat de les dades de Signal";
 
-/* Error indicating that the app was prevented from accessing the user's CloudKit account. */
-"CLOUDKIT_STATUS_RESTRICTED" = "Signal no ha pogut accedir al teu compte iCloud per la còpia de seguretat";
+/* Error indicating that the app was prevented from accessing the user's iCloud account. */
+"CLOUDKIT_STATUS_RESTRICTED" = "Signal no ha obtingut permís per accedir a les còpies de seguretat del teu compte iCloud. Dona accés a Signal als ajustos d'iOS per fer la còpia de seguretat de les dades de Signal.";
+
+/* The first of two messages demonstrating the chosen conversation color, by rendering this message in an outgoing message bubble. */
+"COLOR_PICKER_DEMO_MESSAGE_1" = "Trieu el color dels missatges enviats en aquesta conversa.";
+
+/* The second of two messages demonstrating the chosen conversation color, by rendering this message in an incoming message bubble. */
+"COLOR_PICKER_DEMO_MESSAGE_2" = "Només es veurà al vostre dispositiu.";
+
+/* Modal Sheet title when picking a conversation color. */
+"COLOR_PICKER_SHEET_TITLE" = "Color de la conversa";
 
 /* Activity Sheet label */
 "COMPARE_SAFETY_NUMBER_ACTION" = "Compara'l amb el porta-retalls";
@@ -399,7 +444,7 @@
 "COMPOSE_MESSAGE_INVITE_SECTION_TITLE" = "Convida";
 
 /* Multi-line label explaining why compose-screen contact picker is empty. */
-"COMPOSE_SCREEN_MISSING_CONTACTS_PERMISSION" = "Per a veure quins dels vostres contactes són usuaris del Signal, permeteu-li l'accés als contactes a la configuració del sistema.";
+"COMPOSE_SCREEN_MISSING_CONTACTS_PERMISSION" = "Podeu activar l'accés als contactes a la Configuració de l'iOS per a veure quins contactes són usuaris del Signal.";
 
 /* No comment provided by engineer. */
 "CONFIRM_ACCOUNT_DESTRUCTION_TEXT" = "S'eliminaran els missatges i deixareu d'estar registrat al servidor. L'aplicació es tancarà una vegada s'eliminin les dades.";
@@ -453,7 +498,7 @@
 "CONTACT_FIELD_ADDRESS_NEIGHBORHOOD" = "Barri";
 
 /* Label for the 'pobox' field of a contact's address. */
-"CONTACT_FIELD_ADDRESS_POBOX" = "P.O. Box";
+"CONTACT_FIELD_ADDRESS_POBOX" = "Apartat de correus";
 
 /* Label for the 'postcode' field of a contact's address. */
 "CONTACT_FIELD_ADDRESS_POSTCODE" = "Codi postal";
@@ -515,6 +560,21 @@
 /* Indicates that a contact has no name. */
 "CONTACT_WITHOUT_NAME" = "Contacte sense nom";
 
+/* Message for the 'conversation delete confirmation' alert. */
+"CONVERSATION_DELETE_CONFIRMATION_ALERT_MESSAGE" = "Això no es pot desfer.";
+
+/* Title for the 'conversation delete confirmation' alert. */
+"CONVERSATION_DELETE_CONFIRMATION_ALERT_TITLE" = "Esborrar conversa?";
+
+/* keyboard toolbar label when no messages match the search string */
+"CONVERSATION_SEARCH_NO_RESULTS" = "Sense coincidències";
+
+/* keyboard toolbar label when exactly 1 message matches the search string */
+"CONVERSATION_SEARCH_ONE_RESULT" = "1 coincidència";
+
+/* keyboard toolbar label when more than 1 message matches the search string. Embeds {{number/position of the 'currently viewed' result}} and the {{total number of results}} */
+"CONVERSATION_SEARCH_RESULTS_FORMAT" = "%d de %d coincidències";
+
 /* title for conversation settings screen */
 "CONVERSATION_SETTINGS" = "Configuració del xat";
 
@@ -522,16 +582,16 @@
 "CONVERSATION_SETTINGS_ADD_TO_EXISTING_CONTACT" = "Afegeix a un contacte existent";
 
 /* table cell label in conversation settings */
-"CONVERSATION_SETTINGS_BLOCK_THIS_GROUP" = "Block This Group";
+"CONVERSATION_SETTINGS_BLOCK_THIS_GROUP" = "Bloca aquest grup";
 
 /* table cell label in conversation settings */
-"CONVERSATION_SETTINGS_BLOCK_THIS_USER" = "Block This User";
+"CONVERSATION_SETTINGS_BLOCK_THIS_USER" = "Bloca aquest ususari";
 
 /* Navbar title when viewing settings for a 1-on-1 thread */
 "CONVERSATION_SETTINGS_CONTACT_INFO_TITLE" = "Informació del contacte";
 
 /* Label for table cell which leads to picking a new conversation color */
-"CONVERSATION_SETTINGS_CONVERSATION_COLOR" = "Color";
+"CONVERSATION_SETTINGS_CONVERSATION_COLOR" = "Color de la conversa";
 
 /* Navbar title when viewing settings for a group thread */
 "CONVERSATION_SETTINGS_GROUP_INFO_TITLE" = "Informació del grup";
@@ -566,6 +626,9 @@
 /* Label for 'new contact' button in conversation settings view. */
 "CONVERSATION_SETTINGS_NEW_CONTACT" = "Crea un contacte nou";
 
+/* Table cell label in conversation settings which returns the user to the conversation with 'search mode' activated */
+"CONVERSATION_SETTINGS_SEARCH" = "Cerca la conversa";
+
 /* Label for button that opens conversation settings. */
 "CONVERSATION_SETTINGS_TAP_TO_CHANGE" = "Toca per canviar";
 
@@ -591,7 +654,7 @@
 "CONVERSATION_VIEW_ADD_TO_CONTACTS_OFFER" = "Afegeux als contactes";
 
 /* Message shown in conversation view that offers to share your profile with a user. */
-"CONVERSATION_VIEW_ADD_USER_TO_PROFILE_WHITELIST_OFFER" = "Compartiu el vostre perfil amb aquest usuari";
+"CONVERSATION_VIEW_ADD_USER_TO_PROFILE_WHITELIST_OFFER" = "Compartiu el perfil amb aquest ususari";
 
 /* Title for the group of buttons show for unknown contacts offering to add them to contacts, etc. */
 "CONVERSATION_VIEW_CONTACTS_OFFER_TITLE" = "Aquest usuari no és als vostres contactes.";
@@ -600,7 +663,7 @@
 "CONVERSATION_VIEW_LOADING_MORE_MESSAGES" = "S'estan carregant més missatges...";
 
 /* Indicator on truncated text messages that they can be tapped to see the entire text message. */
-"CONVERSATION_VIEW_OVERSIZE_TEXT_TAP_FOR_MORE" = "Toqueu per a ampliar";
+"CONVERSATION_VIEW_OVERSIZE_TEXT_TAP_FOR_MORE" = "Mostra'n més";
 
 /* Message shown in conversation view that offers to block an unknown user. */
 "CONVERSATION_VIEW_UNKNOWN_CONTACT_BLOCK_OFFER" = "Bloca aquest usuari";
@@ -675,6 +738,9 @@
    Title of the debug log alert. */
 "DEBUG_LOG_ALERT_TITLE" = "Un pas més";
 
+/* Error indicating that the app could not launch the Email app. */
+"DEBUG_LOG_COULD_NOT_EMAIL" = "No s'ha pogut obrir l'aplicació de correu.";
+
 /* Message of the alert before redirecting to GitHub Issues. */
 "DEBUG_LOG_GITHUB_ISSUE_ALERT_MESSAGE" = "S'ha copiat l'enllaç gist al porta-retalls. Ara se us redireccionarà a la llista d'errors del GitHub.";
 
@@ -718,7 +784,7 @@
 "DOMAIN_FRONTING_COUNTRY_VIEW_SECTION_HEADER" = "Ubicació per a l'elusió de la censura";
 
 /* Alert body for when the user has just tried to edit a contacts after declining to give Signal contacts permissions */
-"EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_BODY" = "Podeu donar-li accés a la Configuració dels sistema.";
+"EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_BODY" = "Podeu activar l'accés a la Configuració de l'iOS.";
 
 /* Alert title for when the user has just tried to edit a contacts after declining to give Signal contacts permissions */
 "EDIT_CONTACT_WITHOUT_CONTACTS_PERMISSION_ALERT_TITLE" = "El Signal necessita accés als contactes per a editar la seva informació";
@@ -745,7 +811,7 @@
 "EDIT_GROUP_UPDATE_BUTTON" = "Actualitza";
 
 /* The alert message if user tries to exit update group view without saving changes. */
-"EDIT_GROUP_VIEW_UNSAVED_CHANGES_MESSAGE" = "Heu canviat el grup. Voleu desar aquests canvis?";
+"EDIT_GROUP_VIEW_UNSAVED_CHANGES_MESSAGE" = "Voleu desar els canvis que heu fet en aquest grup?";
 
 /* The alert title if user tries to exit update group view without saving changes. */
 "EDIT_GROUP_VIEW_UNSAVED_CHANGES_TITLE" = "Canvis no desats";
@@ -762,29 +828,11 @@
 /* subject of email sent to contacts when inviting to install Signal */
 "EMAIL_INVITE_SUBJECT" = "Canviem-nos al Signal";
 
-/* Body text an existing user sees when viewing an empty archive */
-"EMPTY_ARCHIVE_TEXT" = "Podeu arxivar les converses inactives que teniu a Converses.";
-
-/* Header text an existing user sees when viewing an empty archive */
-"EMPTY_ARCHIVE_TITLE" = "Organitzeu les converses.";
-
 /* Full width label displayed when attempting to compose message */
 "EMPTY_CONTACTS_LABEL_LINE1" = "Cap dels vostres contactes té Signal.";
 
 /* Full width label displayed when attempting to compose message */
 "EMPTY_CONTACTS_LABEL_LINE2" = "Per què no convideu algú?";
-
-/* Body text a new user sees when viewing an empty inbox */
-"EMPTY_INBOX_NEW_USER_TEXT" = "Tap on the compose button";
-
-/* Header text a new user sees when viewing an empty inbox */
-"EMPTY_INBOX_NEW_USER_TITLE" = "Start your first Signal conversation!";
-
-/* Body text an existing user sees when viewing an empty inbox */
-"EMPTY_INBOX_TEXT" = "Res. Zero. Rien. None.";
-
-/* Header text an existing user sees when viewing an empty inbox */
-"EMPTY_INBOX_TITLE" = "Completament buit.";
 
 /* Indicates that user should confirm their 'two factor auth pin'. */
 "ENABLE_2FA_VIEW_CONFIRM_PIN_INSTRUCTIONS" = "Confirmeu el vostre PIN.";
@@ -808,55 +856,55 @@
 "ENABLE_2FA_VIEW_PIN_DOES_NOT_MATCH" = "Els PIN no coincideixen.";
 
 /* Indicates that user should select a 'two factor auth pin'. */
-"ENABLE_2FA_VIEW_SELECT_PIN_INSTRUCTIONS" = "Enter a Registration Lock PIN. You will be asked to enter this PIN the next time you register this phone number with Signal.";
+"ENABLE_2FA_VIEW_SELECT_PIN_INSTRUCTIONS" = "Introduïu un PIN com a Pany de Registre. Se us demanarà la pròxima vegada que registreu aquest número de telèfon al Signal.";
 
 /* Indicates that user has 'two factor auth pin' disabled. */
-"ENABLE_2FA_VIEW_STATUS_DISABLED_INSTRUCTIONS" = "For increased security, enable a Registration Lock PIN that will be required in order to register this phone number with Signal again.";
+"ENABLE_2FA_VIEW_STATUS_DISABLED_INSTRUCTIONS" = "Per a més seguretat, activeu el PIN com a Pany de Registre, que se us demanarà quan vullgueu tornar a registrar aquest número de telèfon al Signal.";
 
 /* Indicates that user has 'two factor auth pin' enabled. */
-"ENABLE_2FA_VIEW_STATUS_ENABLED_INSTRUCTIONS" = "Registration Lock is enabled. You'll need to enter your PIN when registering your phone number with Signal again.";
+"ENABLE_2FA_VIEW_STATUS_ENABLED_INSTRUCTIONS" = "S'ha activat el Pany de Registre. Caldrà que introduïu el PIN quan torneu a registrar el número de telèfon al Signal.";
 
 /* Title for the 'enable two factor auth PIN' views. */
-"ENABLE_2FA_VIEW_TITLE" = "Registration Lock";
+"ENABLE_2FA_VIEW_TITLE" = "Pany de Registre";
 
 /* Call setup status label */
-"END_CALL_RESPONDER_IS_BUSY" = "Busy";
+"END_CALL_RESPONDER_IS_BUSY" = "Ocupat";
 
 /* Call setup status label */
 "END_CALL_UNCATEGORIZED_FAILURE" = "Ha fallat.";
 
 /* Error indicating that the phone's contacts could not be retrieved. */
-"ERROR_COULD_NOT_FETCH_CONTACTS" = "Could not access contacts.";
+"ERROR_COULD_NOT_FETCH_CONTACTS" = "No s'ha pogut accedir als contactes.";
 
 /* Generic notice when message failed to send. */
 "ERROR_DESCRIPTION_CLIENT_SENDING_FAILURE" = "No s'ha pogut enviar el missatge.";
 
 /* Error message indicating that message send is disabled due to prekey update failures */
-"ERROR_DESCRIPTION_MESSAGE_SEND_DISABLED_PREKEY_UPDATE_FAILURES" = "No s'ha pogut enviar degut a dades de privadesa obsoletes.";
+"ERROR_DESCRIPTION_MESSAGE_SEND_DISABLED_PREKEY_UPDATE_FAILURES" = "Impossible enviar per dades prekey massa antigues.";
 
 /* Error message indicating that message send failed due to block list */
 "ERROR_DESCRIPTION_MESSAGE_SEND_FAILED_DUE_TO_BLOCK_LIST" = "No s'ha pogut enviar el missatge perquè heu blocat l'usuari.";
 
 /* Error message indicating that message send failed due to failed attachment write */
-"ERROR_DESCRIPTION_MESSAGE_SEND_FAILED_DUE_TO_FAILED_ATTACHMENT_WRITE" = "Failed due to failed attachment write.";
+"ERROR_DESCRIPTION_MESSAGE_SEND_FAILED_DUE_TO_FAILED_ATTACHMENT_WRITE" = "Error al escriure i enviar fitxer adjunt.";
 
 /* Generic error used whenever Signal can't contact the server */
-"ERROR_DESCRIPTION_NO_INTERNET" = "El Signal no s'ha pogut connectar a Internet. Proveu des d'altra xarxa WiFi o utilitzeu dades mòbils.";
+"ERROR_DESCRIPTION_NO_INTERNET" = "Signal no s'ha pogut conectar a Internet. Torna-ho a intentar.";
 
 /* Error indicating that an outgoing message had no valid recipients. */
 "ERROR_DESCRIPTION_NO_VALID_RECIPIENTS" = "Ha fallat l'enviament del missatge, no hi ha recipients vàlids.";
 
 /* Error indicating that a socket request failed. */
-"ERROR_DESCRIPTION_REQUEST_FAILED" = "Network request failed.";
+"ERROR_DESCRIPTION_REQUEST_FAILED" = "Ha fallat la xarxa.";
 
 /* Error indicating that a socket request timed out. */
-"ERROR_DESCRIPTION_REQUEST_TIMED_OUT" = "Network request timed out.";
+"ERROR_DESCRIPTION_REQUEST_TIMED_OUT" = "Ha expirat l'operació de xarxa";
 
 /* Error indicating that a socket response failed. */
-"ERROR_DESCRIPTION_RESPONSE_FAILED" = "Invalid response from service.";
+"ERROR_DESCRIPTION_RESPONSE_FAILED" = "Resposta invàlida del servei";
 
 /* Error message when attempting to send message */
-"ERROR_DESCRIPTION_SENDING_UNAUTHORIZED" = "Aquest dispositiu no es troba registrat per al vostre número. Cal que reinstal·leu el Signal.";
+"ERROR_DESCRIPTION_SENDING_UNAUTHORIZED" = "Aquest dispositiu ja no està registrat amb el teu numéro de telèfon. Torna a installar Signal.";
 
 /* Generic server error */
 "ERROR_DESCRIPTION_SERVER_FAILURE" = "Error del servidor. Proveu de nou més tard.";
@@ -867,20 +915,23 @@
 /* Error message when attempting to send message */
 "ERROR_DESCRIPTION_UNREGISTERED_RECIPIENT" = "El contacte no és usuari del Signal.";
 
+/* Error message indicating that attachment download(s) failed. */
+"ERROR_MESSAGE_ATTACHMENT_DOWNLOAD_FAILED" = "Ha fallat la baixada de l'adjunt.";
+
 /* Error message when unable to receive an attachment because the sending client is too old. */
-"ERROR_MESSAGE_ATTACHMENT_FROM_OLD_CLIENT" = "Failure: Ask sender to update Signal and resend.";
+"ERROR_MESSAGE_ATTACHMENT_FROM_OLD_CLIENT" = "Error amb el fitxer adjunt. Torna'l a demanar després d'actualitzar Signal a la darrera versió.";
 
 /* No comment provided by engineer. */
-"ERROR_MESSAGE_DUPLICATE_MESSAGE" = "Rebut missatge duplicat.";
+"ERROR_MESSAGE_DUPLICATE_MESSAGE" = "Rebut un missatge duplicat.";
 
 /* No comment provided by engineer. */
 "ERROR_MESSAGE_INVALID_KEY_EXCEPTION" = "La clau del destinatari no és vàlida.";
 
 /* No comment provided by engineer. */
-"ERROR_MESSAGE_INVALID_MESSAGE" = "Received message was out of sync.";
+"ERROR_MESSAGE_INVALID_MESSAGE" = "El missatge rebut està desincronitzat.";
 
 /* No comment provided by engineer. */
-"ERROR_MESSAGE_INVALID_VERSION" = "Rebut missatge no compatible amb aquesta versió.";
+"ERROR_MESSAGE_INVALID_VERSION" = "Rebut un missatge que no és compatible amb aquesta versió.";
 
 /* No comment provided by engineer. */
 "ERROR_MESSAGE_NO_SESSION" = "Cap sessió disponible per a contactar.";
@@ -895,16 +946,34 @@
 "ERROR_MESSAGE_UNKNOWN_ERROR" = "S'ha produït un error desconegut.";
 
 /* No comment provided by engineer. */
-"ERROR_MESSAGE_WRONG_TRUSTED_IDENTITY_KEY" = "Safety number changed.";
+"ERROR_MESSAGE_WRONG_TRUSTED_IDENTITY_KEY" = "Els números de seguretat han canviat.";
+
+/* Error indicating a send failure due to an expired application. */
+"ERROR_SENDING_EXPIRED" = "La versió del Signal ha caducat. Si us plau, actualitzeu-lo per enviar missatges.";
 
 /* Format string for 'unregistered user' error. Embeds {{the unregistered user's name or signal id}}. */
-"ERROR_UNREGISTERED_USER_FORMAT" = "Unregistered User: %@";
+"ERROR_UNREGISTERED_USER_FORMAT" = "Usuari no registrat: %@";
+
+/* Button to dismiss/ignore the one time splash screen that appears after upgrading */
+"EXPERIENCE_UPGRADE_DISMISS_BUTTON" = "Ara no";
+
+/* Button to dismiss/ignore the one time splash screen that appears after upgrading */
+"EXPERIENCE_UPGRADE_LETS_GO_BUTTON" = "Som-hi";
+
+/* Label notifying the user that the app has expired. */
+"EXPIRATION_ERROR" = "La versió del Signal ha caducat! Els missatges ja no s'enviaran correctament. Premeu per actualitzar-lo a la versió més recent.";
+
+/* Label warning the user that the app will expire soon. */
+"EXPIRATION_WARNING_SOON" = "La vostra versió del Signal caducarà d'aquí %d dies. Premeu per a actualitzar-la a la versió més recent.";
+
+/* Label warning the user that the app will expire today. */
+"EXPIRATION_WARNING_TODAY" = "La vostra versió del Signal caducarà avui. Premeu per actualitzar-la a la versió més recent.";
 
 /* action sheet header when re-sending message which failed because of too many attempts */
-"FAILED_SENDING_BECAUSE_RATE_LIMIT" = "Hi ha hagut massa errors amb aquest contacte, torneu a provar més tard.";
+"FAILED_SENDING_BECAUSE_RATE_LIMIT" = "Massa errors amb aquest contacte. Torna-ho a intentar més tard";
 
 /* action sheet header when re-sending message which failed because of untrusted identity keys */
-"FAILED_SENDING_BECAUSE_UNTRUSTED_IDENTITY_KEY" = "El número de seguretat amb %@ ha canviat. Potser voleu verificar-lo abans de tornar a enviar-ho.";
+"FAILED_SENDING_BECAUSE_UNTRUSTED_IDENTITY_KEY" = "El teu codi de seguretat amb %@ ha canviat recentment. Potser vols comprovar-lo abans de tornar a enviar aquest missatge.";
 
 /* alert title */
 "FAILED_VERIFICATION_TITLE" = "No s'ha pogut verificar els números.";
@@ -913,34 +982,34 @@
 "FINGERPRINT_SCAN_VERIFY_BUTTON" = "Marca com a verificat";
 
 /* No comment provided by engineer. */
-"FINGERPRINT_SHRED_KEYMATERIAL_BUTTON" = "Reset Session";
+"FINGERPRINT_SHRED_KEYMATERIAL_BUTTON" = "Reinicialitza la sessió";
 
 /* Accessibility label for finishing new group */
 "FINISH_GROUP_CREATION_LABEL" = "Acaba de crear el grup";
 
 /* Label indicating media gallery is empty */
-"GALLERY_TILES_EMPTY_GALLERY" = "You don't have any media in this conversation.";
+"GALLERY_TILES_EMPTY_GALLERY" = "No tens arxius en aquesta conversa";
 
 /* Label indicating loading is in progress */
-"GALLERY_TILES_LOADING_MORE_RECENT_LABEL" = "Loading Newer Media...";
+"GALLERY_TILES_LOADING_MORE_RECENT_LABEL" = "Carregant nous arxius...";
 
 /* Label indicating loading is in progress */
-"GALLERY_TILES_LOADING_OLDER_LABEL" = "Loading Older Media...";
+"GALLERY_TILES_LOADING_OLDER_LABEL" = "Carregant arxius antics...";
 
 /* A label for generic attachments. */
 "GENERIC_ATTACHMENT_LABEL" = "Fitxer adjunt";
 
 /* Error displayed when there is a failure fetching a GIF from the remote service. */
-"GIF_PICKER_ERROR_FETCH_FAILURE" = "Failed to fetch the requested GIF. Please verify you are online.";
+"GIF_PICKER_ERROR_FETCH_FAILURE" = "Error descarregant el GIF demanat. Comprova que estàs on-line.";
 
 /* Generic error displayed when picking a GIF */
-"GIF_PICKER_ERROR_GENERIC" = "An unknown error occurred.";
+"GIF_PICKER_ERROR_GENERIC" = "S'ha produït un error desconegut.";
 
 /* Shown when selected GIF couldn't be fetched */
-"GIF_PICKER_FAILURE_ALERT_TITLE" = "Unable to Choose GIF";
+"GIF_PICKER_FAILURE_ALERT_TITLE" = "Error descarregant el GIF";
 
 /* Alert message shown when user tries to search for GIFs without entering any search terms. */
-"GIF_PICKER_VIEW_MISSING_QUERY" = "Please enter your search.";
+"GIF_PICKER_VIEW_MISSING_QUERY" = "Entra el que vols buscar";
 
 /* Title for the 'GIF picker' dialog. */
 "GIF_PICKER_VIEW_TITLE" = "Cerca GIF";
@@ -952,7 +1021,7 @@
 "GIF_VIEW_SEARCH_NO_RESULTS" = "No hi ha cap resultat.";
 
 /* Placeholder text for the search field in GIF view */
-"GIF_VIEW_SEARCH_PLACEHOLDER_TEXT" = "Enter your search";
+"GIF_VIEW_SEARCH_PLACEHOLDER_TEXT" = "Entra el que vols buscar";
 
 /* No comment provided by engineer. */
 "GROUP_AVATAR_CHANGED" = "S'ha canviat l'avatar.";
@@ -979,7 +1048,7 @@
 "GROUP_MEMBERS_CALL" = "Truca";
 
 /* Label for the button that clears all verification errors in the 'group members' view. */
-"GROUP_MEMBERS_RESET_NO_LONGER_VERIFIED" = "Esborra totes les verificacions";
+"GROUP_MEMBERS_RESET_NO_LONGER_VERIFIED" = "Esborra les verificacions per tothom";
 
 /* Label for the 'reset all no-longer-verified group members' confirmation alert. */
 "GROUP_MEMBERS_RESET_NO_LONGER_VERIFIED_ALERT_MESSAGE" = "Això esborrarà la verificació de tots els membres del grup el número dels quals hagin canviat des que els vau verificar.";
@@ -996,12 +1065,6 @@
 /* Button label for the 'show contact info' button */
 "GROUP_MEMBERS_VIEW_CONTACT_INFO" = "Informació del contacte";
 
-/* Modal text when removing a group */
-"GROUP_REMOVING" = "S'està abandonant el grup %@";
-
-/* Title of alert indicating that group deletion failed. */
-"GROUP_REMOVING_FAILED" = "No s'ha pogut abandonar el grup";
-
 /* No comment provided by engineer. */
 "GROUP_TITLE_CHANGED" = "El títol és ara «%@».";
 
@@ -1012,16 +1075,28 @@
 "GROUP_YOU_LEFT" = "Heu abandonat el grup.";
 
 /* Label for 'archived conversations' button. */
-"HOME_VIEW_ARCHIVED_CONVERSATIONS" = "Archived Conversations";
+"HOME_VIEW_ARCHIVED_CONVERSATIONS" = "Converses arxivades";
 
 /* Table cell subtitle label for a conversation the user has blocked. */
-"HOME_VIEW_BLOCKED_CONVERSATION" = "Blocked";
+"HOME_VIEW_BLOCKED_CONVERSATION" = "Blocat";
 
 /* Placeholder text for search bar which filters conversations. */
-"HOME_VIEW_CONVERSATION_SEARCHBAR_PLACEHOLDER" = "Search";
+"HOME_VIEW_CONVERSATION_SEARCHBAR_PLACEHOLDER" = "Cerca";
+
+/* Format string for a label offering to start a new conversation with your contacts, if you have 1 Signal contact.  Embeds {{The name of 1 of your Signal contacts}}. */
+"HOME_VIEW_FIRST_CONVERSATION_OFFER_1_CONTACT_FORMAT" = "Alguns dels vostres contactes ja són al Signal, inclòs %@.";
+
+/* Format string for a label offering to start a new conversation with your contacts, if you have 2 Signal contacts.  Embeds {{The names of 2 of your Signal contacts}}. */
+"HOME_VIEW_FIRST_CONVERSATION_OFFER_2_CONTACTS_FORMAT" = "Alguns dels vostres contactes ja són al Signal, inclosos %@i %@.";
+
+/* Format string for a label offering to start a new conversation with your contacts, if you have at least 3 Signal contacts.  Embeds {{The names of 3 of your Signal contacts}}. */
+"HOME_VIEW_FIRST_CONVERSATION_OFFER_3_CONTACTS_FORMAT" = "Alguns dels vostres contactes ja són al Signal, inclosos %@, %@i %@.";
+
+/* A label offering to start a new conversation with your contacts, if you have no Signal contacts. */
+"HOME_VIEW_FIRST_CONVERSATION_OFFER_NO_CONTACTS" = "Comenceu la primera conversa aquí.";
 
 /* Format string when search returns no results. Embeds {{search term}} */
-"HOME_VIEW_SEARCH_NO_RESULTS_FORMAT" = "No results found for '%@'";
+"HOME_VIEW_SEARCH_NO_RESULTS_FORMAT" = "No s'ha trobat cap resultat per a «%@»";
 
 /* Title for the home view's 'archive' mode. */
 "HOME_VIEW_TITLE_ARCHIVE" = "Arxiva";
@@ -1029,11 +1104,17 @@
 /* Title for the home view's default mode. */
 "HOME_VIEW_TITLE_INBOX" = "Signal";
 
+/* Momentarily shown to the user when attempting to select more images than is allowed. Embeds {{max number of items}} that can be shared. */
+"IMAGE_PICKER_CAN_SELECT_NO_MORE_TOAST_FORMAT" = "No podeu compartir més de %@ elements.";
+
+/* alert title */
+"IMAGE_PICKER_FAILED_TO_PROCESS_ATTACHMENTS" = "Ha fallat seleccionar l'adjunt.";
+
 /* Call setup status label */
 "IN_CALL_CONNECTING" = "S'està connectant...";
 
 /* Call setup status label */
-"IN_CALL_RECONNECTING" = "Reconnecting...";
+"IN_CALL_RECONNECTING" = "Reconnectant...";
 
 /* Call setup status label */
 "IN_CALL_RINGING" = "Està sonant...";
@@ -1045,31 +1126,34 @@
 "IN_CALL_TERMINATED" = "Ha finalitzat.";
 
 /* Label reminding the user that they are in archive mode. */
-"INBOX_VIEW_ARCHIVE_MODE_REMINDER" = "These conversations are archived. They will appear in the inbox if new messages are received.";
+"INBOX_VIEW_ARCHIVE_MODE_REMINDER" = "Aquestes converses estan arxivades i només apareixeran a la bústia d'entrada si es reben missatges nous.";
+
+/* Message shown in the home view when the inbox is empty. */
+"INBOX_VIEW_EMPTY_INBOX" = "Proporcioneu alguna cosa a la safata d'entrada perquè us escriguin. Comenceu enviant un missatge a alguna amistat.";
 
 /* Multi-line label explaining how to show names instead of phone numbers in your inbox */
-"INBOX_VIEW_MISSING_CONTACTS_PERMISSION" = "Per a veure els noms dels vostres contactes, doneu al Signal accés als contactes.";
+"INBOX_VIEW_MISSING_CONTACTS_PERMISSION" = "Podeu activar l'accés als contactes a la Configuració de l'iOS per veure els noms dels contactes a la llista de converses del Signal.";
 
-/* notification body */
+/* info message text in conversation view */
 "INCOMING_CALL" = "Telefonada rebuda";
-
-/* notification body */
-"INCOMING_CALL_FROM" = "Telefonada rubuda de %@";
 
 /* info message recorded in conversation history when local user declined a call */
 "INCOMING_DECLINED_CALL" = "Heu rebutjat una trucada";
 
-/* No comment provided by engineer. */
-"INCOMING_INCOMPLETE_CALL" = "Incoming call";
+/* info message text in conversation view */
+"INCOMING_INCOMPLETE_CALL" = "Telefonada rebuda";
 
 /* info message text shown in conversation view */
 "INFO_MESSAGE_MISSED_CALL_DUE_TO_CHANGED_IDENITY" = "No s'ha pogut trucar perquè el número de seguretat ha canviat.";
+
+/* Shown in inbox and conversation when a user joins Signal, embeds the new user's {{contact name}} */
+"INFO_MESSAGE_USER_JOINED_SIGNAL_BODY_FORMAT" = "%@ és al Signal!";
 
 /* Message for the alert indicating that an audio file is invalid. */
 "INVALID_AUDIO_FILE_ALERT_ERROR_MESSAGE" = "Fitxer d'àudio no vàlid.";
 
 /* Alert body when contacts disabled while trying to invite contacts to signal */
-"INVITE_FLOW_REQUIRES_CONTACT_ACCESS_BODY" = "Per a convidar els vostres contactes, cal que li doneu accés al Signal, a la configuració del sistema.";
+"INVITE_FLOW_REQUIRES_CONTACT_ACCESS_BODY" = "Podeu activar l'accés als contactes a la Configuració de l'iOS per convidar les amistats al  Signal.";
 
 /* Alert title when contacts disabled while trying to invite contacts to signal */
 "INVITE_FLOW_REQUIRES_CONTACT_ACCESS_TITLE" = "Doneu accés als contactes";
@@ -1084,7 +1168,7 @@
 "INVITE_FRIENDS_PICKER_TITLE" = "Convideu els amics";
 
 /* Alert warning that sending an invite to multiple users will create a group message whose recipients will be able to see each other. */
-"INVITE_WARNING_MULTIPLE_INVITES_BY_TEXT" = "Inviting multiple users at the same time will send a group message whose recipients will be able to see each other.";
+"INVITE_WARNING_MULTIPLE_INVITES_BY_TEXT" = "Convidar més d'un usuari al mateix temps generarà un missatge grupal i els destinataris podran veure's mútuament.";
 
 /* Slider label embeds {{TIME_AMOUNT}}, e.g. '2 hours'. See *_TIME_AMOUNT strings for examples. */
 "KEEP_MESSAGES_DURATION" = "Els missatges desapareixeran en %@.";
@@ -1099,13 +1183,13 @@
 "LEAVE_GROUP_ACTION" = "Surt del grup";
 
 /* report an invalid linking code */
-"LINK_DEVICE_INVALID_CODE_BODY" = "Aquest codi QR no és vàlid, assegureu-vos d'escanejar el codi QR que es mostra al dispositiu que voleu enllaçar.";
+"LINK_DEVICE_INVALID_CODE_BODY" = "Aquest codi QR no és vàlid. Si us plau, assegureu-vos que escanegeu el codi QR que es mostra al dispositiu que voleu enllaçar.";
 
 /* report an invalid linking code */
 "LINK_DEVICE_INVALID_CODE_TITLE" = "No s'ha pogut enllaçar el dispositiu";
 
 /* confirm the users intent to link a new device */
-"LINK_DEVICE_PERMISSION_ALERT_BODY" = "Aquest dispositiu podrà veure els vostres grups i contactes, llegir tots els vostres missatges i enviar-ne sota el vostre nom.";
+"LINK_DEVICE_PERMISSION_ALERT_BODY" = "Aquest dispositiu podrà veure els vostres grups i contactes, accedir a les converses i enviar missatges amb el vostre nom.";
 
 /* confirm the users intent to link a new device */
 "LINK_DEVICE_PERMISSION_ALERT_TITLE" = "Voleu enllaçar aquest dispositiu?";
@@ -1114,13 +1198,16 @@
 "LINK_DEVICE_RESTART" = "Trona a provar-ho";
 
 /* QR Scanning screen instructions, placed alongside a camera view for scanning QR Codes */
-"LINK_DEVICE_SCANNING_INSTRUCTIONS" = "Escanegeu el codi QR mostrat al dispositiu a enllaçar.";
+"LINK_DEVICE_SCANNING_INSTRUCTIONS" = "Escanegeu el codi QR que es mostra al dispositiu que voleu enllaçar.";
 
 /* Subheading for 'Link New Device' navigation */
 "LINK_NEW_DEVICE_SUBTITLE" = "Escaneja el codi QR";
 
 /* Navigation title when scanning QR code to add new device. */
 "LINK_NEW_DEVICE_TITLE" = "Enllaça un dispositiu nou";
+
+/* Label for link previews with an unknown host. */
+"LINK_PREVIEW_UNKNOWN_DOMAIN" = "Previsualització de l'enllaç.";
 
 /* Menu item and navbar title for the device manager */
 "LINKED_DEVICES_TITLE" = "Dispositius enllaçats";
@@ -1129,16 +1216,16 @@
 "LINKING_DEVICE_FAILED_TITLE" = "No s'ha pogut enllaçar el dispositiu";
 
 /* table cell label in conversation settings */
-"LIST_GROUP_MEMBERS_ACTION" = "Group Members";
+"LIST_GROUP_MEMBERS_ACTION" = "Membres del grup";
 
 /* No comment provided by engineer. */
 "LOGGING_SECTION" = "Registres";
 
 /* Title for the 'long text message' view. */
-"LONG_TEXT_VIEW_TITLE" = "Message";
+"LONG_TEXT_VIEW_TITLE" = "Missatge";
 
 /* nav bar button item */
-"MEDIA_DETAIL_VIEW_ALL_MEDIA_BUTTON" = "All Media";
+"MEDIA_DETAIL_VIEW_ALL_MEDIA_BUTTON" = "Tot el contingut";
 
 /* media picker option to take photo or video */
 "MEDIA_FROM_CAMERA_BUTTON" = "Càmera";
@@ -1150,43 +1237,49 @@
 "MEDIA_FROM_LIBRARY_BUTTON" = "Galeria";
 
 /* Confirmation button text to delete selected media from the gallery, embeds {{number of messages}} */
-"MEDIA_GALLERY_DELETE_MULTIPLE_MESSAGES_FORMAT" = "Delete %d Messages";
+"MEDIA_GALLERY_DELETE_MULTIPLE_MESSAGES_FORMAT" = "Suprimeix %d missatges";
 
 /* Confirmation button text to delete selected media message from the gallery */
-"MEDIA_GALLERY_DELETE_SINGLE_MESSAGE" = "Delete Message";
+"MEDIA_GALLERY_DELETE_SINGLE_MESSAGE" = "Suprimeix el missatge";
+
+/* embeds {{sender name}} and {{sent datetime}}, e.g. 'Sarah on 10/30/18, 3:29' */
+"MEDIA_GALLERY_LANDSCAPE_TITLE_FORMAT" = "%@ el %@";
+
+/* Format for the 'more items' indicator for media galleries. Embeds {{the number of additional items}}. */
+"MEDIA_GALLERY_MORE_ITEMS_FORMAT" = "+%@";
 
 /* Short sender label for media sent by you */
-"MEDIA_GALLERY_SENDER_NAME_YOU" = "You";
+"MEDIA_GALLERY_SENDER_NAME_YOU" = "Vós";
 
 /* Section header in media gallery collection view */
-"MEDIA_GALLERY_THIS_MONTH_HEADER" = "This Month";
+"MEDIA_GALLERY_THIS_MONTH_HEADER" = "Aquest mes";
 
 /* Action sheet button title */
-"MESSAGE_ACTION_COPY_MEDIA" = "Copy Media";
+"MESSAGE_ACTION_COPY_MEDIA" = "Copia el contingut";
 
 /* Action sheet button title */
-"MESSAGE_ACTION_COPY_TEXT" = "Copy Message Text";
+"MESSAGE_ACTION_COPY_TEXT" = "Copia el text del missatge";
 
 /* Action sheet button title */
-"MESSAGE_ACTION_DELETE_MESSAGE" = "Delete this Message";
+"MESSAGE_ACTION_DELETE_MESSAGE" = "Suprimeix aquest missatge";
 
 /* Action sheet button subtitle */
-"MESSAGE_ACTION_DELETE_MESSAGE_SUBTITLE" = "It will be deleted on this device only";
+"MESSAGE_ACTION_DELETE_MESSAGE_SUBTITLE" = "Només se suprimirà d'aquest dispositiu.";
 
 /* Action sheet button title */
-"MESSAGE_ACTION_DETAILS" = "More Info";
+"MESSAGE_ACTION_DETAILS" = "Més informació";
 
 /* Action sheet button title */
-"MESSAGE_ACTION_REPLY" = "Reply to this Message";
+"MESSAGE_ACTION_REPLY" = "Respon aquest missatge";
 
 /* Action sheet button title */
-"MESSAGE_ACTION_SAVE_MEDIA" = "Save Media";
+"MESSAGE_ACTION_SAVE_MEDIA" = "Desa el contingut";
 
 /* Title for the 'message approval' dialog. */
 "MESSAGE_APPROVAL_DIALOG_TITLE" = "Missatge";
 
 /* Label for the recipient name in the 'message approval' dialog. */
-"MESSAGE_APPROVAL_RECIPIENT_LABEL" = "To:";
+"MESSAGE_APPROVAL_RECIPIENT_LABEL" = "A:";
 
 /* No comment provided by engineer. */
 "MESSAGE_COMPOSEVIEW_TITLE" = "Missatge nou";
@@ -1197,41 +1290,38 @@
 /* Label for the MIME type of attachments in the 'message metadata' view. */
 "MESSAGE_METADATA_VIEW_ATTACHMENT_MIME_TYPE" = "Tipus MIME";
 
-/* Label for 'not yet downloaded' attachments in the 'message metadata' view. */
-"MESSAGE_METADATA_VIEW_ATTACHMENT_NOT_YET_DOWNLOADED" = "Not yet downloaded";
-
 /* Status label for messages which are delivered. */
-"MESSAGE_METADATA_VIEW_MESSAGE_STATUS_DELIVERED" = "Delivered";
+"MESSAGE_METADATA_VIEW_MESSAGE_STATUS_DELIVERED" = "Entregat";
 
 /* Status label for messages which are failed. */
-"MESSAGE_METADATA_VIEW_MESSAGE_STATUS_FAILED" = "Failed";
+"MESSAGE_METADATA_VIEW_MESSAGE_STATUS_FAILED" = "Ha fallat";
 
 /* Status label for messages which are read. */
 "MESSAGE_METADATA_VIEW_MESSAGE_STATUS_READ" = "S'ha llegit";
 
 /* Status label for messages which are sending. */
-"MESSAGE_METADATA_VIEW_MESSAGE_STATUS_SENDING" = "Sending";
+"MESSAGE_METADATA_VIEW_MESSAGE_STATUS_SENDING" = "Enviament";
 
 /* Status label for messages which are sent. */
-"MESSAGE_METADATA_VIEW_MESSAGE_STATUS_SENT" = "Sent";
+"MESSAGE_METADATA_VIEW_MESSAGE_STATUS_SENT" = "Enviament";
 
 /* Status label for messages which were skipped. */
-"MESSAGE_METADATA_VIEW_MESSAGE_STATUS_SKIPPED" = "Skipped";
+"MESSAGE_METADATA_VIEW_MESSAGE_STATUS_SKIPPED" = "S'ha omès";
 
 /* Status label for messages which are uploading. */
-"MESSAGE_METADATA_VIEW_MESSAGE_STATUS_UPLOADING" = "Uploading";
+"MESSAGE_METADATA_VIEW_MESSAGE_STATUS_UPLOADING" = "Pujant";
 
 /* Label for messages without a body or attachment in the 'message metadata' view. */
-"MESSAGE_METADATA_VIEW_NO_ATTACHMENT_OR_BODY" = "Message has no content or attachment.";
+"MESSAGE_METADATA_VIEW_NO_ATTACHMENT_OR_BODY" = "El missatge no té contingut o no té cap adjunt.";
 
 /* Label for the 'received date & time' field of the 'message metadata' view. */
-"MESSAGE_METADATA_VIEW_RECEIVED_DATE_TIME" = "Received";
+"MESSAGE_METADATA_VIEW_RECEIVED_DATE_TIME" = "Rebut";
 
 /* Label for the 'sender' field of the 'message metadata' view. */
-"MESSAGE_METADATA_VIEW_SENDER" = "Sender";
+"MESSAGE_METADATA_VIEW_SENDER" = "Remitent";
 
 /* Label for the 'sent date & time' field of the 'message metadata' view. */
-"MESSAGE_METADATA_VIEW_SENT_DATE_TIME" = "Sent";
+"MESSAGE_METADATA_VIEW_SENT_DATE_TIME" = "Enviament";
 
 /* Label for the original filename of any attachment in the 'message metadata' view. */
 "MESSAGE_METADATA_VIEW_SOURCE_FILENAME" = "Nom del fitxer";
@@ -1242,29 +1332,35 @@
 /* message status for message delivered to their recipient. */
 "MESSAGE_STATUS_DELIVERED" = "S'ha enviat";
 
-/* status message for failed messages */
-"MESSAGE_STATUS_FAILED" = "Sending failed.";
+/* message status while message is downloading. */
+"MESSAGE_STATUS_DOWNLOADING" = "S'està baixant";
 
 /* status message for failed messages */
-"MESSAGE_STATUS_FAILED_SHORT" = "Failed";
+"MESSAGE_STATUS_FAILED" = "Ha fallat l'enviament.";
+
+/* status message for failed messages */
+"MESSAGE_STATUS_FAILED_SHORT" = "Ha fallat";
 
 /* status message for read messages */
 "MESSAGE_STATUS_READ" = "S'ha llegit";
 
 /* message status if message delivery to a recipient is skipped. We skip delivering group messages to users who have left the group or unregistered their Signal account. */
-"MESSAGE_STATUS_RECIPIENT_SKIPPED" = "Skipped";
+"MESSAGE_STATUS_RECIPIENT_SKIPPED" = "S'ha omès";
 
 /* Label indicating that a message failed to send. */
-"MESSAGE_STATUS_SEND_FAILED" = "Send Failed";
+"MESSAGE_STATUS_SEND_FAILED" = "Ha fallat l'enviament.";
 
 /* message status while message is sending. */
-"MESSAGE_STATUS_SENDING" = "S'està enviant...";
+"MESSAGE_STATUS_SENDING" = "Enviant...";
 
 /* status message for sent messages */
 "MESSAGE_STATUS_SENT" = "S'ha enviat";
 
 /* status message while attachment is uploading */
 "MESSAGE_STATUS_UPLOADING" = "S'està pujant...";
+
+/* placeholder text for the editable message field */
+"MESSAGE_TEXT_FIELD_PLACEHOLDER" = "Missatge nou";
 
 /* Indicates that one member of this group conversation is no longer verified. Embeds {{user's name or phone number}}. */
 "MESSAGES_VIEW_1_MEMBER_NO_LONGER_VERIFIED_FORMAT" = "%@ ja no és marcat com a verificat. Toqueu per a més opcions.";
@@ -1276,16 +1372,16 @@
 "MESSAGES_VIEW_CONTACT_NO_LONGER_VERIFIED_FORMAT" = "%@ ja no és marcat com a verificat. Toqueu per a més opcions.";
 
 /* Indicates that a single member of this group has been blocked. */
-"MESSAGES_VIEW_GROUP_1_MEMBER_BLOCKED" = "You Blocked 1 Member of This Group";
+"MESSAGES_VIEW_GROUP_1_MEMBER_BLOCKED" = "Heu blocat 1 membre d'aquest grup";
 
 /* Indicates that this group conversation has been blocked. */
-"MESSAGES_VIEW_GROUP_BLOCKED" = "You Blocked This Group";
+"MESSAGES_VIEW_GROUP_BLOCKED" = "Heu blocat aquest grup";
 
 /* Indicates that some members of this group has been blocked. Embeds {{the number of blocked users in this group}}. */
-"MESSAGES_VIEW_GROUP_N_MEMBERS_BLOCKED_FORMAT" = "You Blocked %@ Members of This Group";
+"MESSAGES_VIEW_GROUP_N_MEMBERS_BLOCKED_FORMAT" = "Heu blocat %@ membres d'aquest grup";
 
 /* Text for banner in group conversation view that offers to share your profile with this group. */
-"MESSAGES_VIEW_GROUP_PROFILE_WHITELIST_BANNER" = "Share Your Profile With This Group?";
+"MESSAGES_VIEW_GROUP_PROFILE_WHITELIST_BANNER" = "Voleu compartir el perfil amb aquest grup?";
 
 /* Indicates that more than one member of this group conversation is no longer verified. */
 "MESSAGES_VIEW_N_MEMBERS_NO_LONGER_VERIFIED" = "Més d'un membre del grup ja no és marcat com a verificat. Toqueu per a més opcions.";
@@ -1294,45 +1390,36 @@
 "MESSAGES_VIEW_TITLE_SUBTITLE" = "Toqueu aquí per anar a la configuració";
 
 /* Indicator that separates read from unread messages. */
-"MESSAGES_VIEW_UNREAD_INDICATOR" = "New Messages";
+"MESSAGES_VIEW_UNREAD_INDICATOR" = "MIssatges nous";
 
 /* Messages that indicates that there are more unseen messages. */
-"MESSAGES_VIEW_UNREAD_INDICATOR_HAS_MORE_UNSEEN_MESSAGES" = "There are more unread messages.";
+"MESSAGES_VIEW_UNREAD_INDICATOR_HAS_MORE_UNSEEN_MESSAGES" = "Hi ha més missatges sense llegir.";
 
 /* Messages that indicates that there are more unseen messages including safety number changes. */
-"MESSAGES_VIEW_UNREAD_INDICATOR_HAS_MORE_UNSEEN_MESSAGES_AND_SAFETY_NUMBER_CHANGES" = "There are more unread messages (including safety number changes).";
+"MESSAGES_VIEW_UNREAD_INDICATOR_HAS_MORE_UNSEEN_MESSAGES_AND_SAFETY_NUMBER_CHANGES" = "Hi ha més missatges sense llegir (inclosos canvis de número de seguretat).";
 
-/* notification title */
+/* info message text in conversation view */
 "MISSED_CALL" = "Telefonada perduda";
-
-/* notification title. Embeds {{caller's name or phone number}} */
-"MISSED_CALL_WITH_CHANGED_IDENTITY_BODY_WITH_CALLER_NAME" = "Trucada perduda de %@ perquè el seu número de seguretat ha canviat.";
-
-/* notification title */
-"MISSED_CALL_WITH_CHANGED_IDENTITY_BODY_WITHOUT_CALLER_NAME" = "Trucada perduda perquè el número de seguretat de qui truca ha canviat.";
 
 /* Alert body
    Alert body when camera is not authorized */
-"MISSING_CAMERA_PERMISSION_MESSAGE" = "El Signal requereix accés a la càmera per fer telefonades de vídeo. Podeu activar els permisos a la Configuració >> Privadesa >> Càmera >> Signal";
+"MISSING_CAMERA_PERMISSION_MESSAGE" = "Podeu activar l'accés a la càmera a la Configuració de l'iOS per fer videotrucades amb el Signal.";
 
 /* Alert title
    Alert title when camera is not authorized */
 "MISSING_CAMERA_PERMISSION_TITLE" = "El Signal necessita accedir a la càmera.";
 
 /* Alert body when user has previously denied media library access */
-"MISSING_MEDIA_LIBRARY_PERMISSION_MESSAGE" = "You can grant this permission in the Settings app.";
+"MISSING_MEDIA_LIBRARY_PERMISSION_MESSAGE" = "Podeu activar aquest permís a la Configuració de l'iOS.";
 
 /* Alert title when user has previously denied media library access */
-"MISSING_MEDIA_LIBRARY_PERMISSION_TITLE" = "Signal Requires Access to your Media Library to do this.";
-
-/* notification title. Embeds {{caller's name or phone number}} */
-"MSGVIEW_MISSED_CALL_WITH_NAME" = "Telefonada perduda de %@.";
+"MISSING_MEDIA_LIBRARY_PERMISSION_TITLE" = "El Signal necessita accés a les fotografies per a aquesta funció.";
 
 /* alert title: cannot link - reached max linked devices */
-"MULTIDEVICE_PAIRING_MAX_DESC" = "You cannot link any more devices.";
+"MULTIDEVICE_PAIRING_MAX_DESC" = "No podeu enllaçar cap més dispositiu.";
 
 /* alert body: cannot link - reached max linked devices */
-"MULTIDEVICE_PAIRING_MAX_RECOVERY" = "You have reached the maximum of devices you can currently link with your account. Please remove a device or try again to link it later.";
+"MULTIDEVICE_PAIRING_MAX_RECOVERY" = "Heu arribat al nombre màxim de dispositius enllaçats al compte. Si us plau, suprimiu un dispositiu i torneu-ho a provar.";
 
 /* An explanation of the consequences of muting a thread. */
 "MUTE_BEHAVIOR_EXPLANATION" = "No rebreu notificacions de converses silenciades.";
@@ -1341,7 +1428,7 @@
 "NAVIGATION_ITEM_SKIP_BUTTON" = "Omet";
 
 /* No comment provided by engineer. */
-"NETWORK_ERROR_RECOVERY" = "Comproveu que esteu connectat i proveu de nou.";
+"NETWORK_ERROR_RECOVERY" = "Comproveu que estigueu connectat a Internet i torneu-ho a provar.";
 
 /* Indicates to the user that censorship circumvention has been activated. */
 "NETWORK_STATUS_CENSORSHIP_CIRCUMVENTION_ACTIVE" = "Elusió de la censura: Activada";
@@ -1353,7 +1440,7 @@
 "NETWORK_STATUS_CONNECTING" = "S'està connectant";
 
 /* Error indicating that this device is no longer registered. */
-"NETWORK_STATUS_DEREGISTERED" = "No Longer Registered";
+"NETWORK_STATUS_DEREGISTERED" = "Ja no està registrat";
 
 /* No comment provided by engineer. */
 "NETWORK_STATUS_HEADER" = "Estat de la xarxa";
@@ -1379,6 +1466,9 @@
 /* An indicator that a user is a member of the new group. */
 "NEW_GROUP_MEMBER_LABEL" = "Membre";
 
+/* notification title. Embeds {{author name}} and {{group name}} */
+"NEW_GROUP_MESSAGE_NOTIFICATION_TITLE" = "%@ a %@";
+
 /* Placeholder text for group name field */
 "NEW_GROUP_NAMEGROUP_REQUEST_DEFAULT" = "Nom d'aquest grup";
 
@@ -1403,35 +1493,128 @@
 /* Label for a button that lets users search for contacts by phone number */
 "NO_CONTACTS_SEARCH_BY_PHONE_NUMBER" = "Troba contactes pel número de telèfon";
 
-/* Lock screen notification text presented after user powers on their device without unlocking. Embeds {{device model}} (either 'iPad' or 'iPhone') */
-"NOTIFICATION_BODY_PHONE_LOCKED_FORMAT" = "You may have received messages while your %@ was restarting.";
+/* Label for 1:1 conversation with yourself. */
+"NOTE_TO_SELF" = "Notifica-m'ho";
 
-/* No comment provided by engineer. */
-"NOTIFICATION_SEND_FAILED" = "No s'ha pogut enviar el missatge a %@.";
+/* Lock screen notification text presented after user powers on their device without unlocking. Embeds {{device model}} (either 'iPad' or 'iPhone') */
+"NOTIFICATION_BODY_PHONE_LOCKED_FORMAT" = "Podeu haver rebut missatges mentre el vostre %@ es reiniciava.";
 
 /* No comment provided by engineer. */
 "NOTIFICATIONS_FOOTER_WARNING" = "Degut a errors coneguts a l'entorn «push» d'Apple, la vista prèvia dels missatges només es mostrarà si aquests es reben dins dels 30 segons d'haver-se enviat. Per això, el número sobre la icona de l'aplicació pot ser poc precís.";
 
 /* No comment provided by engineer. */
-"NOTIFICATIONS_NONE" = "No Name or Content";
+"NOTIFICATIONS_NONE" = "Sense nom ni contingut";
 
 /* Table cell switch label. When disabled, Signal will not play notification sounds while the app is in the foreground. */
-"NOTIFICATIONS_SECTION_INAPP" = "Play While App is Open";
+"NOTIFICATIONS_SECTION_INAPP" = "Sona si l'aplicació està oberta";
 
 /* Label for settings UI that allows user to change the notification sound. */
-"NOTIFICATIONS_SECTION_SOUNDS" = "Sounds";
+"NOTIFICATIONS_SECTION_SOUNDS" = "Sons";
 
 /* No comment provided by engineer. */
-"NOTIFICATIONS_SENDER_AND_MESSAGE" = "Name and Content";
+"NOTIFICATIONS_SENDER_AND_MESSAGE" = "Nom i contingut";
 
 /* No comment provided by engineer. */
-"NOTIFICATIONS_SENDER_ONLY" = "Name Only";
+"NOTIFICATIONS_SENDER_ONLY" = "Només el nom";
 
 /* No comment provided by engineer. */
 "NOTIFICATIONS_SHOW" = "Mostra";
 
 /* No comment provided by engineer. */
 "OK" = "D'acord";
+
+/* Label indicating that the 2fa pin is exhausted in the 'onboarding 2fa' view. */
+"ONBOARDING_2FA_ATTEMPTS_EXHAUSTED" = "Heu esgotat tots els intents del PIN. Ho podreu tornar a provar d'aquí a 7 dies.";
+
+/* The first explanation in the 'onboarding 2FA' view. */
+"ONBOARDING_2FA_EXPLANATION_1" = "Aquest número de telèfon té el bloqueig de registre habilitat. Si us plau, escriviu el PIN de bloqueig del registre.";
+
+/* The first explanation in the 'onboarding 2FA' view. */
+"ONBOARDING_2FA_EXPLANATION_2" = "El PIN de bloqueig de registre és independent del codi de verificació automatitzat que s'ha enviat al telèfon durant el darrer pas.";
+
+/* Label for the 'forgot 2FA PIN' link in the 'onboarding 2FA' view. */
+"ONBOARDING_2FA_FORGOT_PIN_LINK" = "He oblidat el PIN.";
+
+/* Label indicating that the 2fa pin is invalid in the 'onboarding 2fa' view. */
+"ONBOARDING_2FA_INVALID_PIN" = "PIN incorrecte";
+
+/* Label indicating that the 2fa pin is invalid with a retry count in the 'onboarding 2fa' view. */
+"ONBOARDING_2FA_INVALID_PIN_FORMAT" = "PIN incorrecte. Us resten %lu intents.";
+
+/* Title of the 'onboarding 2FA' view. */
+"ONBOARDING_2FA_TITLE" = "Pany de Registre";
+
+/* Title of the 'onboarding Captcha' view. */
+"ONBOARDING_CAPTCHA_TITLE" = "Afegiu una espurna d'humanitat als missatges.";
+
+/* Label for the 'give access' button in the 'onboarding permissions' view. */
+"ONBOARDING_PERMISSIONS_ENABLE_PERMISSIONS_BUTTON" = "Habilita els permisos";
+
+/* Explanation in the 'onboarding permissions' view. */
+"ONBOARDING_PERMISSIONS_EXPLANATION" = "La informació del contacte sempre es transmet amb seguretat.";
+
+/* Label for the 'not now' button in the 'onboarding permissions' view. */
+"ONBOARDING_PERMISSIONS_NOT_NOW_BUTTON" = "Ara no";
+
+/* Title of the 'onboarding permissions' view. */
+"ONBOARDING_PERMISSIONS_TITLE" = "El Signal us pot permetre saber quan us arriba un missatge (i de qui és).";
+
+/* Title of the 'onboarding phone number' view. */
+"ONBOARDING_PHONE_NUMBER_TITLE" = "Per començar, introduïu el número de telèfon.";
+
+/* Label indicating that the phone number is invalid in the 'onboarding phone number' view. */
+"ONBOARDING_PHONE_NUMBER_VALIDATION_WARNING" = "El número no és vàlid";
+
+/* Explanation in the 'onboarding profile' view. */
+"ONBOARDING_PROFILE_EXPLANATION" = "Els perfils del Signal estan encriptats d'extrem a extrem i el servei del Signal no té mai accés a aquesta informació.";
+
+/* Placeholder text for the profile name in the 'onboarding profile' view. */
+"ONBOARDING_PROFILE_NAME_PLACEHOLDER" = "El nom";
+
+/* Title of the 'onboarding profile' view. */
+"ONBOARDING_PROFILE_TITLE" = "Establiu el perfil";
+
+/* Link to the 'terms and privacy policy' in the 'onboarding splash' view. */
+"ONBOARDING_SPLASH_TERM_AND_PRIVACY_POLICY" = "Condicions de servei i política de privadesa";
+
+/* Title of the 'onboarding splash' view. */
+"ONBOARDING_SPLASH_TITLE" = "Porteu a sobre la privadesa.\n\nSigueu vosaltres mateixos a cada missatge.";
+
+/* Label for the link that lets users change their phone number in the onboarding views. */
+"ONBOARDING_VERIFICATION_BACK_LINK" = "El número no és correcte?";
+
+/* Format for the label of the 'sent code' label of the 'onboarding verification' view. Embeds {{the time until the code can be resent}}. */
+"ONBOARDING_VERIFICATION_CODE_COUNTDOWN_FORMAT" = "No tinc cap codi (disponible d'aquí a %@)";
+
+/* action sheet item shown after a number of failures to receive a verificaiton SMS during registration */
+"ONBOARDING_VERIFICATION_EMAIL_SIGNAL_SUPPORT" = "Contacteu amb el suport de Signal";
+
+/* Label indicating that the verification code is incorrect in the 'onboarding verification' view. */
+"ONBOARDING_VERIFICATION_INVALID_CODE" = "Aquest codi no és correcte";
+
+/* Label for link that can be used when the original code did not arrive. */
+"ONBOARDING_VERIFICATION_ORIGINAL_CODE_MISSING_LINK" = "No tinc cap codi.";
+
+/* Message for the 'resend code' alert in the 'onboarding verification' view. */
+"ONBOARDING_VERIFICATION_RESEND_CODE_ALERT_MESSAGE" = "Si us plau, assegureu-vos que tingueu un servei de línia i que pugueu rebre missatges d'SMS.";
+
+/* Title for the 'resend code' alert in the 'onboarding verification' view. */
+"ONBOARDING_VERIFICATION_RESEND_CODE_ALERT_TITLE" = "No teniu cap codi?";
+
+/* Label for the 'resend code by SMS' button in the 'onboarding verification' view. */
+"ONBOARDING_VERIFICATION_RESEND_CODE_BY_SMS_BUTTON" = "Torna a enviar el codi.";
+
+/* Label for the 'resend code by voice' button in the 'onboarding verification' view. */
+"ONBOARDING_VERIFICATION_RESEND_CODE_BY_VOICE_BUTTON" = "Telefona'm, millor";
+
+/* Label for link that can be used when the resent code did not arrive. */
+"ONBOARDING_VERIFICATION_RESENT_CODE_MISSING_LINK" = "Encara no teniu cap codi?";
+
+/* Format for the title of the 'onboarding verification' view. Embeds {{the user's phone number}}. */
+"ONBOARDING_VERIFICATION_TITLE_DEFAULT_FORMAT" = "Introduïu el codi que hem enviat a %@.";
+
+/* Format for the title of the 'onboarding verification' view after the verification code has been resent. Embeds {{the user's phone number}}. */
+"ONBOARDING_VERIFICATION_TITLE_RESENT_FORMAT" = "Acabem de tornar a enviar un codi a %@.";
 
 /* Button text which opens the settings app */
 "OPEN_SETTINGS_BUTTON" = "Configuració";
@@ -1443,19 +1626,43 @@
 "OTHER_UPDATED_DISAPPEARING_MESSAGES_CONFIGURATION" = "%@ ha establit el temps dels missatges efímers en %@.";
 
 /* Label warning the user that the Signal service may be down. */
-"OUTAGE_WARNING" = "Signal is experiencing technical difficulties. We are working hard to restore service as quickly as possible.";
+"OUTAGE_WARNING" = "El Signal està patint problemes tècnics. Este treballant per a recuperar el servei tan ràpid com sigui possible.";
 
-/* No comment provided by engineer. */
+/* info message text in conversation view */
 "OUTGOING_CALL" = "Telefonada feta";
 
-/* No comment provided by engineer. */
-"OUTGOING_INCOMPLETE_CALL" = "Outgoing call";
+/* info message text in conversation view */
+"OUTGOING_INCOMPLETE_CALL" = "Telefonada feta";
 
 /* info message recorded in conversation history when local user tries and fails to call another user. */
-"OUTGOING_MISSED_CALL" = "Unanswered outgoing call";
+"OUTGOING_MISSED_CALL" = "Trucada feta no contestada";
 
 /* A display format for oversize text messages. */
 "OVERSIZE_TEXT_DISPLAY_FORMAT" = "%@...";
+
+/* Error indicating that a PDF could not be displayed. */
+"PDF_VIEW_COULD_NOT_RENDER" = "No s'ha pogut mostrar el PDF.";
+
+/* Navbar title for for PDF view. */
+"PDF_VIEW_TITLE" = "PDF";
+
+/* Label that indicates that 'view-once' is active. */
+"PER_MESSAGE_EXPIRATION_ACTIVE_INDICATOR" = "Fotografia efímera";
+
+/* Label for view-once messages that have invalid content. */
+"PER_MESSAGE_EXPIRATION_INVALID_CONTENT" = "S'ha produït un error en gestionar el missatge rebut";
+
+/* Notification for incoming disappearing photo. */
+"PER_MESSAGE_EXPIRATION_NOTIFICATION" = "Fotografia efímera";
+
+/* Label for outgoing view-once messages. */
+"PER_MESSAGE_EXPIRATION_OUTGOING_MESSAGE" = "Foto";
+
+/* Label for view-once messages indicating that user can tap to view the message's contents. */
+"PER_MESSAGE_EXPIRATION_TAP_TO_VIEW" = "Mostra la fotografia";
+
+/* Label for view-once messages indicating that the local user has viewed the message's contents. */
+"PER_MESSAGE_EXPIRATION_VIEWED" = "Vist";
 
 /* A format for a label showing an example phone number. Embeds {{the example phone number}}. */
 "PHONE_NUMBER_EXAMPLE_FORMAT" = "Exemple: %@";
@@ -1496,8 +1703,20 @@
 /* Label for 'Work FAX' phone numbers. */
 "PHONE_NUMBER_TYPE_WORK_FAX" = "Fax de la feina";
 
+/* alert title, generic error preventing user from capturing a photo */
+"PHOTO_CAPTURE_GENERIC_ERROR" = "No s'ha pogut capturar la imatge.";
+
+/* alert title */
+"PHOTO_CAPTURE_UNABLE_TO_CAPTURE_IMAGE" = "No s'ha pogut capturar la imatge.";
+
+/* alert title */
+"PHOTO_CAPTURE_UNABLE_TO_INITIALIZE_CAMERA" = "Ha fallat configurar la càmera.";
+
+/* label for system photo collections which have no name. */
+"PHOTO_PICKER_UNNAMED_COLLECTION" = "Àlbum sense nom";
+
 /* Accessibility label for button to start media playback */
-"PLAY_BUTTON_ACCESSABILITY_LABEL" = "Play Media";
+"PLAY_BUTTON_ACCESSABILITY_LABEL" = "Reprodueix el contingut";
 
 /* Label indicating that the user is not verified. Embeds {{the user's name or phone number}}. */
 "PRIVACY_IDENTITY_IS_NOT_VERIFIED_FORMAT" = "No heu marcat %@ com a verificat.";
@@ -1536,7 +1755,7 @@
 "PRIVACY_VERIFICATION_FAILED_WITH_OLD_REMOTE_VERSION" = "El vostre contacte està utilitzant una versió antiga del Signal. Cal que l'actualitzi abans de verificar.";
 
 /* alert body */
-"PRIVACY_VERIFICATION_FAILURE_INVALID_QRCODE" = "El codi escanejat no sembla un codi de números de seguretat. Segur que utilitzeu una versió actualitzada del Signal?";
+"PRIVACY_VERIFICATION_FAILURE_INVALID_QRCODE" = "El codi escanejat no sembla un número de seguretat. Teniu la versió més nova de Signal?";
 
 /* Paragraph(s) shown alongside the safety number when verifying privacy with {{contact name}} */
 "PRIVACY_VERIFICATION_INSTRUCTIONS" = "Si voleu verificar la seguretat del xifratge extrem a extrem amb %@, compareu els números de sobre amb els números del seu dispositiu.\n\nTambé podeu escanejar el codi del seu telèfon, o demanar-li que escanegi el vostre.";
@@ -1575,10 +1794,10 @@
 "PROFILE_VIEW_PROFILE_AVATAR_FIELD" = "Avatar";
 
 /* Description of the user profile. */
-"PROFILE_VIEW_PROFILE_DESCRIPTION" = "Your Signal Profile will be visible to your contacts, when you initiate new conversations, and when you share it with other users and groups.";
+"PROFILE_VIEW_PROFILE_DESCRIPTION" = "El perfil de Signal serà visible per a tots els contactes, quan inicieu converses noves i quan el compartiu amb altres usuaris i grups.";
 
 /* Link to more information about the user profile. */
-"PROFILE_VIEW_PROFILE_DESCRIPTION_LINK" = "Tap here to learn more.";
+"PROFILE_VIEW_PROFILE_DESCRIPTION_LINK" = "Toqueu aquí per saber-ne més.";
 
 /* Label for the profile name field of the profile view. */
 "PROFILE_VIEW_PROFILE_NAME_FIELD" = "Nom del perfil";
@@ -1586,16 +1805,13 @@
 /* Button to save the profile view in the profile view. */
 "PROFILE_VIEW_SAVE_BUTTON" = "Desa";
 
-/* Alert title that indicates the user's profile view is being saved. */
-"PROFILE_VIEW_SAVING" = "S'està desant...";
-
 /* Title for the profile view. */
 "PROFILE_VIEW_TITLE" = "Perfil";
 
-/* No comment provided by engineer. */
+/* Notification action button title */
 "PUSH_MANAGER_MARKREAD" = "Marca com a llegit";
 
-/* No comment provided by engineer. */
+/* Notification action button title */
 "PUSH_MANAGER_REPLY" = "Respondre";
 
 /* Title of alert shown when push tokens sync job succeeds. */
@@ -1608,52 +1824,46 @@
 "QUESTIONMARK_PUNCTUATION" = "?";
 
 /* Indicates the author of a quoted message. Embeds {{the author's name or phone number}}. */
-"QUOTED_REPLY_AUTHOR_INDICATOR_FORMAT" = "Replying to %@";
+"QUOTED_REPLY_AUTHOR_INDICATOR_FORMAT" = "Resposta per a %@";
 
 /* message header label when someone else is quoting you */
-"QUOTED_REPLY_AUTHOR_INDICATOR_YOU" = "Replying to You";
+"QUOTED_REPLY_AUTHOR_INDICATOR_YOU" = "Resposta per a tu";
 
 /* message header label when quoting yourself */
-"QUOTED_REPLY_AUTHOR_INDICATOR_YOURSELF" = "Replying to Yourself";
+"QUOTED_REPLY_AUTHOR_INDICATOR_YOURSELF" = "Resposta per a si mateix";
 
-/* Footer label that appears below quoted messages when the quoted content was note derived locally. When the local user doesn't have a copy of the message being quoted, e.g. if it had since been deleted, we instead show the content specified by the sender. */
-"QUOTED_REPLY_CONTENT_FROM_REMOTE_SOURCE" = "Original message not found.";
+/* Footer label that appears below quoted messages when the quoted content was not derived locally. When the local user doesn't have a copy of the message being quoted, e.g. if it had since been deleted, we instead show the content specified by the sender. */
+"QUOTED_REPLY_CONTENT_FROM_REMOTE_SOURCE" = "No s'ha trobat el missatge original.";
 
 /* Toast alert text shown when tapping on a quoted message which we cannot scroll to because the local copy of the message was since deleted. */
-"QUOTED_REPLY_ORIGINAL_MESSAGE_DELETED" = "Original message no longer available.";
+"QUOTED_REPLY_ORIGINAL_MESSAGE_DELETED" = "El missatge original ja no està disponible.";
 
 /* Toast alert text shown when tapping on a quoted message which we cannot scroll to because the local copy of the message didn't exist when the quote was received. */
-"QUOTED_REPLY_ORIGINAL_MESSAGE_REMOTELY_SOURCED" = "Original message not found.";
+"QUOTED_REPLY_ORIGINAL_MESSAGE_REMOTELY_SOURCED" = "No s'ha trobat el missatge original.";
 
 /* Indicates this message is a quoted reply to an attachment of unknown type. */
-"QUOTED_REPLY_TYPE_ATTACHMENT" = "Attachment";
+"QUOTED_REPLY_TYPE_ATTACHMENT" = "Fitxer adjunt";
 
 /* Indicates this message is a quoted reply to an audio file. */
-"QUOTED_REPLY_TYPE_AUDIO" = "Audio";
+"QUOTED_REPLY_TYPE_AUDIO" = "Àudio";
 
 /* Indicates this message is a quoted reply to animated GIF file. */
 "QUOTED_REPLY_TYPE_GIF" = "GIF";
 
 /* Indicates this message is a quoted reply to an image file. */
-"QUOTED_REPLY_TYPE_IMAGE" = "Image";
+"QUOTED_REPLY_TYPE_IMAGE" = "Imatge";
 
 /* Indicates this message is a quoted reply to a video file. */
-"QUOTED_REPLY_TYPE_VIDEO" = "Video";
+"QUOTED_REPLY_TYPE_VIDEO" = "Vídeo";
 
 /* Label for 'I forgot my PIN' link in the 2FA registration view. */
-"REGISTER_2FA_FORGOT_PIN" = "I forgot my PIN.";
+"REGISTER_2FA_FORGOT_PIN" = "He oblidat el PIN.";
 
 /* Alert message explaining what happens if you forget your 'two-factor auth pin'. */
-"REGISTER_2FA_FORGOT_PIN_ALERT_MESSAGE" = "Registration of this phone number will be possible without your Registration Lock PIN after 7 days have passed since the phone number was last active on Signal.";
-
-/* Instructions to enter the 'two-factor auth pin' in the 2FA registration view. */
-"REGISTER_2FA_INSTRUCTIONS" = "This phone number has Registration Lock enabled. Please enter the Registration Lock PIN.\n\nYour Registration Lock PIN is separate from the automated verification code that was sent to your phone during the last step.";
-
-/* Title for alert indicating that attempt to register with 'two-factor auth' failed. */
-"REGISTER_2FA_REGISTRATION_FAILED_ALERT_TITLE" = "Registration Failed";
+"REGISTER_2FA_FORGOT_PIN_ALERT_MESSAGE" = "El registre d'aquest número de telèfon serà possible sense el PIN de bloqueig de registre 7 dies després des de l'última activitat del número de telèfon al Signal.";
 
 /* Label for 'submit' button in the 2FA registration view. */
-"REGISTER_2FA_SUBMIT_BUTTON" = "Submit";
+"REGISTER_2FA_SUBMIT_BUTTON" = "Tramet";
 
 /* No comment provided by engineer. */
 "REGISTER_CONTACTS_WELCOME" = "Us donem la benvinguda!";
@@ -1664,14 +1874,14 @@
 /* No comment provided by engineer. */
 "REGISTER_RATE_LIMITING_BODY" = "Ho heu provat massa vegades. Espereu un minut abans de tornar a provar-ho.";
 
+/* No comment provided by engineer. */
+"REGISTER_RATE_LIMITING_ERROR" = "Ho heu provat massa vegades. Espereu un minut abans de tornar a provar-ho.";
+
 /* Title of alert shown when push tokens sync job fails. */
 "REGISTRATION_BODY" = "No s'ha pogut registrar de nou per rebre notificacions.";
 
 /* Label for the country code field */
 "REGISTRATION_DEFAULT_COUNTRY_NAME" = "Codi internacional";
-
-/* Navigation title shown when user is re-registering after having enabled registration lock */
-"REGISTRATION_ENTER_LOCK_PIN_NAV_TITLE" = "Registration Lock";
 
 /* Placeholder text for the phone number textfield */
 "REGISTRATION_ENTERNUMBER_DEFAULT_TEXT" = "Introduïu el número";
@@ -1683,22 +1893,13 @@
 "REGISTRATION_ERROR_BLANK_VERIFICATION_CODE" = "No podem activar el vostre compte fins que no verifiqueu el codi que us hem enviat.";
 
 /* alert body when registering an iPad */
-"REGISTRATION_IPAD_CONFIRM_BODY" = "Registering now will disable Signal on any other device currently registered with this phone number.";
+"REGISTRATION_IPAD_CONFIRM_BODY" = "Registrar-se ara inhabilitarà el Signal a la resta de dispositius registrats a aquest número de telèfon.";
 
 /* button text to proceed with registration when on an iPad */
-"REGISTRATION_IPAD_CONFIRM_BUTTON" = "Register this iPad";
+"REGISTRATION_IPAD_CONFIRM_BUTTON" = "Registra aquest iPad";
 
 /* alert title when registering an iPad */
-"REGISTRATION_IPAD_CONFIRM_TITLE" = "Already have a Signal account?";
-
-/* one line label below submit button on registration screen, which links to an external webpage. */
-"REGISTRATION_LEGAL_TERMS_LINK" = "Terms & Privacy Policy";
-
-/* legal disclaimer, embeds a tappable {{link title}} which is styled as a hyperlink */
-"REGISTRATION_LEGAL_TOP_MATTER_FORMAT" = "By registering this device, you agree to Signal's %@";
-
-/* embedded in legal topmatter, styled as a link */
-"REGISTRATION_LEGAL_TOP_MATTER_LINK_TITLE" = "terms";
+"REGISTRATION_IPAD_CONFIRM_TITLE" = "Ja teniu un compte al Signal?";
 
 /* No comment provided by engineer. */
 "REGISTRATION_NON_VALID_NUMBER" = "El format del número de telèfon no és compatible, contacteu amb el suport.";
@@ -1707,10 +1908,7 @@
 "REGISTRATION_PHONENUMBER_BUTTON" = "Número de telèfon";
 
 /* No comment provided by engineer. */
-"REGISTRATION_RESTRICTED_MESSAGE" = "Sembla que teniu ganes d'enviar el vostre primer missatge! Heu de registrar-vos abans de poder fer-ho.";
-
-/* No comment provided by engineer. */
-"REGISTRATION_TITLE_LABEL" = "El vostre número de telèfon";
+"REGISTRATION_RESTRICTED_MESSAGE" = "Heu de registrar-vos per poder enviar un missatge. ";
 
 /* Alert view title */
 "REGISTRATION_VERIFICATION_FAILED_TITLE" = "La verificació ha fallat";
@@ -1719,10 +1917,7 @@
 "REGISTRATION_VERIFICATION_FAILED_WRONG_CODE_DESCRIPTION" = "Els números que heu introduït no coincideixen amb els que us hem enviat. Reviseu-los.";
 
 /* Error message indicating that registration failed due to a missing or incorrect 2FA PIN. */
-"REGISTRATION_VERIFICATION_FAILED_WRONG_PIN" = "Incorrect Registration Lock PIN.";
-
-/* No comment provided by engineer. */
-"REGISTRATION_VERIFY_DEVICE" = "Register";
+"REGISTRATION_VERIFICATION_FAILED_WRONG_PIN" = "Codi PIN de registre incorrecte.";
 
 /* Message of alert indicating that users needs to enter a valid phone number to register. */
 "REGISTRATION_VIEW_INVALID_PHONE_NUMBER_ALERT_MESSAGE" = "Introduïu un número de telèfon vàlid a registrar.";
@@ -1736,29 +1931,29 @@
 /* Title of alert indicating that users needs to enter a phone number to register. */
 "REGISTRATION_VIEW_NO_PHONE_NUMBER_ALERT_TITLE" = "No hi ha cap número";
 
-/* No comment provided by engineer. */
+/* notification action */
 "REJECT_CALL_BUTTON_TITLE" = "Rebutja";
 
 /* No comment provided by engineer. */
 "RELAY_REGISTERED_ERROR_RECOVERY" = "El número de telèfon que voleu registrar ja s'ha registrat en un altre servidor, cancel·leu aquell registre i proveu-ho de nou.";
 
 /* Body text for when user is periodically prompted to enter their registration lock PIN */
-"REMINDER_2FA_BODY" = "Registration Lock is enabled for your phone number. To help you memorize your Registration Lock PIN, Signal will periodically ask you to confirm it.";
+"REMINDER_2FA_BODY" = "El bloqueig de registre està habilitat per al vostre número de telèfon.  Per a ajudar-vos a memoritzar el PIN de bloqueig de registre, el Signal us demanarà periòdicament que el confirmeu.";
 
 /* Body header for when user is periodically prompted to enter their registration lock PIN */
-"REMINDER_2FA_BODY_HEADER" = "Reminder:";
+"REMINDER_2FA_BODY_HEADER" = "Recordatori:";
 
 /* Alert message explaining what happens if you forget your 'two-factor auth pin' */
-"REMINDER_2FA_FORGOT_PIN_ALERT_MESSAGE" = "Registration Lock helps protect your phone number from unauthorized registration attempts. This feature can be disabled at any time in your Signal privacy settings.";
+"REMINDER_2FA_FORGOT_PIN_ALERT_MESSAGE" = "El bloqueig de registre ajuda a protegir el número de telèfon d'intents de registre no autoritzats. Aquesta funció es pot inhabilitar en qualsevol moment a la configuració de privadesa del Signal.";
 
 /* Navbar title for when user is periodically prompted to enter their registration lock PIN */
-"REMINDER_2FA_NAV_TITLE" = "Enter Your Registration Lock PIN";
+"REMINDER_2FA_NAV_TITLE" = "Escriviu el PIN de bloqueig del registre";
 
 /* Alert body after wrong guess for 'two-factor auth pin' reminder activity */
-"REMINDER_2FA_WRONG_PIN_ALERT_BODY" = "You can set a new PIN in your privacy settings.";
+"REMINDER_2FA_WRONG_PIN_ALERT_BODY" = "Podeu establir un codi PIN nou als paràmetres de privadesa.";
 
 /* Alert title after wrong guess for 'two-factor auth pin' reminder activity */
-"REMINDER_2FA_WRONG_PIN_ALERT_TITLE" = "That is not the correct PIN.";
+"REMINDER_2FA_WRONG_PIN_ALERT_TITLE" = "Aquest no és el PIN correcte.";
 
 /* No comment provided by engineer. */
 "REREGISTER_FOR_PUSH" = "Registra'm de nou per rebre'n";
@@ -1788,73 +1983,88 @@
 "SCAN_QR_CODE_VIEW_TITLE" = "Escaneja el codi QR";
 
 /* Indicates a delay of zero seconds, and that 'screen lock activity' will timeout immediately. */
-"SCREEN_LOCK_ACTIVITY_TIMEOUT_NONE" = "Instant";
+"SCREEN_LOCK_ACTIVITY_TIMEOUT_NONE" = "Instantani";
 
 /* Indicates that an unknown error occurred while using Touch ID/Face ID/Phone Passcode. */
-"SCREEN_LOCK_ENABLE_UNKNOWN_ERROR" = "Authentication could not be accessed.";
+"SCREEN_LOCK_ENABLE_UNKNOWN_ERROR" = "No s'ha pogut accedir a l'autenticació.";
 
 /* Indicates that Touch ID/Face ID/Phone Passcode authentication failed. */
-"SCREEN_LOCK_ERROR_LOCAL_AUTHENTICATION_FAILED" = "Authentication failed.";
+"SCREEN_LOCK_ERROR_LOCAL_AUTHENTICATION_FAILED" = "Ha fallat l'autenticació.";
 
 /* Indicates that Touch ID/Face ID/Phone Passcode is 'locked out' on this device due to authentication failures. */
-"SCREEN_LOCK_ERROR_LOCAL_AUTHENTICATION_LOCKOUT" = "Too many failed authentication attempts. Please try again later.";
+"SCREEN_LOCK_ERROR_LOCAL_AUTHENTICATION_LOCKOUT" = "Massa intents fallits d'autenticació. Si us plau, torneu-ho a provar més tard.";
 
 /* Indicates that Touch ID/Face ID/Phone Passcode are not available on this device. */
-"SCREEN_LOCK_ERROR_LOCAL_AUTHENTICATION_NOT_AVAILABLE" = "You must enable a passcode in your iOS Settings in order to use Screen Lock.";
+"SCREEN_LOCK_ERROR_LOCAL_AUTHENTICATION_NOT_AVAILABLE" = "Heu d'habilitar un codi contrasenya a la configuració d'iOS per usar el bloqueig de pantalla.";
 
 /* Indicates that Touch ID/Face ID/Phone Passcode is not configured on this device. */
-"SCREEN_LOCK_ERROR_LOCAL_AUTHENTICATION_NOT_ENROLLED" = "You must enable a passcode in your iOS Settings in order to use Screen Lock.";
+"SCREEN_LOCK_ERROR_LOCAL_AUTHENTICATION_NOT_ENROLLED" = "Heu d'habilitar un codi contrasenya a la configuració d'iOS per usar el bloqueig de pantalla.";
 
 /* Indicates that Touch ID/Face ID/Phone Passcode passcode is not set. */
-"SCREEN_LOCK_ERROR_LOCAL_AUTHENTICATION_PASSCODE_NOT_SET" = "You must enable a passcode in your iOS Settings in order to use Screen Lock.";
+"SCREEN_LOCK_ERROR_LOCAL_AUTHENTICATION_PASSCODE_NOT_SET" = "Heu d'habilitar un codi contrasenya a la configuració d'iOS per usar el bloqueig de pantalla.";
 
 /* Description of how and why Signal iOS uses Touch ID/Face ID/Phone Passcode to unlock 'screen lock'. */
-"SCREEN_LOCK_REASON_UNLOCK_SCREEN_LOCK" = "Authenticate to open Signal.";
+"SCREEN_LOCK_REASON_UNLOCK_SCREEN_LOCK" = "Autenticació per obrir el Signal";
 
 /* Title for alert indicating that screen lock could not be unlocked. */
-"SCREEN_LOCK_UNLOCK_FAILED" = "Authentication Failed";
+"SCREEN_LOCK_UNLOCK_FAILED" = "Ha fallat l'autenticació.";
 
 /* Label for button on lock screen that lets users unlock Signal. */
-"SCREEN_LOCK_UNLOCK_SIGNAL" = "Unlock Signal";
+"SCREEN_LOCK_UNLOCK_SIGNAL" = "Desbloca el Signal";
 
 /* No comment provided by engineer. */
 "SEARCH_BYNAMEORNUMBER_PLACEHOLDER_TEXT" = "Cerca per nom o número";
 
 /* section header for search results that match a contact who doesn't have an existing conversation */
-"SEARCH_SECTION_CONTACTS" = "Other Contacts";
+"SEARCH_SECTION_CONTACTS" = "Altres contactes";
 
 /* section header for search results that match existing conversations (either group or contact conversations) */
-"SEARCH_SECTION_CONVERSATIONS" = "Conversations";
+"SEARCH_SECTION_CONVERSATIONS" = "Converses";
 
 /* section header for search results that match a message in a conversation */
-"SEARCH_SECTION_MESSAGES" = "Messages";
+"SEARCH_SECTION_MESSAGES" = "Missatges";
 
 /* No comment provided by engineer. */
-"SECURE_SESSION_RESET" = "La sessió segura a estat reiniciada.";
+"SECURE_SESSION_RESET" = "La sessió segura ha estat reiniciada.";
 
 /* Label for 'select GIF to attach' action sheet button */
 "SELECT_GIF_BUTTON" = "GIF";
 
 /* Table section header for conversations you haven't recently used. */
-"SELECT_THREAD_TABLE_OTHER_CHATS_TITLE" = "Other Contacts";
+"SELECT_THREAD_TABLE_OTHER_CHATS_TITLE" = "Altres contactes";
 
 /* Table section header for recently active conversations */
-"SELECT_THREAD_TABLE_RECENT_CHATS_TITLE" = "Recent Chats";
+"SELECT_THREAD_TABLE_RECENT_CHATS_TITLE" = "Xats recents";
 
 /* No comment provided by engineer. */
 "SEND_AGAIN_BUTTON" = "Envieu de nou";
 
-/* Label for the send button in the conversation view. */
+/* Label for the button to send a message */
 "SEND_BUTTON_TITLE" = "Envia";
+
+/* notification body */
+"SEND_FAILED_NOTIFICATION_BODY" = "El teu missatge no s'ha enviat.";
 
 /* Alert body after invite failed */
 "SEND_INVITE_FAILURE" = "Ha fallat l'enviament de la invitació, torneu a provar-ho més tard.";
 
 /* Alert body after invite succeeded */
-"SEND_INVITE_SUCCESS" = "Heu convidat el vostre amic a utilitzar el Signal!";
+"SEND_INVITE_SUCCESS" = "Heu convidat la vostra amistat a utilitzar el Signal!";
 
 /* Text for button to send a Signal invite via SMS. %@ is placeholder for the recipient's phone number. */
 "SEND_INVITE_VIA_SMS_BUTTON_FORMAT" = "Convida via SMS: %@";
+
+/* alert title when user attempts to leave the send media flow when they have an in-progress album */
+"SEND_MEDIA_ABANDON_TITLE" = "Descarto el contingut multimèdia?";
+
+/* alert action, confirming the user wants to exit the media flow and abandon any photos they've taken */
+"SEND_MEDIA_CONFIRM_ABANDON_ALBUM" = "Descarta el contingut";
+
+/* alert action when the user decides not to cancel the media flow after all. */
+"SEND_MEDIA_RETURN_TO_CAMERA" = "Torna a la càmera";
+
+/* alert action when the user decides not to cancel the media flow after all. */
+"SEND_MEDIA_RETURN_TO_MEDIA_LIBRARY" = "Torna a la biblioteca multimèdia";
 
 /* No comment provided by engineer. */
 "SEND_SMS_CONFIRM_TITLE" = "Convidar a un amic via SMS segur?";
@@ -1886,6 +2096,9 @@
 /* Table footer for the 'censorship circumvention' section shown when censorship circumvention has been auto-enabled based on local phone number. */
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_AUTO_ENABLED" = "L'elusió de la censura s'ha activat basant-se en el número de telèfon del vostre compte.";
 
+/* Table footer for the 'censorship circumvention' section shown when censorship circumvention has been manually disabled. */
+"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_MANUALLY_DISABLED" = "Heu inhabilitat manualment l’elusió de la censura.";
+
 /* Table footer for the 'censorship circumvention' section shown when the app is not connected to the internet. */
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_NO_CONNECTION" = "L'elusió de la censura només es pot activar si esteu connectat a internet.";
 
@@ -1894,9 +2107,6 @@
 
 /* Table header for the 'censorship circumvention' section. */
 "SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_HEADER" = "Elusió de la censura";
-
-/* Label for setting that enables dark theme. */
-"SETTINGS_ADVANCED_DARK_THEME" = "Dark Theme";
 
 /* No comment provided by engineer. */
 "SETTINGS_ADVANCED_DEBUGLOG" = "Activa el registre de depuració";
@@ -1908,43 +2118,58 @@
 "SETTINGS_ADVANCED_TITLE" = "Avançada";
 
 /* Format string for the default 'Note' sound. Embeds the system {{sound name}}. */
-"SETTINGS_AUDIO_DEFAULT_TONE_LABEL_FORMAT" = "%@ (default)";
+"SETTINGS_AUDIO_DEFAULT_TONE_LABEL_FORMAT" = "%@ (per defecte)";
 
 /* Label for the backup view in app settings. */
-"SETTINGS_BACKUP" = "Backup";
+"SETTINGS_BACKUP" = "Còpia de seguretat";
 
 /* Label for 'backup now' button in the backup settings view. */
-"SETTINGS_BACKUP_BACKUP_NOW" = "Backup Now";
+"SETTINGS_BACKUP_BACKUP_NOW" = "Fes-ne una còpia de seguretat ara";
 
 /* Label for 'cancel backup' button in the backup settings view. */
-"SETTINGS_BACKUP_CANCEL_BACKUP" = "Cancel Backup";
+"SETTINGS_BACKUP_CANCEL_BACKUP" = "Cancel·la la còpia de seguretat";
 
 /* Label for switch in settings that controls whether or not backup is enabled. */
-"SETTINGS_BACKUP_ENABLING_SWITCH" = "Backup Enabled";
+"SETTINGS_BACKUP_ENABLING_SWITCH" = "Còpia de seguretat habilitada";
+
+/* Label for iCloud status row in the in the backup settings view. */
+"SETTINGS_BACKUP_ICLOUD_STATUS" = "Estat de l'iCloud";
+
+/* Indicates that the last backup restore failed. */
+"SETTINGS_BACKUP_IMPORT_STATUS_FAILED" = "Ha fallat la restauració de la còpia de seguretat.";
+
+/* Indicates that app is not restoring up. */
+"SETTINGS_BACKUP_IMPORT_STATUS_IDLE" = "S'ha aturat la restauració de la còpia de seguretat.";
+
+/* Indicates that app is restoring up. */
+"SETTINGS_BACKUP_IMPORT_STATUS_IN_PROGRESS" = "La restauració de la còpia de seguretat està en curs.";
+
+/* Indicates that the last backup restore succeeded. */
+"SETTINGS_BACKUP_IMPORT_STATUS_SUCCEEDED" = "S'ha restaurat la còpia de seguretat correctament.";
 
 /* Label for phase row in the in the backup settings view. */
-"SETTINGS_BACKUP_PHASE" = "Phase";
+"SETTINGS_BACKUP_PHASE" = "Fase";
 
 /* Label for phase row in the in the backup settings view. */
-"SETTINGS_BACKUP_PROGRESS" = "Progress";
+"SETTINGS_BACKUP_PROGRESS" = "Progrés";
 
-/* Label for status row in the in the backup settings view. */
-"SETTINGS_BACKUP_STATUS" = "Status";
+/* Label for backup status row in the in the backup settings view. */
+"SETTINGS_BACKUP_STATUS" = "Estat";
 
 /* Indicates that the last backup failed. */
-"SETTINGS_BACKUP_STATUS_FAILED" = "Backup Failed";
+"SETTINGS_BACKUP_STATUS_FAILED" = "Ha fallat la còpia de seguretat";
 
 /* Indicates that app is not backing up. */
-"SETTINGS_BACKUP_STATUS_IDLE" = "Waiting";
+"SETTINGS_BACKUP_STATUS_IDLE" = "Esperant";
 
 /* Indicates that app is backing up. */
-"SETTINGS_BACKUP_STATUS_IN_PROGRESS" = "Backing Up";
+"SETTINGS_BACKUP_STATUS_IN_PROGRESS" = "Es fa la còpia de seguretat";
 
 /* Indicates that the last backup succeeded. */
-"SETTINGS_BACKUP_STATUS_SUCCEEDED" = "Backup Successful";
+"SETTINGS_BACKUP_STATUS_SUCCEEDED" = "Còpia de seguretat correcta";
 
 /* A label for the 'add phone number' button in the block list table. */
-"SETTINGS_BLOCK_LIST_ADD_BUTTON" = "Add Blocked User";
+"SETTINGS_BLOCK_LIST_ADD_BUTTON" = "Afegeix un usuari bloquejat";
 
 /* A label that indicates the user has no Signal contacts. */
 "SETTINGS_BLOCK_LIST_NO_CONTACTS" = "No teniu cap contacte al Signal.";
@@ -1959,31 +2184,31 @@
 "SETTINGS_CALLING_HIDES_IP_ADDRESS_PREFERENCE_TITLE" = "Transmet sempre les telefonades";
 
 /* User settings section footer, a detailed explanation */
-"SETTINGS_CALLING_HIDES_IP_ADDRESS_PREFERENCE_TITLE_DETAIL" = "Transmet totes les telefonades pel servidor del Signal per evitar revelar l'adreça IP al vostre contacte. Activar-ho hi reduirà la qualitat.";
+"SETTINGS_CALLING_HIDES_IP_ADDRESS_PREFERENCE_TITLE_DETAIL" = "Redirigeix totes les trucades a través d'un servidor de Signal per evitar revelar l'adreça IP al contacte. Habilitar-ho reduirà la qualitat de la trucada.";
 
 /* No comment provided by engineer. */
-"SETTINGS_CLEAR_HISTORY" = "Clear Conversation History";
+"SETTINGS_CLEAR_HISTORY" = "Neteja l'historial de la conversa";
 
 /* No comment provided by engineer. */
-"SETTINGS_COPYRIGHT" = "Copyright Open Whisper Systems \nRegistrat amb llicència GPLv3";
+"SETTINGS_COPYRIGHT" = "Copyright Signal Messenger\nAmb llicència de GPLv3";
 
 /* No comment provided by engineer. */
 "SETTINGS_DELETE_ACCOUNT_BUTTON" = "Elimina el compte";
 
 /* Label for 'delete data' button. */
-"SETTINGS_DELETE_DATA_BUTTON" = "Delete All Data";
+"SETTINGS_DELETE_DATA_BUTTON" = "Suprimeix totes les dades";
 
 /* Alert message before user confirms clearing history */
-"SETTINGS_DELETE_HISTORYLOG_CONFIRMATION" = "Segur que voleu eliminar tot l'historial (missatges, fitxers adjunts, historial de trucades...)? Aquesta acció no es pot desfer.";
+"SETTINGS_DELETE_HISTORYLOG_CONFIRMATION" = "Segur que voleu eliminar tot l'historial (missatges, adjunts, trucades, etc.)? Aquesta acció no es pot desfer.";
 
 /* Confirmation text for button which deletes all message, calling, attachments, etc. */
-"SETTINGS_DELETE_HISTORYLOG_CONFIRMATION_BUTTON" = "Delete Everything";
+"SETTINGS_DELETE_HISTORYLOG_CONFIRMATION_BUTTON" = "Suprimeix-ho tot";
 
 /* No comment provided by engineer. */
 "SETTINGS_HELP_HEADER" = "Ajuda";
 
 /* Section header */
-"SETTINGS_HISTORYLOG_TITLE" = "Clear Conversation History";
+"SETTINGS_HISTORYLOG_TITLE" = "Neteja l'historial de la conversa";
 
 /* No comment provided by engineer. */
 "SETTINGS_INFORMATION_HEADER" = "Informació";
@@ -1992,22 +2217,37 @@
 "SETTINGS_INVITE_TITLE" = "Convida els amics";
 
 /* content of tweet when inviting via twitter - please do not translate URL */
-"SETTINGS_INVITE_TWITTER_TEXT" = "You can reach me using @signalapp. Get it now: https://signal.org/download/";
+"SETTINGS_INVITE_TWITTER_TEXT" = "Podeu contactar amb mi usant @signalapp. Baixeu-vos-la ara: https://signal.org/download/";
 
 /* Label for settings view that allows user to change the notification sound. */
-"SETTINGS_ITEM_NOTIFICATION_SOUND" = "Message Sound";
+"SETTINGS_ITEM_NOTIFICATION_SOUND" = "So de missatge";
 
 /* table cell label */
-"SETTINGS_LEGAL_TERMS_CELL" = "Terms & Privacy Policy";
+"SETTINGS_LEGAL_TERMS_CELL" = "Condicions de servei i política de privadesa";
+
+/* Setting for enabling & disabling link previews. */
+"SETTINGS_LINK_PREVIEWS" = "Envia previsualitzacions d'enllaços";
+
+/* Footer for setting for enabling & disabling link previews. */
+"SETTINGS_LINK_PREVIEWS_FOOTER" = "Les vistes prèvies són compatibles amb els enllaços d'Imgur, Instagram, Pinterest, Reddit i YouTube.";
+
+/* Header for setting for enabling & disabling link previews. */
+"SETTINGS_LINK_PREVIEWS_HEADER" = "Previsualitzacions d'enllaços";
 
 /* Title for settings activity */
 "SETTINGS_NAV_BAR_TITLE" = "Configuració";
 
 /* table section footer */
-"SETTINGS_NOTIFICATION_CONTENT_DESCRIPTION" = "Call and Message notifications can appear while your phone is locked. You may wish to limit what is shown in these notifications.";
+"SETTINGS_NOTIFICATION_CONTENT_DESCRIPTION" = "Les notificacions de trucades i missatges es poden mostrar al telèfon quan està bloquejat. Potser voleu limitar el que es mostra a les notificacions.";
 
 /* table section header */
-"SETTINGS_NOTIFICATION_CONTENT_TITLE" = "Notification Content";
+"SETTINGS_NOTIFICATION_CONTENT_TITLE" = "Contingut de la notificació";
+
+/* When the local device discovers a contact has recently installed signal, the app can generates a message encouraging the local user to say hello. Turning this switch off disables that feature. */
+"SETTINGS_NOTIFICATION_EVENTS_CONTACT_JOINED_SIGNAL" = "El contacte s'ha unit al Signal";
+
+/* table section header */
+"SETTINGS_NOTIFICATION_EVENTS_SECTION_TITLE" = "Esdeveniments";
 
 /* No comment provided by engineer. */
 "SETTINGS_NOTIFICATIONS" = "Notificacions";
@@ -2016,10 +2256,10 @@
 "SETTINGS_PRIVACY_CALLKIT_PRIVACY_TITLE" = "Mostra el nom i el número de qui telefona";
 
 /* Settings table section footer. */
-"SETTINGS_PRIVACY_CALLKIT_SYSTEM_CALL_LOG_PREFERENCE_DESCRIPTION" = "Show calls in the \"Recents\" list in the iOS Phone app.";
+"SETTINGS_PRIVACY_CALLKIT_SYSTEM_CALL_LOG_PREFERENCE_DESCRIPTION" = "Mostra les trucades a la llista de recents de l'aplicació de telèfon de l'iOS.";
 
 /* Short table cell label */
-"SETTINGS_PRIVACY_CALLKIT_SYSTEM_CALL_LOG_PREFERENCE_TITLE" = "Show Calls in Recents";
+"SETTINGS_PRIVACY_CALLKIT_SYSTEM_CALL_LOG_PREFERENCE_TITLE" = "Mostra les trucades a Recents";
 
 /* Short table cell label */
 "SETTINGS_PRIVACY_CALLKIT_TITLE" = "Integració amb iOS";
@@ -2028,25 +2268,25 @@
 "SETTINGS_PRIVACY_TITLE" = "Privadesa";
 
 /* Label for the 'read receipts' setting. */
-"SETTINGS_READ_RECEIPT" = "Read Receipts";
+"SETTINGS_READ_RECEIPT" = "Confirmacions de lectura";
 
 /* An explanation of the 'read receipts' setting. */
-"SETTINGS_READ_RECEIPTS_SECTION_FOOTER" = "See and share when messages have been read. This setting is optional and applies to all conversations.";
+"SETTINGS_READ_RECEIPTS_SECTION_FOOTER" = "Vegeu i compartiu quan els missatges s'han llegit. Aquest paràmetre és opcional i s'aplica a totes les converses.";
 
 /* Label for re-registration button. */
-"SETTINGS_REREGISTER_BUTTON" = "Re-register";
+"SETTINGS_REREGISTER_BUTTON" = "Torna a registrar";
 
 /* Label for the 'screen lock activity timeout' setting of the privacy settings. */
-"SETTINGS_SCREEN_LOCK_ACTIVITY_TIMEOUT" = "Screen Lock Timeout";
+"SETTINGS_SCREEN_LOCK_ACTIVITY_TIMEOUT" = "Temps d'espera de la pantalla de bloqueig";
 
 /* Footer for the 'screen lock' section of the privacy settings. */
-"SETTINGS_SCREEN_LOCK_SECTION_FOOTER" = "Unlock Signal's screen using Touch ID, Face ID, or your iOS device passcode. You can still answer incoming calls and receive message notifications while Screen Lock is enabled. Signal's notification settings allow you to customize the information that is displayed.";
+"SETTINGS_SCREEN_LOCK_SECTION_FOOTER" = "Desbloqueja la pantalla de Signal fent servir Touch ID, Face ID o el codi d'accés. Podeu continuar contestant les trucades entrants i rebre notificacions de missatges mentre la pantalla de bloqueig està activada. Els paràmetres de les notificacions de Signal permeten personalitzar la informació que es mostra.";
 
 /* Title for the 'screen lock' section of the privacy settings. */
-"SETTINGS_SCREEN_LOCK_SECTION_TITLE" = "Screen Lock";
+"SETTINGS_SCREEN_LOCK_SECTION_TITLE" = "Pantalla de bloqueig";
 
 /* Label for the 'enable screen lock' switch of the privacy settings. */
-"SETTINGS_SCREEN_LOCK_SWITCH_LABEL" = "Screen Lock";
+"SETTINGS_SCREEN_LOCK_SWITCH_LABEL" = "Pantalla de bloqueig";
 
 /* No comment provided by engineer. */
 "SETTINGS_SCREEN_SECURITY" = "Activa la seguretat de pantalla";
@@ -2058,10 +2298,10 @@
 "SETTINGS_SECTION_CALL_KIT_DESCRIPTION" = "La integració amb iOS mostra les telefonades de Signal a la pantalla de bloqueig i a l'historial de telefonades del sistema. Podeu mostrar el nom i el número del vostre contacte. Si l'iCloud es troba activat, l'historial es compartirà amb Apple.";
 
 /* Label for the notifications section of conversation settings view. */
-"SETTINGS_SECTION_NOTIFICATIONS" = "Notifications";
+"SETTINGS_SECTION_NOTIFICATIONS" = "Notificacions";
 
 /* Header Label for the sounds section of settings views. */
-"SETTINGS_SECTION_SOUNDS" = "Sounds";
+"SETTINGS_SECTION_SOUNDS" = "Sons";
 
 /* settings topic header for table section */
 "SETTINGS_SECTION_TITLE_CALLING" = "Telefonades";
@@ -2073,16 +2313,40 @@
 "SETTINGS_SUPPORT" = "Assistència";
 
 /* Indicates that 'two factor auth' is disabled in the privacy settings. */
-"SETTINGS_TWO_FACTOR_AUTH_DISABLED" = "Disabled";
+"SETTINGS_TWO_FACTOR_AUTH_DISABLED" = "Inhabilitat";
 
 /* Indicates that 'two factor auth' is enabled in the privacy settings. */
-"SETTINGS_TWO_FACTOR_AUTH_ENABLED" = "Enabled";
+"SETTINGS_TWO_FACTOR_AUTH_ENABLED" = "Habilitat";
 
 /* Label for the 'two factor auth' item of the privacy settings. */
-"SETTINGS_TWO_FACTOR_AUTH_ITEM" = "Registration Lock";
+"SETTINGS_TWO_FACTOR_AUTH_ITEM" = "Pany de Registre";
 
 /* Title for the 'two factor auth' section of the privacy settings. */
-"SETTINGS_TWO_FACTOR_AUTH_TITLE" = "Registration Lock";
+"SETTINGS_TWO_FACTOR_AUTH_TITLE" = "Pany de Registre";
+
+/* Label for the 'typing indicators' setting. */
+"SETTINGS_TYPING_INDICATORS" = "Indicadors de tecleig";
+
+/* An explanation of the 'typing indicators' setting. */
+"SETTINGS_TYPING_INDICATORS_FOOTER" = "Vegeu i compartiu quan s'escriuen els missatges. Aquest paràmetre és opcional i s'aplica a totes les converses.";
+
+/* Label for a link to more info about unidentified delivery. */
+"SETTINGS_UNIDENTIFIED_DELIVERY_LEARN_MORE" = "Més informació";
+
+/* table section label */
+"SETTINGS_UNIDENTIFIED_DELIVERY_SECTION_TITLE" = "Remitent segellat";
+
+/* switch label */
+"SETTINGS_UNIDENTIFIED_DELIVERY_SHOW_INDICATORS" = "Indicadors de pantalla";
+
+/* table section footer */
+"SETTINGS_UNIDENTIFIED_DELIVERY_SHOW_INDICATORS_FOOTER" = "Mostra la icona d'estat quan se seleccioni \"Més informació\" als missatges rebuts fent servir un remitent segellat.";
+
+/* switch label */
+"SETTINGS_UNIDENTIFIED_DELIVERY_UNRESTRICTED_ACCESS" = "Permet-ho per a tothom";
+
+/* table section footer */
+"SETTINGS_UNIDENTIFIED_DELIVERY_UNRESTRICTED_ACCESS_FOOTER" = "Habilita el remitent segellat per a missatges rebuts de persones que no teniu als contactes o de persones amb qui no heu compartit el vostre perfil.";
 
 /* No comment provided by engineer. */
 "SETTINGS_VERSION" = "Versió";
@@ -2097,37 +2361,37 @@
 "SHARE_ACTION_TWEET" = "Twitter";
 
 /* alert body when sharing file failed because of untrusted/changed identity keys */
-"SHARE_EXTENSION_FAILED_SENDING_BECAUSE_UNTRUSTED_IDENTITY_FORMAT" = "Your safety number with %@ has recently changed. You may wish to verify it in the main app before resending.";
+"SHARE_EXTENSION_FAILED_SENDING_BECAUSE_UNTRUSTED_IDENTITY_FORMAT" = "El número de seguretat amb %@ ha canviat fa poc. Potser voleu verificar-lo a l'aplicació principal abans de reenviar-lo.";
 
 /* Indicates that the share extension is still loading. */
-"SHARE_EXTENSION_LOADING" = "Loading...";
+"SHARE_EXTENSION_LOADING" = "S'està carregant...";
 
 /* Message indicating that the share extension cannot be used until the user has registered in the main app. */
-"SHARE_EXTENSION_NOT_REGISTERED_MESSAGE" = "Launch the Signal app to register.";
+"SHARE_EXTENSION_NOT_REGISTERED_MESSAGE" = "Obriu l'aplicació de Signal per registrar-vos.";
 
 /* Title indicating that the share extension cannot be used until the user has registered in the main app. */
-"SHARE_EXTENSION_NOT_REGISTERED_TITLE" = "Not Registered";
+"SHARE_EXTENSION_NOT_REGISTERED_TITLE" = "Sense registrar";
 
 /* Message indicating that the share extension cannot be used until the main app has been launched at least once. */
-"SHARE_EXTENSION_NOT_YET_MIGRATED_MESSAGE" = "Launch the Signal app to update or register.";
+"SHARE_EXTENSION_NOT_YET_MIGRATED_MESSAGE" = "Obriu l'aplicació de Signal per actualitzar-la o registrar-vos.";
 
 /* Title indicating that the share extension cannot be used until the main app has been launched at least once. */
-"SHARE_EXTENSION_NOT_YET_MIGRATED_TITLE" = "Not Ready";
+"SHARE_EXTENSION_NOT_YET_MIGRATED_TITLE" = "No està a punt";
 
 /* Alert title */
-"SHARE_EXTENSION_SENDING_FAILURE_TITLE" = "Unable to Send Attachment";
+"SHARE_EXTENSION_SENDING_FAILURE_TITLE" = "No s'ha pogut enviar l'adjunt";
 
 /* Alert title */
-"SHARE_EXTENSION_SENDING_IN_PROGRESS_TITLE" = "Uploading…";
+"SHARE_EXTENSION_SENDING_IN_PROGRESS_TITLE" = "S'està pujant...";
 
 /* Shown when trying to share content to a Signal user for the share extension. Followed by failure details. */
-"SHARE_EXTENSION_UNABLE_TO_BUILD_ATTACHMENT_ALERT_TITLE" = "Unable to Prepare Attachment";
+"SHARE_EXTENSION_UNABLE_TO_BUILD_ATTACHMENT_ALERT_TITLE" = "No s'ha pogut preparar l'adjunt";
 
 /* Title for the 'share extension' view. */
-"SHARE_EXTENSION_VIEW_TITLE" = "Share to Signal";
+"SHARE_EXTENSION_VIEW_TITLE" = "Comparteix a Signal";
 
 /* Action sheet item */
-"SHOW_SAFETY_NUMBER_ACTION" = "Show Safety Number";
+"SHOW_SAFETY_NUMBER_ACTION" = "Mostra el número de seguretat";
 
 /* notification action */
 "SHOW_THREAD_BUTTON_TITLE" = "Mostra la conversa";
@@ -2136,7 +2400,52 @@
 "SMS_INVITE_BODY" = "Et convide a instal·lar el Signal! Ací tens l'enllaç:";
 
 /* Label for the 'no sound' option that allows users to disable sounds for notifications, etc. */
-"SOUNDS_NONE" = "None";
+"SOUNDS_NONE" = "Cap";
+
+/* Preview text shown in notifications and home view for sticker messages. */
+"STICKER_MESSAGE_PREVIEW" = "Missatge adhesiu";
+
+/* Tooltip indicating that a sticker pack was installed. */
+"STICKER_PACK_INSTALLED_TOOLTIP" = "Paquet d'adhesius instal·lat";
+
+/* Label for a sticker that failed to download. */
+"STICKERS_FAILED_DOWNLOAD" = "Adhesiu";
+
+/* Label for the 'install sticker pack' button. */
+"STICKERS_INSTALL_BUTTON" = "Instal·la";
+
+/* Title for the 'available built-in stickers' section of the 'manage stickers' view. */
+"STICKERS_MANAGE_VIEW_AVAILABLE_BUILT_IN_PACKS_SECTION_TITLE" = "Sèries d'artistes de Signal";
+
+/* Title for the 'available known stickers' section of the 'manage stickers' view. */
+"STICKERS_MANAGE_VIEW_AVAILABLE_KNOWN_PACKS_SECTION_TITLE" = "Adhesius que heu rebut";
+
+/* Title for the 'installed stickers' section of the 'manage stickers' view. */
+"STICKERS_MANAGE_VIEW_INSTALLED_PACKS_SECTION_TITLE" = "Adhesius instal·lats";
+
+/* Label indicating that the user has no installed sticker packs. */
+"STICKERS_MANAGE_VIEW_NO_INSTALLED_PACKS" = "No hi ha adhesius instal·lats.";
+
+/* Label indicating that the user has no known sticker packs. */
+"STICKERS_MANAGE_VIEW_NO_KNOWN_PACKS" = "Els adhesius dels missatges d'entrada apareixeran aquí.";
+
+/* Title for the 'manage stickers' view. */
+"STICKERS_MANAGE_VIEW_TITLE" = "Adhesius";
+
+/* Default title for sticker packs. */
+"STICKERS_PACK_DEFAULT_TITLE" = "Paquet d'adhesius";
+
+/* Error message shown when a sticker pack failed to install. */
+"STICKERS_PACK_INSTALL_FAILED" = "Ha fallat instal·lar el paquet d'adhesius.";
+
+/* Title of the 'share sticker pack' view. */
+"STICKERS_PACK_SHARE_VIEW_TITLE" = "Comparteix el paquet d'adhesius";
+
+/* The default title for the 'sticker pack' view. */
+"STICKERS_PACK_VIEW_DEFAULT_TITLE" = "Paquet d'adhesius";
+
+/* Label for the 'uninstall sticker pack' button. */
+"STICKERS_UNINSTALL_BUTTON" = "Desinstal·la";
 
 /* Alert body after verifying privacy with {{other user's name}} */
 "SUCCESSFUL_VERIFICATION_DESCRIPTION" = "El número de seguretat amb %@ coincideix. Podeu marcar el contacte com a verificat.";
@@ -2145,34 +2454,31 @@
 "SUCCESSFUL_VERIFICATION_TITLE" = "Els números de seguretat coincideixen!";
 
 /* Label for button to verify a user's safety number. */
-"SYSTEM_MESSAGE_ACTION_VERIFY_SAFETY_NUMBER" = "Verify Safety Number";
-
-/* No comment provided by engineer. */
-"THEME_SECTION" = "Theme";
+"SYSTEM_MESSAGE_ACTION_VERIFY_SAFETY_NUMBER" = "Verifiqueu el número de seguretat";
 
 /* {{number of days}} embedded in strings, e.g. 'Alice updated disappearing messages expiration to {{5 days}}'. See other *_TIME_AMOUNT strings */
 "TIME_AMOUNT_DAYS" = "%@ dies";
 
 /* Label text below navbar button, embeds {{number of days}}. Must be very short, like 1 or 2 characters, The space is intentionally omitted between the text and the embedded duration so that we get, e.g. '5d' not '5 d'. See other *_TIME_AMOUNT strings */
-"TIME_AMOUNT_DAYS_SHORT_FORMAT" = "%@d";
+"TIME_AMOUNT_DAYS_SHORT_FORMAT" = "%@ d";
 
 /* {{number of hours}} embedded in strings, e.g. 'Alice updated disappearing messages expiration to {{5 hours}}'. See other *_TIME_AMOUNT strings */
 "TIME_AMOUNT_HOURS" = "%@ hores";
 
 /* Label text below navbar button, embeds {{number of hours}}. Must be very short, like 1 or 2 characters, The space is intentionally omitted between the text and the embedded duration so that we get, e.g. '5h' not '5 h'. See other *_TIME_AMOUNT strings */
-"TIME_AMOUNT_HOURS_SHORT_FORMAT" = "%@h";
+"TIME_AMOUNT_HOURS_SHORT_FORMAT" = "%@ h";
 
 /* {{number of minutes}} embedded in strings, e.g. 'Alice updated disappearing messages expiration to {{5 minutes}}'. See other *_TIME_AMOUNT strings */
 "TIME_AMOUNT_MINUTES" = "%@ minuts";
 
 /* Label text below navbar button, embeds {{number of minutes}}. Must be very short, like 1 or 2 characters, The space is intentionally omitted between the text and the embedded duration so that we get, e.g. '5m' not '5 m'. See other *_TIME_AMOUNT strings */
-"TIME_AMOUNT_MINUTES_SHORT_FORMAT" = "%@m";
+"TIME_AMOUNT_MINUTES_SHORT_FORMAT" = "%@ m";
 
 /* {{number of seconds}} embedded in strings, e.g. 'Alice updated disappearing messages expiration to {{5 seconds}}'. See other *_TIME_AMOUNT strings */
 "TIME_AMOUNT_SECONDS" = "%@ segons";
 
 /* Label text below navbar button, embeds {{number of seconds}}. Must be very short, like 1 or 2 characters, The space is intentionally omitted between the text and the embedded duration so that we get, e.g. '5s' not '5 s'. See other *_TIME_AMOUNT strings */
-"TIME_AMOUNT_SECONDS_SHORT_FORMAT" = "%@s";
+"TIME_AMOUNT_SECONDS_SHORT_FORMAT" = "%@ s";
 
 /* {{1 day}} embedded in strings, e.g. 'Alice updated disappearing messages expiration to {{1 day}}'. See other *_TIME_AMOUNT strings */
 "TIME_AMOUNT_SINGLE_DAY" = "%@ dia";
@@ -2190,7 +2496,7 @@
 "TIME_AMOUNT_WEEKS" = "%@ setmanes";
 
 /* Label text below navbar button, embeds {{number of weeks}}. Must be very short, like 1 or 2 characters, The space is intentionally omitted between the text and the embedded duration so that we get, e.g. '5w' not '5 w'. See other *_TIME_AMOUNT strings */
-"TIME_AMOUNT_WEEKS_SHORT_FORMAT" = "%@w";
+"TIME_AMOUNT_WEEKS_SHORT_FORMAT" = "%@ set";
 
 /* Label for the cancel button in an alert or action sheet. */
 "TXT_CANCEL_TITLE" = "Cancel·la";
@@ -2201,14 +2507,35 @@
 /* Pressing this button moves an archived thread from the archive back to the inbox */
 "UNARCHIVE_ACTION" = "Restaura";
 
-/* In Inbox view, last message label for thread with corrupted attachment. */
-"UNKNOWN_ATTACHMENT_LABEL" = "Fitxer adjunt desconegut";
-
 /* Message shown in conversation view that offers to block an unknown user. */
 "UNKNOWN_CONTACT_BLOCK_OFFER" = "L'usuari no és als vostres contactes. Voleu blocar-lo?";
 
 /* Displayed if for some reason we can't determine a contacts phone number *or* name */
 "UNKNOWN_CONTACT_NAME" = "Contacte desconegut";
+
+/* Label for unknown countries. */
+"UNKNOWN_COUNTRY_NAME" = "País desconegut";
+
+/* Info message recorded in conversation history when local user receives an unknown message from a linked device and needs to upgrade. */
+"UNKNOWN_PROTOCOL_VERSION_NEED_TO_UPGRADE_FROM_LINKED_DEVICE" = "Un dels vostres dispositius ha enviat un missatge que no es pot processar o mostrar aquí perquè usa una funció nova del Signal.";
+
+/* Info message recorded in conversation history when local user receives an unknown message and needs to upgrade. Embeds {{user's name or phone number}}. */
+"UNKNOWN_PROTOCOL_VERSION_NEED_TO_UPGRADE_WITH_NAME_FORMAT" = "%@ us ha enviat un missatge que no es pot processar o mostrar perquè usa una funció nova del Signal.";
+
+/* Info message recorded in conversation history when local user receives an unknown message and needs to upgrade. */
+"UNKNOWN_PROTOCOL_VERSION_NEED_TO_UPGRADE_WITHOUT_NAME" = "Heu rebut un missatge que no es pot processar o mostrar perquè usa una funció nova del Signal.";
+
+/* Label for button that lets users upgrade the app. */
+"UNKNOWN_PROTOCOL_VERSION_UPGRADE_BUTTON" = "Actualitza ara el Signal";
+
+/* Info message recorded in conversation history when local user has received an unknown unknown message from a linked device and has upgraded. */
+"UNKNOWN_PROTOCOL_VERSION_UPGRADE_COMPLETE_FROM_LINKED_DEVICE" = "S'ha actualitzat a la darrera versió del Signal. Ara podeu rebre aquest tipus de missatge al dispositiu.";
+
+/* Info message recorded in conversation history when local user has received an unknown message and has upgraded. Embeds {{user's name or phone number}}. */
+"UNKNOWN_PROTOCOL_VERSION_UPGRADE_COMPLETE_WITH_NAME_FORMAT" = "Podeu demanar a %@ que torni a enviar aquest missatge ara que useu una versió actualitzada del Signal.";
+
+/* Info message recorded in conversation history when local user has received an unknown message and has upgraded. */
+"UNKNOWN_PROTOCOL_VERSION_UPGRADE_COMPLETE_WITHOUT_NAME" = "Podeu demanar al remitent que us torni a enviar aquest missatge ara que useu una versió actualitzada del Signal.";
 
 /* Indicates an unknown or unrecognizable value. */
 "UNKNOWN_VALUE" = "Desconegut";
@@ -2217,7 +2544,7 @@
 "UNLINK_ACTION" = "Desenllaça";
 
 /* Alert message to confirm unlinking a device */
-"UNLINK_CONFIRMATION_ALERT_BODY" = "En desenllaçar aquest dispositiu, ja no podrà enviar o rebre missatges.";
+"UNLINK_CONFIRMATION_ALERT_BODY" = "Aquest dispositiu no podrà enviar ni rebre missatges si no està enllaçat.";
 
 /* Alert title for confirming device deletion */
 "UNLINK_CONFIRMATION_ALERT_TITLE" = "Voleu desenllaçar «%@»?";
@@ -2241,76 +2568,19 @@
 "UPDATE_GROUP_CANT_REMOVE_MEMBERS_ALERT_MESSAGE" = "No podeu eliminar membres del grup. Hauran de sortir per ells mateix, o podeu crear un grup nou sense aquest membre.";
 
 /* Title for alert indicating that group members can't be removed. */
-"UPDATE_GROUP_CANT_REMOVE_MEMBERS_ALERT_TITLE" = "No teniu permisos";
+"UPDATE_GROUP_CANT_REMOVE_MEMBERS_ALERT_TITLE" = "No s'admet";
 
-/* Description of CallKit to upgrading (existing) users */
-"UPGRADE_EXPERIENCE_CALLKIT_DESCRIPTION" = "Respondre telefonades des de la pantalla de bloqueig és fàcil amb la integració amb iOS. També és privat: qui vos telefona roman en l'anonimat.";
+/* Body text for stickers splash screen */
+"UPGRADE_EXPERIENCE_INTRODUCING_STICKERS_DESCRIPTION" = "Per què usar paraules quan podeu fer servir adhesius? Toqueu aquesta icona del teclat:";
 
-/* button label shown once when when user upgrades app, in context of call kit */
-"UPGRADE_EXPERIENCE_CALLKIT_PRIVACY_SETTINGS_BUTTON" = "Més informació a la configuració.";
-
-/* Header for upgrade experience */
-"UPGRADE_EXPERIENCE_CALLKIT_TITLE" = "Llisqueu per respondre";
-
-/* Description for notification audio customization */
-"UPGRADE_EXPERIENCE_INTRODUCING_NOTIFICATION_AUDIO_DESCRIPTION" = "You can now choose default and per-conversation notification sounds, and calls will respect the ringtone you've chosen for each system contact.";
-
-/* button label shown one time, after upgrade */
-"UPGRADE_EXPERIENCE_INTRODUCING_NOTIFICATION_AUDIO_SETTINGS_BUTTON" = "Review Notification Settings";
-
-/* Header for upgrade experience */
-"UPGRADE_EXPERIENCE_INTRODUCING_NOTIFICATION_AUDIO_TITLE" = "Updated Call and Message Sounds";
-
-/* button label shown one time, after user upgrades app */
-"UPGRADE_EXPERIENCE_INTRODUCING_PROFILES_BUTTON" = "Set up Your Profile";
-
-/* Description of new profile feature for upgrading (existing) users */
-"UPGRADE_EXPERIENCE_INTRODUCING_PROFILES_DESCRIPTION" = "You can now share a profile photo and name with your friends on Signal.";
-
-/* Header for upgrade experience */
-"UPGRADE_EXPERIENCE_INTRODUCING_PROFILES_TITLE" = "Ready for Your Closeup?";
-
-/* Description of new profile feature for upgrading (existing) users */
-"UPGRADE_EXPERIENCE_INTRODUCING_READ_RECEIPTS_DESCRIPTION" = "You now have the option of seeing and sharing when messages have been read.";
-
-/* button label shown one time, after upgrade */
-"UPGRADE_EXPERIENCE_INTRODUCING_READ_RECEIPTS_PRIVACY_SETTINGS" = "Enable read receipts in your privacy settings.";
-
-/* Header for upgrade experience */
-"UPGRADE_EXPERIENCE_INTRODUCING_READ_RECEIPTS_TITLE" = "Introducing Read Receipts";
-
-/* Description of video calling to upgrading (existing) users */
-"UPGRADE_EXPERIENCE_VIDEO_DESCRIPTION" = "El Signal és compatible amb les telefonades de vídeo segures. Feu una telefonada normal, toqueu el botó de la càmera i saludeu.";
-
-/* Header for upgrade experience */
-"UPGRADE_EXPERIENCE_VIDEO_TITLE" = "Telefonades de Vídeo Segures!";
+/* Header for stickers splash screen */
+"UPGRADE_EXPERIENCE_INTRODUCING_STICKERS_TITLE" = "S'introdueixen els adhesius.";
 
 /* Message for the alert indicating that user should upgrade iOS. */
-"UPGRADE_IOS_ALERT_MESSAGE" = "Signal requires iOS 9 or later. Please upgrade iOS in Settings app >> General >> Software Update.";
+"UPGRADE_IOS_ALERT_MESSAGE" = "El Signal necessitarà aviat l'iOS 10 o posterior. Actualitzeu-lo a la Configuració del sistema >> General >> Actualitzacions.";
 
 /* Title for the alert indicating that user should upgrade iOS. */
 "UPGRADE_IOS_ALERT_TITLE" = "Actualitzeu l'iOS";
-
-/* No comment provided by engineer. */
-"Upgrading Signal ..." = "S'està actualitzant el Signal...";
-
-/* button text for back button on verification view */
-"VERIFICATION_BACK_BUTTON" = "Enrere";
-
-/* Text field placeholder for SMS verification code during registration */
-"VERIFICATION_CHALLENGE_DEFAULT_TEXT" = "Codi de verificació";
-
-/* button text during registration to request phone number verification be done via phone call */
-"VERIFICATION_CHALLENGE_SEND_VIA_VOICE" = "Telefona'm, millor";
-
-/* button text during registration to request another SMS code be sent */
-"VERIFICATION_CHALLENGE_SUBMIT_AGAIN" = "Reenvia el codi via SMS";
-
-/* button text during registration to submit your SMS verification code. */
-"VERIFICATION_CHALLENGE_SUBMIT_CODE" = "Tramet";
-
-/* Label indicating the phone number currently being verified. */
-"VERIFICATION_PHONE_NUMBER_FORMAT" = "Introduïu el codi de verificació que hem enviat a %@.";
 
 /* Format for info message indicating that the verification state was unverified on this device. Embeds {{user's name or phone number}}. */
 "VERIFICATION_STATE_CHANGE_FORMAT_NOT_VERIFIED_LOCAL" = "Heu marcat %@ com a no verificat.";
@@ -2328,7 +2598,7 @@
 "VERIFICATION_STATE_CHANGE_GENERIC" = "L'estat de verificació ha canviat.";
 
 /* Label for button or row which allows users to verify the safety number of another user. */
-"VERIFY_PRIVACY" = "View Safety Number";
+"VERIFY_PRIVACY" = "Mostra el número de seguretat";
 
 /* Label for button or row which allows users to verify the safety numbers of multiple users. */
 "VERIFY_PRIVACY_MULTIPLE" = "Revisa els números de seguretat";

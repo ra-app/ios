@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
@@ -24,6 +24,12 @@ public class SearchIndexer<T> {
 
 @objc
 public class FullTextSearchFinder: NSObject {
+
+    // MARK: - Dependencies
+
+    private static var tsAccountManager: TSAccountManager {
+        return TSAccountManager.sharedInstance()
+    }
 
     // MARK: - Querying
 
@@ -129,26 +135,21 @@ public class FullTextSearchFinder: NSObject {
         return charactersToFilter
     }()
 
+    // This is a hot method, especially while running large migrations.
+    // Changes to it should go through a profiler to make sure large migrations
+    // aren't adversely affected.
+    @objc
     public class func normalize(text: String) -> String {
         // 1. Filter out invalid characters.
-        let filtered = text.unicodeScalars.lazy.filter({
-            !charactersToRemove.contains($0)
-        })
+        let filtered = text.removeCharacters(characterSet: charactersToRemove)
 
         // 2. Simplify whitespace.
-        let simplifyingFunction: (UnicodeScalar) -> UnicodeScalar = {
-            if CharacterSet.whitespacesAndNewlines.contains($0) {
-                return UnicodeScalar(" ")
-            } else {
-                return $0
-            }
-        }
-        let simplified = filtered.map(simplifyingFunction)
+        let simplified = filtered.replaceCharacters(characterSet: .whitespacesAndNewlines,
+                                                    replacement: " ")
 
         // 3. Strip leading & trailing whitespace last, since we may replace
         // filtered characters with whitespace.
-        let result = String(String.UnicodeScalarView(simplified))
-        return result.trimmingCharacters(in: .whitespacesAndNewlines)
+        return simplified.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
     // MARK: - Index Building
@@ -169,11 +170,21 @@ public class FullTextSearchFinder: NSObject {
 
     private static let contactThreadIndexer: SearchIndexer<TSContactThread> = SearchIndexer { (contactThread: TSContactThread, transaction: YapDatabaseReadTransaction) in
         let recipientId =  contactThread.contactIdentifier()
-        return recipientIndexer.index(recipientId, transaction: transaction)
+        var result = recipientIndexer.index(recipientId, transaction: transaction)
+
+        if IsNoteToSelfEnabled(),
+            let localNumber = tsAccountManager.storedOrCachedLocalNumber(transaction.asAnyRead),
+            localNumber == recipientId {
+
+            let noteToSelfLabel = NSLocalizedString("NOTE_TO_SELF", comment: "Label for 1:1 conversation with yourself.")
+            result += " \(noteToSelfLabel)"
+        }
+
+        return result
     }
 
-    private static let recipientIndexer: SearchIndexer<String> = SearchIndexer { (recipientId: String, _: YapDatabaseReadTransaction) in
-        let displayName = contactsManager.displayName(forPhoneIdentifier: recipientId)
+    private static let recipientIndexer: SearchIndexer<String> = SearchIndexer { (recipientId: String, transaction: YapDatabaseReadTransaction) in
+        let displayName = contactsManager.displayName(forPhoneIdentifier: recipientId, transaction: transaction)
 
         let nationalNumber: String = { (recipientId: String) -> String in
 
@@ -194,46 +205,17 @@ public class FullTextSearchFinder: NSObject {
     }
 
     private static let messageIndexer: SearchIndexer<TSMessage> = SearchIndexer { (message: TSMessage, transaction: YapDatabaseReadTransaction) in
-        if let body = message.body, body.count > 0 {
-            return body
-        }
-        if let oversizeText = oversizeText(forMessage: message, transaction: transaction) {
-            return oversizeText
+        if let bodyText = message.bodyText(with: transaction.asAnyRead) {
+            return bodyText
         }
         return ""
-    }
-
-    private static func oversizeText(forMessage message: TSMessage, transaction: YapDatabaseReadTransaction) -> String? {
-        guard message.hasAttachments() else {
-            return nil
-        }
-
-        guard let attachment = message.attachment(with: transaction) else {
-            owsFailDebug("attachment was unexpectedly nil")
-            return nil
-        }
-
-        guard let attachmentStream = attachment as? TSAttachmentStream else {
-            return nil
-        }
-
-        guard attachmentStream.isOversizeText() else {
-            return nil
-        }
-
-        guard let text = attachmentStream.readOversizeText() else {
-            owsFailDebug("Could not load oversize text attachment")
-            return nil
-        }
-
-        return text
     }
 
     private class func indexContent(object: Any, transaction: YapDatabaseReadTransaction) -> String? {
         if let groupThread = object as? TSGroupThread {
             return self.groupThreadIndexer.index(groupThread, transaction: transaction)
         } else if let contactThread = object as? TSContactThread {
-            guard contactThread.hasEverHadMessage else {
+            guard contactThread.shouldThreadBeVisible else {
                 // If we've never sent/received a message in a TSContactThread,
                 // then we want it to appear in the "Other Contacts" section rather
                 // than in the "Conversations" section.
@@ -241,6 +223,10 @@ public class FullTextSearchFinder: NSObject {
             }
             return self.contactThreadIndexer.index(contactThread, transaction: transaction)
         } else if let message = object as? TSMessage {
+            guard !message.isViewOnceMessage else {
+                // Don't index "view-once messages".
+                return nil
+            }
             return self.messageIndexer.index(message, transaction: transaction)
         } else if let signalAccount = object as? SignalAccount {
             return self.recipientIndexer.index(signalAccount.recipientId, transaction: transaction)
@@ -254,7 +240,7 @@ public class FullTextSearchFinder: NSObject {
     private static let dbExtensionName: String = "FullTextSearchFinderExtension"
 
     private func ext(transaction: YapDatabaseReadTransaction) -> YapDatabaseFullTextSearchTransaction? {
-        return transaction.ext(FullTextSearchFinder.dbExtensionName) as? YapDatabaseFullTextSearchTransaction
+        return transaction.safeFullTextSearchTransaction(FullTextSearchFinder.dbExtensionName)
     }
 
     @objc
@@ -277,9 +263,7 @@ public class FullTextSearchFinder: NSObject {
         let contentColumnName = "content"
 
         let handler = YapDatabaseFullTextSearchHandler.withObjectBlock { (transaction: YapDatabaseReadTransaction, dict: NSMutableDictionary, _: String, _: String, object: Any) in
-            if let content: String = indexContent(object: object, transaction: transaction) {
-                dict[contentColumnName] = content
-            }
+            dict[contentColumnName] = indexContent(object: object, transaction: transaction)
         }
 
         // update search index on contact name changes?

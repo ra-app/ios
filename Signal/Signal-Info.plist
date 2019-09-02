@@ -2,6 +2,15 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>BuildDetails</key>
+	<dict>
+		<key>CarthageVersion</key>
+		<string>0.33.0</string>
+		<key>OSXVersion</key>
+		<string>10.14.6</string>
+		<key>WebRTCCommit</key>
+		<string>e742b8b9bc8f2c6d088d9a212fa326ebbba52784 M75 working w/ iOS9</string>
+	</dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
 	<key>CFBundleDisplayName</key>
@@ -21,7 +30,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>2.30.1</string>
+	<string>2.41.1</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -38,13 +47,13 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>2.30.1.0</string>
+	<string>2.41.1.2</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>LOGS_EMAIL</key>
-	<string>support@whispersystems.org</string>
+	<string>support@signal.org</string>
 	<key>LOGS_URL</key>
-	<string>https://github.com/WhisperSystems/Signal-iOS/issues</string>
+	<string>https://github.com/signalapp/Signal-iOS/issues</string>
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.social-networking</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -56,6 +65,34 @@
 			<key>amazonaws.com</key>
 			<dict>
 				<key>NSIncludesSubdomains</key>
+				<true/>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+				<false/>
+			</dict>
+			<key>api-staging.backup.signal.org</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+				<false/>
+			</dict>
+			<key>api-staging.directory.signal.org</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+				<false/>
+			</dict>
+			<key>api.backup.signal.org</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
+				<false/>
+			</dict>
+			<key>api.directory.signal.org</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
 				<true/>
 				<key>NSThirdPartyExceptionRequiresForwardSecrecy</key>
 				<false/>
@@ -122,10 +159,6 @@
 	</array>
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleLightContent</string>
-	<key>UISupportedInterfaceOrientations</key>
-	<array>
-		<string>UIInterfaceOrientationPortrait</string>
-	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
 </dict>

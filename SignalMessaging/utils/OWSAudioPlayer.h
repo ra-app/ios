@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 NS_ASSUME_NONNULL_BEGIN
@@ -17,9 +17,20 @@ typedef NS_ENUM(NSInteger, AudioPlaybackState) {
 
 - (void)setAudioProgress:(CGFloat)progress duration:(CGFloat)duration;
 
+@optional
+- (void)audioPlayerDidFinish;
+
 @end
 
 #pragma mark -
+
+typedef NS_ENUM(NSUInteger, OWSAudioBehavior) {
+    OWSAudioBehavior_Unknown,
+    OWSAudioBehavior_Playback,
+    OWSAudioBehavior_AudioMessagePlayback,
+    OWSAudioBehavior_PlayAndRecord,
+    OWSAudioBehavior_Call,
+};
 
 @interface OWSAudioPlayer : NSObject
 
@@ -31,19 +42,18 @@ typedef NS_ENUM(NSInteger, AudioPlaybackState) {
 
 @property (nonatomic) BOOL isLooping;
 
-- (instancetype)initWithMediaUrl:(NSURL *)mediaUrl;
+- (instancetype)initWithMediaUrl:(NSURL *)mediaUrl audioBehavior:(OWSAudioBehavior)audioBehavior;
 
-- (instancetype)initWithMediaUrl:(NSURL *)mediaUrl delegate:(id<OWSAudioPlayerDelegate>)delegate;
+- (instancetype)initWithMediaUrl:(NSURL *)mediaUrl
+                     audioBehavior:(OWSAudioBehavior)audioBehavior
+                        delegate:(id<OWSAudioPlayerDelegate>)delegate;
 
-// respects silent switch
-- (void)playWithCurrentAudioCategory;
-
-// will ensure sound is audible, even if silent switch is enabled
-- (void)playWithPlaybackAudioCategory;
-
+- (void)play;
 - (void)pause;
+- (void)setupAudioPlayer;
 - (void)stop;
 - (void)togglePlayState;
+- (void)setCurrentTime:(NSTimeInterval)currentTime;
 
 @end
 

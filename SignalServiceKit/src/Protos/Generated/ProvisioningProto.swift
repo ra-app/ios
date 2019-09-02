@@ -3,6 +3,7 @@
 //
 
 import Foundation
+import SignalCoreKit
 
 // WARNING: This code is generated. Only edit within the markers.
 
@@ -16,14 +17,23 @@ public enum ProvisioningProtoError: Error {
 
     // MARK: - ProvisioningProtoProvisionEnvelopeBuilder
 
+    @objc public class func builder(publicKey: Data, body: Data) -> ProvisioningProtoProvisionEnvelopeBuilder {
+        return ProvisioningProtoProvisionEnvelopeBuilder(publicKey: publicKey, body: body)
+    }
+
+    // asBuilder() constructs a builder that reflects the proto's contents.
+    @objc public func asBuilder() -> ProvisioningProtoProvisionEnvelopeBuilder {
+        let builder = ProvisioningProtoProvisionEnvelopeBuilder(publicKey: publicKey, body: body)
+        return builder
+    }
+
     @objc public class ProvisioningProtoProvisionEnvelopeBuilder: NSObject {
 
         private var proto = ProvisioningProtos_ProvisionEnvelope()
 
-        @objc public override init() {}
+        @objc fileprivate override init() {}
 
-        // Initializer for required fields
-        @objc public init(publicKey: Data, body: Data) {
+        @objc fileprivate init(publicKey: Data, body: Data) {
             super.init()
 
             setPublicKey(publicKey)
@@ -91,6 +101,10 @@ public enum ProvisioningProtoError: Error {
                                                         body: body)
         return result
     }
+
+    @objc public override var debugDescription: String {
+        return "\(proto)"
+    }
 }
 
 #if DEBUG
@@ -115,14 +129,23 @@ extension ProvisioningProtoProvisionEnvelope.ProvisioningProtoProvisionEnvelopeB
 
     // MARK: - ProvisioningProtoProvisionMessageBuilder
 
+    @objc public class func builder(identityKeyPublic: Data, identityKeyPrivate: Data, number: String, provisioningCode: String, userAgent: String, profileKey: Data, readReceipts: Bool) -> ProvisioningProtoProvisionMessageBuilder {
+        return ProvisioningProtoProvisionMessageBuilder(identityKeyPublic: identityKeyPublic, identityKeyPrivate: identityKeyPrivate, number: number, provisioningCode: provisioningCode, userAgent: userAgent, profileKey: profileKey, readReceipts: readReceipts)
+    }
+
+    // asBuilder() constructs a builder that reflects the proto's contents.
+    @objc public func asBuilder() -> ProvisioningProtoProvisionMessageBuilder {
+        let builder = ProvisioningProtoProvisionMessageBuilder(identityKeyPublic: identityKeyPublic, identityKeyPrivate: identityKeyPrivate, number: number, provisioningCode: provisioningCode, userAgent: userAgent, profileKey: profileKey, readReceipts: readReceipts)
+        return builder
+    }
+
     @objc public class ProvisioningProtoProvisionMessageBuilder: NSObject {
 
         private var proto = ProvisioningProtos_ProvisionMessage()
 
-        @objc public override init() {}
+        @objc fileprivate override init() {}
 
-        // Initializer for required fields
-        @objc public init(identityKeyPublic: Data, identityKeyPrivate: Data, number: String, provisioningCode: String, userAgent: String, profileKey: Data, readReceipts: Bool) {
+        @objc fileprivate init(identityKeyPublic: Data, identityKeyPrivate: Data, number: String, provisioningCode: String, userAgent: String, profileKey: Data, readReceipts: Bool) {
             super.init()
 
             setIdentityKeyPublic(identityKeyPublic)
@@ -264,6 +287,10 @@ extension ProvisioningProtoProvisionEnvelope.ProvisioningProtoProvisionEnvelopeB
                                                        profileKey: profileKey,
                                                        readReceipts: readReceipts)
         return result
+    }
+
+    @objc public override var debugDescription: String {
+        return "\(proto)"
     }
 }
 

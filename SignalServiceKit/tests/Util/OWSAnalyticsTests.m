@@ -2,13 +2,13 @@
 //  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
 //
 
-#import "NSData+OWS.h"
 #import "OWSAnalytics.h"
-#import "SSKBaseTest.h"
+#import "SSKBaseTestObjC.h"
+#import <SignalCoreKit/NSData+OWS.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface OWSAnalyticsTests : SSKBaseTest
+@interface OWSAnalyticsTests : SSKBaseTestObjC
 
 @end
 

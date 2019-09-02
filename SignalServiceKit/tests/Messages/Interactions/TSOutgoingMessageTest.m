@@ -1,15 +1,15 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "TSOutgoingMessage.h"
 #import "OWSPrimaryStorage.h"
-#import "SSKBaseTest.h"
+#import "SSKBaseTestObjC.h"
 #import "TSContactThread.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface TSOutgoingMessageTest : SSKBaseTest
+@interface TSOutgoingMessageTest : SSKBaseTestObjC
 
 @property (nonatomic) TSContactThread *thread;
 
@@ -42,8 +42,9 @@ NS_ASSUME_NONNULL_BEGIN
                                                      isVoiceMessage:NO
                                                    groupMetaMessage:TSGroupMetaMessageUnspecified
                                                       quotedMessage:nil
-                                                       contactShare:nil];
-    [self readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+                                                       contactShare:nil
+                                                        linkPreview:nil];
+    [self yapWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
         XCTAssertFalse([message shouldStartExpireTimerWithTransaction:transaction]);
     }];
 }
@@ -60,9 +61,10 @@ NS_ASSUME_NONNULL_BEGIN
                                                      isVoiceMessage:NO
                                                    groupMetaMessage:TSGroupMetaMessageUnspecified
                                                       quotedMessage:nil
-                                                       contactShare:nil];
-    [self readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
-        [message updateWithSentRecipient:self.contactId transaction:transaction];
+                                                       contactShare:nil
+                                                        linkPreview:nil];
+    [self yapWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+        [message updateWithSentRecipient:self.contactId wasSentByUD:NO transaction:transaction];
         XCTAssertTrue([message shouldStartExpireTimerWithTransaction:transaction]);
     }];
 }
@@ -79,8 +81,9 @@ NS_ASSUME_NONNULL_BEGIN
                                                      isVoiceMessage:NO
                                                    groupMetaMessage:TSGroupMetaMessageUnspecified
                                                       quotedMessage:nil
-                                                       contactShare:nil];
-    [self readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+                                                       contactShare:nil
+                                                        linkPreview:nil];
+    [self yapWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
         XCTAssertFalse([message shouldStartExpireTimerWithTransaction:transaction]);
     }];
 }
@@ -97,8 +100,9 @@ NS_ASSUME_NONNULL_BEGIN
                                                      isVoiceMessage:NO
                                                    groupMetaMessage:TSGroupMetaMessageUnspecified
                                                       quotedMessage:nil
-                                                       contactShare:nil];
-    [self readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+                                                       contactShare:nil
+                                                        linkPreview:nil];
+    [self yapWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
         [message updateWithMarkingAllUnsentRecipientsAsSendingWithTransaction:transaction];
         XCTAssertFalse([message shouldStartExpireTimerWithTransaction:transaction]);
     }];

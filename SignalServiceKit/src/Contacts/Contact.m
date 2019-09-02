@@ -1,17 +1,16 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "Contact.h"
-#import "Cryptography.h"
-#import "NSString+SSK.h"
 #import "OWSPrimaryStorage.h"
 #import "PhoneNumber.h"
 #import "SSKEnvironment.h"
 #import "SignalRecipient.h"
 #import "TSAccountManager.h"
-
-@import Contacts;
+#import <Contacts/Contacts.h>
+#import <SignalCoreKit/Cryptography.h>
+#import <SignalCoreKit/NSString+OWS.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -45,7 +44,16 @@ NS_ASSUME_NONNULL_BEGIN
 
     NSMutableArray<NSString *> *phoneNumbers = [NSMutableArray new];
     NSMutableDictionary<NSString *, NSString *> *phoneNumberNameMap = [NSMutableDictionary new];
-    for (CNLabeledValue *phoneNumberField in cnContact.phoneNumbers) {
+    const NSUInteger kMaxPhoneNumbersConsidered = 50;
+
+    NSArray<CNLabeledValue *> *consideredPhoneNumbers;
+    if (cnContact.phoneNumbers.count <= kMaxPhoneNumbersConsidered) {
+        consideredPhoneNumbers = cnContact.phoneNumbers;
+    } else {
+        OWSLogInfo(@"For perf, only considering the first %lu phone numbers for contact with many numbers.", (unsigned long)kMaxPhoneNumbersConsidered);
+        consideredPhoneNumbers = [cnContact.phoneNumbers subarrayWithRange:NSMakeRange(0, kMaxPhoneNumbersConsidered)];
+    }
+    for (CNLabeledValue *phoneNumberField in consideredPhoneNumbers) {
         if ([phoneNumberField.value isKindOfClass:[CNPhoneNumber class]]) {
             CNPhoneNumber *phoneNumber = (CNPhoneNumber *)phoneNumberField.value;
             [phoneNumbers addObject:phoneNumber.stringValue];
@@ -212,8 +220,9 @@ NS_ASSUME_NONNULL_BEGIN
     __block NSMutableArray *result = [NSMutableArray array];
 
     for (PhoneNumber *number in [self.parsedPhoneNumbers sortedArrayUsingSelector:@selector(compare:)]) {
-        SignalRecipient *_Nullable signalRecipient =
-            [SignalRecipient registeredRecipientForRecipientId:number.toE164 transaction:transaction];
+        SignalRecipient *_Nullable signalRecipient = [SignalRecipient registeredRecipientForRecipientId:number.toE164
+                                                                                        mustHaveDevices:YES
+                                                                                            transaction:transaction];
         if (signalRecipient) {
             [result addObject:signalRecipient];
         }
@@ -259,7 +268,6 @@ NS_ASSUME_NONNULL_BEGIN
     OWSAssertDebug([self.textSecureIdentifiers containsObject:recipientId]);
 
     NSString *value = self.phoneNumberNameMap[recipientId];
-    OWSAssertDebug(value);
     if (!value) {
         return NSLocalizedString(@"PHONE_NUMBER_TYPE_UNKNOWN",
             @"Label used when we don't what kind of phone number it is (e.g. mobile/work/home).");

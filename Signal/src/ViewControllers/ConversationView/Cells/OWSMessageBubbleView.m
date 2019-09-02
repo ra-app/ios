@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSMessageBubbleView.h"
@@ -18,13 +18,13 @@
 #import "RAAPP-Swift.h"
 #import "UIColor+OWS.h"
 #import <SignalMessaging/UIView+OWS.h>
+#import <SignalServiceKit/MIMETypeUtil.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
-    = UIDataDetectorTypeLink | UIDataDetectorTypeAddress | UIDataDetectorTypeCalendarEvent;
-
-@interface OWSMessageBubbleView () <OWSQuotedMessageViewDelegate, OWSContactShareButtonsViewDelegate>
+@interface OWSMessageBubbleView () <OWSQuotedMessageViewDelegate,
+    OWSContactShareButtonsViewDelegate,
+    UITextViewDelegate>
 
 @property (nonatomic) OWSBubbleView *bubbleView;
 
@@ -40,6 +40,8 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
 
 @property (nonatomic, nullable) UIView *bodyMediaView;
 
+@property (nonatomic) LinkPreviewView *linkPreviewView;
+
 // Should lazy-load expensive view contents (images, etc.).
 // Should do nothing if view is already loaded.
 @property (nonatomic, nullable) dispatch_block_t loadCellContentBlock;
@@ -52,11 +54,29 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
 
 @property (nonatomic, nullable) OWSContactShareButtonsView *contactShareButtonsView;
 
+@property (nonatomic) BOOL isHandlingPan;
+
 @end
 
 #pragma mark -
 
 @implementation OWSMessageBubbleView
+
+#pragma mark - Dependencies
+
+- (OWSAttachmentDownloads *)attachmentDownloads
+{
+    return SSKEnvironment.shared.attachmentDownloads;
+}
+
+- (TSAccountManager *)tsAccountManager
+{
+    OWSAssertDebug(SSKEnvironment.shared.tsAccountManager);
+
+    return SSKEnvironment.shared.tsAccountManager;
+}
+
+#pragma mark -
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
@@ -96,9 +116,9 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
     [self.senderNameLabel ows_autoPinToSuperviewMargins];
 
     self.bodyTextView = [self newTextView];
-    // Setting dataDetectorTypes is expensive.  Do it just once.
-    self.bodyTextView.dataDetectorTypes = kOWSAllowedDataDetectorTypes;
     self.bodyTextView.hidden = YES;
+
+    self.linkPreviewView = [[LinkPreviewView alloc] initWithDraftDelegate:nil];
 
     self.footerView = [OWSMessageFooterView new];
 }
@@ -114,6 +134,7 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
     textView.contentInset = UIEdgeInsetsZero;
     textView.textContainer.lineFragmentPadding = 0;
     textView.scrollEnabled = NO;
+    textView.delegate = self;
     return textView;
 }
 
@@ -164,35 +185,11 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
     return self.viewItem.displayableBodyText;
 }
 
-- (nullable TSAttachmentStream *)attachmentStream
-{
-    // This should always be valid for the appropriate cell types.
-    OWSAssertDebug(self.viewItem.attachmentStream);
-
-    return self.viewItem.attachmentStream;
-}
-
-- (nullable TSAttachmentPointer *)attachmentPointer
-{
-    // This should always be valid for the appropriate cell types.
-    OWSAssertDebug(self.viewItem.attachmentPointer);
-
-    return self.viewItem.attachmentPointer;
-}
-
 - (TSMessage *)message
 {
     OWSAssertDebug([self.viewItem.interaction isKindOfClass:[TSMessage class]]);
 
     return (TSMessage *)self.viewItem.interaction;
-}
-
-- (CGSize)mediaSize
-{
-    // This should always be valid for the appropriate cell types.
-    OWSAssertDebug(self.viewItem.mediaSize.width > 0 && self.viewItem.mediaSize.height > 0);
-
-    return self.viewItem.mediaSize;
 }
 
 - (BOOL)isQuotedReply
@@ -219,28 +216,6 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
 - (BOOL)isOutgoing
 {
     return self.viewItem.interaction.interactionType == OWSInteractionType_OutgoingMessage;
-}
-
-#pragma mark -
-
-- (BOOL)hasBodyTextContent
-{
-    switch (self.cellType) {
-        case OWSMessageCellType_Unknown:
-        case OWSMessageCellType_TextMessage:
-        case OWSMessageCellType_OversizeTextMessage:
-            return YES;
-        case OWSMessageCellType_GenericAttachment:
-        case OWSMessageCellType_DownloadingAttachment:
-        case OWSMessageCellType_StillImage:
-        case OWSMessageCellType_AnimatedImage:
-        case OWSMessageCellType_Audio:
-        case OWSMessageCellType_Video:
-            // Is there a caption?
-            return self.hasBodyText;
-        case OWSMessageCellType_ContactShare:
-            return NO;
-    }
 }
 
 #pragma mark - Load
@@ -299,33 +274,28 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
     UIView *_Nullable bodyMediaView = nil;
     switch (self.cellType) {
         case OWSMessageCellType_Unknown:
-        case OWSMessageCellType_TextMessage:
-        case OWSMessageCellType_OversizeTextMessage:
-            break;
-        case OWSMessageCellType_StillImage:
-            OWSAssertDebug(self.viewItem.attachmentStream);
-            bodyMediaView = [self loadViewForStillImage];
-            break;
-        case OWSMessageCellType_AnimatedImage:
-            OWSAssertDebug(self.viewItem.attachmentStream);
-            bodyMediaView = [self loadViewForAnimatedImage];
-            break;
-        case OWSMessageCellType_Video:
-            OWSAssertDebug(self.viewItem.attachmentStream);
-            bodyMediaView = [self loadViewForVideo];
+        case OWSMessageCellType_TextOnlyMessage:
             break;
         case OWSMessageCellType_Audio:
-            OWSAssertDebug(self.viewItem.attachmentStream);
             bodyMediaView = [self loadViewForAudio];
             break;
         case OWSMessageCellType_GenericAttachment:
             bodyMediaView = [self loadViewForGenericAttachment];
             break;
-        case OWSMessageCellType_DownloadingAttachment:
-            bodyMediaView = [self loadViewForDownloadingAttachment];
-            break;
         case OWSMessageCellType_ContactShare:
             bodyMediaView = [self loadViewForContactShare];
+            break;
+        case OWSMessageCellType_MediaMessage:
+            bodyMediaView = [self loadViewForMediaAlbum];
+            break;
+        case OWSMessageCellType_OversizeTextDownloading:
+            bodyMediaView = [self loadViewForOversizeTextDownload];
+            break;
+        case OWSMessageCellType_StickerMessage:
+            OWSFailDebug(@"Stickers should not be rendered with this view.");
+            break;
+        case OWSMessageCellType_ViewOnce:
+            OWSFailDebug(@"View-once messages should not be rendered with this view.");
             break;
     }
 
@@ -351,14 +321,6 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
 
             if (self.hasBodyMediaWithThumbnail) {
                 [self.stackView addArrangedSubview:bodyMediaView];
-
-                OWSBubbleShapeView *strokeView = [OWSBubbleShapeView bubbleDrawView];
-                strokeView.strokeThickness = CGHairlineWidth();
-                strokeView.strokeColor = (Theme.isDarkThemeEnabled ? [UIColor colorWithWhite:1.f alpha:0.2f]
-                                                                   : [UIColor colorWithWhite:0.f alpha:0.2f]);
-                [bodyMediaView addSubview:strokeView];
-                [self.bubbleView addPartnerView:strokeView];
-                [self.viewConstraints addObjectsFromArray:[strokeView ows_autoPinToSuperviewEdges]];
             } else {
                 OWSAssertDebug(self.cellType == OWSMessageCellType_ContactShare);
 
@@ -381,6 +343,19 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
         } else {
             [textViews addObject:bodyMediaView];
         }
+    }
+
+    if (self.viewItem.linkPreview) {
+        if (self.isQuotedReply) {
+            UIView *spacerView = [UIView containerView];
+            [spacerView autoSetDimension:ALDimensionHeight toSize:self.bodyMediaQuotedReplyVSpacing];
+            [spacerView setCompressionResistanceHigh];
+            [self.stackView addArrangedSubview:spacerView];
+        }
+
+        self.linkPreviewView.state = self.linkPreviewState;
+        [self.stackView addArrangedSubview:self.linkPreviewView];
+        [self.linkPreviewView addBorderViewsWithBubbleView:self.bubbleView];
     }
 
     // We render malformed messages as "empty text" messages,
@@ -428,9 +403,10 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
         [self.viewConstraints addObjectsFromArray:[gradientView ows_autoPinToSuperviewEdges]];
 
         [self.footerView configureWithConversationViewItem:self.viewItem
-                                         isOverlayingMedia:YES
                                          conversationStyle:self.conversationStyle
-                                                isIncoming:self.isIncoming];
+                                                isIncoming:self.isIncoming
+                                         isOverlayingMedia:YES
+                                           isOutsideBubble:NO];
         [bodyMediaView addSubview:self.footerView];
 
         bodyMediaView.layoutMargins = UIEdgeInsetsZero;
@@ -442,9 +418,10 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
         ]];
     } else {
         [self.footerView configureWithConversationViewItem:self.viewItem
-                                         isOverlayingMedia:NO
                                          conversationStyle:self.conversationStyle
-                                                isIncoming:self.isIncoming];
+                                                isIncoming:self.isIncoming
+                                         isOverlayingMedia:NO
+                                           isOutsideBubble:NO];
         [textViews addObject:self.footerView];
     }
 
@@ -496,8 +473,8 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
     UIView *proxyView = [UIView new];
     [self.stackView addArrangedSubview:proxyView];
 
-    OWSBubbleShapeView *shadowView = [OWSBubbleShapeView bubbleShadowView];
-    OWSBubbleShapeView *clipView = [OWSBubbleShapeView bubbleClipView];
+    OWSBubbleShapeView *shadowView = [[OWSBubbleShapeView alloc] initShadow];
+    OWSBubbleShapeView *clipView = [[OWSBubbleShapeView alloc] initClip];
 
     [self addSubview:shadowView];
     [self addSubview:clipView];
@@ -580,11 +557,11 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
 {
     BOOL hasOnlyBodyMediaView = (self.hasBodyMediaWithThumbnail && self.stackView.subviews.count == 1);
     if (!hasOnlyBodyMediaView) {
-        self.bubbleView.bubbleColor = self.bubbleColor;
+        self.bubbleView.fillColor = self.bubbleColor;
     } else {
         // Media-only messages should have no background color; they will fill the bubble's bounds
         // and we don't want artifacts at the edges.
-        self.bubbleView.bubbleColor = nil;
+        self.bubbleView.fillColor = nil;
     }
 }
 
@@ -600,24 +577,47 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
 {
     switch (self.cellType) {
         case OWSMessageCellType_Unknown:
-        case OWSMessageCellType_TextMessage:
-        case OWSMessageCellType_OversizeTextMessage:
-            return NO;
-        case OWSMessageCellType_StillImage:
-        case OWSMessageCellType_AnimatedImage:
-        case OWSMessageCellType_Video:
-            return YES;
+        case OWSMessageCellType_TextOnlyMessage:
         case OWSMessageCellType_Audio:
         case OWSMessageCellType_GenericAttachment:
-        case OWSMessageCellType_DownloadingAttachment:
         case OWSMessageCellType_ContactShare:
+        case OWSMessageCellType_OversizeTextDownloading:
+            return NO;
+        case OWSMessageCellType_MediaMessage:
+            return YES;
+        case OWSMessageCellType_StickerMessage:
+            OWSFailDebug(@"Stickers should not be rendered with this view.");
+            return NO;
+        case OWSMessageCellType_ViewOnce:
+            OWSFailDebug(@"View-once messages should not be rendered with this view.");
+            return NO;
+    }
+}
+
+- (BOOL)hasBodyMediaView {
+    switch (self.cellType) {
+        case OWSMessageCellType_Unknown:
+        case OWSMessageCellType_TextOnlyMessage:
+            return NO;
+        case OWSMessageCellType_Audio:
+        case OWSMessageCellType_GenericAttachment:
+        case OWSMessageCellType_ContactShare:
+        case OWSMessageCellType_MediaMessage:
+        case OWSMessageCellType_OversizeTextDownloading:
+            return YES;
+        case OWSMessageCellType_StickerMessage:
+            OWSFailDebug(@"Stickers should not be rendered with this view.");
+            return NO;
+        case OWSMessageCellType_ViewOnce:
+            OWSFailDebug(@"View-once messages should not be rendered with this view.");
             return NO;
     }
 }
 
 - (BOOL)hasFullWidthMediaView
 {
-    return (self.hasBodyMediaWithThumbnail || self.cellType == OWSMessageCellType_ContactShare);
+    return (self.hasBodyMediaWithThumbnail || self.cellType == OWSMessageCellType_ContactShare
+        || self.cellType == OWSMessageCellType_MediaMessage);
 }
 
 - (BOOL)canFooterOverlayMedia
@@ -627,8 +627,14 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
 
 - (BOOL)hasBottomFooter
 {
-    BOOL shouldFooterOverlayMedia = (self.canFooterOverlayMedia && !self.hasBodyText);
-    return !self.viewItem.shouldHideFooter && !shouldFooterOverlayMedia;
+    BOOL shouldFooterOverlayMedia = (self.canFooterOverlayMedia && self.hasBodyMediaView && !self.hasBodyText);
+    if (self.viewItem.shouldHideFooter) {
+        return NO;
+    } else if (shouldFooterOverlayMedia) {
+        return NO;
+    } else {
+        return YES;
+    }
 }
 
 - (BOOL)insertAnyTextViewsIntoStackView:(NSArray<UIView *> *)textViews
@@ -649,41 +655,6 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
     return YES;
 }
 
-// We now eagerly create our view hierarchy (to do this exactly once per cell usage)
-// but lazy-load any expensive media (photo, gif, etc.) used in those views. Note that
-// this lazy-load can fail, in which case we modify the view hierarchy to use an "error"
-// state. The didCellMediaFailToLoad reflects media load fails.
-- (nullable id)tryToLoadCellMedia:(nullable id (^)(void))loadCellMediaBlock
-                        mediaView:(UIView *)mediaView
-                         cacheKey:(NSString *)cacheKey
-                     canLoadAsync:(BOOL)canLoadAsync
-{
-    OWSAssertDebug(self.attachmentStream);
-    OWSAssertDebug(mediaView);
-    OWSAssertDebug(cacheKey);
-    OWSAssertDebug(self.cellMediaCache);
-
-    if (self.viewItem.didCellMediaFailToLoad) {
-        return nil;
-    }
-
-    id _Nullable cellMedia = [self.cellMediaCache objectForKey:cacheKey];
-    if (cellMedia) {
-        OWSLogVerbose(@"cell media cache hit");
-        return cellMedia;
-    }
-    cellMedia = loadCellMediaBlock();
-    if (cellMedia) {
-        OWSLogVerbose(@"cell media cache miss");
-        [self.cellMediaCache setObject:cellMedia forKey:cacheKey];
-    } else if (!canLoadAsync) {
-        OWSLogError(@"Failed to load cell media: %@", self.attachmentStream.originalMediaURL);
-        self.viewItem.didCellMediaFailToLoad = YES;
-        [self showAttachmentErrorViewWithMediaView:mediaView];
-    }
-    return cellMedia;
-}
-
 - (CGFloat)textViewVSpacing
 {
     return 2.f;
@@ -697,6 +668,16 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
 - (CGFloat)quotedReplyTopMargin
 {
     return 6.f;
+}
+
+- (nullable LinkPreviewSent *)linkPreviewState
+{
+    if (!self.viewItem.linkPreview) {
+        return nil;
+    }
+    return [[LinkPreviewSent alloc] initWithLinkPreview:self.viewItem.linkPreview
+                                        imageAttachment:self.viewItem.linkPreviewAttachment
+                                      conversationStyle:self.conversationStyle];
 }
 
 #pragma mark - Load / Unload
@@ -729,14 +710,16 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
         shouldIgnoreEvents = outgoingMessage.messageState != TSOutgoingMessageStateSent;
     }
     [self.class loadForTextDisplay:self.bodyTextView
-                              text:self.displayableBodyText.displayText
+                   displayableText:self.displayableBodyText
+                        searchText:self.delegate.lastSearchedText
                          textColor:self.bodyTextColor
                               font:self.textMessageFont
                 shouldIgnoreEvents:shouldIgnoreEvents];
 }
 
 + (void)loadForTextDisplay:(OWSMessageTextView *)textView
-                      text:(NSString *)text
+           displayableText:(DisplayableText *)displayableText
+                searchText:(nullable NSString *)searchText
                  textColor:(UIColor *)textColor
                       font:(UIFont *)font
         shouldIgnoreEvents:(BOOL)shouldIgnoreEvents
@@ -752,8 +735,35 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
     };
     textView.shouldIgnoreEvents = shouldIgnoreEvents;
 
+    NSString *text = displayableText.displayText;
+
+    NSMutableAttributedString *attributedText = [[NSMutableAttributedString alloc]
+        initWithString:text
+            attributes:@{ NSFontAttributeName : font, NSForegroundColorAttributeName : textColor }];
+    if (searchText.length >= ConversationSearchController.kMinimumSearchTextLength) {
+        NSString *searchableText = [FullTextSearchFinder normalizeWithText:searchText];
+        NSError *error;
+        NSRegularExpression *regex =
+            [[NSRegularExpression alloc] initWithPattern:[NSRegularExpression escapedPatternForString:searchableText]
+                                                 options:NSRegularExpressionCaseInsensitive
+                                                   error:&error];
+        OWSAssertDebug(error == nil);
+        for (NSTextCheckingResult *match in
+            [regex matchesInString:text options:NSMatchingWithoutAnchoringBounds range:NSMakeRange(0, text.length)]) {
+
+            OWSAssertDebug(match.range.length >= ConversationSearchController.kMinimumSearchTextLength);
+            [attributedText addAttribute:NSBackgroundColorAttributeName value:UIColor.yellowColor range:match.range];
+            [attributedText addAttribute:NSForegroundColorAttributeName value:UIColor.ows_blackColor range:match.range];
+        }
+    }
+
+    [textView ensureShouldLinkifyText:displayableText.shouldAllowLinkification];
+
     // For perf, set text last. Otherwise changing font/color is more expensive.
-    textView.text = text;
+
+    // We use attributedText even when we're not highlighting searched text to esnure any lingering
+    // attributes are reset.
+    textView.attributedText = attributedText;
 }
 
 - (BOOL)shouldShowSenderName
@@ -767,30 +777,9 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
     OWSAssertDebug(self.shouldShowSenderName);
 
     self.senderNameLabel.textColor = self.bodyTextColor;
-    self.senderNameLabel.font = OWSMessageBubbleView.senderNameFont;
+    self.senderNameLabel.font = OWSMessageView.senderNameFont;
     self.senderNameLabel.attributedText = self.viewItem.senderName;
     self.senderNameLabel.lineBreakMode = NSLineBreakByTruncatingTail;
-}
-
-+ (UIFont *)senderNameFont
-{
-    return UIFont.ows_dynamicTypeSubheadlineFont.ows_mediumWeight;
-}
-
-+ (NSDictionary *)senderNamePrimaryAttributes
-{
-    return @{
-        NSFontAttributeName : self.senderNameFont,
-        NSForegroundColorAttributeName : ConversationStyle.bubbleTextColorIncoming,
-    };
-}
-
-+ (NSDictionary *)senderNameSecondaryAttributes
-{
-    return @{
-        NSFontAttributeName : self.senderNameFont.ows_italic,
-        NSForegroundColorAttributeName : ConversationStyle.bubbleTextColorIncoming,
-    };
 }
 
 - (BOOL)hasTapForMore
@@ -820,124 +809,50 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
     return tapForMoreLabel;
 }
 
-- (UIView *)loadViewForStillImage
+- (UIView *)loadViewForMediaAlbum
 {
-    OWSAssertDebug(self.attachmentStream);
-    OWSAssertDebug([self.attachmentStream isImage]);
+    OWSAssertDebug(self.viewItem.mediaAlbumItems);
 
-    UIImageView *stillImageView = [UIImageView new];
-    // We need to specify a contentMode since the size of the image
-    // might not match the aspect ratio of the view.
-    stillImageView.contentMode = UIViewContentModeScaleAspectFill;
-    // Use trilinear filters for better scaling quality at
-    // some performance cost.
-    stillImageView.layer.minificationFilter = kCAFilterTrilinear;
-    stillImageView.layer.magnificationFilter = kCAFilterTrilinear;
-    stillImageView.backgroundColor = [UIColor whiteColor];
-    [self addAttachmentUploadViewIfNecessary];
-
-    __weak OWSMessageBubbleView *weakSelf = self;
-    __weak UIImageView *weakImageView = stillImageView;
+    OWSMediaAlbumCellView *albumView =
+        [[OWSMediaAlbumCellView alloc] initWithMediaCache:self.cellMediaCache
+                                                    items:self.viewItem.mediaAlbumItems
+                                               isOutgoing:self.isOutgoing
+                                          maxMessageWidth:self.conversationStyle.maxMediaMessageWidth];
     self.loadCellContentBlock = ^{
-        OWSMessageBubbleView *strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        OWSCAssertDebug(strongSelf.bodyMediaView == stillImageView);
-        if (stillImageView.image) {
-            return;
-        }
-        stillImageView.image = [strongSelf
-            tryToLoadCellMedia:^{
-                OWSCAssertDebug([strongSelf.attachmentStream isImage]);
-                OWSCAssertDebug([strongSelf.attachmentStream isValidImage]);
-
-                return [strongSelf.attachmentStream
-                    thumbnailImageMediumWithSuccess:^(UIImage *image) {
-                        weakImageView.image = image;
-                    }
-                    failure:^{
-                        OWSLogError(@"Could not load thumbnail.");
-                    }];
-            }
-                     mediaView:stillImageView
-                      cacheKey:strongSelf.attachmentStream.uniqueId
-                  canLoadAsync:YES];
+        [albumView loadMedia];
     };
     self.unloadCellContentBlock = ^{
-        OWSMessageBubbleView *strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        OWSCAssertDebug(strongSelf.bodyMediaView == stillImageView);
-        stillImageView.image = nil;
+        [albumView unloadMedia];
     };
 
-    return stillImageView;
-}
+    // Only apply "inner shadow" for single media, not albums.
+    if (albumView.itemViews.count == 1) {
+        UIView *itemView = albumView.itemViews.firstObject;
+        OWSBubbleShapeView *innerShadowView = [[OWSBubbleShapeView alloc]
+            initInnerShadowWithColor:(Theme.isDarkThemeEnabled ? UIColor.ows_whiteColor : UIColor.ows_blackColor)
+                              radius:0.5f
+                             opacity:0.15f];
+        [itemView addSubview:innerShadowView];
+        [self.bubbleView addPartnerView:innerShadowView];
+        [self.viewConstraints addObjectsFromArray:[innerShadowView ows_autoPinToSuperviewEdges]];
+    }
 
-- (UIView *)loadViewForAnimatedImage
-{
-    OWSAssertDebug(self.attachmentStream);
-    OWSAssertDebug([self.attachmentStream isAnimated]);
-
-    YYAnimatedImageView *animatedImageView = [[YYAnimatedImageView alloc] init];
-    // We need to specify a contentMode since the size of the image
-    // might not match the aspect ratio of the view.
-    animatedImageView.contentMode = UIViewContentModeScaleAspectFill;
-    animatedImageView.backgroundColor = [UIColor whiteColor];
-    [self addAttachmentUploadViewIfNecessary];
-
-    __weak OWSMessageBubbleView *weakSelf = self;
-    self.loadCellContentBlock = ^{
-        OWSMessageBubbleView *strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        OWSCAssertDebug(strongSelf.bodyMediaView == animatedImageView);
-        if (animatedImageView.image) {
-            return;
-        }
-        animatedImageView.image = [strongSelf
-            tryToLoadCellMedia:^{
-                OWSCAssertDebug([strongSelf.attachmentStream isAnimated]);
-                OWSCAssertDebug([strongSelf.attachmentStream isValidImage]);
-
-                NSString *_Nullable filePath = [strongSelf.attachmentStream originalFilePath];
-                YYImage *_Nullable animatedImage = nil;
-                if (strongSelf.attachmentStream.isValidImage && filePath) {
-                    animatedImage = [YYImage imageWithContentsOfFile:filePath];
-                }
-                return animatedImage;
-            }
-                     mediaView:animatedImageView
-                      cacheKey:strongSelf.attachmentStream.uniqueId
-                  canLoadAsync:NO];
-    };
-    self.unloadCellContentBlock = ^{
-        OWSMessageBubbleView *strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        OWSCAssertDebug(strongSelf.bodyMediaView == animatedImageView);
-        animatedImageView.image = nil;
-    };
-
-    return animatedImageView;
+    return albumView;
 }
 
 - (UIView *)loadViewForAudio
 {
-    OWSAssertDebug(self.attachmentStream);
-    OWSAssertDebug([self.attachmentStream isAudio]);
+    TSAttachment *attachment = (self.viewItem.attachmentStream ?: self.viewItem.attachmentPointer);
+    OWSAssertDebug(attachment);
+    OWSAssertDebug([attachment isAudio]);
 
-    OWSAudioMessageView *audioMessageView = [[OWSAudioMessageView alloc] initWithAttachment:self.attachmentStream
+    OWSAudioMessageView *audioMessageView = [[OWSAudioMessageView alloc] initWithAttachment:attachment
                                                                                  isIncoming:self.isIncoming
                                                                                    viewItem:self.viewItem
                                                                           conversationStyle:self.conversationStyle];
     self.viewItem.lastAudioMessageView = audioMessageView;
     [audioMessageView createContents];
-    [self addAttachmentUploadViewIfNecessary];
+    [self addProgressViewsIfNecessary:audioMessageView shouldShowDownloadProgress:NO];
 
     self.loadCellContentBlock = ^{
         // Do nothing.
@@ -949,75 +864,15 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
     return audioMessageView;
 }
 
-- (UIView *)loadViewForVideo
-{
-    OWSAssertDebug(self.attachmentStream);
-    OWSAssertDebug([self.attachmentStream isVideo]);
-
-    UIImageView *stillImageView = [UIImageView new];
-    // We need to specify a contentMode since the size of the image
-    // might not match the aspect ratio of the view.
-    stillImageView.contentMode = UIViewContentModeScaleAspectFill;
-    // Use trilinear filters for better scaling quality at
-    // some performance cost.
-    stillImageView.layer.minificationFilter = kCAFilterTrilinear;
-    stillImageView.layer.magnificationFilter = kCAFilterTrilinear;
-
-    UIImage *videoPlayIcon = [UIImage imageNamed:@"play_button"];
-    UIImageView *videoPlayButton = [[UIImageView alloc] initWithImage:videoPlayIcon];
-    [stillImageView addSubview:videoPlayButton];
-    [videoPlayButton autoCenterInSuperview];
-    [self addAttachmentUploadViewIfNecessaryWithAttachmentStateCallback:^(BOOL isAttachmentReady) {
-        videoPlayButton.hidden = !isAttachmentReady;
-    }];
-
-    __weak OWSMessageBubbleView *weakSelf = self;
-    __weak UIImageView *weakImageView = stillImageView;
-    self.loadCellContentBlock = ^{
-        OWSMessageBubbleView *strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        OWSCAssertDebug(strongSelf.bodyMediaView == stillImageView);
-        if (stillImageView.image) {
-            return;
-        }
-        stillImageView.image = [strongSelf
-            tryToLoadCellMedia:^{
-                OWSCAssertDebug([strongSelf.attachmentStream isVideo]);
-                OWSCAssertDebug([strongSelf.attachmentStream isValidVideo]);
-
-                return [strongSelf.attachmentStream
-                    thumbnailImageMediumWithSuccess:^(UIImage *image) {
-                        weakImageView.image = image;
-                    }
-                    failure:^{
-                        OWSLogError(@"Could not load thumbnail.");
-                    }];
-            }
-                     mediaView:stillImageView
-                      cacheKey:strongSelf.attachmentStream.uniqueId
-                  canLoadAsync:YES];
-    };
-    self.unloadCellContentBlock = ^{
-        OWSMessageBubbleView *strongSelf = weakSelf;
-        if (!strongSelf) {
-            return;
-        }
-        OWSCAssertDebug(strongSelf.bodyMediaView == stillImageView);
-        stillImageView.image = nil;
-    };
-
-    return stillImageView;
-}
-
 - (UIView *)loadViewForGenericAttachment
 {
-    OWSAssertDebug(self.viewItem.attachmentStream);
-    OWSGenericAttachmentView *attachmentView =
-        [[OWSGenericAttachmentView alloc] initWithAttachment:self.attachmentStream isIncoming:self.isIncoming];
+    TSAttachment *attachment = (self.viewItem.attachmentStream ?: self.viewItem.attachmentPointer);
+    OWSAssertDebug(attachment);
+    OWSGenericAttachmentView *attachmentView = [[OWSGenericAttachmentView alloc] initWithAttachment:attachment
+                                                                                         isIncoming:self.isIncoming
+                                                                                           viewItem:self.viewItem];
     [attachmentView createContentsWithConversationStyle:self.conversationStyle];
-    [self addAttachmentUploadViewIfNecessary];
+    [self addProgressViewsIfNecessary:attachmentView shouldShowDownloadProgress:NO];
 
     self.loadCellContentBlock = ^{
         // Do nothing.
@@ -1027,29 +882,6 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
     };
 
     return attachmentView;
-}
-
-- (UIView *)loadViewForDownloadingAttachment
-{
-    OWSAssertDebug(self.attachmentPointer);
-
-    AttachmentPointerView *downloadView =
-        [[AttachmentPointerView alloc] initWithAttachmentPointer:self.attachmentPointer
-                                                      isIncoming:self.isIncoming
-                                               conversationStyle:self.conversationStyle];
-
-    UIView *wrapper = [UIView new];
-    [wrapper addSubview:downloadView];
-    [downloadView autoPinEdgesToSuperviewEdges];
-
-    self.loadCellContentBlock = ^{
-        // Do nothing.
-    };
-    self.unloadCellContentBlock = ^{
-        // Do nothing.
-    };
-
-    return wrapper;
 }
 
 - (UIView *)loadViewForContactShare
@@ -1072,30 +904,119 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
     return contactShareView;
 }
 
-- (void)addAttachmentUploadViewIfNecessary
+- (UIView *)loadViewForOversizeTextDownload
 {
-    [self addAttachmentUploadViewIfNecessaryWithAttachmentStateCallback:nil];
+    // We can use an empty view.  The progress views will display download
+    // progress or tap-to-retry UI.
+    UIView *attachmentView = [UIView new];
+
+    [self addProgressViewsIfNecessary:attachmentView shouldShowDownloadProgress:YES];
+
+    self.loadCellContentBlock = ^{
+        // Do nothing.
+    };
+    self.unloadCellContentBlock = ^{
+        // Do nothing.
+    };
+
+    return attachmentView;
 }
 
-- (void)addAttachmentUploadViewIfNecessaryWithAttachmentStateCallback:
-    (nullable AttachmentStateBlock)attachmentStateCallback
+- (void)addProgressViewsIfNecessary:(UIView *)bodyMediaView shouldShowDownloadProgress:(BOOL)shouldShowDownloadProgress
 {
-    OWSAssertDebug(self.attachmentStream);
+    if (self.viewItem.attachmentStream) {
+        [self addUploadViewIfNecessary:bodyMediaView];
+    } else if (self.viewItem.attachmentPointer) {
+        [self addDownloadViewIfNecessary:bodyMediaView shouldShowDownloadProgress:(BOOL)shouldShowDownloadProgress];
+    }
+}
 
-    if (!attachmentStateCallback) {
-        attachmentStateCallback = ^(BOOL isAttachmentReady) {
-        };
+- (void)addUploadViewIfNecessary:(UIView *)bodyMediaView
+{
+    OWSAssertDebug(self.viewItem.attachmentStream);
+
+    if (!self.isOutgoing) {
+        return;
+    }
+    if (self.viewItem.attachmentStream.isUploaded) {
+        return;
     }
 
-    if (self.isOutgoing) {
-        if (!self.attachmentStream.isUploaded) {
-            AttachmentUploadView *attachmentUploadView =
-                [[AttachmentUploadView alloc] initWithAttachment:self.attachmentStream
-                                         attachmentStateCallback:attachmentStateCallback];
-            [self.bubbleView addSubview:attachmentUploadView];
-            [attachmentUploadView ows_autoPinToSuperviewEdges];
-        }
+    AttachmentUploadView *uploadView = [[AttachmentUploadView alloc] initWithAttachment:self.viewItem.attachmentStream];
+    [self.bubbleView addSubview:uploadView];
+    [uploadView autoPinEdgesToSuperviewEdges];
+    [uploadView setContentHuggingLow];
+    [uploadView setCompressionResistanceLow];
+}
+
+- (void)addDownloadViewIfNecessary:(UIView *)bodyMediaView shouldShowDownloadProgress:(BOOL)shouldShowDownloadProgress
+{
+    OWSAssertDebug(self.viewItem.attachmentPointer);
+
+    switch (self.viewItem.attachmentPointer.state) {
+        case TSAttachmentPointerStateFailed:
+            [self addTapToRetryView:bodyMediaView];
+            return;
+        case TSAttachmentPointerStateEnqueued:
+        case TSAttachmentPointerStateDownloading:
+            break;
     }
+    switch (self.viewItem.attachmentPointer.pointerType) {
+        case TSAttachmentPointerTypeRestoring:
+            // TODO: Show "restoring" indicator and possibly progress.
+            return;
+        case TSAttachmentPointerTypeUnknown:
+        case TSAttachmentPointerTypeIncoming:
+            break;
+    }
+    if (!shouldShowDownloadProgress) {
+        return;
+    }
+    NSString *_Nullable uniqueId = self.viewItem.attachmentPointer.uniqueId;
+    if (uniqueId.length < 1) {
+        OWSFailDebug(@"Missing uniqueId.");
+        return;
+    }
+    if ([self.attachmentDownloads downloadProgressForAttachmentId:uniqueId] == nil) {
+        OWSFailDebug(@"Missing download progress.");
+        return;
+    }
+
+    UIView *overlayView = [UIView new];
+    overlayView.backgroundColor = [self.bubbleColor colorWithAlphaComponent:0.5];
+    [bodyMediaView addSubview:overlayView];
+    [overlayView autoPinEdgesToSuperviewEdges];
+    [overlayView setContentHuggingLow];
+    [overlayView setCompressionResistanceLow];
+
+    MediaDownloadView *downloadView =
+        [[MediaDownloadView alloc] initWithAttachmentId:uniqueId radius:self.conversationStyle.maxMessageWidth * 0.1f];
+    bodyMediaView.layer.opacity = 0.5f;
+    [self.bubbleView addSubview:downloadView];
+    [downloadView autoPinEdgesToSuperviewEdges];
+    [downloadView setContentHuggingLow];
+    [downloadView setCompressionResistanceLow];
+}
+
+- (void)addTapToRetryView:(UIView *)bodyMediaView
+{
+    OWSAssertDebug(self.viewItem.attachmentPointer);
+
+    // Hide the body media view, replace with "tap to retry" indicator.
+
+    UILabel *label = [UILabel new];
+    label.text = NSLocalizedString(
+        @"ATTACHMENT_DOWNLOADING_STATUS_FAILED", @"Status label when an attachment download has failed.");
+    label.font = UIFont.ows_dynamicTypeBodyFont;
+    label.textColor = Theme.secondaryColor;
+    label.numberOfLines = 0;
+    label.lineBreakMode = NSLineBreakByWordWrapping;
+    label.textAlignment = NSTextAlignmentCenter;
+    label.backgroundColor = self.bubbleColor;
+    [bodyMediaView addSubview:label];
+    [label autoPinEdgesToSuperviewMargins];
+    [label setContentHuggingLow];
+    [label setCompressionResistanceLow];
 }
 
 - (void)showAttachmentErrorViewWithMediaView:(UIView *)mediaView
@@ -1137,79 +1058,93 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
     OWSAssertDebug(self.conversationStyle);
     OWSAssertDebug(self.conversationStyle.maxMessageWidth > 0);
 
-    CGFloat maxMessageWidth = self.conversationStyle.maxMessageWidth;
+    CGFloat maxMediaMessageWidth = self.conversationStyle.maxMediaMessageWidth;
     if (!self.hasFullWidthMediaView) {
         CGFloat hMargins = self.conversationStyle.textInsetHorizontal * 2;
-        maxMessageWidth -= hMargins;
+        maxMediaMessageWidth -= hMargins;
     }
 
     CGSize result = CGSizeZero;
     switch (self.cellType) {
         case OWSMessageCellType_Unknown:
-        case OWSMessageCellType_TextMessage:
-        case OWSMessageCellType_OversizeTextMessage: {
+        case OWSMessageCellType_TextOnlyMessage: {
             return nil;
         }
-        case OWSMessageCellType_StillImage:
-        case OWSMessageCellType_AnimatedImage:
-        case OWSMessageCellType_Video: {
-            OWSAssertDebug(self.mediaSize.width > 0);
-            OWSAssertDebug(self.mediaSize.height > 0);
-
-            // TODO: Adjust this behavior.
-
-            CGFloat contentAspectRatio = self.mediaSize.width / self.mediaSize.height;
-            // Clamp the aspect ratio so that very thin/wide content is presented
-            // in a reasonable way.
-            const CGFloat minAspectRatio = 0.35f;
-            const CGFloat maxAspectRatio = 1 / minAspectRatio;
-            contentAspectRatio = MAX(minAspectRatio, MIN(maxAspectRatio, contentAspectRatio));
-
-            const CGFloat maxMediaWidth = maxMessageWidth;
-            const CGFloat maxMediaHeight = maxMessageWidth;
-            CGFloat mediaWidth = maxMediaHeight * contentAspectRatio;
-            CGFloat mediaHeight = maxMediaHeight;
-            if (mediaWidth > maxMediaWidth) {
-                mediaWidth = maxMediaWidth;
-                mediaHeight = maxMediaWidth / contentAspectRatio;
-            }
-
-            // We don't want to blow up small images unnecessarily.
-            const CGFloat kMinimumSize = 150.f;
-            CGFloat shortSrcDimension = MIN(self.mediaSize.width, self.mediaSize.height);
-            CGFloat shortDstDimension = MIN(mediaWidth, mediaHeight);
-            if (shortDstDimension > kMinimumSize && shortDstDimension > shortSrcDimension) {
-                CGFloat factor = kMinimumSize / shortDstDimension;
-                mediaWidth *= factor;
-                mediaHeight *= factor;
-            }
-
-            result = CGSizeRound(CGSizeMake(mediaWidth, mediaHeight));
-            break;
-        }
         case OWSMessageCellType_Audio:
-            result = CGSizeMake(maxMessageWidth, OWSAudioMessageView.bubbleHeight);
+            result = CGSizeMake(maxMediaMessageWidth, OWSAudioMessageView.bubbleHeight);
             break;
         case OWSMessageCellType_GenericAttachment: {
-            OWSAssertDebug(self.viewItem.attachmentStream);
+            TSAttachment *attachment = (self.viewItem.attachmentStream ?: self.viewItem.attachmentPointer);
+            OWSAssertDebug(attachment);
             OWSGenericAttachmentView *attachmentView =
-                [[OWSGenericAttachmentView alloc] initWithAttachment:self.attachmentStream isIncoming:self.isIncoming];
+                [[OWSGenericAttachmentView alloc] initWithAttachment:attachment
+                                                          isIncoming:self.isIncoming
+                                                            viewItem:self.viewItem];
             [attachmentView createContentsWithConversationStyle:self.conversationStyle];
-            result = [attachmentView measureSizeWithMaxMessageWidth:maxMessageWidth];
+            result = [attachmentView measureSizeWithMaxMessageWidth:maxMediaMessageWidth];
             break;
         }
-        case OWSMessageCellType_DownloadingAttachment:
-            result = CGSizeMake(MIN(200, maxMessageWidth), [AttachmentPointerView measureHeight]);
-            break;
         case OWSMessageCellType_ContactShare:
             OWSAssertDebug(self.viewItem.contactShare);
 
-            result = CGSizeMake(maxMessageWidth, [OWSContactShareView bubbleHeight]);
+            result = CGSizeMake(maxMediaMessageWidth, [OWSContactShareView bubbleHeight]);
+            break;
+        case OWSMessageCellType_MediaMessage:
+            result = [OWSMediaAlbumCellView layoutSizeForMaxMessageWidth:maxMediaMessageWidth
+                                                                   items:self.viewItem.mediaAlbumItems];
+
+            if (self.viewItem.mediaAlbumItems.count == 1) {
+                // Honor the content aspect ratio for single media.
+                ConversationMediaAlbumItem *mediaAlbumItem = self.viewItem.mediaAlbumItems.firstObject;
+                if (mediaAlbumItem.mediaSize.width > 0 && mediaAlbumItem.mediaSize.height > 0) {
+                    CGSize mediaSize = mediaAlbumItem.mediaSize;
+                    CGFloat contentAspectRatio = mediaSize.width / mediaSize.height;
+                    // Clamp the aspect ratio so that very thin/wide content is presented
+                    // in a reasonable way.
+                    const CGFloat minAspectRatio = 0.35f;
+                    const CGFloat maxAspectRatio = 1 / minAspectRatio;
+                    contentAspectRatio = MAX(minAspectRatio, MIN(maxAspectRatio, contentAspectRatio));
+
+                    const CGFloat maxMediaWidth = maxMediaMessageWidth;
+                    const CGFloat maxMediaHeight = maxMediaMessageWidth;
+                    CGFloat mediaWidth = maxMediaHeight * contentAspectRatio;
+                    CGFloat mediaHeight = maxMediaHeight;
+                    if (mediaWidth > maxMediaWidth) {
+                        mediaWidth = maxMediaWidth;
+                        mediaHeight = maxMediaWidth / contentAspectRatio;
+                    }
+
+                    // We don't want to blow up small images unnecessarily.
+                    const CGFloat kMinimumSize = 150.f;
+                    CGFloat shortSrcDimension = MIN(mediaSize.width, mediaSize.height);
+                    CGFloat shortDstDimension = MIN(mediaWidth, mediaHeight);
+                    if (shortDstDimension > kMinimumSize && shortDstDimension > shortSrcDimension) {
+                        CGFloat factor = kMinimumSize / shortDstDimension;
+                        mediaWidth *= factor;
+                        mediaHeight *= factor;
+                    }
+
+                    result = CGSizeRound(CGSizeMake(mediaWidth, mediaHeight));
+                }
+            }
+            break;
+        case OWSMessageCellType_OversizeTextDownloading:
+            // There's no way to predict the size of the oversize text,
+            // so we just use a square bubble.
+            result = CGSizeMake(maxMediaMessageWidth, maxMediaMessageWidth);
+            break;
+        case OWSMessageCellType_StickerMessage:
+            OWSFailDebug(@"Stickers should not be rendered with this view.");
+            result = CGSizeZero;
+            break;
+        case OWSMessageCellType_ViewOnce:
+            OWSFailDebug(@"View-once messages should not be rendered with this view.");
+            result = CGSizeZero;
             break;
     }
 
-    OWSAssertDebug(result.width <= maxMessageWidth);
-    result.width = MIN(result.width, maxMessageWidth);
+    OWSAssertDebug(result.width <= maxMediaMessageWidth);
+    result.width = MIN(result.width, maxMediaMessageWidth);
 
     return [NSValue valueWithCGSize:CGSizeCeil(result)];
 }
@@ -1328,7 +1263,16 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
 
         if (bodyMediaSize && quotedMessageSize && self.hasFullWidthMediaView) {
             cellSize.height += self.bodyMediaQuotedReplyVSpacing;
+        } else if (quotedMessageSize && self.viewItem.linkPreview) {
+            cellSize.height += self.bodyMediaQuotedReplyVSpacing;
         }
+    }
+
+    if (self.viewItem.linkPreview) {
+        CGSize linkPreviewSize = [self.linkPreviewView measureWithSentState:self.linkPreviewState];
+        linkPreviewSize.width = MIN(linkPreviewSize.width, self.conversationStyle.maxMessageWidth);
+        cellSize.width = MAX(cellSize.width, linkPreviewSize.width);
+        cellSize.height += linkPreviewSize.height;
     }
 
     NSValue *_Nullable bodyTextSize = [self bodyTextSize];
@@ -1410,25 +1354,6 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
     return [self.conversationStyle bubbleTextColorWithMessage:message];
 }
 
-- (BOOL)isMediaBeingSent
-{
-    if (self.isIncoming) {
-        return NO;
-    }
-    if (self.cellType == OWSMessageCellType_DownloadingAttachment) {
-        return NO;
-    }
-    if (self.cellType == OWSMessageCellType_ContactShare) {
-        // TODO: Handle this case.
-        return NO;
-    }
-    if (!self.attachmentStream) {
-        return NO;
-    }
-    TSOutgoingMessage *outgoingMessage = (TSOutgoingMessage *)self.viewItem.interaction;
-    return outgoingMessage.messageState == TSOutgoingMessageStateSending;
-}
-
 - (void)prepareForReuse
 {
     [NSLayoutConstraint deactivateConstraints:self.viewConstraints];
@@ -1438,9 +1363,10 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
 
     [self.bodyTextView removeFromSuperview];
     self.bodyTextView.text = nil;
+    self.bodyTextView.attributedText = nil;
     self.bodyTextView.hidden = YES;
 
-    self.bubbleView.bubbleColor = nil;
+    self.bubbleView.fillColor = nil;
     [self.bubbleView clearPartnerViews];
 
     for (UIView *subview in self.bubbleView.subviews) {
@@ -1476,16 +1402,12 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
 
     [self.contactShareButtonsView removeFromSuperview];
     self.contactShareButtonsView = nil;
+
+    [self.linkPreviewView removeFromSuperview];
+    self.linkPreviewView.state = nil;
 }
 
 #pragma mark - Gestures
-
-- (void)addTapGestureHandler
-{
-    UITapGestureRecognizer *tap =
-        [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapGesture:)];
-    [self addGestureRecognizer:tap];
-}
 
 - (void)handleTapGesture:(UITapGestureRecognizer *)sender
 {
@@ -1521,7 +1443,7 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
             [self.delegate didTapTruncatedTextMessage:self.viewItem];
             return;
         case OWSMessageGestureLocation_Media:
-            [self handleMediaTapGesture];
+            [self handleMediaTapGesture:locationInMessageBubble];
             break;
         case OWSMessageGestureLocation_QuotedReply:
             if (self.viewItem.quotedReply) {
@@ -1530,67 +1452,159 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
                 OWSFailDebug(@"Missing quoted message.");
             }
             break;
+        case OWSMessageGestureLocation_LinkPreview:
+            if (self.viewItem.linkPreview) {
+                [self.delegate didTapConversationItem:self.viewItem linkPreview:self.viewItem.linkPreview];
+            } else {
+                OWSFailDebug(@"Missing link preview.");
+            }
+            break;
+        case OWSMessageGestureLocation_Sticker:
+            OWSFailDebug(@"Unexpected value.");
+            break;
     }
 }
 
-- (void)handleMediaTapGesture
+- (void)handleMediaTapGesture:(CGPoint)locationInMessageBubble
 {
     OWSAssertDebug(self.delegate);
 
-    TSAttachmentStream *_Nullable attachmentStream = self.viewItem.attachmentStream;
+    if (self.viewItem.attachmentPointer && self.viewItem.attachmentPointer.state == TSAttachmentPointerStateFailed) {
+        [self.delegate didTapFailedIncomingAttachment:self.viewItem];
+        return;
+    }
 
     switch (self.cellType) {
         case OWSMessageCellType_Unknown:
-        case OWSMessageCellType_TextMessage:
-        case OWSMessageCellType_OversizeTextMessage:
-            break;
-        case OWSMessageCellType_StillImage:
-            OWSAssertDebug(self.bodyMediaView);
-            OWSAssertDebug(attachmentStream);
-
-            [self.delegate didTapImageViewItem:self.viewItem
-                              attachmentStream:attachmentStream
-                                     imageView:self.bodyMediaView];
-            break;
-        case OWSMessageCellType_AnimatedImage:
-            OWSAssertDebug(self.bodyMediaView);
-            OWSAssertDebug(attachmentStream);
-
-            [self.delegate didTapImageViewItem:self.viewItem
-                              attachmentStream:attachmentStream
-                                     imageView:self.bodyMediaView];
+        case OWSMessageCellType_TextOnlyMessage:
+        case OWSMessageCellType_OversizeTextDownloading:
             break;
         case OWSMessageCellType_Audio:
-            OWSAssertDebug(attachmentStream);
-
-            [self.delegate didTapAudioViewItem:self.viewItem attachmentStream:attachmentStream];
-            return;
-        case OWSMessageCellType_Video:
-            OWSAssertDebug(self.bodyMediaView);
-            OWSAssertDebug(attachmentStream);
-
-            [self.delegate didTapVideoViewItem:self.viewItem
-                              attachmentStream:attachmentStream
-                                     imageView:self.bodyMediaView];
+            if (self.viewItem.attachmentStream) {
+                [self.delegate didTapAudioViewItem:self.viewItem attachmentStream:self.viewItem.attachmentStream];
+            }
             return;
         case OWSMessageCellType_GenericAttachment:
-            OWSAssertDebug(attachmentStream);
-
-            [AttachmentSharing showShareUIForAttachment:attachmentStream];
-            break;
-        case OWSMessageCellType_DownloadingAttachment: {
-            TSAttachmentPointer *_Nullable attachmentPointer = self.viewItem.attachmentPointer;
-            OWSAssertDebug(attachmentPointer);
-
-            if (attachmentPointer.state == TSAttachmentPointerStateFailed) {
-                [self.delegate didTapFailedIncomingAttachment:self.viewItem attachmentPointer:attachmentPointer];
+            if (self.viewItem.attachmentStream) {
+                if (PdfViewController.canRenderPdf &&
+                    [OWSMimeTypeImagePdf isEqualToString:self.viewItem.attachmentStream.contentType]) {
+                    [self.delegate didTapPdfForItem:self.viewItem attachmentStream:self.viewItem.attachmentStream];
+                } else {
+                    [AttachmentSharing showShareUIForAttachment:self.viewItem.attachmentStream];
+                }
             }
             break;
-        }
         case OWSMessageCellType_ContactShare:
             [self.delegate didTapContactShareViewItem:self.viewItem];
             break;
+        case OWSMessageCellType_MediaMessage: {
+            OWSAssertDebug(self.bodyMediaView);
+            OWSAssertDebug(self.viewItem.mediaAlbumItems.count > 0);
+
+            if (![self.bodyMediaView isKindOfClass:[OWSMediaAlbumCellView class]]) {
+                OWSFailDebug(@"Unexpected body media view: %@", self.bodyMediaView.class);
+                return;
+            }
+            OWSMediaAlbumCellView *_Nullable mediaAlbumCellView = (OWSMediaAlbumCellView *)self.bodyMediaView;
+            CGPoint location = [self convertPoint:locationInMessageBubble toView:self.bodyMediaView];
+            OWSConversationMediaView *_Nullable mediaView = [mediaAlbumCellView mediaViewForLocation:location];
+            if (!mediaView) {
+                OWSFailDebug(@"Missing media view.");
+                return;
+            }
+
+            if ([mediaAlbumCellView isMoreItemsViewWithMediaView:mediaView]
+                && self.viewItem.mediaAlbumHasFailedAttachment) {
+                [self.delegate didTapFailedIncomingAttachment:self.viewItem];
+                return;
+            }
+
+            TSAttachment *attachment = mediaView.attachment;
+            if ([attachment isKindOfClass:[TSAttachmentPointer class]]) {
+                TSAttachmentPointer *attachmentPointer = (TSAttachmentPointer *)attachment;
+                if (attachmentPointer.state == TSAttachmentPointerStateFailed) {
+                    // Treat the tap as a "retry" tap if the user taps on a failed download.
+                    [self.delegate didTapFailedIncomingAttachment:self.viewItem];
+                    return;
+                }
+            } else if (![attachment isKindOfClass:[TSAttachmentStream class]]) {
+                OWSLogWarn(@"Media attachment not yet downloaded.");
+                return;
+            }
+            TSAttachmentStream *attachmentStream = (TSAttachmentStream *)attachment;
+            [self.delegate didTapImageViewItem:self.viewItem attachmentStream:attachmentStream imageView:mediaView];
+            break;
+        }
+        case OWSMessageCellType_StickerMessage:
+            OWSFailDebug(@"Stickers should not be rendered with this view.");
+            break;
+        case OWSMessageCellType_ViewOnce:
+            OWSFailDebug(@"View-once messages should not be rendered with this view.");
+            break;
     }
+}
+
+- (BOOL)handlePanGesture:(UIPanGestureRecognizer *)sender
+{
+    CGPoint locationInMessageBubble = [sender locationInView:self];
+    if (self.isHandlingPan || [self gestureLocationForLocation:locationInMessageBubble] == OWSMessageGestureLocation_Media) {
+        if (self.cellType == OWSMessageCellType_Audio && self.viewItem.attachmentStream) {
+            return [self handleAudioPanGesture:sender];
+        }
+    }
+
+    return NO;
+}
+
+- (BOOL)handleAudioPanGesture:(UIPanGestureRecognizer *)sender
+{
+    OWSAssertDebug(self.delegate);
+
+    if (![self.bodyMediaView isKindOfClass:[OWSAudioMessageView class]]) {
+        OWSFailDebug(@"Unexpected body media view: %@", self.bodyMediaView.class);
+        return NO;
+    }
+
+    OWSAudioMessageView *audioMessageView = (OWSAudioMessageView *)self.bodyMediaView;
+
+    CGPoint locationInAudioView = [sender locationInView:audioMessageView];
+
+    // If the gesture has already began, and we're not scrubbing, don't handle the pan
+    if (sender.state != UIGestureRecognizerStateBegan && !audioMessageView.isScrubbing) {
+        return NO;
+    }
+
+    // If we're outside of the scrubbable region, don't handle the pan
+    if (!audioMessageView.isScrubbing && ![audioMessageView isPointInScrubbableRegion:locationInAudioView]) {
+        return NO;
+    }
+
+    NSTimeInterval scrubbedTime = [audioMessageView scrubToLocation:locationInAudioView];
+
+    switch (sender.state) {
+        case UIGestureRecognizerStateBegan:
+            self.isHandlingPan = YES;
+            audioMessageView.isScrubbing = YES;
+            break;
+        case UIGestureRecognizerStateEnded:
+            // Only update the actual playback position when the user finishes scrubbing,
+            // we still call `scrubToLocation` above in order to update the slider.
+            [self.delegate didScrubAudioViewItem:self.viewItem
+                                          toTime:scrubbedTime
+                                attachmentStream:self.viewItem.attachmentStream];
+
+            // fallthrough
+        case UIGestureRecognizerStateFailed:
+        case UIGestureRecognizerStateCancelled:
+            self.isHandlingPan = NO;
+            audioMessageView.isScrubbing = NO;
+            break;
+        case UIGestureRecognizerStateChanged:
+        case UIGestureRecognizerStatePossible:
+            break;
+    }
+
+    return YES;
 }
 
 - (OWSMessageGestureLocation)gestureLocationForLocation:(CGPoint)locationInMessageBubble
@@ -1603,6 +1617,13 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
         CGPoint location = [self convertPoint:locationInMessageBubble toView:self.quotedMessageView];
         if (location.y <= self.quotedMessageView.height) {
             return OWSMessageGestureLocation_QuotedReply;
+        }
+    }
+
+    if (self.viewItem.linkPreview) {
+        CGPoint location = [self convertPoint:locationInMessageBubble toView:self.linkPreviewView];
+        if (CGRectContainsPoint(self.linkPreviewView.bounds, location)) {
+            return OWSMessageGestureLocation_LinkPreview;
         }
     }
 
@@ -1636,6 +1657,11 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
         failedThumbnailDownloadAttachmentPointer:attachmentPointer];
 }
 
+- (void)didCancelQuotedReply
+{
+    OWSFailDebug(@"Sent quoted replies should not be cancellable.");
+}
+
 #pragma mark - OWSContactShareButtonsViewDelegate
 
 - (void)didTapSendMessageToContactShare:(ContactShareViewModel *)contactShare
@@ -1660,6 +1686,40 @@ const UIDataDetectorTypes kOWSAllowedDataDetectorTypes
     OWSAssertDebug(contactShare);
 
     [self.delegate didTapShowAddToContactUIForContactShare:contactShare];
+}
+
+#pragma mark - UITextViewDelegate
+
+- (BOOL)textView:(UITextView *)textView
+    shouldInteractWithURL:(NSURL *)url
+                  inRange:(NSRange)characterRange
+              interaction:(UITextItemInteraction)interaction
+{
+    return [self shouldInteractWithURL:url];
+}
+
+- (BOOL)textView:(UITextView *)textView shouldInteractWithURL:(NSURL *)url inRange:(NSRange)characterRange
+{
+    return [self shouldInteractWithURL:url];
+}
+
+- (BOOL)shouldInteractWithURL:(NSURL *)url
+{
+    if (![self.tsAccountManager isRegistered]) {
+        return YES;
+    }
+    if (![StickerPackInfo isStickerPackShareUrl:url]) {
+        return YES;
+    }
+    StickerPackInfo *_Nullable stickerPackInfo = [StickerPackInfo parseStickerPackShareUrl:url];
+    if (stickerPackInfo == nil) {
+        OWSFailDebug(@"Invalid URL: %@", url);
+        return YES;
+    }
+
+    [self.delegate didTapStickerPack:stickerPackInfo];
+
+    return NO;
 }
 
 @end

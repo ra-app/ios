@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
@@ -32,6 +32,7 @@ public class ConversationHeaderView: UIStackView {
         }
         set {
             self.subtitleLabel.attributedText = newValue
+            self.subtitleLabel.isHidden = newValue == nil
         }
     }
 
@@ -112,7 +113,7 @@ public class ConversationHeaderView: UIStackView {
 
     public override var intrinsicContentSize: CGSize {
         // Grow to fill as much of the navbar as possible.
-        return UILayoutFittingExpandedSize
+        return UIView.layoutFittingExpandedSize
     }
 
     @objc

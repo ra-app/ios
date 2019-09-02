@@ -1,14 +1,17 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "CountryCodeViewController.h"
 #import "OWSSearchBar.h"
 #import "PhoneNumberUtil.h"
+#import "Theme.h"
 #import "UIColor+OWS.h"
 #import "UIFont+OWS.h"
 #import "UIView+OWS.h"
-#import <SignalMessaging/NSString+OWS.h>
+#import <SignalServiceKit/NSString+SSK.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface CountryCodeViewController () <OWSTableViewControllerDelegate, UISearchBarDelegate>
 
@@ -27,6 +30,7 @@
     [super loadView];
 
     self.shouldUseTheme = NO;
+    self.interfaceOrientationMask = UIInterfaceOrientationMaskAllButUpsideDown;
 
     self.view.backgroundColor = [UIColor whiteColor];
     self.title = NSLocalizedString(@"COUNTRYCODE_SELECT_TITLE", @"");
@@ -160,4 +164,13 @@
     [self.searchBar resignFirstResponder];
 }
 
+#pragma mark - Orientation
+
+- (UIInterfaceOrientationMask)supportedInterfaceOrientations
+{
+    return self.interfaceOrientationMask;
+}
+
 @end
+
+NS_ASSUME_NONNULL_END

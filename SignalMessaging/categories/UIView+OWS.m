@@ -1,11 +1,12 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "UIView+OWS.h"
 #import "OWSMath.h"
+#import <SignalCoreKit/iOSVersions.h>
+#import <SignalMessaging/SignalMessaging-Swift.h>
 #import <SignalServiceKit/AppContext.h>
-#import <SignalServiceKit/iOSVersions.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -22,7 +23,7 @@ CGFloat ScaleFromIPhone5To7Plus(CGFloat iPhone5Value, CGFloat iPhone7PlusValue)
     CGFloat screenShortDimension = ScreenShortDimension();
     return (CGFloat)round(CGFloatLerp(iPhone5Value,
         iPhone7PlusValue,
-        CGFloatInverseLerp(screenShortDimension, kIPhone5ScreenWidth, kIPhone7PlusScreenWidth)));
+        CGFloatClamp01(CGFloatInverseLerp(screenShortDimension, kIPhone5ScreenWidth, kIPhone7PlusScreenWidth))));
 }
 
 CGFloat ScaleFromIPhone5(CGFloat iPhone5Value)
@@ -40,6 +41,15 @@ CGFloat ScaleFromIPhone5(CGFloat iPhone5Value)
     NSArray<NSLayoutConstraint *> *result = @[
         [self autoPinEdgeToSuperviewEdge:ALEdgeLeft withInset:margin],
         [self autoPinEdgeToSuperviewEdge:ALEdgeRight withInset:margin],
+    ];
+    return result;
+}
+
+- (NSArray<NSLayoutConstraint *> *)autoPinWidthToSuperviewMargins
+{
+    NSArray<NSLayoutConstraint *> *result = @[
+        [self autoPinEdgeToSuperviewMargin:ALEdgeLeading],
+        [self autoPinEdgeToSuperviewMargin:ALEdgeTrailing],
     ];
     return result;
 }
@@ -133,7 +143,16 @@ CGFloat ScaleFromIPhone5(CGFloat iPhone5Value)
     return [self autoPinToAspectRatio:1.0];
 }
 
+- (NSLayoutConstraint *)autoPinToAspectRatioWithSize:(CGSize)size {
+    return [self autoPinToAspectRatio:size.width / size.height];
+}
+
 - (NSLayoutConstraint *)autoPinToAspectRatio:(CGFloat)ratio
+{
+    return [self autoPinToAspectRatio:ratio relation:NSLayoutRelationEqual];
+}
+
+- (NSLayoutConstraint *)autoPinToAspectRatio:(CGFloat)ratio relation:(NSLayoutRelation)relation
 {
     // Clamp to ensure view has reasonable aspect ratio.
     CGFloat clampedRatio = CGFloatClamp(ratio, 0.05f, 95.0f);
@@ -144,7 +163,7 @@ CGFloat ScaleFromIPhone5(CGFloat iPhone5Value)
     self.translatesAutoresizingMaskIntoConstraints = NO;
     NSLayoutConstraint *constraint = [NSLayoutConstraint constraintWithItem:self
                                                                   attribute:NSLayoutAttributeWidth
-                                                                  relatedBy:NSLayoutRelationEqual
+                                                                  relatedBy:relation
                                                                      toItem:self
                                                                   attribute:NSLayoutAttributeHeight
                                                                  multiplier:clampedRatio
@@ -552,19 +571,67 @@ CGFloat ScaleFromIPhone5(CGFloat iPhone5Value)
 
 - (UIView *)addBackgroundViewWithBackgroundColor:(UIColor *)backgroundColor
 {
+    return [self addBackgroundViewWithBackgroundColor:backgroundColor cornerRadius:0.f];
+}
+
+- (UIView *)addBackgroundViewWithBackgroundColor:(UIColor *)backgroundColor cornerRadius:(CGFloat)cornerRadius
+{
     UIView *subview = [UIView new];
     subview.backgroundColor = backgroundColor;
+    subview.layer.cornerRadius = cornerRadius;
     [self addSubview:subview];
     [subview autoPinEdgesToSuperviewEdges];
+    [subview setCompressionResistanceLow];
+    [subview setContentHuggingLow];
     [self sendSubviewToBack:subview];
     return subview;
 }
 
+- (UIView *)addBorderViewWithColor:(UIColor *)color strokeWidth:(CGFloat)strokeWidth cornerRadius:(CGFloat)cornerRadius
+{
+
+    UIView *borderView = [UIView new];
+    borderView.userInteractionEnabled = NO;
+    borderView.backgroundColor = UIColor.clearColor;
+    borderView.opaque = NO;
+    borderView.layer.borderColor = color.CGColor;
+    borderView.layer.borderWidth = strokeWidth;
+    borderView.layer.cornerRadius = cornerRadius;
+    [self addSubview:borderView];
+    [borderView autoPinEdgesToSuperviewEdges];
+    [borderView setCompressionResistanceLow];
+    [borderView setContentHuggingLow];
+    return borderView;
+}
+
 @end
+
+#pragma mark -
+
+@implementation UIAlertAction (OWS)
+
++ (instancetype)actionWithTitle:(nullable NSString *)title
+        accessibilityIdentifier:(nullable NSString *)accessibilityIdentifier
+                          style:(UIAlertActionStyle)style
+                        handler:(void (^__nullable)(UIAlertAction *action))handler
+{
+    UIAlertAction *action = [UIAlertAction actionWithTitle:title style:style handler:handler];
+    action.accessibilityIdentifier = accessibilityIdentifier;
+    return action;
+}
+
+@end
+
+#pragma mark -
 
 CGFloat CGHairlineWidth()
 {
     return 1.f / UIScreen.mainScreen.scale;
+}
+
+CGFloat CGHairlineWidthFraction(CGFloat fraction)
+{
+    return CGHairlineWidth() * fraction;
 }
 
 NS_ASSUME_NONNULL_END

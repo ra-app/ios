@@ -1,17 +1,15 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
-#import "OWSMessageSender.h"
-#import "Cryptography.h"
 #import "NSError+MessageSending.h"
 #import "OWSDisappearingMessagesConfiguration.h"
 #import "OWSError.h"
-#import "OWSFakeContactsManager.h"
 #import "OWSFakeNetworkManager.h"
+#import "OWSMessageSender.h"
 #import "OWSPrimaryStorage.h"
 #import "OWSUploadOperation.h"
-#import "SSKBaseTest.h"
+#import "SSKBaseTestObjC.h"
 #import "TSAccountManager.h"
 #import "TSContactThread.h"
 #import "TSGroupModel.h"
@@ -21,6 +19,7 @@
 #import "TSRequest.h"
 #import <AxolotlKit/AxolotlExceptions.h>
 #import <AxolotlKit/SessionBuilder.h>
+#import <SignalCoreKit/Cryptography.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -54,7 +53,7 @@ NS_ASSUME_NONNULL_BEGIN
                                forRecipient:(SignalRecipient *)recipient
                                    inThread:(TSThread *)thread
 {
-    NSLog(@"[OWSFakeMessagesManager] Faking deviceMessages.");
+    OWSLogInfo(@"[OWSFakeMessagesManager] Faking deviceMessages.");
     return @[];
 }
 
@@ -198,15 +197,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark -
 
-@interface TSAccountManager (Testing)
-
-- (void)storeLocalNumber:(NSString *)localNumber;
-
-@end
-
-#pragma mark -
-
-@interface OWSMessageSenderTest : SSKBaseTest
+@interface OWSMessageSenderTest : SSKBaseTestObjC
 
 @property (nonatomic) TSThread *thread;
 @property (nonatomic) TSOutgoingMessage *expiringMessage;
@@ -240,7 +231,8 @@ NS_ASSUME_NONNULL_BEGIN
                                                                           isVoiceMessage:NO
                                                                         groupMetaMessage:TSGroupMetaMessageUnspecified
                                                                            quotedMessage:nil
-                                                                            contactShare:nil];
+                                                                            contactShare:nil
+                                                                             linkPreview:nil];
     [self.unexpiringMessage save];
 
     self.expiringMessage = [[TSOutgoingMessage alloc] initOutgoingMessageWithTimestamp:1
@@ -252,7 +244,8 @@ NS_ASSUME_NONNULL_BEGIN
                                                                         isVoiceMessage:NO
                                                                       groupMetaMessage:TSGroupMetaMessageUnspecified
                                                                          quotedMessage:nil
-                                                                          contactShare:nil];
+                                                                          contactShare:nil
+                                                                           linkPreview:nil];
     [self.expiringMessage save];
 
     OWSPrimaryStorage *storageManager = [OWSPrimaryStorage sharedManager];
@@ -298,7 +291,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     [self waitForExpectationsWithTimeout:5
                                  handler:^(NSError *error) {
-                                     NSLog(@"Expiration timer not set in time.");
+                                     OWSLogInfo(@"Expiration timer not set in time.");
                                  }];
 }
 
@@ -312,7 +305,7 @@ NS_ASSUME_NONNULL_BEGIN
     XCTestExpectation *messageDidNotStartExpiration = [self expectationWithDescription:@"messageDidNotStartExpiration"];
     [messageSender sendMessageToService:self.unexpiringMessage
         success:^() {
-            if (self.unexpiringMessage.isExpiringMessage || self.unexpiringMessage.expiresAt > 0) {
+            if (self.unexpiringMessage.hasPerConversationExpiration || self.unexpiringMessage.expiresAt > 0) {
                 XCTFail(@"Message expiration was not supposed to start.");
             } else {
                 [messageDidNotStartExpiration fulfill];
@@ -324,7 +317,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     [self waitForExpectationsWithTimeout:5
                                  handler:^(NSError *error) {
-                                     NSLog(@"Expiration timer not set in time.");
+                                     OWSLogInfo(@"Expiration timer not set in time.");
                                  }];
 }
 

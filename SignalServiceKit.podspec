@@ -34,7 +34,8 @@ An Objective-C library for communicating with the Signal messaging service.
   s.compiler_flags = "-fcxx-modules"
 
   s.prefix_header_file = 'SignalServiceKit/src/TSPrefix.h'
-  s.xcconfig = { 'OTHER_CFLAGS' => '$(inherited) -DSQLITE_HAS_CODEC' }
+  s.xcconfig = { 'OTHER_CFLAGS' => '$(inherited) -DSQLITE_HAS_CODEC',
+                 'USER_HEADER_SEARCH_PATHS' => '$(inherited) $(SRCROOT)/libwebp/src'   }
 
   s.resources = ["SignalServiceKit/Resources/Certificates/*"]
 
@@ -44,19 +45,19 @@ An Objective-C library for communicating with the Signal messaging service.
   s.dependency 'AxolotlKit'
   s.dependency 'Mantle'
   s.dependency 'YapDatabase/SQLCipher'
-  s.dependency 'SocketRocket'
+  s.dependency 'Starscream'
   s.dependency 'libPhoneNumber-iOS'
   s.dependency 'GRKOpenSSLFramework'
   s.dependency 'SAMKeychain'
   s.dependency 'Reachability'
   s.dependency 'SwiftProtobuf'
-
-  # Avoid PromiseKit 5/6 for now.
-  # From the maintainer:
-  # > PromiseKit 5 has been released, but is not yet fully documented, 
-  # > so we advise sticking with version 4 for the time being.
-  s.dependency 'PromiseKit', "~> 4.0"
-
+  s.dependency 'SignalCoreKit'
+  s.dependency 'SignalMetadataKit'
+  s.dependency 'GRDBCipher'
+  s.dependency 'libwebp'
+  s.dependency 'PromiseKit', "~> 6.0"
+  s.dependency 'YYImage/WebP'
+		
   s.test_spec 'Tests' do |test_spec|
     test_spec.source_files = 'SignalServiceKit/tests/**/*.{h,m,swift}'
   end

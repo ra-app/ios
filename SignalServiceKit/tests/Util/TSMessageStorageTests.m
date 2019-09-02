@@ -1,10 +1,9 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
-#import "Cryptography.h"
 #import "OWSPrimaryStorage.h"
-#import "SSKBaseTest.h"
+#import "SSKBaseTestObjC.h"
 #import "TSContactThread.h"
 #import "TSGroupThread.h"
 #import "TSIncomingMessage.h"
@@ -12,8 +11,10 @@
 #import "TSOutgoingMessage.h"
 #import "TSThread.h"
 #import "YapDatabaseConnection+OWS.h"
+#import <SignalCoreKit/Cryptography.h>
+#import <SignalServiceKit/SignalServiceKit-Swift.h>
 
-@interface TSMessageStorageTests : SSKBaseTest
+@interface TSMessageStorageTests : SSKBaseTestObjC
 
 @property TSContactThread *thread;
 
@@ -27,7 +28,7 @@
 {
     [super setUp];
 
-    [self readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+    [self yapWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
         self.thread = [TSContactThread getOrCreateThreadWithContactId:@"aStupidId" transaction:transaction];
 
         [self.thread saveWithTransaction:transaction];
@@ -59,9 +60,10 @@
                                                       attachmentIds:@[]
                                                    expiresInSeconds:0
                                                       quotedMessage:nil
-                                                       contactShare:nil];
+                                                       contactShare:nil
+                                                        linkPreview:nil];
 
-    [self readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+    [self yapWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
         [newMessage saveWithTransaction:transaction];
         messageId = newMessage.uniqueId;
     }];
@@ -93,7 +95,8 @@
                                                           attachmentIds:@[]
                                                        expiresInSeconds:0
                                                           quotedMessage:nil
-                                                           contactShare:nil];
+                                                           contactShare:nil
+                                                            linkPreview:nil];
 
         [messages addObject:newMessage];
         [newMessage save];
@@ -127,7 +130,7 @@
           @"privacy matters; privacy is what allows us to determine who we are and who we want to be.";
 
     __block TSGroupThread *thread;
-    [self readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+    [self yapWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
         thread = [TSGroupThread getOrCreateThreadWithGroupModel:[[TSGroupModel alloc] initWithTitle:@"fdsfsd"
                                                                                           memberIds:[@[] mutableCopy]
                                                                                               image:nil
@@ -147,7 +150,8 @@
                                                                                       attachmentIds:@[]
                                                                                    expiresInSeconds:0
                                                                                       quotedMessage:nil
-                                                                                       contactShare:nil];
+                                                                                       contactShare:nil
+                                                                                        linkPreview:nil];
         [newMessage save];
         [messages addObject:newMessage];
     }

@@ -1,9 +1,11 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSStorage.h"
 #import <YapDatabase/YapDatabaseViewTransaction.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 extern NSString *const TSInboxGroup;
 extern NSString *const TSArchiveGroup;
@@ -13,7 +15,14 @@ extern NSString *const TSSecondaryDevicesGroup;
 extern NSString *const TSThreadDatabaseViewExtensionName;
 
 extern NSString *const TSMessageDatabaseViewExtensionName;
+extern NSString *const TSMessageDatabaseViewExtensionName_Legacy;
+
 extern NSString *const TSUnreadDatabaseViewExtensionName;
+extern NSString *const TSUnseenDatabaseViewExtensionName;
+extern NSString *const TSThreadOutgoingMessageDatabaseViewExtensionName;
+extern NSString *const TSThreadSpecialMessagesDatabaseViewExtensionName;
+extern NSString *const TSIncompleteViewOnceMessagesDatabaseViewExtensionName;
+extern NSString *const TSIncompleteViewOnceMessagesGroup;
 
 extern NSString *const TSSecondaryDevicesDatabaseViewExtensionName;
 
@@ -34,6 +43,8 @@ extern NSString *const TSLazyRestoreAttachmentsDatabaseViewExtensionName;
 
 + (id)threadSpecialMessagesDatabaseView:(YapDatabaseReadTransaction *)transaction;
 
++ (id)incompleteViewOnceMessagesDatabaseView:(YapDatabaseReadTransaction *)transaction;
+
 #pragma mark - Registration
 
 + (void)registerCrossProcessNotifier:(OWSStorage *)storage;
@@ -42,6 +53,8 @@ extern NSString *const TSLazyRestoreAttachmentsDatabaseViewExtensionName;
 + (void)asyncRegisterThreadDatabaseView:(OWSStorage *)storage;
 
 + (void)asyncRegisterThreadInteractionsDatabaseView:(OWSStorage *)storage;
++ (void)asyncRegisterLegacyThreadInteractionsDatabaseView:(OWSStorage *)storage;
+
 + (void)asyncRegisterThreadOutgoingMessagesDatabaseView:(OWSStorage *)storage;
 
 // Instances of OWSReadTracking for wasRead is NO and shouldAffectUnreadCounts is YES.
@@ -56,8 +69,12 @@ extern NSString *const TSLazyRestoreAttachmentsDatabaseViewExtensionName;
 
 + (void)asyncRegisterThreadSpecialMessagesDatabaseView:(OWSStorage *)storage;
 
++ (void)asyncRegisterIncompleteViewOnceMessagesDatabaseView:(OWSStorage *)storage;
+
 + (void)asyncRegisterSecondaryDevicesDatabaseView:(OWSStorage *)storage;
 
 + (void)asyncRegisterLazyRestoreAttachmentsDatabaseView:(OWSStorage *)storage;
 
 @end
+
+NS_ASSUME_NONNULL_END

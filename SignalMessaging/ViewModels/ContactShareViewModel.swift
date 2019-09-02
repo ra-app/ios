@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
@@ -41,7 +41,7 @@ public class ContactShareViewModel: NSObject {
 
     @objc
     public convenience init(contactShareRecord: OWSContact, transaction: YapDatabaseReadTransaction) {
-        if let avatarAttachment = contactShareRecord.avatarAttachment(with: transaction) as? TSAttachmentStream {
+        if let avatarAttachment = contactShareRecord.avatarAttachment(with: transaction.asAnyRead) as? TSAttachmentStream {
             self.init(contactShareRecord: contactShareRecord, avatarImageData: avatarAttachment.validStillImageData())
         } else {
             self.init(contactShareRecord: contactShareRecord, avatarImageData: nil)
@@ -49,7 +49,7 @@ public class ContactShareViewModel: NSObject {
     }
 
     @objc
-    public func getAvatarImage(diameter: CGFloat, contactsManager: OWSContactsManager) -> UIImage {
+    public func getAvatarImage(diameter: CGFloat, contactsManager: OWSContactsManager) -> UIImage? {
         if let avatarImage = avatarImage {
             return avatarImage
         }
@@ -65,8 +65,7 @@ public class ContactShareViewModel: NSObject {
 
         let avatarBuilder = OWSContactAvatarBuilder(nonSignalName: displayName,
                                                     colorSeed: colorSeed,
-                                                    diameter: UInt(diameter),
-                                                    contactsManager: contactsManager)
+                                                    diameter: UInt(diameter))
         // Note: we use buildDefaultImage() and not build() so that contact
         // share views always reflect the contents of the contact share.
         // build() might return an avatar from a corresponding system

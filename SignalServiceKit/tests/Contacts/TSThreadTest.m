@@ -1,10 +1,11 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
+#import "MIMETypeUtil.h"
 #import "OWSDevice.h"
 #import "OWSPrimaryStorage.h"
-#import "SSKBaseTest.h"
+#import "SSKBaseTestObjC.h"
 #import "TSAttachmentStream.h"
 #import "TSContactThread.h"
 #import "TSIncomingMessage.h"
@@ -12,7 +13,7 @@
 #import "TestAppContext.h"
 #import <SignalServiceKit/SignalServiceKit-Swift.h>
 
-@interface TSThreadTest : SSKBaseTest
+@interface TSThreadTest : SSKBaseTestObjC
 
 @end
 
@@ -37,7 +38,9 @@
         [[TSContactThread alloc] initWithUniqueId:[TSContactThread threadIdFromContactId:@"+13334445555"]];
     [thread save];
 
-    XCTAssertEqual(0, [thread numberOfInteractions]);
+    [self readWithBlock:^(SDSAnyReadTransaction *_Nonnull transaction) {
+        XCTAssertEqual(0, [thread numberOfInteractionsWithTransaction:transaction]);
+    }];
 
     TSIncomingMessage *incomingMessage =
         [[TSIncomingMessage alloc] initIncomingMessageWithTimestamp:10000
@@ -48,7 +51,12 @@
                                                       attachmentIds:@[]
                                                    expiresInSeconds:0
                                                       quotedMessage:nil
-                                                       contactShare:nil];
+                                                       contactShare:nil
+                                                        linkPreview:nil
+                                                     messageSticker:nil
+                                                    serverTimestamp:nil
+                                                    wasReceivedByUD:NO
+                                                  isViewOnceMessage:NO];
     [incomingMessage save];
 
     TSOutgoingMessage *outgoingMessage =
@@ -61,13 +69,20 @@
                                                      isVoiceMessage:NO
                                                    groupMetaMessage:TSGroupMetaMessageUnspecified
                                                       quotedMessage:nil
-                                                       contactShare:nil];
+                                                       contactShare:nil
+                                                        linkPreview:nil
+                                                     messageSticker:nil
+                                                  isViewOnceMessage:NO];
     [outgoingMessage save];
 
-    XCTAssertEqual(2, [thread numberOfInteractions]);
+    [self yapReadWithBlock:^(YapDatabaseReadTransaction *_Nonnull transaction) {
+        XCTAssertEqual(2, [thread numberOfInteractionsWithTransaction:transaction.asAnyRead]);
+    }];
 
     [thread remove];
-    XCTAssertEqual(0, [thread numberOfInteractions]);
+    [self yapReadWithBlock:^(YapDatabaseReadTransaction *_Nonnull transaction) {
+        XCTAssertEqual(0, [thread numberOfInteractionsWithTransaction:transaction.asAnyRead]);
+    }];
     XCTAssertEqual(0, [TSInteraction numberOfKeysInCollection]);
 }
 
@@ -78,13 +93,16 @@
     [thread save];
 
     // Sanity check
-    XCTAssertEqual(0, [thread numberOfInteractions]);
+    [self yapReadWithBlock:^(YapDatabaseReadTransaction *_Nonnull transaction) {
+        XCTAssertEqual(0, [thread numberOfInteractionsWithTransaction:transaction.asAnyRead]);
+    }];
 
-    NSError *error;
-    TSAttachmentStream *incomingAttachment =
-        [[TSAttachmentStream alloc] initWithContentType:@"image/jpeg" byteCount:0 sourceFilename:nil];
-    [incomingAttachment writeData:[NSData new] error:&error];
-    [incomingAttachment save];
+    __block TSAttachmentStream *incomingAttachment;
+    [self yapWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+        incomingAttachment = [AttachmentStreamFactory createWithContentType:OWSMimeTypeImageJpeg
+                                                                 dataSource:DataSourceValue.emptyDataSource
+                                                                transaction:transaction.asAnyWrite];
+    }];
 
     // Sanity check
     BOOL incomingFileWasCreated =
@@ -100,13 +118,20 @@
                                                       attachmentIds:@[ incomingAttachment.uniqueId ]
                                                    expiresInSeconds:0
                                                       quotedMessage:nil
-                                                       contactShare:nil];
+                                                       contactShare:nil
+                                                        linkPreview:nil
+                                                     messageSticker:nil
+                                                    serverTimestamp:nil
+                                                    wasReceivedByUD:NO
+                                                  isViewOnceMessage:NO];
     [incomingMessage save];
 
-    TSAttachmentStream *outgoingAttachment =
-        [[TSAttachmentStream alloc] initWithContentType:@"image/jpeg" byteCount:0 sourceFilename:nil];
-    [outgoingAttachment writeData:[NSData new] error:&error];
-    [outgoingAttachment save];
+    __block TSAttachmentStream *outgoingAttachment;
+    [self yapWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+        outgoingAttachment = [AttachmentStreamFactory createWithContentType:OWSMimeTypeImageJpeg
+                                                                 dataSource:DataSourceValue.emptyDataSource
+                                                                transaction:transaction.asAnyWrite];
+    }];
 
     // Sanity check
     BOOL outgoingFileWasCreated =
@@ -123,15 +148,22 @@
                                                      isVoiceMessage:NO
                                                    groupMetaMessage:TSGroupMetaMessageUnspecified
                                                       quotedMessage:nil
-                                                       contactShare:nil];
+                                                       contactShare:nil
+                                                        linkPreview:nil
+                                                     messageSticker:nil
+                                                  isViewOnceMessage:NO];
     [outgoingMessage save];
 
     // Sanity check
-    XCTAssertEqual(2, [thread numberOfInteractions]);
+    [self yapReadWithBlock:^(YapDatabaseReadTransaction *_Nonnull transaction) {
+        XCTAssertEqual(2, [thread numberOfInteractionsWithTransaction:transaction.asAnyRead]);
+    }];
 
     // Actual Test Follows
     [thread remove];
-    XCTAssertEqual(0, [thread numberOfInteractions]);
+    [self yapReadWithBlock:^(YapDatabaseReadTransaction *_Nonnull transaction) {
+        XCTAssertEqual(0, [thread numberOfInteractionsWithTransaction:transaction.asAnyRead]);
+    }];
 
     BOOL incomingFileStillExists =
         [[NSFileManager defaultManager] fileExistsAtPath:[incomingAttachment originalFilePath]];

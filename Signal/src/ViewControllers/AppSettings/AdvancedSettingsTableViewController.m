@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "AdvancedSettingsTableViewController.h"
@@ -7,8 +7,7 @@
 #import "DomainFrontingCountryViewController.h"
 #import "OWSCountryMetadata.h"
 #import "Pastelog.h"
-#import "PushManager.h"
-#import "RAAPP-Swift.h"
+#import "Signal-Swift.h"
 #import "TSAccountManager.h"
 #import <PromiseKit/AnyPromise.h>
 #import <Reachability/Reachability.h>
@@ -45,7 +44,7 @@ NS_ASSUME_NONNULL_BEGIN
 {
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(socketStateDidChange)
-                                                 name:kNSNotification_SocketManagerStateDidChange
+                                                 name:kNSNotification_OWSWebSocketStateDidChange
                                                object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(reachabilityChanged)
@@ -90,14 +89,21 @@ NS_ASSUME_NONNULL_BEGIN
     OWSTableSection *loggingSection = [OWSTableSection new];
     loggingSection.headerTitle = NSLocalizedString(@"LOGGING_SECTION", nil);
     [loggingSection addItem:[OWSTableItem switchItemWithText:NSLocalizedString(@"SETTINGS_ADVANCED_DEBUGLOG", @"")
-                                                        isOn:[OWSPreferences isLoggingEnabled]
-                                                      target:weakSelf
-                                                    selector:@selector(didToggleEnableLogSwitch:)]];
+                                accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"enable_debug_log")
+                                isOnBlock:^{
+                                    return [OWSPreferences isLoggingEnabled];
+                                }
+                                isEnabledBlock:^{
+                                    return YES;
+                                }
+                                target:weakSelf
+                                selector:@selector(didToggleEnableLogSwitch:)]];
 
 
     if ([OWSPreferences isLoggingEnabled]) {
         [loggingSection
             addItem:[OWSTableItem actionItemWithText:NSLocalizedString(@"SETTINGS_ADVANCED_SUBMIT_DEBUGLOG", @"")
+                             accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"submit_debug_log")
                                          actionBlock:^{
                                              OWSLogInfo(@"Submitting debug logs");
                                              [DDLog flushLog];
@@ -111,6 +117,8 @@ NS_ASSUME_NONNULL_BEGIN
     pushNotificationsSection.headerTitle
         = NSLocalizedString(@"PUSH_REGISTER_TITLE", @"Used in table section header and alert view title contexts");
     [pushNotificationsSection addItem:[OWSTableItem actionItemWithText:NSLocalizedString(@"REREGISTER_FOR_PUSH", nil)
+                                               accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(
+                                                                           self, @"reregister_push_notifications")
                                                            actionBlock:^{
                                                                [weakSelf syncPushTokens];
                                                            }]];
@@ -128,12 +136,20 @@ NS_ASSUME_NONNULL_BEGIN
     OWSTableSection *censorshipSection = [OWSTableSection new];
     censorshipSection.headerTitle = NSLocalizedString(@"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_HEADER",
         @"Table header for the 'censorship circumvention' section.");
+    BOOL isAnySocketOpen = TSSocketManager.shared.highestSocketState == OWSWebSocketStateOpen;
     if (OWSSignalService.sharedInstance.hasCensoredPhoneNumber) {
-        censorshipSection.footerTitle
-            = NSLocalizedString(@"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_AUTO_ENABLED",
+        if (OWSSignalService.sharedInstance.isCensorshipCircumventionManuallyDisabled) {
+            censorshipSection.footerTitle
+                = NSLocalizedString(@"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_MANUALLY_DISABLED",
+                    @"Table footer for the 'censorship circumvention' section shown when censorship circumvention has "
+                    @"been manually disabled.");
+        } else {
+            censorshipSection.footerTitle = NSLocalizedString(
+                @"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_AUTO_ENABLED",
                 @"Table footer for the 'censorship circumvention' section shown when censorship circumvention has been "
                 @"auto-enabled based on local phone number.");
-    } else if ([TSSocketManager sharedManager].state == SocketManagerStateOpen) {
+        }
+    } else if (isAnySocketOpen) {
         censorshipSection.footerTitle
             = NSLocalizedString(@"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION_FOOTER_WEBSOCKET_CONNECTED",
                 @"Table footer for the 'censorship circumvention' section shown when the app is connected to the "
@@ -160,22 +176,29 @@ NS_ASSUME_NONNULL_BEGIN
     // * ...The internet is not reachable, since we don't want to let users to activate
     //      censorship circumvention unnecessarily, e.g. if they just don't have a valid
     //      internet connection.
-    BOOL isManualCensorshipCircumventionOnEnabled
-        = (OWSSignalService.sharedInstance.isCensorshipCircumventionManuallyActivated
-            || (!OWSSignalService.sharedInstance.hasCensoredPhoneNumber &&
-                   [TSSocketManager sharedManager].state != SocketManagerStateOpen
-                   && weakSelf.reachability.isReachable));
-    BOOL isCensorshipCircumventionOn = NO;
-    if (OWSSignalService.sharedInstance.hasCensoredPhoneNumber) {
-        isCensorshipCircumventionOn = YES;
-    } else {
-        isCensorshipCircumventionOn = OWSSignalService.sharedInstance.isCensorshipCircumventionManuallyActivated;
-    }
+    OWSTableSwitchBlock isCensorshipCircumventionOnBlock = ^{
+        return OWSSignalService.sharedInstance.isCensorshipCircumventionActive;
+    };
+    Reachability *reachability = self.reachability;
+    OWSTableSwitchBlock isManualCensorshipCircumventionOnEnabledBlock = ^{
+        OWSSignalService *service = OWSSignalService.sharedInstance;
+        if (service.isCensorshipCircumventionActive) {
+            return YES;
+        } else if (service.hasCensoredPhoneNumber && service.isCensorshipCircumventionManuallyDisabled) {
+            return YES;
+        } else if (TSSocketManager.shared.highestSocketState == OWSWebSocketStateOpen) {
+            return NO;
+        } else {
+            return reachability.isReachable;
+        }
+    };
+
     [censorshipSection
         addItem:[OWSTableItem switchItemWithText:NSLocalizedString(@"SETTINGS_ADVANCED_CENSORSHIP_CIRCUMVENTION",
                                                      @"Label for the  'manual censorship circumvention' switch.")
-                                            isOn:isCensorshipCircumventionOn
-                                       isEnabled:isManualCensorshipCircumventionOnEnabled
+                         accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"censorship_circumvention")
+                                       isOnBlock:isCensorshipCircumventionOnBlock
+                                  isEnabledBlock:isManualCensorshipCircumventionOnEnabledBlock
                                           target:weakSelf
                                         selector:@selector(didToggleEnableCensorshipCircumventionSwitch:)]];
 
@@ -194,17 +217,6 @@ NS_ASSUME_NONNULL_BEGIN
                                                             }]];
     }
     [contents addSection:censorshipSection];
-
-#ifdef THEME_ENABLED
-    OWSTableSection *themeSection = [OWSTableSection new];
-    themeSection.headerTitle = NSLocalizedString(@"THEME_SECTION", nil);
-    [themeSection addItem:[OWSTableItem switchItemWithText:NSLocalizedString(@"SETTINGS_ADVANCED_DARK_THEME",
-                                                               @"Label for setting that enables dark theme.")
-                                                      isOn:[Theme isDarkThemeEnabled]
-                                                    target:weakSelf
-                                                  selector:@selector(didToggleThemeSwitch:)]];
-    [contents addSection:themeSection];
-#endif
 
     self.contents = contents;
 }
@@ -250,8 +262,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)syncPushTokens
 {
-    OWSSyncPushTokensJob *job = [[OWSSyncPushTokensJob alloc] initWithAccountManager:SignalApp.sharedApp.accountManager
-                                                                         preferences:Environment.shared.preferences];
+    OWSSyncPushTokensJob *job =
+        [[OWSSyncPushTokensJob alloc] initWithAccountManager:AppEnvironment.shared.accountManager
+                                                 preferences:Environment.shared.preferences];
     job.uploadOnlyIfStale = NO;
     [job run]
         .then(^{
@@ -282,19 +295,17 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)didToggleEnableCensorshipCircumventionSwitch:(UISwitch *)sender
 {
-    OWSSignalService.sharedInstance.isCensorshipCircumventionManuallyActivated = sender.isOn;
+    OWSSignalService *service = OWSSignalService.sharedInstance;
+    if (sender.isOn) {
+        service.isCensorshipCircumventionManuallyDisabled = NO;
+        service.isCensorshipCircumventionManuallyActivated = YES;
+    } else {
+        service.isCensorshipCircumventionManuallyDisabled = YES;
+        service.isCensorshipCircumventionManuallyActivated = NO;
+    }
 
     [self updateTableContents];
 }
-
-#ifdef THEME_ENABLED
-- (void)didToggleThemeSwitch:(UISwitch *)sender
-{
-    [Theme setIsDarkThemeEnabled:sender.isOn];
-
-    [self updateTableContents];
-}
-#endif
 
 @end
 

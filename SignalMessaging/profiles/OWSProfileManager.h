@@ -7,6 +7,7 @@
 NS_ASSUME_NONNULL_BEGIN
 
 extern NSString *const kNSNotificationName_ProfileWhitelistDidChange;
+extern NSString *const kNSNotificationName_ProfileKeyDidChange;
 
 extern const NSUInteger kOWSProfileManager_NameDataLength;
 extern const NSUInteger kOWSProfileManager_MaxAvatarDiameter;
@@ -22,9 +23,7 @@ extern const NSUInteger kOWSProfileManager_MaxAvatarDiameter;
 
 - (instancetype)init NS_UNAVAILABLE;
 
-- (instancetype)initWithPrimaryStorage:(OWSPrimaryStorage *)primaryStorage
-                         messageSender:(OWSMessageSender *)messageSender
-                        networkManager:(TSNetworkManager *)networkManager;
+- (instancetype)initWithPrimaryStorage:(OWSPrimaryStorage *)primaryStorage;
 
 + (instancetype)sharedManager;
 
@@ -38,6 +37,7 @@ extern const NSUInteger kOWSProfileManager_MaxAvatarDiameter;
 - (BOOL)hasLocalProfile;
 - (nullable NSString *)localProfileName;
 - (nullable UIImage *)localProfileAvatarImage;
+- (nullable NSData *)localProfileAvatarData;
 - (void)ensureLocalProfileCached;
 
 // This method is used to update the "local profile" state on the client
@@ -52,8 +52,6 @@ extern const NSUInteger kOWSProfileManager_MaxAvatarDiameter;
 
 - (BOOL)isProfileNameTooLong:(nullable NSString *)profileName;
 
-// The local profile state can fall out of sync with the service
-// (e.g. due to a botched profile update, for example).
 - (void)fetchLocalUsersProfile;
 
 #pragma mark - Profile Whitelist

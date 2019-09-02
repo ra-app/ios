@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "TSConstants.h"
@@ -9,38 +9,42 @@ NS_ASSUME_NONNULL_BEGIN
 extern NSString *const TSRegistrationErrorDomain;
 extern NSString *const TSRegistrationErrorUserInfoHTTPStatus;
 extern NSString *const RegistrationStateDidChangeNotification;
-extern NSString *const DeregistrationStateDidChangeNotification;
+extern NSString *const TSRemoteAttestationAuthErrorKey;
 extern NSString *const kNSNotificationName_LocalNumberDidChange;
 
-@class OWSPrimaryStorage;
+@class AnyPromise;
+@class SDSAnyReadTransaction;
+@class SDSAnyWriteTransaction;
+@class SDSKeyValueStore;
 @class TSNetworkManager;
-@class YapDatabaseReadWriteTransaction;
+
+typedef NS_ENUM(NSUInteger, OWSRegistrationState) {
+    OWSRegistrationState_Unregistered,
+    OWSRegistrationState_PendingBackupRestore,
+    OWSRegistrationState_Registered,
+    OWSRegistrationState_Deregistered,
+    OWSRegistrationState_Reregistering,
+};
 
 @interface TSAccountManager : NSObject
 
-// This property is exposed for testing purposes only.
-#ifdef DEBUG
+@property (nonatomic, readonly) SDSKeyValueStore *keyValueStore;
+
 @property (nonatomic, nullable) NSString *phoneNumberAwaitingVerification;
-#endif
 
 #pragma mark - Initializers
 
-- (instancetype)init NS_UNAVAILABLE;
-
-- (instancetype)initWithNetworkManager:(TSNetworkManager *)networkManager
-                        primaryStorage:(OWSPrimaryStorage *)primaryStorage NS_DESIGNATED_INITIALIZER;
-
 + (instancetype)sharedInstance;
 
-@property (nonatomic, strong, readonly) TSNetworkManager *networkManager;
+- (OWSRegistrationState)registrationState;
 
 /**
  *  Returns if a user is registered or not
  *
  *  @return registered or not
  */
-+ (BOOL)isRegistered;
-- (BOOL)isRegistered;
+@property (readonly) BOOL isRegistered;
+@property (readonly) BOOL isRegisteredAndReady;
 
 /**
  *  Returns current phone number for this device, which may not yet have been registered.
@@ -50,49 +54,42 @@ extern NSString *const kNSNotificationName_LocalNumberDidChange;
 + (nullable NSString *)localNumber;
 - (nullable NSString *)localNumber;
 
+// A variant of localNumber that never opens a "sneaky" transaction.
+- (nullable NSString *)storedOrCachedLocalNumber:(SDSAnyReadTransaction *)transaction;
+
+#ifdef DEBUG
+// This method is exposed for testing purposes only.
+- (void)storeLocalNumber:(NSString *)localNumber;
+#endif
+
 /**
  *  Symmetric key that's used to encrypt message payloads from the server,
  *
  *  @return signaling key
  */
-+ (nullable NSString *)signalingKey;
-- (nullable NSString *)signalingKey;
+- (nullable NSString *)storedSignalingKey;
 
 /**
  *  The server auth token allows the Signal client to connect to the Signal server
  *
  *  @return server authentication token
  */
-+ (nullable NSString *)serverAuthToken;
-- (nullable NSString *)serverAuthToken;
+- (nullable NSString *)storedServerAuthToken;
 
 /**
  *  The registration ID is unique to an installation of TextSecure, it allows to know if the app was reinstalled
  *
  *  @return registrationID;
  */
-
-+ (uint32_t)getOrGenerateRegistrationId;
-+ (uint32_t)getOrGenerateRegistrationId:(YapDatabaseReadWriteTransaction *)transaction;
+- (uint32_t)getOrGenerateRegistrationId;
+- (uint32_t)getOrGenerateRegistrationIdWithTransaction:(SDSAnyWriteTransaction *)transaction;
 
 #pragma mark - Register with phone number
-
-+ (void)registerWithPhoneNumber:(NSString *)phoneNumber
-                        success:(void (^)(void))successBlock
-                        failure:(void (^)(NSError *error))failureBlock
-                smsVerification:(BOOL)isSMS;
-
-+ (void)rerequestSMSWithSuccess:(void (^)(void))successBlock failure:(void (^)(NSError *error))failureBlock;
-
-+ (void)rerequestVoiceWithSuccess:(void (^)(void))successBlock failure:(void (^)(NSError *error))failureBlock;
 
 - (void)verifyAccountWithCode:(NSString *)verificationCode
                           pin:(nullable NSString *)pin
                       success:(void (^)(void))successBlock
                       failure:(void (^)(NSError *error))failureBlock;
-
-- (void)registerForManualMessageFetchingWithSuccess:(void (^)(void))successBlock
-                                            failure:(void (^)(NSError *error))failureBlock;
 
 // Called once registration is complete - meaning the following have succeeded:
 // - obtained signal server credentials
@@ -128,14 +125,31 @@ extern NSString *const kNSNotificationName_LocalNumberDidChange;
 - (BOOL)isDeregistered;
 - (void)setIsDeregistered:(BOOL)isDeregistered;
 
+- (BOOL)hasPendingBackupRestoreDecision;
+- (void)setHasPendingBackupRestoreDecision:(BOOL)value;
+
 #pragma mark - Re-registration
 
 // Re-registration is the process of re-registering _with the same phone number_.
 
 // Returns YES on success.
 - (BOOL)resetForReregistration;
-- (NSString *)reregisterationPhoneNumber;
+- (nullable NSString *)reregistrationPhoneNumber;
 - (BOOL)isReregistering;
+
+#pragma mark - Manual Message Fetch
+
+- (BOOL)isManualMessageFetchEnabled;
+- (void)setIsManualMessageFetchEnabled:(BOOL)value;
+
+#ifdef DEBUG
+- (void)registerForTestsWithLocalNumber:(NSString *)localNumber;
+#endif
+
+- (AnyPromise *)updateAccountAttributes __attribute__((warn_unused_result));
+
+// This should only be used during the registration process.
+- (AnyPromise *)performUpdateAccountAttributes __attribute__((warn_unused_result));
 
 @end
 

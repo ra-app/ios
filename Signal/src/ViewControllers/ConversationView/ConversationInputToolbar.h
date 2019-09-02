@@ -1,12 +1,14 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class ConversationStyle;
+@class OWSLinkPreviewDraft;
 @class OWSQuotedReplyModel;
 @class SignalAttachment;
+@class StickerInfo;
 
 @protocol ConversationInputToolbarDelegate <NSObject>
 
@@ -14,15 +16,25 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)attachmentButtonPressed;
 
+- (void)cameraButtonPressed;
+
+- (void)sendSticker:(StickerInfo *)stickerInfo;
+
+- (void)presentManageStickersView;
+
+- (CGSize)rootViewSize;
+
 #pragma mark - Voice Memo
 
 - (void)voiceMemoGestureDidStart;
 
-- (void)voiceMemoGestureDidEnd;
+- (void)voiceMemoGestureDidLock;
+
+- (void)voiceMemoGestureDidComplete;
 
 - (void)voiceMemoGestureDidCancel;
 
-- (void)voiceMemoGestureDidChange:(CGFloat)cancelAlpha;
+- (void)voiceMemoGestureDidUpdateCancelWithRatioComplete:(CGFloat)cancelAlpha;
 
 @end
 
@@ -40,22 +52,32 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, weak) id<ConversationInputToolbarDelegate> inputToolbarDelegate;
 
-- (void)beginEditingTextMessage;
-- (void)endEditingTextMessage;
-- (BOOL)isInputTextViewFirstResponder;
+- (void)beginEditingMessage;
+- (void)endEditingMessage;
+- (BOOL)isInputViewFirstResponder;
 
 - (void)setInputTextViewDelegate:(id<ConversationInputTextViewDelegate>)value;
 
 - (NSString *)messageText;
 - (void)setMessageText:(NSString *_Nullable)value animated:(BOOL)isAnimated;
+- (void)acceptAutocorrectSuggestion;
 - (void)clearTextMessageAnimated:(BOOL)isAnimated;
+- (void)clearStickerKeyboard;
 - (void)toggleDefaultKeyboard;
 
 - (void)updateFontSizes;
 
+- (void)updateLayoutWithSafeAreaInsets:(UIEdgeInsets)safeAreaInsets;
+- (void)ensureTextViewHeight;
+
+- (void)viewDidAppear;
+
+- (void)ensureFirstResponderState;
+
 #pragma mark - Voice Memo
 
-- (void)ensureTextViewHeight;
+- (void)lockVoiceMemoUI;
+
 - (void)showVoiceMemoUI;
 
 - (void)hideVoiceMemoUI:(BOOL)animated;
@@ -64,7 +86,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)cancelVoiceMemoIfNecessary;
 
+#pragma mark -
+
 @property (nonatomic, nullable) OWSQuotedReplyModel *quotedReply;
+
+@property (nonatomic, nullable, readonly) OWSLinkPreviewDraft *linkPreviewDraft;
 
 @end
 

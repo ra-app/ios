@@ -1,16 +1,16 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "SharingThreadPickerViewController.h"
 #import "Environment.h"
-#import "NSString+OWS.h"
 #import "SignalApp.h"
 #import "ThreadUtil.h"
 #import "UIColor+OWS.h"
 #import "UIFont+OWS.h"
 #import "UIView+OWS.h"
 #import <SignalMessaging/SignalMessaging-Swift.h>
+#import <SignalServiceKit/NSString+SSK.h>
 #import <SignalServiceKit/OWSError.h>
 #import <SignalServiceKit/OWSMessageSender.h>
 #import <SignalServiceKit/TSThread.h>
@@ -30,7 +30,6 @@ typedef void (^SendMessageBlock)(SendCompletionBlock completion);
 @property (nonatomic) TSThread *thread;
 @property (nonatomic, readonly, weak) id<ShareViewDelegate> shareViewDelegate;
 @property (nonatomic, readonly) UIProgressView *progressView;
-@property (nonatomic, readonly) YapDatabaseConnection *editingDBConnection;
 @property (atomic, nullable) TSOutgoingMessage *outgoingMessage;
 
 @end
@@ -46,12 +45,25 @@ typedef void (^SendMessageBlock)(SendCompletionBlock completion);
         return self;
     }
 
-    _editingDBConnection = [OWSPrimaryStorage.sharedManager newDatabaseConnection];
     _shareViewDelegate = shareViewDelegate;
     self.selectThreadViewDelegate = self;
 
     return self;
 }
+
+#pragma mark - Dependencies
+
+- (YapDatabaseConnection *)dbReadWriteConnection
+{
+    return OWSPrimaryStorage.sharedManager.dbReadWriteConnection;
+}
+
+- (YapDatabaseConnection *)dbReadConnection
+{
+    return OWSPrimaryStorage.sharedManager.dbReadConnection;
+}
+
+#pragma mark - UIViewController overrides
 
 - (void)loadView
 {
@@ -127,13 +139,18 @@ typedef void (^SendMessageBlock)(SendCompletionBlock completion);
 
 - (nullable NSString *)convertAttachmentToMessageTextIfPossible
 {
-    if (!self.attachment.isConvertibleToTextMessage) {
+    if (self.attachments.count > 1) {
         return nil;
     }
-    if (self.attachment.dataLength >= kOversizeTextMessageSizeThreshold) {
+    OWSAssertDebug(self.attachments.count == 1);
+    SignalAttachment *attachment = self.attachments.firstObject;
+    if (!attachment.isConvertibleToTextMessage) {
         return nil;
     }
-    NSData *data = self.attachment.data;
+    if (attachment.dataLength >= kOversizeTextMessageSizeThreshold) {
+        return nil;
+    }
+    NSData *data = attachment.data;
     OWSAssertDebug(data.length < kOversizeTextMessageSizeThreshold);
     NSString *_Nullable messageText = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     OWSLogVerbose(@"messageTextForAttachment: %@", messageText);
@@ -142,40 +159,67 @@ typedef void (^SendMessageBlock)(SendCompletionBlock completion);
 
 - (void)threadWasSelected:(TSThread *)thread
 {
-    OWSAssertDebug(self.attachment);
+    OWSAssertDebug(self.attachments.count > 0);
     OWSAssertDebug(thread);
 
     self.thread = thread;
 
-    if (self.attachment.isConvertibleToContactShare) {
-        [self showContactShareApproval];
+    if ([self tryToShareAsMessageText]) {
         return;
     }
 
-    NSString *_Nullable messageText = [self convertAttachmentToMessageTextIfPossible];
-
-    if (messageText) {
-        MessageApprovalViewController *approvalVC =
-            [[MessageApprovalViewController alloc] initWithMessageText:messageText
-                                                                thread:thread
-                                                       contactsManager:self.contactsManager
-                                                              delegate:self];
-
-        [self.navigationController pushViewController:approvalVC animated:YES];
-    } else {
-        OWSNavigationController *approvalModal =
-            [AttachmentApprovalViewController wrappedInNavControllerWithAttachment:self.attachment delegate:self];
-        [self presentViewController:approvalModal animated:YES completion:nil];
+    if ([self tryToShareAsContactShare]) {
+        return;
     }
+
+    OWSNavigationController *approvalModal =
+        [AttachmentApprovalViewController wrappedInNavControllerWithAttachments:self.attachments approvalDelegate:self];
+    [self presentViewController:approvalModal animated:YES completion:nil];
 }
 
-- (void)showContactShareApproval
+- (BOOL)tryToShareAsMessageText
 {
-    OWSAssertDebug(self.attachment);
-    OWSAssertDebug(self.thread);
-    OWSAssertDebug(self.attachment.isConvertibleToContactShare);
+    OWSAssertDebug(self.attachments.count > 0);
 
-    NSData *data = self.attachment.data;
+    NSString *_Nullable messageText = [self convertAttachmentToMessageTextIfPossible];
+    if (!messageText) {
+        return NO;
+    }
+
+    MessageApprovalViewController *approvalVC =
+        [[MessageApprovalViewController alloc] initWithMessageText:messageText
+                                                            thread:self.thread
+                                                   contactsManager:self.contactsManager
+                                                          delegate:self];
+
+    [self.navigationController pushViewController:approvalVC animated:YES];
+    return YES;
+}
+
+- (BOOL)tryToShareAsContactShare
+{
+    OWSAssertDebug(self.attachments.count > 0);
+
+    if (self.attachments.count > 1) {
+        return NO;
+    }
+    OWSAssertDebug(self.attachments.count == 1);
+    SignalAttachment *attachment = self.attachments.firstObject;
+    if (!attachment.isConvertibleToContactShare) {
+        return NO;
+    }
+
+    [self showContactShareApproval:attachment];
+    return YES;
+}
+
+- (void)showContactShareApproval:(SignalAttachment *)attachment
+{
+    OWSAssertDebug(attachment);
+    OWSAssertDebug(self.thread);
+    OWSAssertDebug(attachment.isConvertibleToContactShare);
+
+    NSData *data = attachment.data;
 
     CNContact *_Nullable cnContact = [Contact cnContactWithVCardData:data];
     Contact *_Nullable contact = [[Contact alloc] initWithSystemContact:cnContact];
@@ -228,32 +272,53 @@ typedef void (^SendMessageBlock)(SendCompletionBlock completion);
 
 #pragma mark - AttachmentApprovalViewControllerDelegate
 
-- (void)attachmentApproval:(AttachmentApprovalViewController *)approvalViewController
-      didApproveAttachment:(SignalAttachment *)attachment
+- (void)attachmentApprovalDidAppear:(AttachmentApprovalViewController *_Nonnull)attachmentApproval
+{
+    // no-op
+}
+
+- (void)attachmentApproval:(AttachmentApprovalViewController *_Nonnull)attachmentApproval
+     didApproveAttachments:(NSArray<SignalAttachment *> *_Nonnull)attachments
+               messageText:(NSString *_Nullable)messageText
 {
     [ThreadUtil addThreadToProfileWhitelistIfEmptyContactThread:self.thread];
-    [self tryToSendMessageWithBlock:^(SendCompletionBlock sendCompletion) {
-        OWSAssertIsOnMainThread();
+    [self
+        tryToSendMessageWithBlock:^(SendCompletionBlock sendCompletion) {
+            OWSAssertIsOnMainThread();
 
-        __block TSOutgoingMessage *outgoingMessage = nil;
-        outgoingMessage = [ThreadUtil sendMessageWithAttachment:attachment
-                                                       inThread:self.thread
-                                               quotedReplyModel:nil
-                                                  messageSender:self.messageSender
-                                                     completion:^(NSError *_Nullable error) {
-                                                         sendCompletion(error, outgoingMessage);
-                                                     }];
+            __block TSOutgoingMessage *outgoingMessage = nil;
+            // DURABLE CLEANUP - SAE uses non-durable sending to make sure the app is running long enough to complete
+            // the sending operation. Alternatively, we could use a durable send, but do more to make sure the
+            // SAE runs as long as it needs.
+            // TODO ALBUMS - send album via SAE
 
-        // This is necessary to show progress.
-        self.outgoingMessage = outgoingMessage;
-    }
-                 fromViewController:approvalViewController];
+            [self.dbReadConnection readWithBlock:^(YapDatabaseReadTransaction *_Nonnull transaction) {
+                outgoingMessage = [ThreadUtil sendMessageNonDurablyWithText:messageText
+                                                           mediaAttachments:attachments
+                                                                   inThread:self.thread
+                                                           quotedReplyModel:nil
+                                                                transaction:transaction
+                                                              messageSender:self.messageSender
+                                                                 completion:^(NSError *_Nullable error) {
+                                                                     sendCompletion(error, outgoingMessage);
+                                                                 }];
+            }];
+
+            // This is necessary to show progress.
+            self.outgoingMessage = outgoingMessage;
+        }
+               fromViewController:attachmentApproval];
+}
+
+- (void)attachmentApprovalDidCancel:(AttachmentApprovalViewController *)attachmentApproval
+{
+    [self cancelShareExperience];
 }
 
 - (void)attachmentApproval:(AttachmentApprovalViewController *)attachmentApproval
-       didCancelAttachment:(SignalAttachment *)attachment
+      didChangeMessageText:(nullable NSString *)newMessageText
 {
-    [self cancelShareExperience];
+    // no-op
 }
 
 #pragma mark - MessageApprovalViewControllerDelegate
@@ -268,19 +333,25 @@ typedef void (^SendMessageBlock)(SendCompletionBlock completion);
         OWSAssertIsOnMainThread();
 
         __block TSOutgoingMessage *outgoingMessage = nil;
-        outgoingMessage = [ThreadUtil sendMessageWithText:messageText
-            inThread:self.thread
-            quotedReplyModel:nil
-            messageSender:self.messageSender
-            success:^{
-                sendCompletion(nil, outgoingMessage);
-            }
-            failure:^(NSError *_Nonnull error) {
-                sendCompletion(error, outgoingMessage);
-            }];
-
-        // This is necessary to show progress.
-        self.outgoingMessage = outgoingMessage;
+        // DURABLE CLEANUP - SAE uses non-durable sending to make sure the app is running long enough to complete
+        // the sending operation. Alternatively, we could use a durable send, but do more to make sure the
+        // SAE runs as long as it needs.
+        [self.dbReadConnection readWithBlock:^(YapDatabaseReadTransaction *_Nonnull transaction) {
+            outgoingMessage = [ThreadUtil sendMessageNonDurablyWithText:messageText
+                                                               inThread:self.thread
+                                                       quotedReplyModel:nil
+                                                            transaction:transaction
+                                                          messageSender:self.messageSender
+                                                             completion:^(NSError *_Nullable error) {
+                                                                 if (error) {
+                                                                     sendCompletion(error, outgoingMessage);
+                                                                 } else {
+                                                                     sendCompletion(nil, outgoingMessage);
+                                                                 }
+                                                             }];
+            // This is necessary to show progress.
+            self.outgoingMessage = outgoingMessage;
+        }];
     }
                  fromViewController:approvalViewController];
 }
@@ -300,19 +371,22 @@ typedef void (^SendMessageBlock)(SendCompletionBlock completion);
     [ThreadUtil addThreadToProfileWhitelistIfEmptyContactThread:self.thread];
     [self tryToSendMessageWithBlock:^(SendCompletionBlock sendCompletion) {
         OWSAssertIsOnMainThread();
-        [self.editingDBConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction *_Nonnull transaction) {
-            if (contactShare.avatarImage) {
-                [contactShare.dbRecord saveAvatarImage:contactShare.avatarImage transaction:transaction];
+        // TODO - in line with QuotedReply and other message attachments, saving should happen as part of sending
+        // preparation rather than duplicated here and in the SAE
+        [self.dbReadWriteConnection
+            asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction *_Nonnull transaction) {
+                if (contactShare.avatarImage) {
+                    [contactShare.dbRecord saveAvatarImage:contactShare.avatarImage transaction:transaction.asAnyWrite];
+                }
             }
-        }
             completionBlock:^{
                 __block TSOutgoingMessage *outgoingMessage = nil;
-                outgoingMessage = [ThreadUtil sendMessageWithContactShare:contactShare.dbRecord
-                                                                 inThread:self.thread
-                                                            messageSender:self.messageSender
-                                                               completion:^(NSError *_Nullable error) {
-                                                                   sendCompletion(error, outgoingMessage);
-                                                               }];
+                outgoingMessage = [ThreadUtil sendMessageNonDurablyWithContactShare:contactShare.dbRecord
+                                                                           inThread:self.thread
+                                                                      messageSender:self.messageSender
+                                                                         completion:^(NSError *_Nullable error) {
+                                                                             sendCompletion(error, outgoingMessage);
+                                                                         }];
                 // This is necessary to show progress.
                 self.outgoingMessage = outgoingMessage;
             }];
@@ -358,7 +432,7 @@ typedef void (^SendMessageBlock)(SendCompletionBlock completion);
     [self.progressView autoPinWidthToSuperviewWithMargin:24];
     [self.progressView autoAlignAxis:ALAxisHorizontal toSameAxisOfView:progressAlert.view withOffset:4];
 #ifdef DEBUG
-    if (@available(iOS 12, *)) {
+    if (@available(iOS 13, *)) {
         // TODO: Congratulations! You survived to see another iOS release.
         OWSFailDebug(@"Make sure the progress view still looks good, and increment the version canary.");
     }
@@ -370,7 +444,7 @@ typedef void (^SendMessageBlock)(SendCompletionBlock completion);
             if (error) {
                 [fromViewController
                     dismissViewControllerAnimated:YES
-                                       completion:^(void) {
+                                       completion:^{
                                            OWSLogInfo(@"Sending message failed with error: %@", error);
                                            [self showSendFailureAlertWithError:error
                                                                        message:message
@@ -384,11 +458,10 @@ typedef void (^SendMessageBlock)(SendCompletionBlock completion);
         });
     };
 
-    [fromViewController presentViewController:progressAlert
-                                     animated:YES
-                                   completion:^(void) {
-                                       sendMessageBlock(sendCompletion);
-                                   }];
+    [fromViewController presentAlert:progressAlert
+                          completion:^{
+                              sendMessageBlock(sendCompletion);
+                          }];
 }
 
 - (void)showSendFailureAlertWithError:(NSError *)error
@@ -439,7 +512,7 @@ typedef void (^SendMessageBlock)(SendCompletionBlock completion);
             OWSFailDebug(@"Untrusted recipient error is missing recipient id.");
         }
 
-        [fromViewController presentViewController:failureAlert animated:YES completion:nil];
+        [fromViewController presentAlert:failureAlert];
     } else {
         // Non-identity failure, e.g. network offline, rate limit
 
@@ -462,7 +535,7 @@ typedef void (^SendMessageBlock)(SendCompletionBlock completion);
                                    }];
 
         [failureAlert addAction:retryAction];
-        [fromViewController presentViewController:failureAlert animated:YES completion:nil];
+        [fromViewController presentAlert:failureAlert];
     }
 }
 
@@ -477,10 +550,10 @@ typedef void (^SendMessageBlock)(SendCompletionBlock completion);
 
     OWSLogDebug(@"Confirming identity for recipient: %@", recipientId);
 
-    [OWSPrimaryStorage.sharedManager.newDatabaseConnection asyncReadWriteWithBlock:^(
-        YapDatabaseReadWriteTransaction *transaction) {
+    [self.dbReadWriteConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
         OWSVerificationState verificationState =
-            [[OWSIdentityManager sharedManager] verificationStateForRecipientId:recipientId transaction:transaction];
+            [[OWSIdentityManager sharedManager] verificationStateForRecipientId:recipientId
+                                                                    transaction:transaction.asAnyRead];
         switch (verificationState) {
             case OWSVerificationStateVerified: {
                 OWSFailDebug(@"Shouldn't need to confirm identity if it was already verified");
@@ -498,13 +571,14 @@ typedef void (^SendMessageBlock)(SendCompletionBlock completion);
             case OWSVerificationStateNoLongerVerified: {
                 OWSLogInfo(@"marked recipient: %@ as default verification status.", recipientId);
                 NSData *identityKey =
-                    [[OWSIdentityManager sharedManager] identityKeyForRecipientId:recipientId transaction:transaction];
+                    [[OWSIdentityManager sharedManager] identityKeyForRecipientId:recipientId
+                                                                      transaction:transaction.asAnyRead];
                 OWSAssertDebug(identityKey);
                 [[OWSIdentityManager sharedManager] setVerificationState:OWSVerificationStateDefault
                                                              identityKey:identityKey
                                                              recipientId:recipientId
                                                    isUserInitiatedChange:YES
-                                                             transaction:transaction];
+                                                             transaction:transaction.asAnyWrite];
                 break;
             }
         }
@@ -534,30 +608,28 @@ typedef void (^SendMessageBlock)(SendCompletionBlock completion);
     [progressAlert addAction:progressCancelAction];
 
     [fromViewController
-        presentViewController:progressAlert
-                     animated:YES
-                   completion:^(void) {
-                       [self.messageSender enqueueMessage:message
-                           success:^(void) {
-                               OWSLogInfo(@"Resending attachment succeeded.");
-                               dispatch_async(dispatch_get_main_queue(), ^(void) {
-                                   [self.shareViewDelegate shareViewWasCompleted];
-                               });
-                           }
-                           failure:^(NSError *error) {
-                               dispatch_async(dispatch_get_main_queue(), ^(void) {
-                                   [fromViewController
-                                       dismissViewControllerAnimated:YES
-                                                          completion:^(void) {
-                                                              OWSLogInfo(
-                                                                  @"Sending attachment failed with error: %@", error);
-                                                              [self showSendFailureAlertWithError:error
-                                                                                          message:message
-                                                                               fromViewController:fromViewController];
-                                                          }];
-                               });
-                           }];
-                   }];
+        presentAlert:progressAlert
+          completion:^{
+              [self.messageSender sendMessage:message
+                  success:^{
+                      OWSLogInfo(@"Resending attachment succeeded.");
+                      dispatch_async(dispatch_get_main_queue(), ^{
+                          [self.shareViewDelegate shareViewWasCompleted];
+                      });
+                  }
+                  failure:^(NSError *error) {
+                      dispatch_async(dispatch_get_main_queue(), ^{
+                          [fromViewController
+                              dismissViewControllerAnimated:YES
+                                                 completion:^{
+                                                     OWSLogInfo(@"Sending attachment failed with error: %@", error);
+                                                     [self showSendFailureAlertWithError:error
+                                                                                 message:message
+                                                                      fromViewController:fromViewController];
+                                                 }];
+                      });
+                  }];
+          }];
 }
 
 - (void)attachmentUploadProgress:(NSNotification *)notification
@@ -571,6 +643,7 @@ typedef void (^SendMessageBlock)(SendCompletionBlock completion);
         return;
     }
 
+    // TODO: Support multi-image messages.
     NSString *_Nullable attachmentRecordId = self.outgoingMessage.attachmentIds.firstObject;
     if (!attachmentRecordId) {
         OWSLogDebug(@"Ignoring upload progress until outgoing message has an attachment record id");

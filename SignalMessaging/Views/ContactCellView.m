@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "ContactCellView.h"
@@ -8,6 +8,7 @@
 #import "UIFont+OWS.h"
 #import "UIView+OWS.h"
 #import <SignalMessaging/SignalMessaging-Swift.h>
+#import <SignalServiceKit/OWSPrimaryStorage.h>
 #import <SignalServiceKit/SignalAccount.h>
 #import <SignalServiceKit/TSContactThread.h>
 #import <SignalServiceKit/TSGroupThread.h>
@@ -15,7 +16,6 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-const NSUInteger kContactCellAvatarSize = 48;
 const CGFloat kContactCellAvatarTextMargin = 12;
 
 @interface ContactCellView ()
@@ -28,7 +28,6 @@ const CGFloat kContactCellAvatarTextMargin = 12;
 @property (nonatomic) UIStackView *nameContainerView;
 @property (nonatomic) UIView *accessoryViewContainer;
 
-@property (nonatomic) OWSContactsManager *contactsManager;
 @property (nonatomic, nullable) TSThread *thread;
 @property (nonatomic) NSString *recipientId;
 
@@ -46,6 +45,31 @@ const CGFloat kContactCellAvatarTextMargin = 12;
     return self;
 }
 
+#pragma mark - Dependencies
+
+- (OWSContactsManager *)contactsManager
+{
+    OWSAssertDebug(Environment.shared.contactsManager);
+
+    return Environment.shared.contactsManager;
+}
+
+- (OWSPrimaryStorage *)primaryStorage
+{
+    OWSAssertDebug(SSKEnvironment.shared.primaryStorage);
+
+    return SSKEnvironment.shared.primaryStorage;
+}
+
+- (TSAccountManager *)tsAccountManager
+{
+    OWSAssertDebug(SSKEnvironment.shared.tsAccountManager);
+
+    return SSKEnvironment.shared.tsAccountManager;
+}
+
+#pragma mark -
+
 - (void)configure
 {
     OWSAssertDebug(!self.nameLabel);
@@ -53,8 +77,8 @@ const CGFloat kContactCellAvatarTextMargin = 12;
     self.layoutMargins = UIEdgeInsetsZero;
 
     _avatarView = [AvatarImageView new];
-    [_avatarView autoSetDimension:ALDimensionWidth toSize:kContactCellAvatarSize];
-    [_avatarView autoSetDimension:ALDimensionHeight toSize:kContactCellAvatarSize];
+    [_avatarView autoSetDimension:ALDimensionWidth toSize:kStandardAvatarSize];
+    [_avatarView autoSetDimension:ALDimensionHeight toSize:kStandardAvatarSize];
 
     self.nameLabel = [UILabel new];
     self.nameLabel.lineBreakMode = NSLineBreakByTruncatingTail;
@@ -103,19 +127,30 @@ const CGFloat kContactCellAvatarTextMargin = 12;
     self.accessoryLabel.textColor = Theme.middleGrayColor;
 }
 
-- (void)configureWithRecipientId:(NSString *)recipientId contactsManager:(OWSContactsManager *)contactsManager
+- (void)configureWithRecipientId:(NSString *)recipientId
 {
     OWSAssertDebug(recipientId.length > 0);
-    OWSAssertDebug(contactsManager);
 
     // Update fonts to reflect changes to dynamic type.
     [self configureFontsAndColors];
 
     self.recipientId = recipientId;
-    self.contactsManager = contactsManager;
 
-    self.nameLabel.attributedText =
-        [contactsManager formattedFullNameForRecipientId:recipientId font:self.nameLabel.font];
+    [self.primaryStorage.dbReadConnection readWithBlock:^(YapDatabaseReadTransaction *transaction) {
+        self.thread = [TSContactThread getThreadWithContactId:recipientId transaction:transaction];
+    }];
+
+    BOOL isNoteToSelf = (IsNoteToSelfEnabled() && [recipientId isEqualToString:self.tsAccountManager.localNumber]);
+    if (isNoteToSelf) {
+        self.nameLabel.attributedText = [[NSAttributedString alloc]
+            initWithString:NSLocalizedString(@"NOTE_TO_SELF", @"Label for 1:1 conversation with yourself.")
+                attributes:@{
+                    NSFontAttributeName : self.nameLabel.font,
+                }];
+    } else {
+        self.nameLabel.attributedText =
+            [self.contactsManager formattedFullNameForRecipientId:recipientId font:self.nameLabel.font];
+    }
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(otherUsersProfileDidChange:)
@@ -133,7 +168,7 @@ const CGFloat kContactCellAvatarTextMargin = 12;
     [self layoutSubviews];
 }
 
-- (void)configureWithThread:(TSThread *)thread contactsManager:(OWSContactsManager *)contactsManager
+- (void)configureWithThread:(TSThread *)thread
 {
     OWSAssertDebug(thread);
     self.thread = thread;
@@ -141,11 +176,15 @@ const CGFloat kContactCellAvatarTextMargin = 12;
     // Update fonts to reflect changes to dynamic type.
     [self configureFontsAndColors];
 
-    self.contactsManager = contactsManager;
-
     NSString *threadName = thread.name;
     if (threadName.length == 0 && [thread isKindOfClass:[TSGroupThread class]]) {
         threadName = [MessageStrings newGroupDefaultTitle];
+    }
+
+    BOOL isNoteToSelf
+        = (!thread.isGroupThread && [thread.contactIdentifier isEqualToString:self.tsAccountManager.localNumber]);
+    if (isNoteToSelf) {
+        threadName = NSLocalizedString(@"NOTE_TO_SELF", @"Label for 1:1 conversation with yourself.");
     }
 
     NSAttributedString *attributedText =
@@ -164,8 +203,7 @@ const CGFloat kContactCellAvatarTextMargin = 12;
                                                    object:nil];
         [self updateProfileName];
     }
-    self.avatarView.image =
-        [OWSAvatarBuilder buildImageForThread:thread diameter:kContactCellAvatarSize contactsManager:contactsManager];
+    self.avatarView.image = [OWSAvatarBuilder buildImageForThread:thread diameter:kStandardAvatarSize];
 
     if (self.accessoryMessage) {
         self.accessoryLabel.text = self.accessoryMessage;
@@ -178,13 +216,6 @@ const CGFloat kContactCellAvatarTextMargin = 12;
 
 - (void)updateAvatar
 {
-    OWSContactsManager *contactsManager = self.contactsManager;
-    if (contactsManager == nil) {
-        OWSFailDebug(@"contactsManager should not be nil");
-        self.avatarView.image = nil;
-        return;
-    }
-
     NSString *recipientId = self.recipientId;
     if (recipientId.length == 0) {
         OWSFailDebug(@"recipientId should not be nil");
@@ -192,20 +223,18 @@ const CGFloat kContactCellAvatarTextMargin = 12;
         return;
     }
 
-    NSString *colorName = ^{
+    ConversationColorName colorName = ^{
         if (self.thread) {
             return self.thread.conversationColorName;
         } else {
             OWSAssertDebug(self.recipientId);
-            return [TSThread stableConversationColorNameForString:self.recipientId];
+            return [TSThread stableColorNameForNewConversationWithString:self.recipientId];
         }
     }();
-    UIColor *color = [UIColor ows_conversationColorForColorName:colorName];
-    
-    self.avatarView.image = [[[OWSContactAvatarBuilder alloc] initWithSignalId:recipientId
-                                                                         color:color
-                                                                      diameter:kContactCellAvatarSize
-                                                               contactsManager:contactsManager] build];
+
+    self.avatarView.image =
+        [[[OWSContactAvatarBuilder alloc] initWithSignalId:recipientId colorName:colorName diameter:kStandardAvatarSize]
+            build];
 }
 
 - (void)updateProfileName

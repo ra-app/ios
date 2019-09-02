@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "ConversationViewItem.h"
@@ -8,11 +8,10 @@
 #import "OWSMessageCell.h"
 #import "OWSMessageHeaderView.h"
 #import "OWSSystemMessageCell.h"
-#import "RAAPP-Swift.h"
-#import <AssetsLibrary/AssetsLibrary.h>
-#import <SignalMessaging/NSString+OWS.h>
+#import "Signal-Swift.h"
 #import <SignalMessaging/OWSUnreadIndicator.h>
 #import <SignalServiceKit/NSData+Image.h>
+#import <SignalServiceKit/NSString+SSK.h>
 #import <SignalServiceKit/OWSContact.h>
 #import <SignalServiceKit/TSInteraction.h>
 
@@ -21,32 +20,90 @@ NS_ASSUME_NONNULL_BEGIN
 NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
 {
     switch (cellType) {
-        case OWSMessageCellType_TextMessage:
-            return @"OWSMessageCellType_TextMessage";
-        case OWSMessageCellType_OversizeTextMessage:
-            return @"OWSMessageCellType_OversizeTextMessage";
-        case OWSMessageCellType_StillImage:
-            return @"OWSMessageCellType_StillImage";
-        case OWSMessageCellType_AnimatedImage:
-            return @"OWSMessageCellType_AnimatedImage";
+        case OWSMessageCellType_TextOnlyMessage:
+            return @"OWSMessageCellType_TextOnlyMessage";
         case OWSMessageCellType_Audio:
             return @"OWSMessageCellType_Audio";
-        case OWSMessageCellType_Video:
-            return @"OWSMessageCellType_Video";
         case OWSMessageCellType_GenericAttachment:
             return @"OWSMessageCellType_GenericAttachment";
-        case OWSMessageCellType_DownloadingAttachment:
-            return @"OWSMessageCellType_DownloadingAttachment";
         case OWSMessageCellType_Unknown:
             return @"OWSMessageCellType_Unknown";
         case OWSMessageCellType_ContactShare:
             return @"OWSMessageCellType_ContactShare";
+        case OWSMessageCellType_MediaMessage:
+            return @"OWSMessageCellType_MediaMessage";
+        case OWSMessageCellType_OversizeTextDownloading:
+            return @"OWSMessageCellType_OversizeTextDownloading";
+        case OWSMessageCellType_StickerMessage:
+            return @"OWSMessageCellType_StickerMessage";
+        case OWSMessageCellType_ViewOnce:
+            return @"OWSMessageCellType_ViewOnce";
+    }
+}
+
+NSString *NSStringForViewOnceMessageState(ViewOnceMessageState cellType)
+{
+    switch (cellType) {
+        case ViewOnceMessageState_Unknown:
+            return @"ViewOnceMessageState_Unknown";
+        case ViewOnceMessageState_IncomingExpired:
+            return @"ViewOnceMessageState_IncomingExpired";
+        case ViewOnceMessageState_IncomingDownloading:
+            return @"ViewOnceMessageState_IncomingDownloading";
+        case ViewOnceMessageState_IncomingFailed:
+            return @"ViewOnceMessageState_IncomingFailed";
+        case ViewOnceMessageState_IncomingAvailable:
+            return @"ViewOnceMessageState_IncomingAvailable";
+        case ViewOnceMessageState_IncomingInvalidContent:
+            return @"ViewOnceMessageState_IncomingInvalidContent";
+        case ViewOnceMessageState_OutgoingSending:
+            return @"ViewOnceMessageState_OutgoingSending";
+        case ViewOnceMessageState_OutgoingFailed:
+            return @"ViewOnceMessageState_OutgoingFailed";
+        case ViewOnceMessageState_OutgoingSentExpired:
+            return @"ViewOnceMessageState_OutgoingSentExpired";
     }
 }
 
 #pragma mark -
 
-@interface ConversationViewItem ()
+@implementation ConversationMediaAlbumItem
+
+- (instancetype)initWithAttachment:(TSAttachment *)attachment
+                  attachmentStream:(nullable TSAttachmentStream *)attachmentStream
+                           caption:(nullable NSString *)caption
+                         mediaSize:(CGSize)mediaSize
+{
+    OWSAssertDebug(attachment);
+
+    self = [super init];
+
+    if (!self) {
+        return self;
+    }
+
+    _attachment = attachment;
+    _attachmentStream = attachmentStream;
+    _caption = caption;
+    _mediaSize = mediaSize;
+
+    return self;
+}
+
+- (BOOL)isFailedDownload
+{
+    if (![self.attachment isKindOfClass:[TSAttachmentPointer class]]) {
+        return NO;
+    }
+    TSAttachmentPointer *attachmentPointer = (TSAttachmentPointer *)self.attachment;
+    return attachmentPointer.state == TSAttachmentPointerStateFailed;
+}
+
+@end
+
+#pragma mark -
+
+@interface ConversationInteractionViewItem ()
 
 @property (nonatomic, nullable) NSValue *cachedCellSize;
 
@@ -63,22 +120,42 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
 @property (nonatomic, nullable) DisplayableText *displayableBodyText;
 @property (nonatomic, nullable) DisplayableText *displayableQuotedText;
 @property (nonatomic, nullable) OWSQuotedReplyModel *quotedReply;
-@property (nonatomic, readonly, nullable) NSString *quotedAttachmentMimetype;
-@property (nonatomic, readonly, nullable) NSString *quotedRecipientId;
+@property (nonatomic, nullable) StickerInfo *stickerInfo;
+@property (nonatomic, nullable) TSAttachmentStream *stickerAttachment;
+@property (nonatomic) BOOL isFailedSticker;
+@property (nonatomic) ViewOnceMessageState viewOnceMessageState;
 @property (nonatomic, nullable) TSAttachmentStream *attachmentStream;
 @property (nonatomic, nullable) TSAttachmentPointer *attachmentPointer;
 @property (nonatomic, nullable) ContactShareViewModel *contactShare;
-@property (nonatomic) CGSize mediaSize;
+@property (nonatomic, nullable) OWSLinkPreview *linkPreview;
+@property (nonatomic, nullable) TSAttachment *linkPreviewAttachment;
+@property (nonatomic, nullable) NSArray<ConversationMediaAlbumItem *> *mediaAlbumItems;
+@property (nonatomic, nullable) NSString *systemMessageText;
+@property (nonatomic, nullable) TSThread *incomingMessageAuthorThread;
+@property (nonatomic, nullable) NSString *authorConversationColorName;
+@property (nonatomic, nullable) ConversationStyle *conversationStyle;
 
 @end
 
 #pragma mark -
 
-@implementation ConversationViewItem
+@implementation ConversationInteractionViewItem
+
+@synthesize shouldShowDate = _shouldShowDate;
+@synthesize shouldShowSenderAvatar = _shouldShowSenderAvatar;
+@synthesize unreadIndicator = _unreadIndicator;
+@synthesize didCellMediaFailToLoad = _didCellMediaFailToLoad;
+@synthesize interaction = _interaction;
+@synthesize isFirstInCluster = _isFirstInCluster;
+@synthesize isGroupThread = _isGroupThread;
+@synthesize isLastInCluster = _isLastInCluster;
+@synthesize lastAudioMessageView = _lastAudioMessageView;
+@synthesize senderName = _senderName;
+@synthesize shouldHideFooter = _shouldHideFooter;
 
 - (instancetype)initWithInteraction:(TSInteraction *)interaction
                       isGroupThread:(BOOL)isGroupThread
-                        transaction:(YapDatabaseReadTransaction *)transaction
+                        transaction:(SDSAnyReadTransaction *)transaction
                   conversationStyle:(ConversationStyle *)conversationStyle
 {
     OWSAssertDebug(interaction);
@@ -95,12 +172,14 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
     _isGroupThread = isGroupThread;
     _conversationStyle = conversationStyle;
 
+    [self setAuthorConversationColorNameWithTransaction:transaction];
+
     [self ensureViewState:transaction];
 
     return self;
 }
 
-- (void)replaceInteraction:(TSInteraction *)interaction transaction:(YapDatabaseReadTransaction *)transaction
+- (void)replaceInteraction:(TSInteraction *)interaction transaction:(SDSAnyReadTransaction *)transaction
 {
     OWSAssertDebug(interaction);
 
@@ -111,14 +190,53 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
     self.displayableBodyText = nil;
     self.attachmentStream = nil;
     self.attachmentPointer = nil;
-    self.mediaSize = CGSizeZero;
+    self.mediaAlbumItems = nil;
     self.displayableQuotedText = nil;
     self.quotedReply = nil;
+    self.stickerInfo = nil;
+    self.stickerAttachment = nil;
+    self.isFailedSticker = NO;
+    self.viewOnceMessageState = ViewOnceMessageState_Unknown;
+    self.contactShare = nil;
     self.systemMessageText = nil;
+    self.authorConversationColorName = nil;
+    self.linkPreview = nil;
+    self.linkPreviewAttachment = nil;
+
+    [self setAuthorConversationColorNameWithTransaction:transaction];
 
     [self clearCachedLayoutState];
 
     [self ensureViewState:transaction];
+}
+
+- (void)setAuthorConversationColorNameWithTransaction:(SDSAnyReadTransaction *)transaction
+{
+    OWSAssertDebug(transaction);
+
+    switch (self.interaction.interactionType) {
+        case OWSInteractionType_TypingIndicator: {
+            OWSTypingIndicatorInteraction *typingIndicator = (OWSTypingIndicatorInteraction *)self.interaction;
+            _authorConversationColorName =
+                [TSContactThread conversationColorNameForRecipientId:typingIndicator.recipientId
+                                                         transaction:transaction];
+            break;
+        }
+        case OWSInteractionType_IncomingMessage: {
+            TSIncomingMessage *incomingMessage = (TSIncomingMessage *)self.interaction;
+            _authorConversationColorName =
+                [TSContactThread conversationColorNameForRecipientId:incomingMessage.authorId transaction:transaction];
+            break;
+        }
+        default:
+            _authorConversationColorName = nil;
+            break;
+    }
+}
+
+- (NSString *)itemId
+{
+    return self.interaction.uniqueId;
 }
 
 - (BOOL)hasBodyText
@@ -141,7 +259,12 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
     return self.hasQuotedAttachment || self.hasQuotedText;
 }
 
-- (BOOL)isExpiringMessage
+- (BOOL)isSticker
+{
+    return self.stickerInfo != nil;
+}
+
+- (BOOL)hasPerConversationExpiration
 {
     if (self.interaction.interactionType != OWSInteractionType_OutgoingMessage
         && self.interaction.interactionType != OWSInteractionType_IncomingMessage) {
@@ -149,7 +272,18 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
     }
 
     TSMessage *message = (TSMessage *)self.interaction;
-    return message.isExpiringMessage;
+    return message.hasPerConversationExpiration;
+}
+
+- (BOOL)isViewOnceMessage
+{
+    if (self.interaction.interactionType != OWSInteractionType_OutgoingMessage
+        && self.interaction.interactionType != OWSInteractionType_IncomingMessage) {
+        return NO;
+    }
+
+    TSMessage *message = (TSMessage *)self.interaction;
+    return message.isViewOnceMessage;
 }
 
 - (BOOL)hasCellHeader
@@ -201,6 +335,32 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
     [self clearCachedLayoutState];
 }
 
+- (void)setIsFirstInCluster:(BOOL)isFirstInCluster
+{
+    if (_isFirstInCluster == isFirstInCluster) {
+        return;
+    }
+
+    _isFirstInCluster = isFirstInCluster;
+
+    // Although this doesn't affect layout size, the view model use
+    // hasCachedLayoutState to detect which cells needs to be redrawn due to changes.
+    [self clearCachedLayoutState];
+}
+
+- (void)setIsLastInCluster:(BOOL)isLastInCluster
+{
+    if (_isLastInCluster == isLastInCluster) {
+        return;
+    }
+
+    _isLastInCluster = isLastInCluster;
+
+    // Although this doesn't affect layout size, the view model use
+    // hasCachedLayoutState to detect which cells needs to be redrawn due to changes.
+    [self clearCachedLayoutState];
+}
+
 - (void)setUnreadIndicator:(nullable OWSUnreadIndicator *)unreadIndicator
 {
     if ([NSObject isNullableObject:_unreadIndicator equalTo:unreadIndicator]) {
@@ -212,9 +372,57 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
     [self clearCachedLayoutState];
 }
 
+- (void)setStickerInfo:(nullable StickerInfo *)stickerInfo
+{
+    if ([NSObject isNullableObject:_stickerInfo equalTo:stickerInfo]) {
+        return;
+    }
+
+    _stickerInfo = stickerInfo;
+
+    [self clearCachedLayoutState];
+}
+
+- (void)setStickerAttachment:(nullable TSAttachmentStream *)stickerAttachment
+{
+    BOOL didChange = ((_stickerAttachment != nil) != (stickerAttachment != nil));
+
+    _stickerAttachment = stickerAttachment;
+
+    if (didChange) {
+        [self clearCachedLayoutState];
+    }
+}
+
+- (void)setIsFailedSticker:(BOOL)isFailedSticker
+{
+    if (_isFailedSticker == isFailedSticker) {
+        return;
+    }
+
+    _isFailedSticker = isFailedSticker;
+
+    [self clearCachedLayoutState];
+}
+
+- (void)setViewOnceMessageState:(ViewOnceMessageState)viewOnceMessageState
+{
+    if (_viewOnceMessageState == viewOnceMessageState) {
+        return;
+    }
+
+    _viewOnceMessageState = viewOnceMessageState;
+
+    [self clearCachedLayoutState];
+}
+
 - (void)clearCachedLayoutState
 {
     self.cachedCellSize = nil;
+}
+
+- (BOOL)hasCachedLayoutState {
+    return self.cachedCellSize != nil;
 }
 
 - (CGSize)cellSize
@@ -265,6 +473,9 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
             case OWSInteractionType_Offer:
                 measurementCell = [OWSContactOffersCell new];
                 break;
+            case OWSInteractionType_TypingIndicator:
+                measurementCell = [OWSTypingIndicatorCell new];
+                break;
         }
 
         OWSAssertDebug(measurementCell);
@@ -274,7 +485,7 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
     return measurementCell;
 }
 
-- (CGFloat)vSpacingWithPreviousLayoutItem:(ConversationViewItem *)previousLayoutItem
+- (CGFloat)vSpacingWithPreviousLayoutItem:(id<ConversationViewItem>)previousLayoutItem
 {
     OWSAssertDebug(previousLayoutItem);
 
@@ -322,7 +533,26 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
         case OWSInteractionType_Offer:
             return [collectionView dequeueReusableCellWithReuseIdentifier:[OWSContactOffersCell cellReuseIdentifier]
                                                              forIndexPath:indexPath];
+
+        case OWSInteractionType_TypingIndicator:
+            return [collectionView dequeueReusableCellWithReuseIdentifier:[OWSTypingIndicatorCell cellReuseIdentifier]
+                                                             forIndexPath:indexPath];
     }
+}
+
+- (nullable TSAttachmentStream *)firstValidAlbumAttachment
+{
+    OWSAssertDebug(self.mediaAlbumItems.count > 0);
+
+    // For now, use first valid attachment.
+    TSAttachmentStream *_Nullable attachmentStream = nil;
+    for (ConversationMediaAlbumItem *mediaAlbumItem in self.mediaAlbumItems) {
+        if (mediaAlbumItem.attachmentStream && mediaAlbumItem.attachmentStream.isValidVisualMedia) {
+            attachmentStream = mediaAlbumItem.attachmentStream;
+            break;
+        }
+    }
+    return attachmentStream;
 }
 
 #pragma mark - OWSAudioPlayerDelegate
@@ -338,9 +568,24 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
 {
     OWSAssertIsOnMainThread();
 
-    self.audioProgressSeconds = progress;
+    // We don't want to reset the progress slider when the playback stops,
+    // only when we finish playing the recording. This lets the user pick
+    // back up where they left off if they, for example, play another message.
+    if (self.audioPlaybackState != AudioPlaybackState_Stopped) {
+        self.audioProgressSeconds = progress;
+    }
 
     [self.lastAudioMessageView updateContents];
+}
+
+- (void)audioPlayerDidFinish
+{
+    OWSAssertIsOnMainThread();
+
+    if (self.audioPlaybackState == AudioPlaybackState_Stopped) {
+        self.audioProgressSeconds = 0;
+        [self.lastAudioMessageView updateContents];
+    }
 }
 
 #pragma mark - Displayable Text
@@ -403,6 +648,19 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
                                   }];
 }
 
+- (DisplayableText *)displayableCaptionForText:(NSString *)text attachmentId:(NSString *)attachmentId
+{
+    OWSAssertDebug(text);
+    OWSAssertDebug(attachmentId.length > 0);
+
+    NSString *displayableTextCacheKey = [@"attachment-caption-" stringByAppendingString:attachmentId];
+
+    return [self displayableTextForCacheKey:displayableTextCacheKey
+                                  textBlock:^{
+                                      return text;
+                                  }];
+}
+
 - (DisplayableText *)displayableTextForCacheKey:(NSString *)displayableTextCacheKey
                                       textBlock:(NSString * (^_Nonnull)(void))textBlock
 {
@@ -419,22 +677,7 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
 
 #pragma mark - View State
 
-- (nullable TSAttachment *)firstAttachmentIfAnyOfMessage:(TSMessage *)message
-                                             transaction:(YapDatabaseReadTransaction *)transaction
-{
-    OWSAssertDebug(transaction);
-
-    if (message.attachmentIds.count == 0) {
-        return nil;
-    }
-    NSString *_Nullable attachmentId = message.attachmentIds.firstObject;
-    if (attachmentId.length == 0) {
-        return nil;
-    }
-    return [TSAttachment fetchObjectWithUniqueID:attachmentId transaction:transaction];
-}
-
-- (void)ensureViewState:(YapDatabaseReadTransaction *)transaction
+- (void)ensureViewState:(SDSAnyReadTransaction *)transaction
 {
     OWSAssertIsOnMainThread();
     OWSAssertDebug(transaction);
@@ -443,6 +686,7 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
     switch (self.interaction.interactionType) {
         case OWSInteractionType_Unknown:
         case OWSInteractionType_Offer:
+        case OWSInteractionType_TypingIndicator:
             return;
         case OWSInteractionType_Error:
         case OWSInteractionType_Info:
@@ -464,57 +708,103 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
     self.hasViewState = YES;
 
     TSMessage *message = (TSMessage *)self.interaction;
-    if (message.contactShare) {
-        self.contactShare =
-            [[ContactShareViewModel alloc] initWithContactShareRecord:message.contactShare transaction:transaction];
-        self.messageCellType = OWSMessageCellType_ContactShare;
+
+    if (message.isViewOnceMessage) {
+        [self configureViewOnceMessage:message transaction:transaction];
         return;
     }
-    TSAttachment *_Nullable attachment = [self firstAttachmentIfAnyOfMessage:message transaction:transaction];
-    if (attachment) {
-        if ([attachment isKindOfClass:[TSAttachmentStream class]]) {
-            self.attachmentStream = (TSAttachmentStream *)attachment;
 
-            if ([attachment.contentType isEqualToString:OWSMimeTypeOversizeTextMessage]) {
-                self.messageCellType = OWSMessageCellType_OversizeTextMessage;
-                self.displayableBodyText = [self displayableBodyTextForOversizeTextAttachment:self.attachmentStream
-                                                                                interactionId:message.uniqueId];
-            } else if ([self.attachmentStream isAnimated] || [self.attachmentStream isImage] ||
-                [self.attachmentStream isVideo]) {
-                if ([self.attachmentStream isAnimated]) {
-                    if (![self.attachmentStream isValidImage]) {
-                        OWSLogWarn(@"Treating invalid image as generic attachment.");
-                        self.messageCellType = OWSMessageCellType_GenericAttachment;
-                        return;
-                    }
+    if (transaction.transitional_yapReadTransaction != nil) {
+        if (message.contactShare) {
+            self.contactShare =
+                [[ContactShareViewModel alloc] initWithContactShareRecord:message.contactShare
+                                                              transaction:transaction.transitional_yapReadTransaction];
+            self.messageCellType = OWSMessageCellType_ContactShare;
+            return;
+        }
+    }
 
-                    self.messageCellType = OWSMessageCellType_AnimatedImage;
-                } else if ([self.attachmentStream isImage]) {
-                    if (![self.attachmentStream isValidImage]) {
-                        OWSLogWarn(@"Treating invalid image as generic attachment.");
-                        self.messageCellType = OWSMessageCellType_GenericAttachment;
-                        return;
-                    }
+    // Check for stickers _before_ media or quoted reply handling;
+    // stickers should not have quoted replies and should never
+    // have media.
+    if (message.messageSticker) {
+        self.stickerInfo = message.messageSticker.info;
+        TSAttachment *_Nullable stickerAttachment =
+            [TSAttachment anyFetchWithUniqueId:message.messageSticker.attachmentId transaction:transaction];
+        OWSAssertDebug(stickerAttachment);
+        if ([stickerAttachment isKindOfClass:[TSAttachmentStream class]]) {
+            TSAttachmentStream *stickerAttachmentStream = (TSAttachmentStream *)stickerAttachment;
+            CGSize mediaSize = [stickerAttachmentStream imageSize];
+            if (stickerAttachmentStream.isValidImage && mediaSize.width > 0 && mediaSize.height > 0) {
+                self.stickerAttachment = stickerAttachmentStream;
+            }
+        } else if ([stickerAttachment isKindOfClass:[TSAttachmentPointer class]]) {
+            TSAttachmentPointer *stickerAttachmentPointer = (TSAttachmentPointer *)stickerAttachment;
+            self.isFailedSticker = stickerAttachmentPointer.state == TSAttachmentPointerStateFailed;
+        }
+        // Exit early; stickers shouldn't have body text or other attachments.
+        self.messageCellType = OWSMessageCellType_StickerMessage;
+        return;
+    }
 
-                    self.messageCellType = OWSMessageCellType_StillImage;
-                } else if ([self.attachmentStream isVideo]) {
-                    if (![self.attachmentStream isValidVideo]) {
-                        OWSLogWarn(@"Treating invalid video as generic attachment.");
-                        self.messageCellType = OWSMessageCellType_GenericAttachment;
-                        return;
-                    }
+    // Check for quoted replies _before_ media album handling,
+    // since that logic may exit early.
+    if (transaction.transitional_yapReadTransaction != nil) {
+        if (message.quotedMessage) {
+            self.quotedReply =
+                [OWSQuotedReplyModel quotedReplyWithQuotedMessage:message.quotedMessage
+                                                      transaction:transaction.transitional_yapReadTransaction];
 
-                    self.messageCellType = OWSMessageCellType_Video;
-                } else {
-                    OWSFailDebug(@"unexpected attachment type.");
-                    self.messageCellType = OWSMessageCellType_GenericAttachment;
-                    return;
-                }
-                self.mediaSize = [self.attachmentStream imageSize];
-                if (self.mediaSize.width <= 0 || self.mediaSize.height <= 0) {
-                    self.messageCellType = OWSMessageCellType_GenericAttachment;
-                }
-            } else if ([self.attachmentStream isAudio]) {
+            if (self.quotedReply.body.length > 0) {
+                self.displayableQuotedText =
+                    [self displayableQuotedTextForText:self.quotedReply.body interactionId:message.uniqueId];
+            }
+        }
+    }
+
+    TSAttachment *_Nullable oversizeTextAttachment = [message oversizeTextAttachmentWithTransaction:transaction];
+    if ([oversizeTextAttachment isKindOfClass:[TSAttachmentStream class]]) {
+        TSAttachmentStream *oversizeTextAttachmentStream = (TSAttachmentStream *)oversizeTextAttachment;
+        self.displayableBodyText = [self displayableBodyTextForOversizeTextAttachment:oversizeTextAttachmentStream
+                                                                        interactionId:message.uniqueId];
+    } else if ([oversizeTextAttachment isKindOfClass:[TSAttachmentPointer class]]) {
+        TSAttachmentPointer *oversizeTextAttachmentPointer = (TSAttachmentPointer *)oversizeTextAttachment;
+        // TODO: Handle backup restore.
+        self.messageCellType = OWSMessageCellType_OversizeTextDownloading;
+        self.attachmentPointer = (TSAttachmentPointer *)oversizeTextAttachmentPointer;
+        return;
+    } else {
+        NSString *_Nullable bodyText = [message bodyTextWithTransaction:transaction];
+        if (bodyText) {
+            self.displayableBodyText = [self displayableBodyTextForText:bodyText interactionId:message.uniqueId];
+        }
+    }
+
+    NSArray<TSAttachment *> *mediaAttachments = [message mediaAttachmentsWithTransaction:transaction];
+    NSArray<ConversationMediaAlbumItem *> *mediaAlbumItems = [self albumItemsForMediaAttachments:mediaAttachments];
+    if (mediaAlbumItems.count > 0) {
+        if (mediaAlbumItems.count == 1) {
+            ConversationMediaAlbumItem *mediaAlbumItem = mediaAlbumItems.firstObject;
+            if (mediaAlbumItem.attachmentStream && !mediaAlbumItem.attachmentStream.isValidVisualMedia) {
+                OWSLogWarn(@"Treating invalid media as generic attachment.");
+                self.messageCellType = OWSMessageCellType_GenericAttachment;
+                return;
+            }
+        }
+
+        self.mediaAlbumItems = mediaAlbumItems;
+        self.messageCellType = OWSMessageCellType_MediaMessage;
+        return;
+    }
+
+    // Only media galleries should have more than one attachment.
+    OWSAssertDebug(mediaAttachments.count <= 1);
+
+    TSAttachment *_Nullable mediaAttachment = mediaAttachments.firstObject;
+    if (mediaAttachment) {
+        if ([mediaAttachment isKindOfClass:[TSAttachmentStream class]]) {
+            self.attachmentStream = (TSAttachmentStream *)mediaAttachment;
+            if ([self.attachmentStream isAudio]) {
                 CGFloat audioDurationSeconds = [self.attachmentStream audioDurationSeconds];
                 if (audioDurationSeconds > 0) {
                     self.audioDurationSeconds = audioDurationSeconds;
@@ -522,53 +812,184 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
                 } else {
                     self.messageCellType = OWSMessageCellType_GenericAttachment;
                 }
+            } else if (self.messageCellType == OWSMessageCellType_Unknown) {
+                self.messageCellType = OWSMessageCellType_GenericAttachment;
+            }
+        } else if ([mediaAttachment isKindOfClass:[TSAttachmentPointer class]]) {
+            if ([mediaAttachment isAudio]) {
+                self.audioDurationSeconds = 0;
+                self.messageCellType = OWSMessageCellType_Audio;
             } else {
                 self.messageCellType = OWSMessageCellType_GenericAttachment;
             }
-        } else if ([attachment isKindOfClass:[TSAttachmentPointer class]]) {
-            self.messageCellType = OWSMessageCellType_DownloadingAttachment;
-            self.attachmentPointer = (TSAttachmentPointer *)attachment;
+            self.attachmentPointer = (TSAttachmentPointer *)mediaAttachment;
         } else {
             OWSFailDebug(@"Unknown attachment type");
         }
     }
 
-    // Ignore message body for oversize text attachments.
-    if (message.body.length > 0) {
-        if (self.hasBodyText) {
-            OWSFailDebug(@"oversize text message has unexpected caption.");
-        }
-
-        // If we haven't already assigned an attachment type at this point, message.body isn't a caption,
-        // it's a stand-alone text message.
+    if (self.hasBodyText) {
         if (self.messageCellType == OWSMessageCellType_Unknown) {
-            OWSAssertDebug(message.attachmentIds.count == 0);
-            self.messageCellType = OWSMessageCellType_TextMessage;
+            OWSAssertDebug(message.attachmentIds.count == 0
+                || (message.attachmentIds.count == 1 &&
+                       [message oversizeTextAttachmentWithTransaction:transaction] != nil));
+            self.messageCellType = OWSMessageCellType_TextOnlyMessage;
         }
-        self.displayableBodyText = [self displayableBodyTextForText:message.body interactionId:message.uniqueId];
         OWSAssertDebug(self.displayableBodyText);
+    }
+
+    if (self.hasBodyText && message.linkPreview) {
+        self.linkPreview = message.linkPreview;
+        if (message.linkPreview.imageAttachmentId.length > 0) {
+            TSAttachment *_Nullable linkPreviewAttachment =
+                [TSAttachment anyFetchWithUniqueId:message.linkPreview.imageAttachmentId transaction:transaction];
+            if (!linkPreviewAttachment) {
+                OWSFailDebug(@"Could not load link preview image attachment.");
+            } else if (!linkPreviewAttachment.isImage) {
+                OWSFailDebug(@"Link preview attachment isn't an image.");
+            } else if ([linkPreviewAttachment isKindOfClass:[TSAttachmentStream class]]) {
+                TSAttachmentStream *attachmentStream = (TSAttachmentStream *)linkPreviewAttachment;
+                if (!attachmentStream.isValidImage) {
+                    OWSFailDebug(@"Link preview image attachment isn't valid.");
+                } else {
+                    self.linkPreviewAttachment = linkPreviewAttachment;
+                }
+            } else {
+                self.linkPreviewAttachment = linkPreviewAttachment;
+            }
+        }
     }
 
     if (self.messageCellType == OWSMessageCellType_Unknown) {
         // Messages of unknown type (including messages with missing attachments)
         // are rendered like empty text messages, but without any interactivity.
         OWSLogWarn(@"Treating unknown message as empty text message: %@ %llu", message.class, message.timestamp);
-        self.messageCellType = OWSMessageCellType_TextMessage;
+        self.messageCellType = OWSMessageCellType_TextOnlyMessage;
         self.displayableBodyText = [[DisplayableText alloc] initWithFullText:@"" displayText:@"" isTextTruncated:NO];
-    }
-
-    if (message.quotedMessage) {
-        self.quotedReply =
-            [OWSQuotedReplyModel quotedReplyWithQuotedMessage:message.quotedMessage transaction:transaction];
-
-        if (self.quotedReply.body.length > 0) {
-            self.displayableQuotedText =
-                [self displayableQuotedTextForText:self.quotedReply.body interactionId:message.uniqueId];
-        }
     }
 }
 
-- (NSString *)systemMessageTextWithTransaction:(YapDatabaseReadTransaction *)transaction
+- (void)configureViewOnceMessage:(TSMessage *)message transaction:(SDSAnyReadTransaction *)transaction
+{
+    OWSAssertDebug(message != nil);
+    OWSAssertDebug(transaction != nil);
+    OWSAssertDebug(message.isViewOnceMessage);
+
+    if (self.interaction.interactionType == OWSInteractionType_OutgoingMessage) {
+        if (message.isViewOnceComplete) {
+            self.messageCellType = OWSMessageCellType_ViewOnce;
+            self.viewOnceMessageState = ViewOnceMessageState_OutgoingSentExpired;
+            return;
+        }
+
+        TSOutgoingMessage *outgoingMessage = (TSOutgoingMessage *)message;
+        switch (outgoingMessage.messageState) {
+            case TSOutgoingMessageStateSending:
+                self.viewOnceMessageState = ViewOnceMessageState_OutgoingSending;
+                break;
+            case TSOutgoingMessageStateFailed:
+                self.viewOnceMessageState = ViewOnceMessageState_OutgoingFailed;
+                break;
+            default:
+                self.viewOnceMessageState = ViewOnceMessageState_OutgoingSentExpired;
+                break;
+        }
+        self.messageCellType = OWSMessageCellType_ViewOnce;
+        return;
+    }
+    if (message.isViewOnceComplete) {
+        self.messageCellType = OWSMessageCellType_ViewOnce;
+        self.viewOnceMessageState = ViewOnceMessageState_IncomingExpired;
+        return;
+    }
+
+    NSArray<TSAttachment *> *mediaAttachments = [message mediaAttachmentsWithTransaction:transaction];
+    // TODO: We currently only support single attachments for
+    //       view-once messages.
+    TSAttachment *_Nullable mediaAttachment = mediaAttachments.firstObject;
+    if ([mediaAttachment isKindOfClass:[TSAttachmentPointer class]]) {
+        self.messageCellType = OWSMessageCellType_ViewOnce;
+        self.attachmentPointer = (TSAttachmentPointer *)mediaAttachment;
+        self.viewOnceMessageState = (self.attachmentPointer.state == TSAttachmentPointerStateFailed
+                ? ViewOnceMessageState_IncomingFailed
+                : ViewOnceMessageState_IncomingDownloading);
+        return;
+    } else if ([mediaAttachment isKindOfClass:[TSAttachmentStream class]]) {
+        TSAttachmentStream *attachmentStream = (TSAttachmentStream *)mediaAttachment;
+        if (attachmentStream.isValidVisualMedia && (attachmentStream.isImage || attachmentStream.isAnimated)) {
+            self.messageCellType = OWSMessageCellType_ViewOnce;
+            self.viewOnceMessageState = ViewOnceMessageState_IncomingAvailable;
+            self.attachmentStream = attachmentStream;
+        } else {
+            self.messageCellType = OWSMessageCellType_ViewOnce;
+            self.viewOnceMessageState = ViewOnceMessageState_IncomingInvalidContent;
+        }
+        return;
+    }
+
+    OWSFailDebug(@"Invalid media for view-once message.");
+    self.messageCellType = OWSMessageCellType_Unknown;
+}
+
+- (NSArray<ConversationMediaAlbumItem *> *)albumItemsForMediaAttachments:(NSArray<TSAttachment *> *)attachments
+{
+    OWSAssertIsOnMainThread();
+
+    NSMutableArray<ConversationMediaAlbumItem *> *mediaAlbumItems = [NSMutableArray new];
+    for (TSAttachment *attachment in attachments) {
+        if (!attachment.isVisualMedia) {
+            // Well behaving clients should not send a mix of visual media (like JPG) and non-visual media (like PDF's)
+            // Since we're not coped to handle a mix of media, return @[]
+            OWSAssertDebug(mediaAlbumItems.count == 0);
+            return @[];
+        }
+
+        NSString *_Nullable caption = (attachment.caption
+                ? [self displayableCaptionForText:attachment.caption attachmentId:attachment.uniqueId].displayText
+                : nil);
+
+        if (![attachment isKindOfClass:[TSAttachmentStream class]]) {
+            TSAttachmentPointer *attachmentPointer = (TSAttachmentPointer *)attachment;
+            CGSize mediaSize = CGSizeZero;
+            if (attachmentPointer.mediaSize.width > 0 && attachmentPointer.mediaSize.height > 0) {
+                mediaSize = attachmentPointer.mediaSize;
+            }
+            [mediaAlbumItems addObject:[[ConversationMediaAlbumItem alloc] initWithAttachment:attachment
+                                                                             attachmentStream:nil
+                                                                                      caption:caption
+                                                                                    mediaSize:mediaSize]];
+            continue;
+        }
+        TSAttachmentStream *attachmentStream = (TSAttachmentStream *)attachment;
+        if (![attachmentStream isValidVisualMedia]) {
+            OWSLogWarn(@"Filtering invalid media.");
+            [mediaAlbumItems addObject:[[ConversationMediaAlbumItem alloc] initWithAttachment:attachment
+                                                                             attachmentStream:nil
+                                                                                      caption:caption
+                                                                                    mediaSize:CGSizeZero]];
+            continue;
+        }
+        CGSize mediaSize = [attachmentStream imageSize];
+        if (mediaSize.width <= 0 || mediaSize.height <= 0) {
+            OWSLogWarn(@"Filtering media with invalid size.");
+            [mediaAlbumItems addObject:[[ConversationMediaAlbumItem alloc] initWithAttachment:attachment
+                                                                             attachmentStream:nil
+                                                                                      caption:caption
+                                                                                    mediaSize:CGSizeZero]];
+            continue;
+        }
+
+        ConversationMediaAlbumItem *mediaAlbumItem =
+            [[ConversationMediaAlbumItem alloc] initWithAttachment:attachment
+                                                  attachmentStream:attachmentStream
+                                                           caption:caption
+                                                         mediaSize:mediaSize];
+        [mediaAlbumItems addObject:mediaAlbumItem];
+    }
+    return mediaAlbumItems;
+}
+
+- (NSString *)systemMessageTextWithTransaction:(SDSAnyReadTransaction *)transaction
 {
     OWSAssertDebug(transaction);
 
@@ -664,14 +1085,6 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
     return _attachmentPointer;
 }
 
-- (CGSize)mediaSize
-{
-    OWSAssertIsOnMainThread();
-    OWSAssertDebug(self.hasViewState);
-
-    return _mediaSize;
-}
-
 - (nullable DisplayableText *)displayableQuotedText
 {
     OWSAssertIsOnMainThread();
@@ -686,23 +1099,22 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
 
 - (void)copyTextAction
 {
+    if (self.attachmentPointer != nil) {
+        OWSFailDebug(@"Can't copy not-yet-downloaded attachment");
+        return;
+    }
+
     switch (self.messageCellType) {
-        case OWSMessageCellType_TextMessage:
-        case OWSMessageCellType_OversizeTextMessage:
-        case OWSMessageCellType_StillImage:
-        case OWSMessageCellType_AnimatedImage:
+        case OWSMessageCellType_TextOnlyMessage:
         case OWSMessageCellType_Audio:
-        case OWSMessageCellType_Video:
+        case OWSMessageCellType_MediaMessage:
         case OWSMessageCellType_GenericAttachment: {
             OWSAssertDebug(self.displayableBodyText);
             [UIPasteboard.generalPasteboard setString:self.displayableBodyText.fullText];
             break;
         }
-        case OWSMessageCellType_DownloadingAttachment: {
-            OWSFailDebug(@"Can't copy not-yet-downloaded attachment");
-            break;
-        }
-        case OWSMessageCellType_Unknown: {
+        case OWSMessageCellType_Unknown:
+        case OWSMessageCellType_StickerMessage: {
             OWSFailDebug(@"No text to copy");
             break;
         }
@@ -711,163 +1123,293 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
             OWSFailDebug(@"Not implemented yet");
             break;
         }
+        case OWSMessageCellType_OversizeTextDownloading:
+            OWSFailDebug(@"Can't copy not-yet-downloaded attachment");
+            return;
+        case OWSMessageCellType_ViewOnce:
+            OWSFailDebug(@"Can't copy view once message");
+            return;
     }
 }
 
 - (void)copyMediaAction
 {
+    if (self.attachmentPointer != nil) {
+        OWSFailDebug(@"Can't copy not-yet-downloaded attachment");
+        return;
+    }
+
     switch (self.messageCellType) {
         case OWSMessageCellType_Unknown:
-        case OWSMessageCellType_TextMessage:
-        case OWSMessageCellType_OversizeTextMessage:
+        case OWSMessageCellType_TextOnlyMessage:
         case OWSMessageCellType_ContactShare: {
             OWSFailDebug(@"No media to copy");
             break;
         }
-        case OWSMessageCellType_StillImage:
-        case OWSMessageCellType_AnimatedImage:
         case OWSMessageCellType_Audio:
-        case OWSMessageCellType_Video:
         case OWSMessageCellType_GenericAttachment: {
-            NSString *utiType = [MIMETypeUtil utiTypeForMIMEType:self.attachmentStream.contentType];
-            if (!utiType) {
-                OWSFailDebug(@"Unknown MIME type: %@", self.attachmentStream.contentType);
-                utiType = (NSString *)kUTTypeGIF;
-            }
-            NSData *data = [NSData dataWithContentsOfURL:[self.attachmentStream originalMediaURL]];
-            if (!data) {
-                OWSFailDebug(@"Could not load attachment data");
-                return;
-            }
-            [UIPasteboard.generalPasteboard setData:data forPasteboardType:utiType];
+            [self copyAttachmentToPasteboard:self.attachmentStream];
             break;
         }
-        case OWSMessageCellType_DownloadingAttachment: {
+        case OWSMessageCellType_MediaMessage: {
+            if (self.mediaAlbumItems.count == 1) {
+                ConversationMediaAlbumItem *mediaAlbumItem = self.mediaAlbumItems.firstObject;
+                if (mediaAlbumItem.attachmentStream && mediaAlbumItem.attachmentStream.isValidVisualMedia) {
+                    [self copyAttachmentToPasteboard:mediaAlbumItem.attachmentStream];
+                    return;
+                }
+            }
+
+            OWSFailDebug(@"Can't copy media album");
+            break;
+        }
+        case OWSMessageCellType_OversizeTextDownloading:
             OWSFailDebug(@"Can't copy not-yet-downloaded attachment");
-            break;
-        }
+            return;
+        case OWSMessageCellType_StickerMessage:
+            if (self.stickerAttachment != nil) {
+                [self copyAttachmentToPasteboard:self.stickerAttachment];
+            } else {
+                OWSFailDebug(@"Sticked not yet downloaded.");
+            }
+            return;
+        case OWSMessageCellType_ViewOnce:
+            OWSFailDebug(@"Can't copy view once message");
+            return;
     }
 }
 
-- (void)shareTextAction
+- (void)copyAttachmentToPasteboard:(TSAttachmentStream *)attachment
 {
-    switch (self.messageCellType) {
-        case OWSMessageCellType_TextMessage:
-        case OWSMessageCellType_OversizeTextMessage:
-        case OWSMessageCellType_StillImage:
-        case OWSMessageCellType_AnimatedImage:
-        case OWSMessageCellType_Audio:
-        case OWSMessageCellType_Video:
-        case OWSMessageCellType_GenericAttachment: {
-            OWSAssertDebug(self.displayableBodyText);
-            [AttachmentSharing showShareUIForText:self.displayableBodyText.fullText];
-            break;
-        }
-        case OWSMessageCellType_DownloadingAttachment: {
-            OWSFailDebug(@"Can't share not-yet-downloaded attachment");
-            break;
-        }
-        case OWSMessageCellType_Unknown: {
-            OWSFailDebug(@"No text to share");
-            break;
-        }
-        case OWSMessageCellType_ContactShare: {
-            OWSFailDebug(@"share contact not implemented.");
-            break;
-        }
+    OWSAssertDebug(attachment);
+
+    NSString *utiType = [MIMETypeUtil utiTypeForMIMEType:attachment.contentType];
+    if (!utiType) {
+        OWSFailDebug(@"Unknown MIME type: %@", attachment.contentType);
+        utiType = (NSString *)kUTTypeGIF;
     }
+    NSData *data = [NSData dataWithContentsOfURL:[attachment originalMediaURL]];
+    if (!data) {
+        OWSFailDebug(@"Could not load attachment data");
+        return;
+    }
+    [UIPasteboard.generalPasteboard setData:data forPasteboardType:utiType];
 }
 
 - (void)shareMediaAction
 {
+    if (self.attachmentPointer != nil) {
+        OWSFailDebug(@"Can't share not-yet-downloaded attachment");
+        return;
+    }
+
     switch (self.messageCellType) {
         case OWSMessageCellType_Unknown:
-        case OWSMessageCellType_TextMessage:
-        case OWSMessageCellType_OversizeTextMessage:
+        case OWSMessageCellType_TextOnlyMessage:
         case OWSMessageCellType_ContactShare:
             OWSFailDebug(@"No media to share.");
             break;
-        case OWSMessageCellType_StillImage:
-        case OWSMessageCellType_AnimatedImage:
         case OWSMessageCellType_Audio:
-        case OWSMessageCellType_Video:
         case OWSMessageCellType_GenericAttachment:
             [AttachmentSharing showShareUIForAttachment:self.attachmentStream];
             break;
-        case OWSMessageCellType_DownloadingAttachment: {
-            OWSFailDebug(@"Can't share not-yet-downloaded attachment");
+        case OWSMessageCellType_MediaMessage: {
+            // TODO: We need a "canShareMediaAction" method.
+            OWSAssertDebug(self.mediaAlbumItems);
+            NSMutableArray<TSAttachmentStream *> *attachmentStreams = [NSMutableArray new];
+            for (ConversationMediaAlbumItem *mediaAlbumItem in self.mediaAlbumItems) {
+                if (mediaAlbumItem.attachmentStream && mediaAlbumItem.attachmentStream.isValidVisualMedia) {
+                    [attachmentStreams addObject:mediaAlbumItem.attachmentStream];
+                }
+            }
+            if (attachmentStreams.count < 1) {
+                OWSFailDebug(@"Can't share media album; no valid items.");
+                return;
+            }
+            [AttachmentSharing showShareUIForAttachments:attachmentStreams completion:nil];
             break;
         }
+        case OWSMessageCellType_OversizeTextDownloading:
+            OWSFailDebug(@"Can't share not-yet-downloaded attachment");
+            return;
+        case OWSMessageCellType_StickerMessage:
+            if (self.stickerAttachment != nil) {
+                [AttachmentSharing showShareUIForAttachment:self.stickerAttachment];
+            } else {
+                OWSFailDebug(@"Sticked not yet downloaded.");
+            }
+            return;
+        case OWSMessageCellType_ViewOnce:
+            OWSFailDebug(@"Can't share view once message");
+            return;
+    }
+}
+
+- (BOOL)canCopyMedia
+{
+    if (self.attachmentPointer != nil) {
+        // The attachment is still downloading.
+        return NO;
+    }
+
+    switch (self.messageCellType) {
+        case OWSMessageCellType_Unknown:
+        case OWSMessageCellType_TextOnlyMessage:
+        case OWSMessageCellType_ContactShare:
+        case OWSMessageCellType_Audio:
+            return NO;
+        case OWSMessageCellType_GenericAttachment:
+        case OWSMessageCellType_MediaMessage: {
+            if (self.mediaAlbumItems.count == 1) {
+                ConversationMediaAlbumItem *mediaAlbumItem = self.mediaAlbumItems.firstObject;
+                if (mediaAlbumItem.attachmentStream && mediaAlbumItem.attachmentStream.isValidVisualMedia) {
+                    return YES;
+                }
+            }
+            return NO;
+        }
+        case OWSMessageCellType_OversizeTextDownloading:
+        case OWSMessageCellType_StickerMessage:
+        case OWSMessageCellType_ViewOnce:
+            return NO;
     }
 }
 
 - (BOOL)canSaveMedia
 {
+    if (self.attachmentPointer != nil) {
+        // The attachment is still downloading.
+        return NO;
+    }
+
     switch (self.messageCellType) {
         case OWSMessageCellType_Unknown:
-        case OWSMessageCellType_TextMessage:
-        case OWSMessageCellType_OversizeTextMessage:
+        case OWSMessageCellType_TextOnlyMessage:
         case OWSMessageCellType_ContactShare:
-            return NO;
-        case OWSMessageCellType_StillImage:
-        case OWSMessageCellType_AnimatedImage:
-            return YES;
         case OWSMessageCellType_Audio:
-            return NO;
-        case OWSMessageCellType_Video:
-            return UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(self.attachmentStream.originalFilePath);
         case OWSMessageCellType_GenericAttachment:
             return NO;
-        case OWSMessageCellType_DownloadingAttachment: {
+        case OWSMessageCellType_MediaMessage: {
+            for (ConversationMediaAlbumItem *mediaAlbumItem in self.mediaAlbumItems) {
+                if (!mediaAlbumItem.attachmentStream) {
+                    continue;
+                }
+                if (!mediaAlbumItem.attachmentStream.isValidVisualMedia) {
+                    continue;
+                }
+                if (mediaAlbumItem.attachmentStream.isImage || mediaAlbumItem.attachmentStream.isAnimated) {
+                    return YES;
+                }
+                if (mediaAlbumItem.attachmentStream.isVideo) {
+                    if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(
+                            mediaAlbumItem.attachmentStream.originalFilePath)) {
+                        return YES;
+                    }
+                }
+            }
             return NO;
         }
+        case OWSMessageCellType_OversizeTextDownloading:
+        case OWSMessageCellType_StickerMessage:
+        case OWSMessageCellType_ViewOnce:
+            return NO;
     }
 }
 
 - (void)saveMediaAction
 {
+    if (self.attachmentPointer != nil) {
+        OWSFailDebug(@"Can't save not-yet-downloaded attachment");
+        return;
+    }
     switch (self.messageCellType) {
         case OWSMessageCellType_Unknown:
-        case OWSMessageCellType_TextMessage:
-        case OWSMessageCellType_OversizeTextMessage:
+        case OWSMessageCellType_TextOnlyMessage:
         case OWSMessageCellType_ContactShare:
             OWSFailDebug(@"Cannot save text data.");
             break;
-        case OWSMessageCellType_StillImage:
-        case OWSMessageCellType_AnimatedImage: {
-            NSData *data = [NSData dataWithContentsOfURL:[self.attachmentStream originalMediaURL]];
-            if (!data) {
-                OWSFailDebug(@"Could not load image data");
-                return;
-            }
-            ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
-            [library writeImageDataToSavedPhotosAlbum:data
-                                             metadata:nil
-                                      completionBlock:^(NSURL *assetURL, NSError *error) {
-                                          if (error) {
-                                              OWSLogWarn(@"Error Saving image to photo album: %@", error);
-                                          }
-                                      }];
-            break;
-        }
         case OWSMessageCellType_Audio:
             OWSFailDebug(@"Cannot save media data.");
-            break;
-        case OWSMessageCellType_Video:
-            if (UIVideoAtPathIsCompatibleWithSavedPhotosAlbum(self.attachmentStream.originalFilePath)) {
-                UISaveVideoAtPathToSavedPhotosAlbum(self.attachmentStream.originalFilePath, self, nil, nil);
-            } else {
-                OWSFailDebug(@"Could not save incompatible video data.");
-            }
             break;
         case OWSMessageCellType_GenericAttachment:
             OWSFailDebug(@"Cannot save media data.");
             break;
-        case OWSMessageCellType_DownloadingAttachment: {
-            OWSFailDebug(@"Can't save not-yet-downloaded attachment");
+        case OWSMessageCellType_MediaMessage: {
+            [self saveMediaAlbumItems];
             break;
         }
+        case OWSMessageCellType_OversizeTextDownloading:
+            OWSFailDebug(@"Can't save not-yet-downloaded attachment");
+            return;
+        case OWSMessageCellType_StickerMessage:
+            return [self saveSticker];
+        case OWSMessageCellType_ViewOnce:
+            OWSFailDebug(@"Can't save view once message");
+            return;
     }
+}
+
+- (void)saveMediaAlbumItems
+{
+    // We need to do these writes serially to avoid "write busy" errors
+    // from too many concurrent asset saves.
+    [self saveMediaAlbumItems:[self.mediaAlbumItems mutableCopy]];
+}
+
+- (void)saveMediaAlbumItems:(NSMutableArray<ConversationMediaAlbumItem *> *)mediaAlbumItems
+{
+    if (mediaAlbumItems.count < 1) {
+        return;
+    }
+    ConversationMediaAlbumItem *mediaAlbumItem = mediaAlbumItems.firstObject;
+    [mediaAlbumItems removeObjectAtIndex:0];
+
+    if (!mediaAlbumItem.attachmentStream || !mediaAlbumItem.attachmentStream.isValidVisualMedia) {
+        // Skip this item.
+    } else if (mediaAlbumItem.attachmentStream.isImage || mediaAlbumItem.attachmentStream.isAnimated) {
+        [[PHPhotoLibrary sharedPhotoLibrary]
+            performChanges:^{
+                [PHAssetChangeRequest
+                    creationRequestForAssetFromImageAtFileURL:mediaAlbumItem.attachmentStream.originalMediaURL];
+            }
+            completionHandler:^(BOOL success, NSError *error) {
+                if (error || !success) {
+                    OWSFailDebug(@"Image save failed: %@", error);
+                }
+                [self saveMediaAlbumItems:mediaAlbumItems];
+            }];
+        return;
+    } else if (mediaAlbumItem.attachmentStream.isVideo) {
+        [[PHPhotoLibrary sharedPhotoLibrary]
+            performChanges:^{
+                [PHAssetChangeRequest
+                    creationRequestForAssetFromVideoAtFileURL:mediaAlbumItem.attachmentStream.originalMediaURL];
+            }
+            completionHandler:^(BOOL success, NSError *error) {
+                if (error || !success) {
+                    OWSFailDebug(@"Video save failed: %@", error);
+                }
+                [self saveMediaAlbumItems:mediaAlbumItems];
+            }];
+        return;
+    }
+    return [self saveMediaAlbumItems:mediaAlbumItems];
+}
+
+- (void)saveSticker
+{
+    OWSAssertDebug(self.stickerAttachment != nil);
+    OWSAssertDebug(self.stickerAttachment.isValidImage);
+
+    [[PHPhotoLibrary sharedPhotoLibrary]
+        performChanges:^{
+            [PHAssetChangeRequest creationRequestForAssetFromImageAtFileURL:self.stickerAttachment.originalMediaURL];
+        }
+        completionHandler:^(BOOL success, NSError *error) {
+            if (error || !success) {
+                OWSFailDebug(@"Image save failed: %@", error);
+            }
+        }];
 }
 
 - (void)deleteAction
@@ -882,22 +1424,41 @@ NSString *NSStringForOWSMessageCellType(OWSMessageCellType cellType)
 
 - (BOOL)hasMediaActionContent
 {
+    if (self.attachmentPointer != nil) {
+        // The attachment is still downloading.
+        return NO;
+    }
+
     switch (self.messageCellType) {
         case OWSMessageCellType_Unknown:
-        case OWSMessageCellType_TextMessage:
-        case OWSMessageCellType_OversizeTextMessage:
+        case OWSMessageCellType_TextOnlyMessage:
         case OWSMessageCellType_ContactShare:
             return NO;
-        case OWSMessageCellType_StillImage:
-        case OWSMessageCellType_AnimatedImage:
         case OWSMessageCellType_Audio:
-        case OWSMessageCellType_Video:
         case OWSMessageCellType_GenericAttachment:
             return self.attachmentStream != nil;
-        case OWSMessageCellType_DownloadingAttachment: {
+        case OWSMessageCellType_MediaMessage:
+            return self.firstValidAlbumAttachment != nil;
+        case OWSMessageCellType_OversizeTextDownloading:
             return NO;
+        case OWSMessageCellType_StickerMessage:
+            return self.stickerAttachment != nil;
+        case OWSMessageCellType_ViewOnce:
+            return NO;
+    }
+}
+
+- (BOOL)mediaAlbumHasFailedAttachment
+{
+    OWSAssertDebug(self.messageCellType == OWSMessageCellType_MediaMessage);
+    OWSAssertDebug(self.mediaAlbumItems.count > 0);
+
+    for (ConversationMediaAlbumItem *mediaAlbumItem in self.mediaAlbumItems) {
+        if (mediaAlbumItem.isFailedDownload) {
+            return YES;
         }
     }
+    return NO;
 }
 
 @end

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import <SignalServiceKit/Contact.h>
@@ -11,6 +11,7 @@ extern NSString *const OWSContactsManagerSignalAccountsDidChangeNotification;
 
 @class ImageCache;
 @class OWSPrimaryStorage;
+@class SDSKeyValueStore;
 @class SignalAccount;
 @class UIFont;
 
@@ -25,9 +26,9 @@ extern NSString *const OWSContactsManagerSignalAccountsDidChangeNotification;
 
 - (id)initWithPrimaryStorage:(OWSPrimaryStorage *)primaryStorage;
 
-- (void)startObserving;
-
 #pragma mark - Accessors
+
+@property (nonatomic, readonly) SDSKeyValueStore *keyValueStore;
 
 @property (nonnull, readonly) ImageCache *avatarCache;
 
@@ -44,8 +45,6 @@ extern NSString *const OWSContactsManagerSignalAccountsDidChangeNotification;
 - (SignalAccount *)fetchOrBuildSignalAccountForRecipientId:(NSString *)recipientId;
 - (BOOL)hasSignalAccountForRecipientId:(NSString *)recipientId;
 
-- (void)loadSignalAccountsFromCache;
-
 #pragma mark - System Contact Fetching
 
 // Must call `requestSystemContactsOnce` before accessing this method
@@ -54,6 +53,8 @@ extern NSString *const OWSContactsManagerSignalAccountsDidChangeNotification;
 @property (nonatomic, readonly) BOOL systemContactsHaveBeenRequestedAtLeastOnce;
 
 @property (nonatomic, readonly) BOOL supportsContactEditing;
+
+@property (atomic, readonly) BOOL isSetup;
 
 // Request systems contacts and start syncing changes. The user will see an alert
 // if they haven't previously.
@@ -74,7 +75,6 @@ extern NSString *const OWSContactsManagerSignalAccountsDidChangeNotification;
 - (BOOL)isSystemContact:(NSString *)recipientId;
 - (BOOL)isSystemContactWithSignalAccount:(NSString *)recipientId;
 - (BOOL)hasNameInSystemContactsForRecipientId:(NSString *)recipientId;
-- (NSString *)displayNameForPhoneIdentifier:(nullable NSString *)identifier;
 - (NSString *)displayNameForSignalAccount:(SignalAccount *)signalAccount;
 
 /**

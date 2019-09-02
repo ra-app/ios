@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
@@ -37,7 +37,7 @@ class AppUpdateNag: NSObject {
 
         firstly {
             self.versionService.fetchLatestVersion(lookupURL: lookupURL)
-        }.then { appStoreRecord -> Void in
+        }.done { appStoreRecord in
             guard appStoreRecord.version.compare(currentVersion, options: .numeric) == ComparisonResult.orderedDescending else {
                 Logger.debug("remote version: \(appStoreRecord) is not newer than currentVersion: \(currentVersion)")
                 return
@@ -115,7 +115,7 @@ class AppUpdateNag: NSObject {
         }
 
         switch frontmostViewController {
-        case is HomeViewController, is RegistrationViewController:
+        case is HomeViewController, is OnboardingSplashViewController:
             self.setLastNagDate(Date())
             self.clearFirstHeardOfNewVersionDate()
             presentUpgradeNag(appStoreRecord: appStoreRecord)
@@ -144,7 +144,9 @@ class AppUpdateNag: NSObject {
         }
 
         alert.addAction(updateAction)
-        alert.addAction(UIAlertAction(title: dismissButtonText, style: .cancel, handler: nil))
+        alert.addAction(UIAlertAction(title: dismissButtonText, style: .cancel) { _ in
+            Logger.info("dismissed upgrade notice")
+        })
 
         OWSAlerts.showAlert(alert)
     }
@@ -201,12 +203,12 @@ class AppStoreVersionService: NSObject {
     func fetchLatestVersion(lookupURL: URL) -> Promise<AppStoreRecord> {
         Logger.debug("lookupURL:\(lookupURL)")
 
-        let (promise, fulfill, reject) = Promise<AppStoreRecord>.pending()
+        let (promise, resolver) = Promise<AppStoreRecord>.pending()
 
         let task = URLSession.ephemeral.dataTask(with: lookupURL) { (data, _, error) in
             guard let data = data else {
                 Logger.warn("data was unexpectedly nil")
-                reject(OWSErrorMakeUnableToProcessServerResponseError())
+                resolver.reject(OWSErrorMakeUnableToProcessServerResponseError())
                 return
             }
 
@@ -215,13 +217,13 @@ class AppStoreVersionService: NSObject {
                 let resultSet = try decoder.decode(AppStoreLookupResultSet.self, from: data)
                 guard let appStoreRecord = resultSet.results.first else {
                     Logger.warn("record was unexpectedly nil")
-                    reject(OWSErrorMakeUnableToProcessServerResponseError())
+                    resolver.reject(OWSErrorMakeUnableToProcessServerResponseError())
                     return
                 }
 
-                fulfill(appStoreRecord)
+                resolver.fulfill(appStoreRecord)
             } catch {
-                reject(error)
+                resolver.reject(error)
             }
         }
 

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "AboutTableViewController.h"
@@ -26,6 +26,13 @@
 
     [self updateTableContents];
 
+    // Crash app if user performs obscure gesture in order to test
+    // crash reporting.
+    UITapGestureRecognizer *gesture = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(crashApp)];
+    gesture.numberOfTouchesRequired = 2;
+    gesture.numberOfTapsRequired = 5;
+    [self.tableView addGestureRecognizer:gesture];
+
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(pushTokensDidChange:)
                                                  name:[OWSSyncPushTokensJob PushTokensDidChange]
@@ -49,20 +56,20 @@
                                                   accessoryText:[[[NSBundle mainBundle] infoDictionary]
                                                                     objectForKey:@"CFBundleVersion"]]];
 
-#ifdef SHOW_LEGAL_TERMS_LINK
     [informationSection addItem:[OWSTableItem disclosureItemWithText:NSLocalizedString(@"SETTINGS_LEGAL_TERMS_CELL",
                                                                          @"table cell label")
+                                             accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"terms")
                                                          actionBlock:^{
                                                              [[UIApplication sharedApplication]
                                                                  openURL:[NSURL URLWithString:kLegalTermsUrlString]];
                                                          }]];
-#endif
 
     [contents addSection:informationSection];
 
     OWSTableSection *helpSection = [OWSTableSection new];
     helpSection.headerTitle = NSLocalizedString(@"SETTINGS_HELP_HEADER", @"");
     [helpSection addItem:[OWSTableItem disclosureItemWithText:NSLocalizedString(@"SETTINGS_SUPPORT", @"")
+                                      accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"support")
                                                   actionBlock:^{
                                                       [[UIApplication sharedApplication]
                                                           openURL:[NSURL URLWithString:@"https://support.signal.org"]];
@@ -145,6 +152,11 @@
 #endif
 
     self.contents = contents;
+}
+
+- (void)crashApp
+{
+    OWSFail(@"crashApp");
 }
 
 @end

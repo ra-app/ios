@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSMessageFooterView.h"
@@ -85,10 +85,11 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - Load
 
-- (void)configureWithConversationViewItem:(ConversationViewItem *)viewItem
-                        isOverlayingMedia:(BOOL)isOverlayingMedia
+- (void)configureWithConversationViewItem:(id<ConversationViewItem>)viewItem
                         conversationStyle:(ConversationStyle *)conversationStyle
                                isIncoming:(BOOL)isIncoming
+                        isOverlayingMedia:(BOOL)isOverlayingMedia
+                          isOutsideBubble:(BOOL)isOutsideBubble
 {
     OWSAssertDebug(viewItem);
     OWSAssertDebug(conversationStyle);
@@ -98,12 +99,14 @@ NS_ASSUME_NONNULL_BEGIN
     UIColor *textColor;
     if (isOverlayingMedia) {
         textColor = [UIColor whiteColor];
+    } else if (isOutsideBubble) {
+        textColor = Theme.secondaryColor;
     } else {
         textColor = [conversationStyle bubbleSecondaryTextColorWithIsIncoming:isIncoming];
     }
     self.timestampLabel.textColor = textColor;
 
-    if (viewItem.isExpiringMessage) {
+    if (viewItem.hasPerConversationExpiration) {
         TSMessage *message = (TSMessage *)viewItem.interaction;
         uint64_t expirationTimestamp = message.expiresAt;
         uint32_t expiresInSeconds = message.expiresInSeconds;
@@ -186,7 +189,7 @@ NS_ASSUME_NONNULL_BEGIN
     [self.statusIndicatorImageView.layer addAnimation:animation forKey:@"animation"];
 }
 
-- (BOOL)isFailedOutgoingMessage:(ConversationViewItem *)viewItem
+- (BOOL)isFailedOutgoingMessage:(id<ConversationViewItem>)viewItem
 {
     OWSAssertDebug(viewItem);
 
@@ -200,7 +203,7 @@ NS_ASSUME_NONNULL_BEGIN
     return messageStatus == MessageReceiptStatusFailed;
 }
 
-- (void)configureLabelsWithConversationViewItem:(ConversationViewItem *)viewItem
+- (void)configureLabelsWithConversationViewItem:(id<ConversationViewItem>)viewItem
 {
     OWSAssertDebug(viewItem);
 
@@ -217,7 +220,7 @@ NS_ASSUME_NONNULL_BEGIN
     self.timestampLabel.text = timestampLabelText.localizedUppercaseString;
 }
 
-- (CGSize)measureWithConversationViewItem:(ConversationViewItem *)viewItem
+- (CGSize)measureWithConversationViewItem:(id<ConversationViewItem>)viewItem
 {
     OWSAssertDebug(viewItem);
 
@@ -236,14 +239,14 @@ NS_ASSUME_NONNULL_BEGIN
         }
     }
 
-    if (viewItem.isExpiringMessage) {
+    if (viewItem.hasPerConversationExpiration) {
         result.width += ([OWSMessageTimerView measureSize].width + self.hSpacing);
     }
 
     return CGSizeCeil(result);
 }
 
-- (nullable NSString *)messageStatusTextForConversationViewItem:(ConversationViewItem *)viewItem
+- (nullable NSString *)messageStatusTextForConversationViewItem:(id<ConversationViewItem>)viewItem
 {
     OWSAssertDebug(viewItem);
     if (viewItem.interaction.interactionType != OWSInteractionType_OutgoingMessage) {

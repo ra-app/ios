@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "TSInvalidIdentityKeyErrorMessage.h"
@@ -8,12 +8,12 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation TSInvalidIdentityKeyErrorMessage
 
-- (void)acceptNewIdentityKey
+- (void)throws_acceptNewIdentityKey
 {
     OWSAbstractMethod();
 }
 
-- (nullable NSData *)newIdentityKey
+- (nullable NSData *)throws_newIdentityKey
 {
     OWSAbstractMethod();
     return nil;

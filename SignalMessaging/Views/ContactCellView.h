@@ -4,19 +4,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-extern const NSUInteger kContactCellAvatarSize;
 extern const CGFloat kContactCellAvatarTextMargin;
 
-@class OWSContactsManager;
 @class TSThread;
 
 @interface ContactCellView : UIStackView
 
 @property (nonatomic, nullable) NSString *accessoryMessage;
 
-- (void)configureWithRecipientId:(NSString *)recipientId contactsManager:(OWSContactsManager *)contactsManager;
+- (void)configureWithRecipientId:(NSString *)recipientId;
 
-- (void)configureWithThread:(TSThread *)thread contactsManager:(OWSContactsManager *)contactsManager;
+- (void)configureWithThread:(TSThread *)thread;
 
 - (void)prepareForReuse;
 

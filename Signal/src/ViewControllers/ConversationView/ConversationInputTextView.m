@@ -1,10 +1,10 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "ConversationInputTextView.h"
-#import "RAAPP-Swift.h"
-#import <SignalMessaging/NSString+OWS.h>
+#import "Signal-Swift.h"
+#import <SignalServiceKit/NSString+SSK.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -26,12 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
         [self setTranslatesAutoresizingMaskIntoConstraints:NO];
 
         self.delegate = self;
-
-        self.backgroundColor = (Theme.isDarkThemeEnabled ? UIColor.ows_gray90Color : UIColor.ows_gray02Color);
-        self.layer.borderColor
-            = (Theme.isDarkThemeEnabled ? [Theme.primaryColor colorWithAlphaComponent:0.06f].CGColor
-                                        : [Theme.primaryColor colorWithAlphaComponent:0.12f].CGColor);
-        self.layer.borderWidth = 0.5f;
+        self.backgroundColor = nil;
 
         self.scrollIndicatorInsets = UIEdgeInsetsMake(4, 4, 4, 4);
 
@@ -56,7 +51,14 @@ NS_ASSUME_NONNULL_BEGIN
 
         // We need to do these steps _after_ placeholderView is configured.
         self.font = [UIFont ows_dynamicTypeBodyFont];
-        self.textContainerInset = UIEdgeInsetsMake(7.0f, 12.0f, 7.0f, 12.0f);
+        CGFloat hMarginLeading = 12.f;
+        CGFloat hMarginTrailing = 24.f;
+        self.textContainerInset = UIEdgeInsetsMake(7.f,
+            CurrentAppContext().isRTL ? hMarginTrailing : hMarginLeading,
+            7.f,
+            CurrentAppContext().isRTL ? hMarginLeading : hMarginTrailing);
+        self.textContainer.lineFragmentPadding = 0;
+        self.contentInset = UIEdgeInsetsZero;
 
         [self ensurePlaceholderConstraints];
         [self updatePlaceholderVisibility];
@@ -64,6 +66,8 @@ NS_ASSUME_NONNULL_BEGIN
 
     return self;
 }
+
+#pragma mark -
 
 - (void)setFont:(UIFont *_Nullable)font
 {
@@ -111,12 +115,15 @@ NS_ASSUME_NONNULL_BEGIN
     CGRect beginningTextRect = [self firstRectForRange:beginningTextRange];
 
     CGFloat topInset = beginningTextRect.origin.y;
-    CGFloat leftInset = beginningTextRect.origin.x;
+    CGFloat leadingInset = beginningTextRect.origin.x;
 
-    // we use Left instead of Leading, since it's based on the prior CGRect offset
     self.placeholderConstraints = @[
-        [self.placeholderView autoPinEdgeToSuperviewEdge:ALEdgeLeft withInset:leftInset],
-        [self.placeholderView autoPinEdgeToSuperviewEdge:ALEdgeRight],
+        [self.placeholderView autoMatchDimension:ALDimensionWidth
+                                     toDimension:ALDimensionWidth
+                                          ofView:self
+                                      withOffset:-leadingInset],
+        [self.placeholderView autoPinEdgeToSuperviewEdge:ALEdgeTrailing],
+        [self.placeholderView autoPinEdgeToSuperviewEdge:ALEdgeLeading withInset:leadingInset],
         [self.placeholderView autoPinEdgeToSuperviewEdge:ALEdgeTop withInset:topInset],
     ];
 }
@@ -136,6 +143,17 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)canBecomeFirstResponder
 {
     return YES;
+}
+
+- (BOOL)becomeFirstResponder
+{
+    BOOL result = [super becomeFirstResponder];
+
+    if (result) {
+        [self.textViewToolbarDelegate textViewDidBecomeFirstResponder:self];
+    }
+
+    return result;
 }
 
 - (BOOL)pasteboardHasPossibleAttachment
@@ -176,11 +194,18 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)textViewDidChange:(UITextView *)textView
 {
+    OWSAssertDebug(self.inputTextViewDelegate);
     OWSAssertDebug(self.textViewToolbarDelegate);
 
     [self updatePlaceholderVisibility];
 
+    [self.inputTextViewDelegate textViewDidChange:self];
     [self.textViewToolbarDelegate textViewDidChange:self];
+}
+
+- (void)textViewDidChangeSelection:(UITextView *)textView
+{
+    [self.textViewToolbarDelegate textViewDidChangeSelection:self];
 }
 
 #pragma mark - Key Commands

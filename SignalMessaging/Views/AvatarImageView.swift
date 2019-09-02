@@ -1,11 +1,13 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import UIKit
 
 @objc
 public class AvatarImageView: UIImageView {
+
+    private let shadowLayer = CAShapeLayer()
 
     public init() {
         super.init(frame: .zero)
@@ -30,16 +32,36 @@ public class AvatarImageView: UIImageView {
     func configureView() {
         self.autoPinToSquareAspectRatio()
 
-        self.layer.minificationFilter = kCAFilterTrilinear
-        self.layer.magnificationFilter = kCAFilterTrilinear
-        self.layer.borderWidth = 0.5
+        self.layer.minificationFilter = .trilinear
+        self.layer.magnificationFilter = .trilinear
         self.layer.masksToBounds = true
+
+        self.layer.addSublayer(self.shadowLayer)
+
         self.contentMode = .scaleToFill
     }
 
     override public func layoutSubviews() {
-        self.layer.borderColor = UIColor(white: 0, alpha: 0.15).cgColor
         self.layer.cornerRadius = self.frame.size.width / 2
+
+        // Inner shadow.
+        // This should usually not be visible; it is used to distinguish
+        // profile pics from the background if they are similar.
+        self.shadowLayer.frame = self.bounds
+        self.shadowLayer.masksToBounds = true
+        let shadowBounds = self.bounds
+        let shadowPath = UIBezierPath(ovalIn: shadowBounds)
+        // This can be any value large enough to cast a sufficiently large shadow.
+        let shadowInset: CGFloat = -3
+        shadowPath.append(UIBezierPath(rect: shadowBounds.insetBy(dx: shadowInset, dy: shadowInset)))
+        // This can be any color since the fill should be clipped.
+        self.shadowLayer.fillColor = UIColor.black.cgColor
+        self.shadowLayer.path = shadowPath.cgPath
+        self.shadowLayer.fillRule = .evenOdd
+        self.shadowLayer.shadowColor = (Theme.isDarkThemeEnabled ? UIColor.white : UIColor.black).cgColor
+        self.shadowLayer.shadowRadius = 0.5
+        self.shadowLayer.shadowOpacity = 0.15
+        self.shadowLayer.shadowOffset = .zero
     }
 }
 
@@ -153,6 +175,62 @@ public class ConversationAvatarImageView: AvatarImageView {
     public func updateImage() {
         Logger.debug("updateImage")
 
-        self.image = OWSAvatarBuilder.buildImage(thread: thread, diameter: diameter, contactsManager: contactsManager)
+        self.image = OWSAvatarBuilder.buildImage(thread: thread, diameter: diameter)
+    }
+}
+
+@objc
+public class AvatarImageButton: UIButton {
+    private let shadowLayer = CAShapeLayer()
+
+    // MARK: - Button Overrides
+
+    override public func layoutSubviews() {
+        super.layoutSubviews()
+
+        layer.cornerRadius = frame.size.width / 2
+
+        // Inner shadow.
+        // This should usually not be visible; it is used to distinguish
+        // profile pics from the background if they are similar.
+        shadowLayer.frame = bounds
+        shadowLayer.masksToBounds = true
+        let shadowBounds = bounds
+        let shadowPath = UIBezierPath(ovalIn: shadowBounds)
+        // This can be any value large enough to cast a sufficiently large shadow.
+        let shadowInset: CGFloat = -3
+        shadowPath.append(UIBezierPath(rect: shadowBounds.insetBy(dx: shadowInset, dy: shadowInset)))
+        // This can be any color since the fill should be clipped.
+        shadowLayer.fillColor = UIColor.black.cgColor
+        shadowLayer.path = shadowPath.cgPath
+        shadowLayer.fillRule = .evenOdd
+        shadowLayer.shadowColor = (Theme.isDarkThemeEnabled ? UIColor.white : UIColor.black).cgColor
+        shadowLayer.shadowRadius = 0.5
+        shadowLayer.shadowOpacity = 0.15
+        shadowLayer.shadowOffset = .zero
+    }
+
+    override public func setImage(_ image: UIImage?, for state: UIControl.State) {
+        ensureViewConfigured()
+        super.setImage(image, for: state)
+    }
+
+    // MARK: Private
+
+    var hasBeenConfigured = false
+    func ensureViewConfigured() {
+        guard !hasBeenConfigured else {
+            return
+        }
+        hasBeenConfigured = true
+
+        autoPinToSquareAspectRatio()
+
+        layer.minificationFilter = .trilinear
+        layer.magnificationFilter = .trilinear
+        layer.masksToBounds = true
+        layer.addSublayer(shadowLayer)
+
+        contentMode = .scaleToFill
     }
 }

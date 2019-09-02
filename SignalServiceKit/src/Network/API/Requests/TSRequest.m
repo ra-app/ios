@@ -1,10 +1,15 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "TSRequest.h"
 #import "TSAccountManager.h"
 #import "TSConstants.h"
+#import <SignalCoreKit/NSData+OWS.h>
+#import <SignalMetadataKit/SignalMetadataKit-Swift.h>
+#import <SignalServiceKit/SSKEnvironment.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 @implementation TSRequest
 
@@ -28,7 +33,7 @@
 
 - (instancetype)init
 {
-    OWSRaiseException(NSInternalInconsistencyException, @"You must use the initWithURL: method");
+    OWSFail(@"You must use the initWithURL: method");
     return nil;
 }
 
@@ -39,7 +44,7 @@
                 cachePolicy:(NSURLRequestCachePolicy)cachePolicy
             timeoutInterval:(NSTimeInterval)timeoutInterval
 {
-    OWSRaiseException(NSInternalInconsistencyException, @"You must use the initWithURL method");
+    OWSFail(@"You must use the initWithURL: method");
     return nil;
 }
 
@@ -72,6 +77,13 @@
     return [[TSRequest alloc] initWithURL:url method:method parameters:parameters];
 }
 
+#pragma mark - Dependencies
+
+- (TSAccountManager *)tsAccountManager
+{
+    return SSKEnvironment.shared.tsAccountManager;
+}
+
 #pragma mark - Authorization
 
 - (void)setAuthUsername:(nullable NSString *)authUsername
@@ -92,7 +104,7 @@
     }
 }
 
-- (NSString *)authUsername
+- (nullable NSString *)authUsername
 {
     OWSAssertDebug(self.shouldHaveAuthorizationHeaders);
 
@@ -101,13 +113,15 @@
     }
 }
 
-- (NSString *)authPassword
+- (nullable NSString *)authPassword
 {
     OWSAssertDebug(self.shouldHaveAuthorizationHeaders);
 
     @synchronized(self) {
-        return (_authPassword ?: [TSAccountManager serverAuthToken]);
+        return (_authPassword ?: self.tsAccountManager.storedServerAuthToken);
     }
 }
 
 @end
+
+NS_ASSUME_NONNULL_END

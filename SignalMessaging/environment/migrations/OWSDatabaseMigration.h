@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import <SignalServiceKit/TSYapDatabaseObject.h>
@@ -11,8 +11,6 @@ typedef void (^OWSDatabaseMigrationCompletion)(void);
 @class OWSPrimaryStorage;
 
 @interface OWSDatabaseMigration : TSYapDatabaseObject
-
-- (instancetype)initWithPrimaryStorage:(OWSPrimaryStorage *)primaryStorage;
 
 @property (nonatomic, readonly) OWSPrimaryStorage *primaryStorage;
 

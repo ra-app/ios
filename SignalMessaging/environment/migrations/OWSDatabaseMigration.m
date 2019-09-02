@@ -1,13 +1,25 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSDatabaseMigration.h"
 #import <SignalServiceKit/OWSPrimaryStorage.h>
+#import <SignalServiceKit/SSKEnvironment.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @implementation OWSDatabaseMigration
+
+#pragma mark - Dependencies
+
+- (OWSPrimaryStorage *)primaryStorage
+{
+    OWSAssertDebug(SSKEnvironment.shared.primaryStorage);
+
+    return SSKEnvironment.shared.primaryStorage;
+}
+
+#pragma mark -
 
 - (void)saveWithTransaction:(YapDatabaseReadWriteTransaction *)transaction
 {
@@ -16,14 +28,12 @@ NS_ASSUME_NONNULL_BEGIN
     [super saveWithTransaction:transaction];
 }
 
-- (instancetype)initWithPrimaryStorage:(OWSPrimaryStorage *)primaryStorage
+- (instancetype)init
 {
     self = [super initWithUniqueId:[self.class migrationId]];
     if (!self) {
         return self;
     }
-
-    _primaryStorage = primaryStorage;
 
     return self;
 }
@@ -39,7 +49,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (NSString *)migrationId
 {
-    OWSRaiseException(NSInternalInconsistencyException, @"Must override %@ in subclass", NSStringFromSelector(_cmd));
+    OWSAbstractMethod();
+    return @"";
 }
 
 + (NSString *)collection
@@ -50,7 +61,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)runUpWithTransaction:(YapDatabaseReadWriteTransaction *)transaction
 {
-    OWSRaiseException(NSInternalInconsistencyException, @"Must override %@ in subclass", NSStringFromSelector(_cmd));
+    OWSAbstractMethod();
 }
 
 - (void)runUpWithCompletion:(OWSDatabaseMigrationCompletion)completion
@@ -81,13 +92,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (YapDatabaseConnection *)dbReadWriteConnection
 {
-    static dispatch_once_t onceToken;
-    static YapDatabaseConnection *sharedDBConnection;
-    dispatch_once(&onceToken, ^{
-        sharedDBConnection = [OWSPrimaryStorage sharedManager].newDatabaseConnection;
-    });
-
-    return sharedDBConnection;
+    return SSKEnvironment.shared.migrationDBConnection;
 }
 
 - (YapDatabaseConnection *)dbReadConnection

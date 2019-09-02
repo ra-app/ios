@@ -1,15 +1,15 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "HomeViewCell.h"
 #import "OWSAvatarBuilder.h"
 #import "RAAPP-Swift.h"
 #import <SignalMessaging/OWSFormat.h>
-#import <SignalMessaging/OWSMath.h>
-#import <SignalMessaging/OWSUserProfile.h>
 #import <SignalMessaging/SignalMessaging-Swift.h>
+#import <SignalServiceKit/OWSMath.h>
 #import <SignalServiceKit/OWSMessageManager.h>
+#import <SignalServiceKit/OWSUserProfile.h>
 #import <SignalServiceKit/TSContactThread.h>
 #import <SignalServiceKit/TSGroupThread.h>
 
@@ -18,18 +18,18 @@ NS_ASSUME_NONNULL_BEGIN
 @interface HomeViewCell ()
 
 @property (nonatomic) AvatarImageView *avatarView;
-@property (nonatomic) UIStackView *topRowView;
 @property (nonatomic) UILabel *nameLabel;
 @property (nonatomic) UILabel *snippetLabel;
 @property (nonatomic) UILabel *dateTimeLabel;
 @property (nonatomic) MessageStatusView *messageStatusView;
+@property (nonatomic) TypingIndicatorView *typingIndicatorView;
 
 @property (nonatomic) UIView *unreadBadge;
 @property (nonatomic) UILabel *unreadLabel;
-@property (nonatomic) UIView *unreadBadgeContainer;
 
 @property (nonatomic, nullable) ThreadViewModel *thread;
-@property (nonatomic, nullable) OWSContactsManager *contactsManager;
+@property (nonatomic, nullable) NSAttributedString *overrideSnippet;
+@property (nonatomic) BOOL isBlocked;
 
 @property (nonatomic, readonly) NSMutableArray<NSLayoutConstraint *> *viewConstraints;
 
@@ -38,6 +38,29 @@ NS_ASSUME_NONNULL_BEGIN
 #pragma mark -
 
 @implementation HomeViewCell
+
+#pragma mark - Dependencies
+
+- (OWSContactsManager *)contactsManager
+{
+    OWSAssertDebug(Environment.shared.contactsManager);
+
+    return Environment.shared.contactsManager;
+}
+
+- (id<OWSTypingIndicators>)typingIndicators
+{
+    return SSKEnvironment.shared.typingIndicators;
+}
+
+- (TSAccountManager *)tsAccountManager
+{
+    OWSAssertDebug(SSKEnvironment.shared.tsAccountManager);
+
+    return SSKEnvironment.shared.tsAccountManager;
+}
+
+#pragma mark -
 
 - (instancetype)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(nullable NSString *)reuseIdentifier
 {
@@ -91,14 +114,13 @@ NS_ASSUME_NONNULL_BEGIN
     [self.messageStatusView setContentHuggingHorizontalHigh];
     [self.messageStatusView setCompressionResistanceHorizontalHigh];
 
-    self.topRowView = [[UIStackView alloc] initWithArrangedSubviews:@[
+    UIStackView *topRowView = [[UIStackView alloc] initWithArrangedSubviews:@[
         self.nameLabel,
         self.dateTimeLabel,
-        self.messageStatusView,
     ]];
-    self.topRowView.axis = UILayoutConstraintAxisHorizontal;
-    self.topRowView.alignment = UIStackViewAlignmentLastBaseline;
-    self.topRowView.spacing = 6.f;
+    topRowView.axis = UILayoutConstraintAxisHorizontal;
+    topRowView.alignment = UIStackViewAlignmentLastBaseline;
+    topRowView.spacing = 6.f;
 
     self.snippetLabel = [UILabel new];
     self.snippetLabel.font = [self snippetFont];
@@ -107,11 +129,33 @@ NS_ASSUME_NONNULL_BEGIN
     [self.snippetLabel setContentHuggingHorizontalLow];
     [self.snippetLabel setCompressionResistanceHorizontalLow];
 
-    UIStackView *vStackView = [[UIStackView alloc] initWithArrangedSubviews:@[
-        self.topRowView,
+    self.typingIndicatorView = [TypingIndicatorView new];
+    [self.contentView addSubview:self.typingIndicatorView];
+
+    UIStackView *bottomRowView = [[UIStackView alloc] initWithArrangedSubviews:@[
         self.snippetLabel,
+        self.messageStatusView,
+    ]];
+
+    bottomRowView.axis = UILayoutConstraintAxisHorizontal;
+    bottomRowView.alignment = UIStackViewAlignmentLastBaseline;
+    bottomRowView.spacing = 6.f;
+
+    UIStackView *vStackView = [[UIStackView alloc] initWithArrangedSubviews:@[
+        topRowView,
+        bottomRowView,
     ]];
     vStackView.axis = UILayoutConstraintAxisVertical;
+
+    [self.contentView addSubview:vStackView];
+    [vStackView autoPinLeadingToTrailingEdgeOfView:self.avatarView offset:self.avatarHSpacing];
+    [vStackView autoVCenterInSuperview];
+    // Ensure that the cell's contents never overflow the cell bounds.
+    [vStackView autoPinEdgeToSuperviewMargin:ALEdgeTop relation:NSLayoutRelationGreaterThanOrEqual];
+    [vStackView autoPinEdgeToSuperviewMargin:ALEdgeBottom relation:NSLayoutRelationGreaterThanOrEqual];
+    [vStackView autoPinTrailingToSuperviewMargin];
+
+    vStackView.userInteractionEnabled = NO;
 
     self.unreadLabel = [UILabel new];
     self.unreadLabel.textColor = [UIColor ows_whiteColor];
@@ -127,29 +171,11 @@ NS_ASSUME_NONNULL_BEGIN
     [self.unreadBadge setContentHuggingHigh];
     [self.unreadBadge setCompressionResistanceHigh];
 
-    self.unreadBadgeContainer = [UIView containerView];
-    [self.unreadBadgeContainer addSubview:self.unreadBadge];
-    [self.unreadBadge autoPinWidthToSuperview];
-    [self.unreadBadgeContainer setContentHuggingHigh];
-    [self.unreadBadgeContainer setCompressionResistanceHigh];
-
-    UIStackView *hStackView = [[UIStackView alloc] initWithArrangedSubviews:@[
-        vStackView,
-        self.unreadBadgeContainer,
-    ]];
-    hStackView.axis = UILayoutConstraintAxisHorizontal;
-    hStackView.spacing = 6.f;
-    [self.contentView addSubview:hStackView];
-    [hStackView autoPinLeadingToTrailingEdgeOfView:self.avatarView offset:self.avatarHSpacing];
-    [hStackView autoVCenterInSuperview];
-    // Ensure that the cell's contents never overflow the cell bounds.
-    [hStackView autoPinEdgeToSuperviewMargin:ALEdgeTop relation:NSLayoutRelationGreaterThanOrEqual];
-    [hStackView autoPinEdgeToSuperviewMargin:ALEdgeBottom relation:NSLayoutRelationGreaterThanOrEqual];
-    [hStackView autoPinTrailingToSuperviewMargin];
-
+    [self.contentView addSubview:self.unreadBadge];
     [self.unreadBadge autoAlignAxis:ALAxisHorizontal toSameAxisOfView:self.nameLabel];
 
-    hStackView.userInteractionEnabled = NO;
+    [self.typingIndicatorView autoPinEdge:ALEdgeLeading toEdge:ALEdgeLeading ofView:self.snippetLabel];
+    [self.typingIndicatorView autoAlignAxis:ALAxisHorizontal toSameAxisOfView:self.snippetLabel];
 }
 
 - (void)dealloc
@@ -173,36 +199,37 @@ NS_ASSUME_NONNULL_BEGIN
 }
 
 - (void)configureWithThread:(ThreadViewModel *)thread
-            contactsManager:(OWSContactsManager *)contactsManager
                   isBlocked:(BOOL)isBlocked
 {
     [self configureWithThread:thread
-              contactsManager:contactsManager
                     isBlocked:isBlocked
               overrideSnippet:nil
                  overrideDate:nil];
 }
 
 - (void)configureWithThread:(ThreadViewModel *)thread
-            contactsManager:(OWSContactsManager *)contactsManager
                   isBlocked:(BOOL)isBlocked
             overrideSnippet:(nullable NSAttributedString *)overrideSnippet
                overrideDate:(nullable NSDate *)overrideDate
 {
     OWSAssertIsOnMainThread();
     OWSAssertDebug(thread);
-    OWSAssertDebug(contactsManager);
 
     [OWSTableItem configureCell:self];
 
     self.thread = thread;
-    self.contactsManager = contactsManager;
+    self.overrideSnippet = overrideSnippet;
+    self.isBlocked = isBlocked;
 
     BOOL hasUnreadMessages = thread.hasUnreadMessages;
 
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(otherUsersProfileDidChange:)
                                                  name:kNSNotificationName_OtherUsersProfileDidChange
+                                               object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(typingIndicatorStateDidChange:)
+                                                 name:[OWSTypingIndicatorsImpl typingIndicatorStateDidChange]
                                                object:nil];
     [self updateNameLabel];
     [self updateAvatarView];
@@ -211,14 +238,14 @@ NS_ASSUME_NONNULL_BEGIN
     // changes to the dynamic type settings are reflected.
     self.snippetLabel.font = [self snippetFont];
 
-    if (overrideSnippet) {
-        self.snippetLabel.attributedText = overrideSnippet;
-    } else {
-        self.snippetLabel.attributedText = [self attributedSnippetForThread:thread isBlocked:isBlocked];
-    }
+    [self updatePreview];
 
-    self.dateTimeLabel.text
-        = (overrideDate ? [self stringForDate:overrideDate] : [self stringForDate:thread.lastMessageDate]);
+    NSDate *_Nullable labelDate = overrideDate ?: thread.lastMessageDate;
+    if (labelDate != nil) {
+        self.dateTimeLabel.text = [DateUtil formatDateShort:labelDate];
+    } else {
+        self.dateTimeLabel.text = nil;
+    }
 
     UIColor *textColor = [Theme secondaryColor];
     if (hasUnreadMessages && overrideSnippet == nil) {
@@ -233,18 +260,20 @@ NS_ASSUME_NONNULL_BEGIN
     if (overrideSnippet) {
         // If we're using the home view cell to render search results,
         // don't show "unread badge" or "message status" indicator.
-        self.unreadBadgeContainer.hidden = YES;
+        self.unreadBadge.hidden = YES;
         self.messageStatusView.hidden = YES;
     } else if (unreadCount > 0) {
         // If there are unread messages, show the "unread badge."
         // The "message status" indicators is redundant.
-        self.unreadBadgeContainer.hidden = NO;
+        self.unreadBadge.hidden = NO;
         self.messageStatusView.hidden = YES;
 
         self.unreadLabel.text = [OWSFormat formatInt:(int)unreadCount];
         self.unreadLabel.font = self.unreadFont;
         const int unreadBadgeHeight = (int)ceil(self.unreadLabel.font.lineHeight * 1.5f);
         self.unreadBadge.layer.cornerRadius = unreadBadgeHeight / 2;
+        self.unreadBadge.layer.borderColor = Theme.backgroundColor.CGColor;
+        self.unreadBadge.layer.borderWidth = 1.f;
 
         [NSLayoutConstraint autoSetPriority:UILayoutPriorityDefaultHigh
                              forConstraints:^{
@@ -255,15 +284,20 @@ NS_ASSUME_NONNULL_BEGIN
                                  OWSAssertDebug(UIFont.ows_dynamicTypeBodyFont.pointSize != 17 || minMargin == 12);
 
                                  [self.viewConstraints addObjectsFromArray:@[
+                                     // badge sizing
                                      [self.unreadBadge autoMatchDimension:ALDimensionWidth
                                                               toDimension:ALDimensionWidth
                                                                    ofView:self.unreadLabel
-                                                               withOffset:minMargin],
-                                     // badge sizing
+                                                               withOffset:minMargin
+                                                                 relation:NSLayoutRelationGreaterThanOrEqual],
                                      [self.unreadBadge autoSetDimension:ALDimensionWidth
                                                                  toSize:unreadBadgeHeight
                                                                relation:NSLayoutRelationGreaterThanOrEqual],
                                      [self.unreadBadge autoSetDimension:ALDimensionHeight toSize:unreadBadgeHeight],
+                                     [self.unreadBadge autoPinEdge:ALEdgeTrailing
+                                                            toEdge:ALEdgeTrailing
+                                                            ofView:self.avatarView
+                                                        withOffset:6.f],
                                  ]];
                              }];
     } else {
@@ -302,7 +336,7 @@ NS_ASSUME_NONNULL_BEGIN
         self.messageStatusView.image = [statusIndicatorImage imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate];
         self.messageStatusView.tintColor = messageStatusViewTintColor;
         self.messageStatusView.hidden = statusIndicatorImage == nil;
-        self.unreadBadgeContainer.hidden = YES;
+        self.unreadBadge.hidden = YES;
         if (shouldAnimateStatusIcon) {
             CABasicAnimation *animation;
             animation = [CABasicAnimation animationWithKeyPath:@"transform.rotation.z"];
@@ -320,13 +354,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)updateAvatarView
 {
-    OWSContactsManager *contactsManager = self.contactsManager;
-    if (contactsManager == nil) {
-        OWSFailDebug(@"contactsManager should not be nil");
-        self.avatarView.image = nil;
-        return;
-    }
-
     ThreadViewModel *thread = self.thread;
     if (thread == nil) {
         OWSFailDebug(@"thread should not be nil");
@@ -334,9 +361,7 @@ NS_ASSUME_NONNULL_BEGIN
         return;
     }
 
-    self.avatarView.image = [OWSAvatarBuilder buildImageForThread:thread.threadRecord
-                                                         diameter:self.avatarSize
-                                                  contactsManager:contactsManager];
+    self.avatarView.image = [OWSAvatarBuilder buildImageForThread:thread.threadRecord diameter:self.avatarSize];
 }
 
 - (NSAttributedString *)attributedSnippetForThread:(ThreadViewModel *)thread isBlocked:(BOOL)isBlocked
@@ -385,18 +410,6 @@ NS_ASSUME_NONNULL_BEGIN
     return snippetText;
 }
 
-#pragma mark - Date formatting
-
-- (NSString *)stringForDate:(nullable NSDate *)date
-{
-    if (date == nil) {
-        OWSFailDebug(@"date was unexpectedly nil");
-        return @"";
-    }
-
-    return [DateUtil formatDateShort:date];
-}
-
 #pragma mark - Constants
 
 - (UIFont *)unreadFont
@@ -427,7 +440,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSUInteger)avatarSize
 {
-    return 48.f;
+    return kStandardAvatarSize;
 }
 
 - (NSUInteger)avatarHSpacing
@@ -445,7 +458,7 @@ NS_ASSUME_NONNULL_BEGIN
     [self.viewConstraints removeAllObjects];
 
     self.thread = nil;
-    self.contactsManager = nil;
+    self.overrideSnippet = nil;
     self.avatarView.image = nil;
 
     [[NSNotificationCenter defaultCenter] removeObserver:self];
@@ -488,13 +501,6 @@ NS_ASSUME_NONNULL_BEGIN
         return;
     }
 
-    OWSContactsManager *contactsManager = self.contactsManager;
-    if (contactsManager == nil) {
-        OWSFailDebug(@"contacts manager should not be nil");
-        self.nameLabel.attributedText = nil;
-        return;
-    }
-
     NSAttributedString *name;
     if (thread.isGroupThread) {
         if (thread.name.length == 0) {
@@ -503,12 +509,56 @@ NS_ASSUME_NONNULL_BEGIN
             name = [[NSAttributedString alloc] initWithString:thread.name];
         }
     } else {
-        name = [contactsManager attributedContactOrProfileNameForPhoneIdentifier:thread.contactIdentifier
-                                                                     primaryFont:self.nameFont
-                                                                   secondaryFont:self.nameSecondaryFont];
+        if (self.thread.threadRecord.isNoteToSelf) {
+            name = [[NSAttributedString alloc]
+                initWithString:NSLocalizedString(@"NOTE_TO_SELF", @"Label for 1:1 conversation with yourself.")
+                    attributes:@{
+                        NSFontAttributeName : self.nameFont,
+                    }];
+        } else {
+            name = [self.contactsManager attributedContactOrProfileNameForPhoneIdentifier:thread.contactIdentifier
+                                                                              primaryFont:self.nameFont
+                                                                            secondaryFont:self.nameSecondaryFont];
+        }
     }
 
     self.nameLabel.attributedText = name;
+}
+
+#pragma mark - Typing Indicators
+
+- (void)updatePreview
+{
+    if ([self.typingIndicators typingRecipientIdForThread:self.thread.threadRecord] != nil) {
+        // If we hide snippetLabel, our layout will break since UIStackView will remove
+        // it from the layout.  Wrapping the preview views (the snippet label and the
+        // typing indicator) in a UIStackView proved non-trivial since we're using
+        // UIStackViewAlignmentLastBaseline.  Therefore we hide the _contents_ of the
+        // snippet label using an empty string.
+        self.snippetLabel.text = @" ";
+        self.typingIndicatorView.hidden = NO;
+        [self.typingIndicatorView startAnimation];
+    } else {
+        if (self.overrideSnippet) {
+            self.snippetLabel.attributedText = self.overrideSnippet;
+        } else {
+            self.snippetLabel.attributedText = [self attributedSnippetForThread:self.thread isBlocked:self.isBlocked];
+        }
+        self.typingIndicatorView.hidden = YES;
+        [self.typingIndicatorView stopAnimation];
+    }
+}
+
+- (void)typingIndicatorStateDidChange:(NSNotification *)notification
+{
+    OWSAssertIsOnMainThread();
+    OWSAssertDebug(self.thread);
+
+    if (notification.object && ![notification.object isEqual:self.thread.threadRecord.uniqueId]) {
+        return;
+    }
+
+    [self updatePreview];
 }
 
 @end

@@ -1,9 +1,9 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSSyncGroupsRequestMessage.h"
-#import "NSDate+OWS.h"
+#import <SignalCoreKit/NSDate+OWS.h>
 #import <SignalServiceKit/SignalServiceKit-Swift.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -20,6 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithThread:(nullable TSThread *)thread groupId:(NSData *)groupId
 {
+    // MJK TODO - remove senderTimestamp
     self = [super initOutgoingMessageWithTimestamp:[NSDate ows_millisecondTimeStamp]
                                           inThread:thread
                                        messageBody:nil
@@ -29,7 +30,10 @@ NS_ASSUME_NONNULL_BEGIN
                                     isVoiceMessage:NO
                                   groupMetaMessage:TSGroupMetaMessageUnspecified
                                      quotedMessage:nil
-                                      contactShare:nil];
+                                      contactShare:nil
+                                       linkPreview:nil
+                                    messageSticker:nil
+                                 isViewOnceMessage:NO];
     if (!self) {
         return self;
     }
@@ -59,8 +63,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable SSKProtoDataMessageBuilder *)dataMessageBuilder
 {
-    SSKProtoGroupContextBuilder *groupContextBuilder =
-        [[SSKProtoGroupContextBuilder alloc] initWithId:self.groupId type:SSKProtoGroupContextTypeRequestInfo];
+    SSKProtoGroupContextBuilder *groupContextBuilder = [SSKProtoGroupContext builderWithId:self.groupId];
+    [groupContextBuilder setType:SSKProtoGroupContextTypeRequestInfo];
 
     NSError *error;
     SSKProtoGroupContext *_Nullable groupContextProto = [groupContextBuilder buildAndReturnError:&error];
@@ -69,7 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    SSKProtoDataMessageBuilder *builder = [SSKProtoDataMessageBuilder new];
+    SSKProtoDataMessageBuilder *builder = [SSKProtoDataMessage builder];
     [builder setTimestamp:self.timestamp];
     [builder setGroup:groupContextProto];
 

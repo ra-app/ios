@@ -1,21 +1,25 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "TSAccountManager.h"
 #import "AppContext.h"
-#import "NSData+OWS.h"
+#import "AppReadiness.h"
 #import "NSNotificationCenter+OWS.h"
 #import "NSURLSessionDataTask+StatusCode.h"
 #import "OWSError.h"
-#import "OWSPrimaryStorage+SessionStore.h"
 #import "OWSRequestFactory.h"
+#import "ProfileManagerProtocol.h"
+#import "RemoteAttestation.h"
+#import "SSKEnvironment.h"
+#import "SSKSessionStore.h"
 #import "TSNetworkManager.h"
 #import "TSPreKeyManager.h"
-#import "TSVerifyCodeRequest.h"
-#import "YapDatabaseConnection+OWS.h"
-#import "YapDatabaseTransaction+OWS.h"
-#import <Curve25519Kit/Randomness.h>
+#import <PromiseKit/AnyPromise.h>
+#import <Reachability/Reachability.h>
+#import <SignalCoreKit/NSData+OWS.h>
+#import <SignalCoreKit/Randomness.h>
+#import <SignalServiceKit/SignalServiceKit-Swift.h>
 #import <YapDatabase/YapDatabase.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -23,31 +27,28 @@ NS_ASSUME_NONNULL_BEGIN
 NSString *const TSRegistrationErrorDomain = @"TSRegistrationErrorDomain";
 NSString *const TSRegistrationErrorUserInfoHTTPStatus = @"TSHTTPStatus";
 NSString *const RegistrationStateDidChangeNotification = @"RegistrationStateDidChangeNotification";
-NSString *const DeregistrationStateDidChangeNotification = @"DeregistrationStateDidChangeNotification";
+NSString *const TSRemoteAttestationAuthErrorKey = @"TSRemoteAttestationAuth";
 NSString *const kNSNotificationName_LocalNumberDidChange = @"kNSNotificationName_LocalNumberDidChange";
 
 NSString *const TSAccountManager_RegisteredNumberKey = @"TSStorageRegisteredNumberKey";
 NSString *const TSAccountManager_IsDeregisteredKey = @"TSAccountManager_IsDeregisteredKey";
 NSString *const TSAccountManager_ReregisteringPhoneNumberKey = @"TSAccountManager_ReregisteringPhoneNumberKey";
 NSString *const TSAccountManager_LocalRegistrationIdKey = @"TSStorageLocalRegistrationId";
+NSString *const TSAccountManager_HasPendingRestoreDecisionKey = @"TSAccountManager_HasPendingRestoreDecisionKey";
 
 NSString *const TSAccountManager_UserAccountCollection = @"TSStorageUserAccountCollection";
 NSString *const TSAccountManager_ServerAuthToken = @"TSStorageServerAuthToken";
 NSString *const TSAccountManager_ServerSignalingKey = @"TSStorageServerSignalingKey";
+NSString *const TSAccountManager_ManualMessageFetchKey = @"TSAccountManager_ManualMessageFetchKey";
+NSString *const TSAccountManager_NeedsAccountAttributesUpdateKey = @"TSAccountManager_NeedsAccountAttributesUpdateKey";
 
 @interface TSAccountManager ()
 
-@property (atomic, readonly) BOOL isRegistered;
-
-// This property is exposed publicly for testing purposes only.
-#ifndef DEBUG
-@property (nonatomic, nullable) NSString *phoneNumberAwaitingVerification;
-#endif
-
 @property (nonatomic, nullable) NSString *cachedLocalNumber;
-@property (nonatomic, readonly) YapDatabaseConnection *dbConnection;
 
 @property (nonatomic, nullable) NSNumber *cachedIsDeregistered;
+
+@property (nonatomic) Reachability *reachability;
 
 @end
 
@@ -57,16 +58,15 @@ NSString *const TSAccountManager_ServerSignalingKey = @"TSStorageServerSignaling
 
 @synthesize isRegistered = _isRegistered;
 
-- (instancetype)initWithNetworkManager:(TSNetworkManager *)networkManager
-                        primaryStorage:(OWSPrimaryStorage *)primaryStorage
+- (instancetype)init
 {
     self = [super init];
     if (!self) {
         return self;
     }
 
-    _networkManager = networkManager;
-    _dbConnection = [primaryStorage newDatabaseConnection];
+    _keyValueStore = [[SDSKeyValueStore alloc] initWithCollection:TSAccountManager_UserAccountCollection];
+    self.reachability = [Reachability reachabilityForInternetConnection];
 
     OWSSingletonAssert();
 
@@ -76,6 +76,15 @@ NSString *const TSAccountManager_ServerSignalingKey = @"TSStorageServerSignaling
                                                      name:YapDatabaseModifiedExternallyNotification
                                                    object:nil];
     }
+
+    [AppReadiness runNowOrWhenAppDidBecomeReady:^{
+        [[self updateAccountAttributesIfNecessary] retainUntilComplete];
+    }];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(reachabilityChanged)
+                                                 name:kReachabilityChangedNotification
+                                               object:nil];
 
     return self;
 }
@@ -87,15 +96,37 @@ NSString *const TSAccountManager_ServerSignalingKey = @"TSStorageServerSignaling
 
 + (instancetype)sharedInstance
 {
-    static dispatch_once_t onceToken;
-    static id sharedInstance = nil;
-    dispatch_once(&onceToken, ^{
-        sharedInstance = [[self alloc] initWithNetworkManager:[TSNetworkManager sharedManager]
-                                               primaryStorage:[OWSPrimaryStorage sharedManager]];
-    });
-
-    return sharedInstance;
+    OWSAssertDebug(SSKEnvironment.shared.tsAccountManager);
+    
+    return SSKEnvironment.shared.tsAccountManager;
 }
+
+#pragma mark - Dependencies
+
+- (TSNetworkManager *)networkManager
+{
+    OWSAssertDebug(SSKEnvironment.shared.networkManager);
+    
+    return SSKEnvironment.shared.networkManager;
+}
+
+- (id<ProfileManagerProtocol>)profileManager {
+    OWSAssertDebug(SSKEnvironment.shared.profileManager);
+
+    return SSKEnvironment.shared.profileManager;
+}
+
+- (SDSDatabaseStorage *)databaseStorage
+{
+    return SDSDatabaseStorage.shared;
+}
+
+- (SSKSessionStore *)sessionStore
+{
+    return SSKEnvironment.shared.sessionStore;
+}
+
+#pragma mark -
 
 - (void)setPhoneNumberAwaitingVerification:(NSString *_Nullable)phoneNumberAwaitingVerification
 {
@@ -106,9 +137,21 @@ NSString *const TSAccountManager_ServerSignalingKey = @"TSStorageServerSignaling
                                                            userInfo:nil];
 }
 
-+ (BOOL)isRegistered
+- (OWSRegistrationState)registrationState
 {
-    return [[self sharedInstance] isRegistered];
+    if (!self.isRegistered) {
+        return OWSRegistrationState_Unregistered;
+    } else if (self.isDeregistered) {
+        if (self.isReregistering) {
+            return OWSRegistrationState_Reregistering;
+        } else {
+            return OWSRegistrationState_Deregistered;
+        }
+    } else if (self.isDeregistered) {
+        return OWSRegistrationState_PendingBackupRestore;
+    } else {
+        return OWSRegistrationState_Registered;
+    }
 }
 
 - (BOOL)isRegistered
@@ -124,25 +167,28 @@ NSString *const TSAccountManager_ServerSignalingKey = @"TSStorageServerSignaling
     }
 }
 
+- (BOOL)isRegisteredAndReady
+{
+    return self.registrationState == OWSRegistrationState_Registered;
+}
+
 - (void)didRegister
 {
     OWSLogInfo(@"didRegister");
     NSString *phoneNumber = self.phoneNumberAwaitingVerification;
 
     if (!phoneNumber) {
-        OWSRaiseException(@"RegistrationFail", @"Internal Corrupted State");
+        OWSFail(@"phoneNumber was unexpectedly nil");
     }
 
     [self storeLocalNumber:phoneNumber];
-
-    [[NSNotificationCenter defaultCenter] postNotificationNameAsync:RegistrationStateDidChangeNotification
-                                                             object:nil
-                                                           userInfo:nil];
 
     // Warm these cached values.
     [self isRegistered];
     [self localNumber];
     [self isDeregistered];
+
+    [self postRegistrationStateDidChangeNotification];
 }
 
 + (nullable NSString *)localNumber
@@ -171,20 +217,33 @@ NSString *const TSAccountManager_ServerSignalingKey = @"TSStorageServerSignaling
 - (nullable NSString *)storedLocalNumber
 {
     @synchronized (self) {
-        return [self.dbConnection stringForKey:TSAccountManager_RegisteredNumberKey
-                                  inCollection:TSAccountManager_UserAccountCollection];
+        __block NSString *_Nullable result;
+        [self.databaseStorage readWithBlock:^(SDSAnyReadTransaction *transaction) {
+            result = [self.keyValueStore getString:TSAccountManager_RegisteredNumberKey transaction:transaction];
+        }];
+        return result;
     }
+}
+
+- (nullable NSString *)storedOrCachedLocalNumber:(SDSAnyReadTransaction *)transaction
+{
+    @synchronized(self) {
+        if (self.cachedLocalNumber) {
+            return self.cachedLocalNumber;
+        }
+    }
+
+    return [self.keyValueStore getString:TSAccountManager_RegisteredNumberKey transaction:transaction];
 }
 
 - (void)storeLocalNumber:(NSString *)localNumber
 {
     @synchronized (self) {
-        [self.dbConnection setObject:localNumber
-                              forKey:TSAccountManager_RegisteredNumberKey
-                        inCollection:TSAccountManager_UserAccountCollection];
+        [self.databaseStorage writeWithBlock:^(SDSAnyWriteTransaction *transaction) {
+            [self.keyValueStore setString:localNumber key:TSAccountManager_RegisteredNumberKey transaction:transaction];
 
-        [self.dbConnection removeObjectForKey:TSAccountManager_ReregisteringPhoneNumberKey
-                                 inCollection:TSAccountManager_UserAccountCollection];
+            [self.keyValueStore removeValueForKey:TSAccountManager_ReregisteringPhoneNumberKey transaction:transaction];
+        }];
 
         self.phoneNumberAwaitingVerification = nil;
 
@@ -192,42 +251,37 @@ NSString *const TSAccountManager_ServerSignalingKey = @"TSStorageServerSignaling
     }
 }
 
-+ (uint32_t)getOrGenerateRegistrationId
-{
-    return [[self sharedInstance] getOrGenerateRegistrationId];
-}
-
-+ (uint32_t)getOrGenerateRegistrationId:(YapDatabaseReadWriteTransaction *)transaction
-{
-    return [[self sharedInstance] getOrGenerateRegistrationId:transaction];
-}
 
 - (uint32_t)getOrGenerateRegistrationId
 {
     __block uint32_t result;
-    [self.dbConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction *_Nonnull transaction) {
-        result = [self getOrGenerateRegistrationId:transaction];
+    [self.databaseStorage writeWithBlock:^(SDSAnyWriteTransaction *transaction) {
+        result = [self getOrGenerateRegistrationIdWithTransaction:transaction];
     }];
     return result;
 }
 
-- (uint32_t)getOrGenerateRegistrationId:(YapDatabaseReadWriteTransaction *)transaction
+- (uint32_t)getOrGenerateRegistrationIdWithTransaction:(SDSAnyWriteTransaction *)transaction
 {
-    @synchronized(self)
-    {
-        uint32_t registrationID = [[transaction objectForKey:TSAccountManager_LocalRegistrationIdKey
-                                                inCollection:TSAccountManager_UserAccountCollection] unsignedIntValue];
+    // Unlike other methods in this class, there's no need for a `@synchronized` block
+    // here, since we're already in a write transaction, and all writes occur on a serial queue.
+    //
+    // Since other code in this class which uses @synchronized(self) also needs to open write
+    // transaction, using @synchronized(self) here, inside of a WriteTransaction risks deadlock.
+    NSNumber *_Nullable storedId =
+        [self.keyValueStore getObject:TSAccountManager_LocalRegistrationIdKey transaction:transaction];
 
-        if (registrationID == 0) {
-            registrationID = (uint32_t)arc4random_uniform(16380) + 1;
-            OWSLogWarn(@"Generated a new registrationID: %u", registrationID);
+    uint32_t registrationID = storedId.unsignedIntValue;
 
-            [transaction setObject:[NSNumber numberWithUnsignedInteger:registrationID]
-                            forKey:TSAccountManager_LocalRegistrationIdKey
-                      inCollection:TSAccountManager_UserAccountCollection];
-        }
-        return registrationID;
+    if (registrationID == 0) {
+        registrationID = (uint32_t)arc4random_uniform(16380) + 1;
+        OWSLogWarn(@"Generated a new registrationID: %u", registrationID);
+
+        [self.keyValueStore setObject:[NSNumber numberWithUnsignedInteger:registrationID]
+                                  key:TSAccountManager_LocalRegistrationIdKey
+                          transaction:transaction];
     }
+    return registrationID;
 }
 
 - (void)registerForPushNotificationsWithPushToken:(NSString *)pushToken
@@ -270,96 +324,21 @@ NSString *const TSAccountManager_ServerSignalingKey = @"TSStorageServerSignaling
         }];
 }
 
-+ (void)registerWithPhoneNumber:(NSString *)phoneNumber
-                        success:(void (^)(void))successBlock
-                        failure:(void (^)(NSError *error))failureBlock
-                smsVerification:(BOOL)isSMS
-
-{
-    if ([self isRegistered]) {
-        failureBlock([NSError errorWithDomain:@"tsaccountmanager.verify" code:4000 userInfo:nil]);
-        return;
-    }
-
-    // The country code of TSAccountManager.phoneNumberAwaitingVerification is used to
-    // determine whether or not to use domain fronting, so it needs to be set _before_
-    // we make our verification code request.
-    TSAccountManager *manager = [self sharedInstance];
-    manager.phoneNumberAwaitingVerification = phoneNumber;
-
-    TSRequest *request =
-        [OWSRequestFactory requestVerificationCodeRequestWithPhoneNumber:phoneNumber
-                                                               transport:(isSMS ? TSVerificationTransportSMS
-                                                                                : TSVerificationTransportVoice)];
-    [[TSNetworkManager sharedManager] makeRequest:request
-        success:^(NSURLSessionDataTask *task, id responseObject) {
-            OWSLogInfo(@"Successfully requested verification code request for number: %@ method:%@",
-                phoneNumber,
-                isSMS ? @"SMS" : @"Voice");
-            successBlock();
-        }
-        failure:^(NSURLSessionDataTask *task, NSError *error) {
-            if (!IsNSErrorNetworkFailure(error)) {
-                OWSProdError([OWSAnalyticsEvents accountsErrorVerificationCodeRequestFailed]);
-            }
-            OWSLogError(@"Failed to request verification code request with error:%@", error);
-            failureBlock(error);
-        }];
-}
-
-+ (void)rerequestSMSWithSuccess:(void (^)(void))successBlock failure:(void (^)(NSError *error))failureBlock
-{
-    TSAccountManager *manager = [self sharedInstance];
-    NSString *number          = manager.phoneNumberAwaitingVerification;
-
-    OWSAssertDebug(number);
-
-    [self registerWithPhoneNumber:number success:successBlock failure:failureBlock smsVerification:YES];
-}
-
-+ (void)rerequestVoiceWithSuccess:(void (^)(void))successBlock failure:(void (^)(NSError *error))failureBlock
-{
-    TSAccountManager *manager = [self sharedInstance];
-    NSString *number          = manager.phoneNumberAwaitingVerification;
-
-    OWSAssertDebug(number);
-
-    [self registerWithPhoneNumber:number success:successBlock failure:failureBlock smsVerification:NO];
-}
-
-- (void)registerForManualMessageFetchingWithSuccess:(void (^)(void))successBlock
-                                            failure:(void (^)(NSError *error))failureBlock
-{
-    TSRequest *request = [OWSRequestFactory updateAttributesRequestWithManualMessageFetching:YES];
-    [self.networkManager makeRequest:request
-        success:^(NSURLSessionDataTask *_Nonnull task, id _Nonnull responseObject) {
-            OWSLogInfo(@"updated server with account attributes to enableManualFetching");
-            successBlock();
-        }
-        failure:^(NSURLSessionDataTask *_Nonnull task, NSError *_Nonnull error) {
-            OWSLogInfo(@"failed to updat server with account attributes with error: %@", error);
-            failureBlock(error);
-        }];
-}
-
 - (void)verifyAccountWithCode:(NSString *)verificationCode
                           pin:(nullable NSString *)pin
                       success:(void (^)(void))successBlock
                       failure:(void (^)(NSError *error))failureBlock
 {
     NSString *authToken = [[self class] generateNewAccountAuthenticationToken];
-    NSString *signalingKey = [[self class] generateNewSignalingKeyToken];
     NSString *phoneNumber = self.phoneNumberAwaitingVerification;
 
-    OWSAssertDebug(signalingKey);
     OWSAssertDebug(authToken);
     OWSAssertDebug(phoneNumber);
 
-    TSVerifyCodeRequest *request = [[TSVerifyCodeRequest alloc] initWithVerificationCode:verificationCode
-                                                                               forNumber:phoneNumber
-                                                                                     pin:pin
-                                                                            signalingKey:signalingKey
-                                                                                 authKey:authToken];
+    TSRequest *request = [OWSRequestFactory verifyCodeRequestWithVerificationCode:verificationCode
+                                                                        forNumber:phoneNumber
+                                                                              pin:pin
+                                                                          authKey:authToken];
 
     [self.networkManager makeRequest:request
         success:^(NSURLSessionDataTask *task, id responseObject) {
@@ -370,8 +349,32 @@ NSString *const TSAccountManager_ServerSignalingKey = @"TSStorageServerSignaling
                 case 200:
                 case 204: {
                     OWSLogInfo(@"Verification code accepted.");
-                    [self storeServerAuthToken:authToken signalingKey:signalingKey];
-                    [TSPreKeyManager createPreKeysWithSuccess:successBlock failure:failureBlock];
+
+                    [self setStoredServerAuthToken:authToken];
+
+                    [[[SignalServiceRestClient new] updateAccountAttributesObjC]
+                            .thenInBackground(^{
+                                return [AnyPromise promiseWithResolverBlock:^(PMKResolver resolve) {
+                                    [TSPreKeyManager
+                                        createPreKeysWithSuccess:^{
+                                            resolve(@(1));
+                                        }
+                                        failure:^(NSError *error) {
+                                            resolve(error);
+                                        }];
+                                }];
+                            })
+                            .then(^{
+                                [self.profileManager fetchLocalUsersProfile];
+                            })
+                            .then(^{
+                                successBlock();
+                            })
+                            .catchInBackground(^(NSError *error) {
+                                OWSLogError(@"Error: %@", error);
+                                failureBlock(error);
+                            }) retainUntilComplete];
+
                     break;
                 }
                 default: {
@@ -386,7 +389,7 @@ NSString *const TSAccountManager_ServerSignalingKey = @"TSStorageServerSignaling
             if (!IsNSErrorNetworkFailure(error)) {
                 OWSProdError([OWSAnalyticsEvents accountsErrorVerifyAccountRequestFailed]);
             }
-            OWSAssertDebug([error.domain isEqualToString:TSNetworkManagerDomain]);
+            OWSAssertDebug([error.domain isEqualToString:TSNetworkManagerErrorDomain]);
 
             OWSLogWarn(@"Error verifying code: %@", error.debugDescription);
 
@@ -411,9 +414,41 @@ NSString *const TSAccountManager_ServerSignalingKey = @"TSStorageServerSignaling
                     NSString *localizedMessage = NSLocalizedString(@"REGISTRATION_VERIFICATION_FAILED_WRONG_PIN",
                         "Error message indicating that registration failed due to a missing or incorrect 2FA PIN.");
                     OWSLogError(@"2FA PIN required: %ld", (long)error.code);
-                    NSError *error
-                        = OWSErrorWithCodeDescription(OWSErrorCodeRegistrationMissing2FAPIN, localizedMessage);
-                    failureBlock(error);
+
+                    NSError *userError = OWSErrorWithCodeDescription(OWSErrorCodeRegistrationMissing2FAPIN, localizedMessage);
+
+                    NSData *responseData = error.userInfo[AFNetworkingOperationFailingURLResponseDataErrorKey];
+                    if (responseData == nil) {
+                        OWSFailDebug(@"Response data is unexpectedly nil");
+                        return failureBlock(OWSErrorMakeUnableToProcessServerResponseError());
+                    }
+
+                    NSError *error;
+                    NSDictionary<NSString *, id> *_Nullable responseDict =
+                        [NSJSONSerialization JSONObjectWithData:responseData options:0 error:&error];
+                    if (![responseDict isKindOfClass:[NSDictionary class]] || error != nil) {
+                        OWSFailDebug(@"Failed to parse 2fa required json");
+                        return failureBlock(OWSErrorMakeUnableToProcessServerResponseError());
+                    }
+
+                    // Check if we received KBS credentials, if so pass them on.
+                    // This should only ever be returned if the user was using registration lock v2
+                    NSDictionary *_Nullable storageCredentials = responseDict[@"storageCredentials"];
+                    if ([storageCredentials isKindOfClass:[NSDictionary class]]) {
+                        RemoteAttestationAuth *_Nullable auth = [RemoteAttestation parseAuthParams:storageCredentials];
+                        if (!auth) {
+                            OWSFailDebug(@"remote attestation auth could not be parsed: %@", responseDict);
+                            return failureBlock(OWSErrorMakeUnableToProcessServerResponseError());
+                        }
+
+                        userError = OWSErrorWithUserInfo(OWSErrorCodeRegistrationMissing2FAPIN,
+                                                         @{
+                                                           NSLocalizedDescriptionKey: localizedMessage,
+                                                           TSRemoteAttestationAuthErrorKey: auth
+                                                         });
+                    }
+
+                    failureBlock(userError);
                     break;
                 }
                 default: {
@@ -433,47 +468,28 @@ NSString *const TSAccountManager_ServerSignalingKey = @"TSStorageServerSignaling
     return authTokenPrint;
 }
 
-+ (NSString *)generateNewSignalingKeyToken {
-    /*The signalingKey is 32 bytes of AES material (256bit AES) and 20 bytes of
-     * Hmac key material (HmacSHA1) concatenated into a 52 byte slug that is
-     * base64 encoded. */
-    NSData *signalingKeyToken = [Randomness generateRandomBytes:52];
-    NSString *signalingKeyTokenPrint = [[NSData dataWithData:signalingKeyToken] base64EncodedString];
-    return signalingKeyTokenPrint;
+- (nullable NSString *)storedSignalingKey
+{
+    __block NSString *_Nullable result;
+    [self.databaseStorage readWithBlock:^(SDSAnyReadTransaction *transaction) {
+        result = [self.keyValueStore getString:TSAccountManager_ServerSignalingKey transaction:transaction];
+    }];
+    return result;
 }
 
-+ (nullable NSString *)signalingKey
+- (nullable NSString *)storedServerAuthToken
 {
-    return [[self sharedInstance] signalingKey];
+    __block NSString *_Nullable result;
+    [self.databaseStorage readWithBlock:^(SDSAnyReadTransaction *transaction) {
+        result = [self.keyValueStore getString:TSAccountManager_ServerAuthToken transaction:transaction];
+    }];
+    return result;
 }
 
-- (nullable NSString *)signalingKey
+- (void)setStoredServerAuthToken:(NSString *)authToken
 {
-    return [self.dbConnection stringForKey:TSAccountManager_ServerSignalingKey
-                              inCollection:TSAccountManager_UserAccountCollection];
-}
-
-+ (nullable NSString *)serverAuthToken
-{
-    return [[self sharedInstance] serverAuthToken];
-}
-
-- (nullable NSString *)serverAuthToken
-{
-    return [self.dbConnection stringForKey:TSAccountManager_ServerAuthToken
-                              inCollection:TSAccountManager_UserAccountCollection];
-}
-
-- (void)storeServerAuthToken:(NSString *)authToken signalingKey:(NSString *)signalingKey
-{
-    [self.dbConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
-        [transaction setObject:authToken
-                        forKey:TSAccountManager_ServerAuthToken
-                  inCollection:TSAccountManager_UserAccountCollection];
-        [transaction setObject:signalingKey
-                        forKey:TSAccountManager_ServerSignalingKey
-                  inCollection:TSAccountManager_UserAccountCollection];
-
+    [self.databaseStorage writeWithBlock:^(SDSAnyWriteTransaction *transaction) {
+        [self.keyValueStore setString:authToken key:TSAccountManager_ServerAuthToken transaction:transaction];
     }];
 }
 
@@ -491,9 +507,7 @@ NSString *const TSAccountManager_ServerSignalingKey = @"TSStorageServerSignaling
             // `RegistrationStateDidChangeNotification` which is only safe to fire after
             // the data store is reset.
 
-            [[NSNotificationCenter defaultCenter] postNotificationNameAsync:RegistrationStateDidChangeNotification
-                                                                     object:nil
-                                                                   userInfo:nil];
+            [self.sharedInstance postRegistrationStateDidChangeNotification];
         }
         failure:^(NSURLSessionDataTask *task, NSError *error) {
             if (!IsNSErrorNetworkFailure(error)) {
@@ -526,9 +540,11 @@ NSString *const TSAccountManager_ServerSignalingKey = @"TSStorageServerSignaling
     // Cache this since we access this a lot, and once set it will not change.
     @synchronized(self) {
         if (self.cachedIsDeregistered == nil) {
-            self.cachedIsDeregistered = @([self.dbConnection boolForKey:TSAccountManager_IsDeregisteredKey
-                                                           inCollection:TSAccountManager_UserAccountCollection
-                                                           defaultValue:NO]);
+            [self.databaseStorage readWithBlock:^(SDSAnyReadTransaction *transaction) {
+                self.cachedIsDeregistered = @([self.keyValueStore getBool:TSAccountManager_IsDeregisteredKey
+                                                             defaultValue:NO
+                                                              transaction:transaction]);
+            }];
         }
 
         OWSAssertDebug(self.cachedIsDeregistered);
@@ -548,15 +564,15 @@ NSString *const TSAccountManager_ServerSignalingKey = @"TSStorageServerSignaling
         self.cachedIsDeregistered = @(isDeregistered);
     }
 
-    [self.dbConnection asyncReadWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
-        [transaction setObject:@(isDeregistered)
-                        forKey:TSAccountManager_IsDeregisteredKey
-                  inCollection:TSAccountManager_UserAccountCollection];
-    }];
-
-    [[NSNotificationCenter defaultCenter] postNotificationNameAsync:DeregistrationStateDidChangeNotification
-                                                             object:nil
-                                                           userInfo:nil];
+    [self.databaseStorage
+        asyncWriteWithBlock:^(SDSAnyWriteTransaction *transaction) {
+            [self.keyValueStore setObject:@(isDeregistered)
+                                      key:TSAccountManager_IsDeregisteredKey
+                              transaction:transaction];
+        }
+        completion:^{
+            [self postRegistrationStateDidChangeNotification];
+        }];
 }
 
 #pragma mark - Re-registration
@@ -574,34 +590,165 @@ NSString *const TSAccountManager_ServerSignalingKey = @"TSStorageServerSignaling
         _cachedLocalNumber = nil;
         _phoneNumberAwaitingVerification = nil;
         _cachedIsDeregistered = nil;
-        [self.dbConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
-            [transaction removeAllObjectsInCollection:TSAccountManager_UserAccountCollection];
+        [self.databaseStorage writeWithBlock:^(SDSAnyWriteTransaction *transaction) {
+            [self.keyValueStore removeAllWithTransaction:transaction];
 
-            [[OWSPrimaryStorage sharedManager] resetSessionStore:transaction];
+            [self.sessionStore resetSessionStore:transaction];
 
-            [transaction setObject:localNumber
-                            forKey:TSAccountManager_ReregisteringPhoneNumberKey
-                      inCollection:TSAccountManager_UserAccountCollection];
+            [self.keyValueStore setObject:localNumber
+                                      key:TSAccountManager_ReregisteringPhoneNumberKey
+                              transaction:transaction];
         }];
+
+        [self postRegistrationStateDidChangeNotification];
+
         return YES;
     }
 }
 
-- (NSString *)reregisterationPhoneNumber
+- (nullable NSString *)reregistrationPhoneNumber
 {
     OWSAssertDebug([self isReregistering]);
 
-    NSString *_Nullable result = [self.dbConnection stringForKey:TSAccountManager_ReregisteringPhoneNumberKey
-                                                    inCollection:TSAccountManager_UserAccountCollection];
-    OWSAssertDebug(result);
+    __block NSString *_Nullable result;
+    [self.databaseStorage readWithBlock:^(SDSAnyReadTransaction *transaction) {
+        result = [self.keyValueStore getString:TSAccountManager_ReregisteringPhoneNumberKey transaction:transaction];
+        OWSAssertDebug(result);
+    }];
     return result;
 }
 
 - (BOOL)isReregistering
 {
-    return nil !=
-        [self.dbConnection stringForKey:TSAccountManager_ReregisteringPhoneNumberKey
-                           inCollection:TSAccountManager_UserAccountCollection];
+    __block NSString *_Nullable reregistrationPhoneNumber;
+    [self.databaseStorage readWithBlock:^(SDSAnyReadTransaction *transaction) {
+        reregistrationPhoneNumber =
+            [self.keyValueStore getString:TSAccountManager_ReregisteringPhoneNumberKey transaction:transaction];
+    }];
+
+    return nil != reregistrationPhoneNumber;
+}
+
+- (BOOL)hasPendingBackupRestoreDecision
+{
+    __block BOOL result;
+    [self.databaseStorage readWithBlock:^(SDSAnyReadTransaction *transaction) {
+        result = [self.keyValueStore getBool:TSAccountManager_HasPendingRestoreDecisionKey
+                                defaultValue:NO
+                                 transaction:transaction];
+    }];
+    return result;
+}
+
+- (void)setHasPendingBackupRestoreDecision:(BOOL)value
+{
+    OWSLogInfo(@"%d", value);
+    [self.databaseStorage writeWithBlock:^(SDSAnyWriteTransaction *transaction) {
+        [self.keyValueStore setBool:value key:TSAccountManager_HasPendingRestoreDecisionKey transaction:transaction];
+    }];
+    [self postRegistrationStateDidChangeNotification];
+}
+
+- (BOOL)isManualMessageFetchEnabled
+{
+    __block BOOL result;
+    [self.databaseStorage readWithBlock:^(SDSAnyReadTransaction *transaction) {
+        result =
+            [self.keyValueStore getBool:TSAccountManager_ManualMessageFetchKey defaultValue:NO transaction:transaction];
+    }];
+    return result;
+}
+
+- (void)setIsManualMessageFetchEnabled:(BOOL)value
+{
+    [self.databaseStorage writeWithBlock:^(SDSAnyWriteTransaction *transaction) {
+        [self.keyValueStore setBool:value key:TSAccountManager_ManualMessageFetchKey transaction:transaction];
+    }];
+}
+
+- (void)registerForTestsWithLocalNumber:(NSString *)localNumber
+{
+    OWSAssertDebug(localNumber.length > 0);
+    
+    [self storeLocalNumber:localNumber];
+}
+
+#pragma mark - Account Attributes
+
+- (AnyPromise *)updateAccountAttributes
+{
+    // Enqueue a "account attribute update", recording the "request time".
+    [self.databaseStorage writeWithBlock:^(SDSAnyWriteTransaction *transaction) {
+        [self.keyValueStore setObject:[NSDate new]
+                                  key:TSAccountManager_NeedsAccountAttributesUpdateKey
+                          transaction:transaction];
+    }];
+
+    return [self updateAccountAttributesIfNecessary];
+}
+
+- (AnyPromise *)updateAccountAttributesIfNecessary {
+    if (!self.isRegistered) {
+        return [AnyPromise promiseWithValue:@(1)];
+    }
+
+    __block NSDate *_Nullable updateRequestDate;
+    [self.databaseStorage readWithBlock:^(SDSAnyReadTransaction *transaction) {
+        updateRequestDate =
+            [self.keyValueStore getObject:TSAccountManager_NeedsAccountAttributesUpdateKey transaction:transaction];
+    }];
+
+    if (!updateRequestDate) {
+        return [AnyPromise promiseWithValue:@(1)];
+    }
+    AnyPromise *promise = [self performUpdateAccountAttributes];
+    promise = promise.thenInBackground(^(id value) {
+        [self.databaseStorage writeWithBlock:^(SDSAnyWriteTransaction *transaction) {
+            // Clear the update request unless a new update has been requested
+            // while this update was in flight.
+            NSDate *_Nullable latestUpdateRequestDate =
+                [self.keyValueStore getObject:TSAccountManager_NeedsAccountAttributesUpdateKey transaction:transaction];
+
+            if (latestUpdateRequestDate && [latestUpdateRequestDate isEqual:updateRequestDate]) {
+                [self.keyValueStore removeValueForKey:TSAccountManager_NeedsAccountAttributesUpdateKey
+                                          transaction:transaction];
+            }
+        }];
+    });
+    return promise;
+}
+
+- (AnyPromise *)performUpdateAccountAttributes
+{
+    AnyPromise *promise = [[SignalServiceRestClient new] updateAccountAttributesObjC];
+    promise = promise.then(^(id value) {
+        // Fetch the local profile, as we may have changed its
+        // account attributes.  Specifically, we need to determine
+        // if all devices for our account now support UD for sync
+        // messages.
+        [self.profileManager fetchLocalUsersProfile];
+    });
+    [promise retainUntilComplete];
+    return promise;
+}
+
+- (void)reachabilityChanged {
+    OWSAssertIsOnMainThread();
+
+    [AppReadiness runNowOrWhenAppDidBecomeReady:^{
+        [[self updateAccountAttributesIfNecessary] retainUntilComplete];
+    }];
+}
+
+#pragma mark - Notifications
+
+- (void)postRegistrationStateDidChangeNotification
+{
+    OWSAssertIsOnMainThread();
+
+    [[NSNotificationCenter defaultCenter] postNotificationNameAsync:RegistrationStateDidChangeNotification
+                                                             object:nil
+                                                           userInfo:nil];
 }
 
 @end

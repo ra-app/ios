@@ -1,15 +1,15 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "MockSSKEnvironment.h"
-#import "NSDate+OWS.h"
 #import "OWSDisappearingMessagesFinder.h"
 #import "OWSPrimaryStorage.h"
-#import "SSKBaseTest.h"
+#import "SSKBaseTestObjC.h"
 #import "TSContactThread.h"
 #import "TSMessage.h"
 #import "TestAppContext.h"
+#import <SignalCoreKit/NSDate+OWS.h>
 #import <SignalServiceKit/SignalServiceKit-Swift.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark -
 
-@interface OWSDisappearingMessageFinderTest : SSKBaseTest
+@interface OWSDisappearingMessageFinderTest : SSKBaseTestObjC
 
 @property (nonatomic, nullable) OWSDisappearingMessagesFinder *finder;
 @property (nonatomic, nullable) TSThread *thread;
@@ -70,7 +70,8 @@ NS_ASSUME_NONNULL_BEGIN
                                       expiresInSeconds:expiresInSeconds
                                        expireStartedAt:expireStartedAt
                                          quotedMessage:nil
-                                          contactShare:nil];
+                                          contactShare:nil
+                                           linkPreview:nil];
 }
 
 - (void)testExpiredMessages
@@ -82,7 +83,8 @@ NS_ASSUME_NONNULL_BEGIN
                                                             expiresInSeconds:1
                                                              expireStartedAt:self.now - 20000
                                                                quotedMessage:nil
-                                                                contactShare:nil];
+                                                                contactShare:nil
+                                                                 linkPreview:nil];
     [expiredMessage1 save];
 
     TSMessage *expiredMessage2 =
@@ -104,7 +106,7 @@ NS_ASSUME_NONNULL_BEGIN
     [unExpiringMessage2 save];
 
     __block NSArray<TSMessage *> *actualMessages;
-    [self readWithBlock:^(YapDatabaseReadTransaction *transaction) {
+    [self yapReadWithBlock:^(YapDatabaseReadTransaction *transaction) {
         actualMessages = [self.finder fetchExpiredMessagesWithTransaction:transaction];
     }];
 
@@ -133,7 +135,7 @@ NS_ASSUME_NONNULL_BEGIN
     [unExpiringMessage2 save];
 
     __block NSArray<TSMessage *> *actualMessages;
-    [self readWithBlock:^(YapDatabaseReadTransaction *transaction) {
+    [self yapReadWithBlock:^(YapDatabaseReadTransaction *transaction) {
         actualMessages = [self.finder fetchUnstartedExpiringMessagesInThread:self.thread
                                                                  transaction:transaction];
     }];
@@ -146,7 +148,7 @@ NS_ASSUME_NONNULL_BEGIN
 {
     __block NSNumber *nextExpirationTimestamp;
 
-    [self readWithBlock:^(YapDatabaseReadTransaction *transaction) {
+    [self yapReadWithBlock:^(YapDatabaseReadTransaction *transaction) {
         XCTAssertNotNil(self.finder);
         nextExpirationTimestamp = [self.finder nextExpirationTimestampWithTransaction:transaction];
     }];

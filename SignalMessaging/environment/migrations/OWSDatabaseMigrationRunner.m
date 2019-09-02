@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSDatabaseMigrationRunner.h"
@@ -19,33 +19,42 @@ NS_ASSUME_NONNULL_BEGIN
 
 @implementation OWSDatabaseMigrationRunner
 
-- (instancetype)initWithPrimaryStorage:(OWSPrimaryStorage *)primaryStorage
+#pragma mark - Dependencies
+
+- (OWSPrimaryStorage *)primaryStorage
 {
-    self = [super init];
-    if (!self) {
-        return self;
-    }
+    OWSAssertDebug(SSKEnvironment.shared.primaryStorage);
 
-    _primaryStorage = primaryStorage;
-
-    return self;
+    return SSKEnvironment.shared.primaryStorage;
 }
+
+#pragma mark -
 
 // This should all migrations which do NOT qualify as safeBlockingMigrations:
 - (NSArray<OWSDatabaseMigration *> *)allMigrations
 {
-    OWSPrimaryStorage *primaryStorage = OWSPrimaryStorage.sharedManager;
-    return @[
-        [[OWS100RemoveTSRecipientsMigration alloc] initWithPrimaryStorage:primaryStorage],
-        [[OWS102MoveLoggingPreferenceToUserDefaults alloc] initWithPrimaryStorage:primaryStorage],
-        [[OWS103EnableVideoCalling alloc] initWithPrimaryStorage:primaryStorage],
-        [[OWS104CreateRecipientIdentities alloc] initWithPrimaryStorage:primaryStorage],
-        [[OWS105AttachmentFilePaths alloc] initWithPrimaryStorage:primaryStorage],
-        [[OWS106EnsureProfileComplete alloc] initWithPrimaryStorage:primaryStorage],
-        [[OWS107LegacySounds alloc] initWithPrimaryStorage:primaryStorage],
-        [[OWS108CallLoggingPreference alloc] initWithPrimaryStorage:primaryStorage],
-        [[OWS109OutgoingMessageState alloc] initWithPrimaryStorage:primaryStorage]
+    NSArray<OWSDatabaseMigration *> *prodMigrations = @[
+        [[OWS100RemoveTSRecipientsMigration alloc] init],
+        [[OWS102MoveLoggingPreferenceToUserDefaults alloc] init],
+        [[OWS103EnableVideoCalling alloc] init],
+        [[OWS104CreateRecipientIdentities alloc] init],
+        [[OWS105AttachmentFilePaths alloc] init],
+        [[OWS106EnsureProfileComplete alloc] init],
+        [[OWS107LegacySounds alloc] init],
+        [[OWS108CallLoggingPreference alloc] init],
+        [[OWS109OutgoingMessageState alloc] init],
+        [OWS110SortIdMigration new],
+        [[OWS111UDAttributesMigration alloc] init],
+        [[OWS112TypingIndicatorsMigration alloc] init],
+        [[OWS113MultiAttachmentMediaMessages alloc] init],
+        [[OWS114RemoveDynamicInteractions alloc] init]
     ];
+
+    if (SSKFeatureFlags.useGRDB) {
+        return [prodMigrations arrayByAddingObjectsFromArray:@ [[OWS115GRDBMigration new]]];
+    } else {
+        return prodMigrations;
+    }
 }
 
 - (void)assumeAllExistingMigrationsRun
@@ -58,7 +67,34 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)runAllOutstandingWithCompletion:(OWSDatabaseMigrationCompletion)completion
 {
+    [self removeUnknownMigrations];
+
     [self runMigrations:[self.allMigrations mutableCopy] completion:completion];
+}
+
+// Some users (especially internal users) will move back and forth between
+// app versions.  Whenever they move "forward" in the version history, we
+// want them to re-run any new migrations. Therefore, when they move "backward"
+// in the version history, we cull any unknown migrations.
+- (void)removeUnknownMigrations
+{
+    NSMutableSet<NSString *> *knownMigrationIds = [NSMutableSet new];
+    for (OWSDatabaseMigration *migration in self.allMigrations) {
+        [knownMigrationIds addObject:migration.uniqueId];
+    }
+
+    [self.primaryStorage.dbReadWriteConnection readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
+        NSArray<NSString *> *savedMigrationIds = [transaction allKeysInCollection:OWSDatabaseMigration.collection];
+
+        NSMutableSet<NSString *> *unknownMigrationIds = [NSMutableSet new];
+        [unknownMigrationIds addObjectsFromArray:savedMigrationIds];
+        [unknownMigrationIds minusSet:knownMigrationIds];
+
+        for (NSString *unknownMigrationId in unknownMigrationIds) {
+            OWSLogInfo(@"Culling unknown migration: %@", unknownMigrationId);
+            [transaction removeObjectForKey:unknownMigrationId inCollection:OWSDatabaseMigration.collection];
+        }
+    }];
 }
 
 // Run migrations serially to:

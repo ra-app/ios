@@ -1,20 +1,19 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
-
-#import "OWSAudioPlayer.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
 @class ConversationStyle;
-@class ConversationViewItem;
-@class TSAttachmentStream;
+@class TSAttachment;
+
+@protocol ConversationViewItem;
 
 @interface OWSAudioMessageView : UIStackView
 
-- (instancetype)initWithAttachment:(TSAttachmentStream *)attachmentStream
+- (instancetype)initWithAttachment:(TSAttachment *)attachment
                         isIncoming:(BOOL)isIncoming
-                          viewItem:(ConversationViewItem *)viewItem
+                          viewItem:(id<ConversationViewItem>)viewItem
                  conversationStyle:(ConversationStyle *)conversationStyle;
 
 - (void)createContents;
@@ -22,6 +21,11 @@ NS_ASSUME_NONNULL_BEGIN
 + (CGFloat)bubbleHeight;
 
 - (void)updateContents;
+
+- (BOOL)isPointInScrubbableRegion:(CGPoint)location;
+- (NSTimeInterval)scrubToLocation:(CGPoint)location;
+
+@property (nonatomic) BOOL isScrubbing;
 
 @end
 

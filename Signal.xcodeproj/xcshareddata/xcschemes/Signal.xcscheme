@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0940"
+   LastUpgradeVersion = "1020"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -28,7 +28,7 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "237277EA071A0C42090E0E10F34EFC45"
+               BlueprintIdentifier = "88466E9845300D40B5E5E16190FCF608"
                BuildableName = "SignalServiceKit.framework"
                BlueprintName = "SignalServiceKit"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">
@@ -56,9 +56,59 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "12F92260A64B367895EEBA8F7CB85E66"
+               BlueprintIdentifier = "59FFD47D610248F8216F6279B325E3BF"
                BuildableName = "SignalServiceKit-Unit-Tests.xctest"
                BlueprintName = "SignalServiceKit-Unit-Tests"
+               ReferencedContainer = "container:Pods/Pods.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "1D5FBD12E05B627E46927DBA76985355"
+               BuildableName = "SignalCoreKit-Unit-Tests.xctest"
+               BlueprintName = "SignalCoreKit-Unit-Tests"
+               ReferencedContainer = "container:Pods/Pods.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "5B34FB0B5ABA685EF33F1BA1C388F016"
+               BuildableName = "AxolotlKit-Unit-Tests.xctest"
+               BlueprintName = "AxolotlKit-Unit-Tests"
+               ReferencedContainer = "container:Pods/Pods.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "D85B45003BA81D72F606FDF3EB4B4E1C"
+               BuildableName = "Curve25519Kit-Unit-Tests.xctest"
+               BlueprintName = "Curve25519Kit-Unit-Tests"
+               ReferencedContainer = "container:Pods/Pods.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "F9C2DA0BADF4F69559F0AA5BB4FC1E06"
+               BuildableName = "HKDFKit-Unit-Tests.xctest"
+               BlueprintName = "HKDFKit-Unit-Tests"
+               ReferencedContainer = "container:Pods/Pods.xcodeproj">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "92057C418B970541FF6BE6E64A49D8C2"
+               BuildableName = "SignalMetadataKit-Unit-Tests.xctest"
+               BlueprintName = "SignalMetadataKit-Unit-Tests"
                ReferencedContainer = "container:Pods/Pods.xcodeproj">
             </BuildableReference>
          </TestableReference>

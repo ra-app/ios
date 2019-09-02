@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
@@ -154,6 +154,10 @@ public class SignalAttachment: NSObject {
     @objc
     public var isConvertibleToContactShare = false
 
+    // This flag should be set for attachments that should be sent as view-once messages.
+    @objc
+    public var isViewOnceAttachment = false
+
     // Attachment types are identified using UTIs.
     //
     // See: https://developer.apple.com/library/content/documentation/Miscellaneous/Reference/UTIRef/Articles/System-DeclaredUniformTypeIdentifiers.html
@@ -185,6 +189,11 @@ public class SignalAttachment: NSObject {
     static let kMaxFileSizeVideo = OWSMediaUtils.kMaxFileSizeVideo
     static let kMaxFileSizeAudio = OWSMediaUtils.kMaxFileSizeAudio
     static let kMaxFileSizeGeneric = OWSMediaUtils.kMaxFileSizeGeneric
+
+    // MARK: 
+
+    @objc
+    public static let maxAttachmentsAllowed: Int = 32
 
     // MARK: Constructor
 
@@ -240,6 +249,31 @@ public class SignalAttachment: NSObject {
     }
 
     @objc
+    public func buildOutgoingAttachmentInfo(message: TSMessage) -> OutgoingAttachmentInfo {
+        assert(message.uniqueId != nil)
+        return OutgoingAttachmentInfo(dataSource: dataSource,
+                                      contentType: mimeType,
+                                      sourceFilename: filenameOrDefault,
+                                      caption: captionText,
+                                      albumMessageId: message.uniqueId)
+    }
+
+    @objc
+    public func staticThumbnail() -> UIImage? {
+        if isAnimatedImage {
+            return image()
+        } else if isImage {
+            return image()
+        } else if isVideo {
+            return videoPreview()
+        } else if isAudio {
+            return nil
+        } else {
+            return nil
+        }
+    }
+
+    @objc
     public func image() -> UIImage? {
         if let cachedImage = cachedImage {
             return cachedImage
@@ -271,7 +305,7 @@ public class SignalAttachment: NSObject {
             let asset = AVURLAsset(url: mediaUrl)
             let generator = AVAssetImageGenerator(asset: asset)
             generator.appliesPreferredTrackTransform = true
-            let cgImage = try generator.copyCGImage(at: CMTimeMake(0, 1), actualTime: nil)
+            let cgImage = try generator.copyCGImage(at: CMTimeMake(value: 0, timescale: 1), actualTime: nil)
             let image = UIImage(cgImage: cgImage)
 
             cachedVideoPreview = image
@@ -462,7 +496,10 @@ public class SignalAttachment: NSObject {
         guard let pasteboardUTITypes = UIPasteboard.general.types(forItemSet: itemSet) else {
             return false
         }
-        let pasteboardUTISet = Set<String>(pasteboardUTITypes[0])
+        let pasteboardUTISet = Set<String>(filterDynamicUTITypes(pasteboardUTITypes[0]))
+        guard pasteboardUTISet.count > 0 else {
+            return false
+        }
 
         // The pasteboard can be populated with multiple UTI types
         // with different payloads.  iMessage for example will copy
@@ -497,6 +534,15 @@ public class SignalAttachment: NSObject {
         return hasTextUTIType
     }
 
+    // Discard "dynamic" UTI types since our attachment pipeline
+    // requires "standard" UTI types to work properly, e.g. when
+    // mapping between UTI type, MIME type and file extension.
+    private class func filterDynamicUTITypes(_ types: [String]) -> [String] {
+        return types.filter {
+            !$0.hasPrefix("dyn")
+        }
+    }
+
     // Returns an attachment from the pasteboard, or nil if no attachment
     // can be found.
     //
@@ -512,7 +558,11 @@ public class SignalAttachment: NSObject {
         guard let pasteboardUTITypes = UIPasteboard.general.types(forItemSet: itemSet) else {
             return nil
         }
-        let pasteboardUTISet = Set<String>(pasteboardUTITypes[0])
+
+        let pasteboardUTISet = Set<String>(filterDynamicUTITypes(pasteboardUTITypes[0]))
+        guard pasteboardUTISet.count > 0 else {
+            return nil
+        }
         for dataUTI in inputImageUTISet {
             if pasteboardUTISet.contains(dataUTI) {
                 guard let data = dataForFirstPasteboardItem(dataUTI: dataUTI) else {
@@ -562,11 +612,7 @@ public class SignalAttachment: NSObject {
             owsFailDebug("Missing expected pasteboard data for UTI: \(dataUTI)")
             return nil
         }
-        guard datas.count > 0 else {
-            owsFailDebug("Missing expected pasteboard data for UTI: \(dataUTI)")
-            return nil
-        }
-        guard let data = datas[0] as? Data else {
+        guard let data = datas.first else {
             owsFailDebug("Missing expected pasteboard data for UTI: \(dataUTI)")
             return nil
         }
@@ -717,8 +763,7 @@ public class SignalAttachment: NSObject {
                 }
                 dstImage = resizedImage
             }
-            guard let jpgImageData = UIImageJPEGRepresentation(dstImage,
-                                                               jpegCompressionQuality(imageUploadQuality: imageUploadQuality)) else {
+            guard let jpgImageData = dstImage.jpegData(compressionQuality: jpegCompressionQuality(imageUploadQuality: imageUploadQuality)) else {
                                                                 attachment.error = .couldNotConvertToJpeg
                                                                 return attachment
             }
@@ -943,7 +988,7 @@ public class SignalAttachment: NSObject {
     }
 
     private class var videoTempPath: URL {
-        let videoDir = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("video")
+        let videoDir = URL(fileURLWithPath: OWSTemporaryDirectory()).appendingPathComponent("video")
         OWSFileSystem.ensureDirectoryExists(videoDir.path)
         return videoDir
     }
@@ -954,7 +999,7 @@ public class SignalAttachment: NSObject {
         guard let url = dataSource.dataUrl() else {
             let attachment = SignalAttachment(dataSource: DataSourceValue.emptyDataSource(), dataUTI: dataUTI)
             attachment.error = .missingData
-            return (Promise(value: attachment), nil)
+            return (Promise.value(attachment), nil)
         }
 
         let asset = AVAsset(url: url)
@@ -962,7 +1007,7 @@ public class SignalAttachment: NSObject {
         guard let exportSession = AVAssetExportSession(asset: asset, presetName: AVAssetExportPresetMediumQuality) else {
             let attachment = SignalAttachment(dataSource: DataSourceValue.emptyDataSource(), dataUTI: dataUTI)
             attachment.error = .couldNotConvertToMpeg4
-            return (Promise(value: attachment), nil)
+            return (Promise.value(attachment), nil)
         }
 
         exportSession.shouldOptimizeForNetworkUse = true
@@ -972,7 +1017,7 @@ public class SignalAttachment: NSObject {
         let exportURL = videoTempPath.appendingPathComponent(UUID().uuidString).appendingPathExtension("mp4")
         exportSession.outputURL = exportURL
 
-        let (promise, fulfill, _) = Promise<SignalAttachment>.pending()
+        let (promise, resolver) = Promise<SignalAttachment>.pending()
 
         Logger.debug("starting video export")
         exportSession.exportAsynchronously {
@@ -985,14 +1030,14 @@ public class SignalAttachment: NSObject {
                 owsFailDebug("Failed to build data source for exported video URL")
                 let attachment = SignalAttachment(dataSource: DataSourceValue.emptyDataSource(), dataUTI: dataUTI)
                 attachment.error = .couldNotConvertToMpeg4
-                fulfill(attachment)
+                resolver.fulfill(attachment)
                 return
             }
 
             dataSource.sourceFilename = mp4Filename
 
             let attachment = SignalAttachment(dataSource: dataSource, dataUTI: kUTTypeMPEG4 as String)
-            fulfill(attachment)
+            resolver.fulfill(attachment)
         }
 
         return (promise, exportSession)
@@ -1101,7 +1146,7 @@ public class SignalAttachment: NSObject {
 
     // MARK: Attachments
 
-    // Factory method for attachments of any kind.
+    // Factory method for non-image Attachments.
     //
     // NOTE: The attachment returned by this method may not be valid.
     //       Check the attachment's error property.

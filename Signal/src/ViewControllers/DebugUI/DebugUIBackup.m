@@ -1,18 +1,34 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "DebugUIBackup.h"
 #import "OWSBackup.h"
 #import "OWSTableViewController.h"
-#import "RAAPP-Swift.h"
-#import <Curve25519Kit/Randomness.h>
-
-@import CloudKit;
+#import "Signal-Swift.h"
+#import <CloudKit/CloudKit.h>
+#import <PromiseKit/AnyPromise.h>
+#import <SignalCoreKit/Randomness.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
 @implementation DebugUIBackup
+
+#pragma mark - Dependencies
+
++ (TSAccountManager *)tsAccountManager
+{
+    OWSAssertDebug(SSKEnvironment.shared.tsAccountManager);
+
+    return SSKEnvironment.shared.tsAccountManager;
+}
+
++ (OWSBackup *)backup
+{
+    OWSAssertDebug(AppEnvironment.shared.backup);
+
+    return AppEnvironment.shared.backup;
+}
 
 #pragma mark - Factory Methods
 
@@ -36,6 +52,10 @@ NS_ASSUME_NONNULL_BEGIN
                                      actionBlock:^{
                                          [DebugUIBackup logBackupRecords];
                                      }]];
+    [items addObject:[OWSTableItem itemWithTitle:@"Log CloudKit backup manifests"
+                                     actionBlock:^{
+                                         [DebugUIBackup logBackupManifests];
+                                     }]];
     [items addObject:[OWSTableItem itemWithTitle:@"Restore CloudKit backup"
                                      actionBlock:^{
                                          [DebugUIBackup tryToImportBackup];
@@ -52,6 +72,26 @@ NS_ASSUME_NONNULL_BEGIN
                                      actionBlock:^{
                                          [DebugUIBackup clearBackupMetadataCache];
                                      }]];
+    [items addObject:[OWSTableItem itemWithTitle:@"Log Backup Metadata Cache"
+                                     actionBlock:^{
+                                         [DebugUIBackup logBackupMetadataCache];
+                                     }]];
+    [items addObject:[OWSTableItem itemWithTitle:@"Lazy Restore Attachments"
+                                     actionBlock:^{
+                                         [AppEnvironment.shared.backupLazyRestore runIfNecessary];
+                                     }]];
+    [items addObject:[OWSTableItem itemWithTitle:@"Upload 100 CK records"
+                                     actionBlock:^{
+                                         [DebugUIBackup uploadCKBatch:100];
+                                     }]];
+    [items addObject:[OWSTableItem itemWithTitle:@"Upload 1,000 CK records"
+                                     actionBlock:^{
+                                         [DebugUIBackup uploadCKBatch:1000];
+                                     }]];
+    [items addObject:[OWSTableItem itemWithTitle:@"Upload 10,000 CK records"
+                                     actionBlock:^{
+                                         [DebugUIBackup uploadCKBatch:10000];
+                                     }]];
 
     return [OWSTableSection sectionWithTitle:self.name items:items];
 }
@@ -66,17 +106,13 @@ NS_ASSUME_NONNULL_BEGIN
     BOOL success = [data writeToFile:filePath atomically:YES];
     OWSAssertDebug(success);
 
-    [OWSBackupAPI checkCloudKitAccessWithCompletion:^(BOOL hasAccess) {
-        if (hasAccess) {
-            [OWSBackupAPI saveTestFileToCloudWithFileUrl:[NSURL fileURLWithPath:filePath]
-                                                 success:^(NSString *recordName) {
-                                                     // Do nothing, the API method will log for us.
-                                                 }
-                                                 failure:^(NSError *error){
-                                                     // Do nothing, the API method will log for us.
-                                                 }];
-        }
-    }];
+    NSString *recipientId = self.tsAccountManager.localNumber;
+    NSString *recordName = [OWSBackupAPI recordNameForTestFileWithRecipientId:recipientId];
+    CKRecord *record = [OWSBackupAPI recordForFileUrl:[NSURL fileURLWithPath:filePath] recordName:recordName];
+
+    [[self.backup ensureCloudKitAccess].thenInBackground(^{
+        return [OWSBackupAPI saveRecordsToCloudObjcWithRecords:@[ record ]];
+    }) retainUntilComplete];
 }
 
 + (void)checkForBackup
@@ -85,7 +121,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     [OWSBackup.sharedManager
         checkCanImportBackup:^(BOOL value) {
-            OWSLogInfo(@"has backup available  for import? %d", value);
+            OWSLogInfo(@"has backup available for import? %d", value);
         }
                      failure:^(NSError *error){
                          // Do nothing.
@@ -99,23 +135,36 @@ NS_ASSUME_NONNULL_BEGIN
     [OWSBackup.sharedManager logBackupRecords];
 }
 
++ (void)logBackupManifests
+{
+    OWSLogInfo(@"logBackupManifests.");
+
+    [OWSBackup.sharedManager
+        allRecipientIdsWithManifestsInCloud:^(NSArray<NSString *> *recipientIds) {
+            OWSLogInfo(@"recipientIds: %@", recipientIds);
+        }
+        failure:^(NSError *error) {
+            OWSLogError(@"error: %@", error);
+        }];
+}
+
 + (void)tryToImportBackup
 {
     OWSLogInfo(@"tryToImportBackup.");
 
-    UIAlertController *controller =
+    UIAlertController *alert =
         [UIAlertController alertControllerWithTitle:@"Restore CloudKit Backup"
                                             message:@"This will delete all of your database contents."
                                      preferredStyle:UIAlertControllerStyleAlert];
 
-    [controller addAction:[UIAlertAction actionWithTitle:@"Restore"
-                                                   style:UIAlertActionStyleDefault
-                                                 handler:^(UIAlertAction *_Nonnull action) {
-                                                     [OWSBackup.sharedManager tryToImportBackup];
-                                                 }]];
-    [controller addAction:[OWSAlerts cancelAction]];
+    [alert addAction:[UIAlertAction actionWithTitle:@"Restore"
+                                              style:UIAlertActionStyleDefault
+                                            handler:^(UIAlertAction *_Nonnull action) {
+                                                [OWSBackup.sharedManager tryToImportBackup];
+                                            }]];
+    [alert addAction:[OWSAlerts cancelAction]];
     UIViewController *fromViewController = [[UIApplication sharedApplication] frontmostViewController];
-    [fromViewController presentViewController:controller animated:YES completion:nil];
+    [fromViewController presentAlert:alert];
 }
 
 + (void)logDatabaseSizeStats
@@ -163,19 +212,44 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (void)clearAllCloudKitRecords
 {
-    OWSLogInfo(@"clearAllCloudKitRecords.");
+    OWSLogInfo(@"");
 
     [OWSBackup.sharedManager clearAllCloudKitRecords];
 }
 
 + (void)clearBackupMetadataCache
 {
-    OWSLogInfo(@"ClearBackupMetadataCache.");
+    OWSLogInfo(@"");
 
     [OWSPrimaryStorage.sharedManager.newDatabaseConnection
         readWriteWithBlock:^(YapDatabaseReadWriteTransaction *transaction) {
             [transaction removeAllObjectsInCollection:[OWSBackupFragment collection]];
         }];
+}
+
++ (void)logBackupMetadataCache
+{
+    [self.backup logBackupMetadataCache:OWSPrimaryStorage.sharedManager.newDatabaseConnection];
+}
+
++ (void)uploadCKBatch:(NSUInteger)count
+{
+    NSMutableArray<CKRecord *> *records = [NSMutableArray new];
+    for (NSUInteger i = 0; i < count; i++) {
+        NSData *_Nullable data = [Randomness generateRandomBytes:32];
+        OWSAssertDebug(data);
+        NSString *filePath = [OWSFileSystem temporaryFilePathWithFileExtension:@"pdf"];
+        BOOL success = [data writeToFile:filePath atomically:YES];
+        OWSAssertDebug(success);
+
+        NSString *recipientId = self.tsAccountManager.localNumber;
+        NSString *recordName = [OWSBackupAPI recordNameForTestFileWithRecipientId:recipientId];
+        CKRecord *record = [OWSBackupAPI recordForFileUrl:[NSURL fileURLWithPath:filePath] recordName:recordName];
+        [records addObject:record];
+    }
+    [[OWSBackupAPI saveRecordsToCloudObjcWithRecords:records].thenInBackground(^{
+        OWSLogVerbose(@"success.");
+    }) retainUntilComplete];
 }
 
 @end

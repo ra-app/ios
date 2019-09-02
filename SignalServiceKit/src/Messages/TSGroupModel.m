@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "TSGroupModel.h"
@@ -7,6 +7,8 @@
 #import "NSString+SSK.h"
 
 NS_ASSUME_NONNULL_BEGIN
+
+const int32_t kGroupIdLength = 16;
 
 @interface TSGroupModel ()
 
@@ -25,11 +27,36 @@ NS_ASSUME_NONNULL_BEGIN
                       groupId:(NSData *)groupId
 {
     OWSAssertDebug(memberIds);
+    OWSAssertDebug(groupId.length == kGroupIdLength);
+
+    self = [super init];
+    if (!self) {
+        return self;
+    }
 
     _groupName              = title;
     _groupMemberIds         = [memberIds copy];
     _groupImage = image; // image is stored in DB
     _groupId                = groupId;
+
+    return self;
+}
+
+- (instancetype)initWithGroupId:(NSData *)groupId
+                 groupMemberIds:(NSArray<NSString *> *)groupMemberIds
+                      groupName:(nullable NSString *)groupName
+{
+    OWSAssertDebug(groupMemberIds);
+    OWSAssertDebug(groupId.length == kGroupIdLength);
+
+    self = [super init];
+    if (!self) {
+        return self;
+    }
+
+    _groupId = groupId;
+    _groupMemberIds = [groupMemberIds copy];
+    _groupName = groupName;
 
     return self;
 }
@@ -46,6 +73,7 @@ NS_ASSUME_NONNULL_BEGIN
     if (_groupMemberIds == nil) {
         _groupMemberIds = [NSArray new];
     }
+    OWSAssertDebug(self.groupId.length == kGroupIdLength);
 
     return self;
 }

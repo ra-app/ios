@@ -1,21 +1,23 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSDisappearingMessagesJob.h"
 #import "AppContext.h"
 #import "AppReadiness.h"
 #import "ContactsManagerProtocol.h"
-#import "NSDate+OWS.h"
 #import "NSTimer+OWS.h"
 #import "OWSBackgroundTask.h"
 #import "OWSDisappearingConfigurationUpdateInfoMessage.h"
 #import "OWSDisappearingMessagesConfiguration.h"
 #import "OWSDisappearingMessagesFinder.h"
 #import "OWSPrimaryStorage.h"
+#import "SSKEnvironment.h"
 #import "TSIncomingMessage.h"
 #import "TSMessage.h"
 #import "TSThread.h"
+#import <SignalCoreKit/NSDate+OWS.h>
+#import <SignalServiceKit/SignalServiceKit-Swift.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -51,12 +53,9 @@ void AssertIsOnDisappearingMessagesQueue()
 
 + (instancetype)sharedJob
 {
-    static OWSDisappearingMessagesJob *sharedJob = nil;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        sharedJob = [[self alloc] initWithPrimaryStorage:[OWSPrimaryStorage sharedManager]];
-    });
-    return sharedJob;
+    OWSAssertDebug(SSKEnvironment.shared.disappearingMessagesJob);
+
+    return SSKEnvironment.shared.disappearingMessagesJob;
 }
 
 - (instancetype)initWithPrimaryStorage:(OWSPrimaryStorage *)primaryStorage
@@ -71,7 +70,7 @@ void AssertIsOnDisappearingMessagesQueue()
 
     // suspenders in case a deletion schedule is missed.
     NSTimeInterval kFallBackTimerInterval = 5 * kMinuteInterval;
-    [AppReadiness runNowOrWhenAppIsReady:^{
+    [AppReadiness runNowOrWhenAppDidBecomeReady:^{
         if (CurrentAppContext().isMainApp) {
             self.fallbackTimer = [NSTimer weakScheduledTimerWithTimeInterval:kFallBackTimerInterval
                                                                       target:self
@@ -109,6 +108,15 @@ void AssertIsOnDisappearingMessagesQueue()
     });
     return queue;
 }
+
+#pragma mark - Dependencies
+
+- (id<ContactsManagerProtocol>)contactsManager
+{
+    return SSKEnvironment.shared.contactsManager;
+}
+
+#pragma mark -
 
 - (NSUInteger)deleteExpiredMessages
 {
@@ -173,7 +181,7 @@ void AssertIsOnDisappearingMessagesQueue()
 {
     OWSAssertDebug(transaction);
 
-    if (!message.isExpiringMessage) {
+    if (!message.hasPerConversationExpiration) {
         return;
     }
 
@@ -182,7 +190,7 @@ void AssertIsOnDisappearingMessagesQueue()
 
     // Don't clobber if multiple actions simultaneously triggered expiration.
     if (message.expireStartedAt == 0 || message.expireStartedAt > expirationStartedAt) {
-        [message updateWithExpireStartedAt:expirationStartedAt transaction:transaction];
+        [message updateWithExpireStartedAt:expirationStartedAt transaction:transaction.asAnyWrite];
     }
 
     [transaction addCompletionQueue:nil
@@ -193,37 +201,24 @@ void AssertIsOnDisappearingMessagesQueue()
                     }];
 }
 
-- (void)becomeConsistentWithConfigurationForMessage:(TSMessage *)message
-                                    contactsManager:(id<ContactsManagerProtocol>)contactsManager
-                                        transaction:(YapDatabaseReadWriteTransaction *)transaction
-{
-    TSThread *thread = [message threadWithTransaction:transaction];
-    NSString *remoteContactName = nil;
-    if ([message isKindOfClass:[TSIncomingMessage class]]) {
-        TSIncomingMessage *incomingMessage = (TSIncomingMessage *)message;
-        remoteContactName = [contactsManager displayNameForPhoneIdentifier:incomingMessage.messageAuthorId];
-    }
-
-    [self becomeConsistentWithDisappearingDuration:message.expiresInSeconds
-                                            thread:thread
-                             appearBeforeTimestamp:message.timestampForSorting
-                        createdByRemoteContactName:remoteContactName
-                            createdInExistingGroup:NO
-                                       transaction:transaction];
-}
+#pragma mark - Apply Remote Configuration
 
 - (void)becomeConsistentWithDisappearingDuration:(uint32_t)duration
                                           thread:(TSThread *)thread
-                           appearBeforeTimestamp:(uint64_t)timestampForSorting
-                      createdByRemoteContactName:(nullable NSString *)remoteContactName
+                      createdByRemoteRecipientId:(nullable NSString *)remoteRecipientId
                           createdInExistingGroup:(BOOL)createdInExistingGroup
                                      transaction:(YapDatabaseReadWriteTransaction *)transaction
 {
     OWSAssertDebug(thread);
-    OWSAssertDebug(timestampForSorting > 0);
     OWSAssertDebug(transaction);
 
     OWSBackgroundTask *_Nullable backgroundTask = [OWSBackgroundTask backgroundTaskWithLabelStr:__PRETTY_FUNCTION__];
+
+    NSString *_Nullable remoteContactName = nil;
+    if (remoteRecipientId) {
+        remoteContactName = [self.contactsManager displayNameForPhoneIdentifier:remoteRecipientId
+                                                                    transaction:transaction];
+    }
 
     // Become eventually consistent in the case that the remote changed their settings at the same time.
     // Also in case remote doesn't support expiring messages
@@ -246,9 +241,9 @@ void AssertIsOnDisappearingMessagesQueue()
 
     [disappearingMessagesConfiguration saveWithTransaction:transaction];
 
-    // We want the info message to appear _before_ the message.
+    // MJK TODO - should be safe to remove this senderTimestamp
     OWSDisappearingConfigurationUpdateInfoMessage *infoMessage =
-        [[OWSDisappearingConfigurationUpdateInfoMessage alloc] initWithTimestamp:timestampForSorting - 1
+        [[OWSDisappearingConfigurationUpdateInfoMessage alloc] initWithTimestamp:[NSDate ows_millisecondTimeStamp]
                                                                           thread:thread
                                                                    configuration:disappearingMessagesConfiguration
                                                              createdByRemoteName:remoteContactName
@@ -258,6 +253,8 @@ void AssertIsOnDisappearingMessagesQueue()
     OWSAssertDebug(backgroundTask);
     backgroundTask = nil;
 }
+
+#pragma mark -
 
 - (void)startIfNecessary
 {
@@ -276,6 +273,13 @@ void AssertIsOnDisappearingMessagesQueue()
 
             [self runLoop];
         });
+    });
+}
+
+- (void)schedulePass
+{
+    dispatch_async(OWSDisappearingMessagesJob.serialQueue, ^{
+        [self runLoop];
     });
 }
 
@@ -394,7 +398,7 @@ void AssertIsOnDisappearingMessagesQueue()
             OWSFailDebug(@"starting old timer for message timestamp: %lu", (unsigned long)message.timestamp);
 
             // We don't know when it was actually read, so assume it was read as soon as it was received.
-            uint64_t readTimeBestGuess = message.timestampForSorting;
+            uint64_t readTimeBestGuess = message.receivedAtTimestamp;
             [self startAnyExpirationForMessage:message expirationStartedAt:readTimeBestGuess transaction:transaction];
         }
                                                  transaction:transaction];
@@ -406,7 +410,7 @@ void AssertIsOnDisappearingMessagesQueue()
 {
     OWSAssertIsOnMainThread();
 
-    [AppReadiness runNowOrWhenAppIsReady:^{
+    [AppReadiness runNowOrWhenAppDidBecomeReady:^{
         dispatch_async(OWSDisappearingMessagesJob.serialQueue, ^{
             [self runLoop];
         });

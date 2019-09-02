@@ -1,10 +1,9 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSStorage.h"
 #import "AppContext.h"
-#import "NSData+OWS.h"
 #import "NSNotificationCenter+OWS.h"
 #import "NSUserDefaults+OWS.h"
 #import "OWSBackgroundTask.h"
@@ -12,7 +11,8 @@
 #import "OWSPrimaryStorage.h"
 #import "OWSStorage+Subclass.h"
 #import "TSAttachmentStream.h"
-#import <Curve25519Kit/Randomness.h>
+#import <SignalCoreKit/NSData+OWS.h>
+#import <SignalCoreKit/Randomness.h>
 #import <SignalServiceKit/SignalServiceKit-Swift.h>
 #import <YapDatabase/YapDatabase.h>
 #import <YapDatabase/YapDatabaseAutoView.h>
@@ -26,12 +26,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 NSString *const StorageIsReadyNotification = @"StorageIsReadyNotification";
-
-NSString *const OWSStorageExceptionName_DatabasePasswordInaccessibleWhileBackgrounded
-    = @"OWSStorageExceptionName_DatabasePasswordInaccessibleWhileBackgrounded";
-NSString *const OWSStorageExceptionName_DatabasePasswordUnwritable
-    = @"OWSStorageExceptionName_DatabasePasswordUnwritable";
-NSString *const OWSStorageExceptionName_NoDatabase = @"OWSStorageExceptionName_NoDatabase";
 NSString *const OWSResetStorageNotification = @"OWSResetStorageNotification";
 
 static NSString *keychainService = @"TSKeyChainService";
@@ -86,7 +80,7 @@ NSString *const kNSUserDefaults_DatabaseExtensionVersionMap = @"kNSUserDefaults_
     OWSAssertDebug(delegate.areAllRegistrationsComplete);
 
     OWSBackgroundTask *_Nullable backgroundTask = nil;
-    if (CurrentAppContext().isMainApp) {
+    if (CurrentAppContext().isMainApp && !CurrentAppContext().isRunningTests) {
         backgroundTask = [OWSBackgroundTask backgroundTaskWithLabelStr:__PRETTY_FUNCTION__];
     }
     [super readWriteWithBlock:block];
@@ -330,7 +324,7 @@ NSString *const kNSUserDefaults_DatabaseExtensionVersionMap = @"kNSUserDefaults_
             // Sleep to give analytics events time to be delivered.
             [NSThread sleepForTimeInterval:15.0f];
 
-            OWSRaiseException(OWSStorageExceptionName_NoDatabase, @"Failed to initialize database.");
+            OWSFail(@"Failed to initialize database.");
         }
     }
 }
@@ -416,13 +410,39 @@ NSString *const kNSUserDefaults_DatabaseExtensionVersionMap = @"kNSUserDefaults_
     return OWSPrimaryStorage.sharedManager.areAllRegistrationsComplete;
 }
 
-- (BOOL)tryToLoadDatabase
++ (YapDatabaseOptions *)defaultDatabaseOptions
 {
-    __weak OWSStorage *weakSelf = self;
-
     YapDatabaseOptions *options = [[YapDatabaseOptions alloc] init];
     options.corruptAction = YapDatabaseCorruptAction_Fail;
     options.enableMultiProcessSupport = YES;
+
+    // We leave a portion of the header decrypted so that iOS will recognize the file
+    // as a SQLite database. Otherwise, because the database lives in a shared data container,
+    // and our usage of sqlite's write-ahead logging retains a lock on the database, the OS
+    // would kill the app/share extension as soon as it is backgrounded.
+    options.cipherUnencryptedHeaderLength = kSqliteHeaderLength;
+
+    // If we want to migrate to the new cipher defaults in SQLCipher4+ we'll need to do a one time
+    // migration. See the `PRAGMA cipher_migrate` documentation for details.
+    // https://www.zetetic.net/sqlcipher/sqlcipher-api/#cipher_migrate
+    options.legacyCipherCompatibilityVersion = 3;
+
+    // If any of these asserts fails, we need to verify and update
+    // OWSDatabaseConverter which assumes the values of these options.
+    OWSAssertDebug(options.cipherDefaultkdfIterNumber == 0);
+    OWSAssertDebug(options.kdfIterNumber == 0);
+    OWSAssertDebug(options.cipherPageSize == 0);
+    OWSAssertDebug(options.pragmaPageSize == 0);
+    OWSAssertDebug(options.pragmaJournalSizeLimit == 0);
+    OWSAssertDebug(options.pragmaMMapSize == 0);
+
+    return options;
+}
+
+- (BOOL)tryToLoadDatabase
+{
+    __weak OWSStorage *weakSelf = self;
+    YapDatabaseOptions *options = [self.class defaultDatabaseOptions];
     options.cipherKeySpecBlock = ^{
         // NOTE: It's critical that we don't capture a reference to self
         // (e.g. by using OWSAssertDebug()) or this database will contain a
@@ -437,21 +457,6 @@ NSString *const kNSUserDefaults_DatabaseExtensionVersionMap = @"kNSUserDefaults_
         OWSCAssertDebug(databaseKeySpec.length == kSQLCipherKeySpecLength);
         return databaseKeySpec;
     };
-
-    // We leave a portion of the header decrypted so that iOS will recognize the file
-    // as a SQLite database. Otherwise, because the database lives in a shared data container,
-    // and our usage of sqlite's write-ahead logging retains a lock on the database, the OS
-    // would kill the app/share extension as soon as it is backgrounded.
-    options.cipherUnencryptedHeaderLength = kSqliteHeaderLength;
-
-    // If any of these asserts fails, we need to verify and update
-    // OWSDatabaseConverter which assumes the values of these options.
-    OWSAssertDebug(options.cipherDefaultkdfIterNumber == 0);
-    OWSAssertDebug(options.kdfIterNumber == 0);
-    OWSAssertDebug(options.cipherPageSize == 0);
-    OWSAssertDebug(options.pragmaPageSize == 0);
-    OWSAssertDebug(options.pragmaJournalSizeLimit == 0);
-    OWSAssertDebug(options.pragmaMMapSize == 0);
 
     // Sanity checking elsewhere asserts we should only regenerate key specs when
     // there is no existing database, so rather than lazily generate in the cipherKeySpecBlock
@@ -503,8 +508,7 @@ NSString *const kNSUserDefaults_DatabaseExtensionVersionMap = @"kNSUserDefaults_
 {
     YapDatabaseConnection *dbConnection = self.database.newConnection;
     if (!dbConnection) {
-        OWSRaiseException(
-            @"OWSStorageExceptionName_CouldNotOpenConnection", @"Storage could not open new database connection.");
+        OWSFail(@"Storage could not open new database connection.");
     }
     return dbConnection;
 }
@@ -644,7 +648,9 @@ NSString *const kNSUserDefaults_DatabaseExtensionVersionMap = @"kNSUserDefaults_
                               if (!ready) {
                                   OWSFailDebug(@"asyncRegisterExtension failed: %@", extensionName);
                               } else {
-                                  OWSLogVerbose(@"asyncRegisterExtension succeeded: %@", extensionName);
+                                  if (!CurrentAppContext().isRunningTests) {
+                                      OWSLogVerbose(@"asyncRegisterExtension succeeded: %@", extensionName);
+                                  }
                               }
 
                               dispatch_async(dispatch_get_main_queue(), ^{
@@ -699,6 +705,8 @@ NSString *const kNSUserDefaults_DatabaseExtensionVersionMap = @"kNSUserDefaults_
     [self deleteDatabaseFiles];
 
     [self deleteDBKeys];
+
+    [OWSKeyBackupService clearKeychain];
 
     if (CurrentAppContext().isMainApp) {
         [TSAttachmentStream deleteAttachments];
@@ -824,8 +832,10 @@ NSString *const kNSUserDefaults_DatabaseExtensionVersionMap = @"kNSUserDefaults_
             OWSProdCritical([OWSAnalyticsEvents storageErrorCouldNotLoadDatabaseSecondAttempt]);
         }
 
-        // Try to reset app by deleting database.
-        [OWSStorage resetAllStorage];
+        if (!CurrentAppContext().isRunningTests) {
+            // Try to reset app by deleting database.
+            [OWSStorage resetAllStorage];
+        }
 
         keySpec = [Randomness generateRandomBytes:(int)kSQLCipherKeySpecLength];
         [[self class] storeDatabaseCipherKeySpec:keySpec];
@@ -860,7 +870,7 @@ NSString *const kNSUserDefaults_DatabaseExtensionVersionMap = @"kNSUserDefaults_
     // Presumably this happened in response to a push notification. It's possible that the keychain is corrupted
     // but it could also just be that the user hasn't yet unlocked their device since our password is
     // kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
-    OWSRaiseException(OWSStorageExceptionName_DatabasePasswordInaccessibleWhileBackgrounded, @"%@", errorDescription);
+    OWSFail(@"%@", errorDescription);
 }
 
 + (void)deleteDBKeys
@@ -923,8 +933,7 @@ NSString *const kNSUserDefaults_DatabaseExtensionVersionMap = @"kNSUserDefaults_
         // Sleep to give analytics events time to be delivered.
         [NSThread sleepForTimeInterval:15.0f];
 
-        OWSRaiseException(
-            OWSStorageExceptionName_DatabasePasswordUnwritable, @"Setting keychain value failed with error: %@", error);
+        OWSFail(@"Setting keychain value failed with error: %@", error);
     } else {
         OWSLogWarn(@"Successfully set new keychain value.");
     }

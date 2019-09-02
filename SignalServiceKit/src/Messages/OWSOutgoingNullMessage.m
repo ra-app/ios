@@ -1,12 +1,12 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSOutgoingNullMessage.h"
-#import "Cryptography.h"
-#import "NSDate+OWS.h"
 #import "OWSVerificationStateSyncMessage.h"
 #import "TSContactThread.h"
+#import <SignalCoreKit/Cryptography.h>
+#import <SignalCoreKit/NSDate+OWS.h>
 #import <SignalServiceKit/SignalServiceKit-Swift.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (instancetype)initWithContactThread:(TSContactThread *)contactThread
          verificationStateSyncMessage:(OWSVerificationStateSyncMessage *)verificationStateSyncMessage
 {
+    // MJK TODO - remove senderTimestamp
     self = [super initOutgoingMessageWithTimestamp:[NSDate ows_millisecondTimeStamp]
                                           inThread:contactThread
                                        messageBody:nil
@@ -33,7 +34,10 @@ NS_ASSUME_NONNULL_BEGIN
                                     isVoiceMessage:NO
                                   groupMetaMessage:TSGroupMetaMessageUnspecified
                                      quotedMessage:nil
-                                      contactShare:nil];
+                                      contactShare:nil
+                                       linkPreview:nil
+                                    messageSticker:nil
+                                 isViewOnceMessage:NO];
     if (!self) {
         return self;
     }
@@ -47,7 +51,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (nullable NSData *)buildPlainTextData:(SignalRecipient *)recipient
 {
-    SSKProtoNullMessageBuilder *nullMessageBuilder = [SSKProtoNullMessageBuilder new];
+    SSKProtoNullMessageBuilder *nullMessageBuilder = [SSKProtoNullMessage builder];
 
     NSUInteger contentLength = self.verificationStateSyncMessage.unpaddedVerifiedLength;
 
@@ -71,7 +75,7 @@ NS_ASSUME_NONNULL_BEGIN
         return nil;
     }
 
-    SSKProtoContentBuilder *contentBuilder = [SSKProtoContentBuilder new];
+    SSKProtoContentBuilder *contentBuilder = [SSKProtoContent builder];
     contentBuilder.nullMessage = nullMessage;
 
     NSData *_Nullable contentData = [contentBuilder buildSerializedDataAndReturnError:&error];

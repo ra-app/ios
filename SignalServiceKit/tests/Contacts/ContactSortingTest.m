@@ -1,15 +1,14 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "Contact.h"
-#import "SSKBaseTest.h"
-
-@import Contacts;
+#import "SSKBaseTestObjC.h"
+#import <Contacts/Contacts.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface ContactSortingTest : SSKBaseTest
+@interface ContactSortingTest : SSKBaseTestObjC
 
 @end
 
@@ -48,7 +47,7 @@ NS_ASSUME_NONNULL_BEGIN
             Contact *b = resortedContacts[j];
             BOOL correct = ([a.firstName isEqualToString:b.firstName] && [a.lastName isEqualToString:b.lastName]);
             if (!correct) {
-                XCTAssert(@"Contacts failed to sort names by first, last");
+                XCTFail(@"Contacts failed to sort names by first, last");
                 break;
             }
         }
@@ -81,7 +80,7 @@ NS_ASSUME_NONNULL_BEGIN
             Contact *b = resortedContacts[j];
             BOOL correct = ([a.firstName isEqualToString:b.firstName] && [a.lastName isEqualToString:b.lastName]);
             if (!correct) {
-                XCTAssert(@"Contacts failed to sort names by last, first");
+                XCTFail(@"Contacts failed to sort names by last, first");
                 break;
             }
         }

@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSError.h"
@@ -11,9 +11,14 @@ NSString *const OWSErrorRecipientIdentifierKey = @"OWSErrorKeyRecipientIdentifie
 
 NSError *OWSErrorWithCodeDescription(OWSErrorCode code, NSString *description)
 {
+    return OWSErrorWithUserInfo(code, @{ NSLocalizedDescriptionKey: description });
+}
+
+NSError *OWSErrorWithUserInfo(OWSErrorCode code, NSDictionary *userInfo)
+{
     return [NSError errorWithDomain:OWSSignalServiceKitErrorDomain
                                code:code
-                           userInfo:@{ NSLocalizedDescriptionKey: description }];
+                           userInfo:userInfo];
 }
 
 NSError *OWSErrorMakeUnableToProcessServerResponseError()
@@ -57,7 +62,7 @@ NSError *OWSErrorMakeMessageSendDisabledDueToPreKeyUpdateFailuresError()
             @"Error message indicating that message send is disabled due to prekey update failures"));
 }
 
-NSError *OWSErrorMakeMessageSendFailedToBlockListError()
+NSError *OWSErrorMakeMessageSendFailedDueToBlockListError()
 {
     return OWSErrorWithCodeDescription(OWSErrorCodeMessageSendFailedToBlockList,
         NSLocalizedString(@"ERROR_DESCRIPTION_MESSAGE_SEND_FAILED_DUE_TO_BLOCK_LIST",

@@ -33,8 +33,7 @@ class DebugUICalling: DebugUIPage {
                 let kFakeCallId = UInt64(12345)
                 var hangupMessage: SSKProtoCallMessageHangup
                 do {
-                    let hangupBuilder = SSKProtoCallMessageHangup.SSKProtoCallMessageHangupBuilder()
-                    hangupBuilder.setId(kFakeCallId)
+                    let hangupBuilder = SSKProtoCallMessageHangup.builder(id: kFakeCallId)
                     hangupMessage = try hangupBuilder.build()
                 } catch {
                     owsFailDebug("could not build proto")
@@ -42,11 +41,11 @@ class DebugUICalling: DebugUIPage {
                 }
                 let callMessage = OWSOutgoingCallMessage(thread: thread, hangupMessage: hangupMessage)
 
-                strongSelf.messageSender.sendPromise(message: callMessage).then {
+                strongSelf.messageSender.sendPromise(message: callMessage).done {
                     Logger.debug("Successfully sent hangup call message to \(thread.contactIdentifier())")
                 }.catch { error in
                     Logger.error("failed to send hangup call message to \(thread.contactIdentifier()) with error: \(error)")
-                }
+                }.retainUntilComplete()
             },
             OWSTableItem(title: "Send 'busy' for old call") { [weak self] in
                 guard let strongSelf = self else { return }
@@ -54,8 +53,7 @@ class DebugUICalling: DebugUIPage {
                 let kFakeCallId = UInt64(12345)
                 var busyMessage: SSKProtoCallMessageBusy
                 do {
-                    let busyBuilder = SSKProtoCallMessageBusy.SSKProtoCallMessageBusyBuilder()
-                    busyBuilder.setId(kFakeCallId)
+                    let busyBuilder = SSKProtoCallMessageBusy.builder(id: kFakeCallId)
                     busyMessage = try busyBuilder.build()
                 } catch {
                     owsFailDebug("Couldn't build proto")
@@ -64,11 +62,11 @@ class DebugUICalling: DebugUIPage {
 
                 let callMessage = OWSOutgoingCallMessage(thread: thread, busyMessage: busyMessage)
 
-                strongSelf.messageSender.sendPromise(message: callMessage).then {
+                strongSelf.messageSender.sendPromise(message: callMessage).done {
                     Logger.debug("Successfully sent busy call message to \(thread.contactIdentifier())")
                 }.catch { error in
                     Logger.error("failed to send busy call message to \(thread.contactIdentifier()) with error: \(error)")
-                }
+                }.retainUntilComplete()
             }
         ]
 

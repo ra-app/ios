@@ -1,106 +1,80 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
 import WebRTC
 
-@objc
+@objc(OWSAudioActivity)
 public class AudioActivity: NSObject {
     let audioDescription: String
 
-    override public var description: String {
-        return "<\(self.logTag) audioDescription: \"\(audioDescription)\">"
-    }
+    let behavior: OWSAudioBehavior
 
     @objc
-    public init(audioDescription: String) {
+    public init(audioDescription: String, behavior: OWSAudioBehavior) {
         self.audioDescription = audioDescription
+        self.behavior = behavior
     }
 
     deinit {
-        OWSAudioSession.shared.ensureAudioSessionActivationStateAfterDelay()
+        audioSession.ensureAudioState()
+    }
+
+    // MARK: Dependencies
+
+    var audioSession: OWSAudioSession {
+        return Environment.shared.audioSession
+    }
+
+    // MARK: 
+
+    override public var description: String {
+        return "<\(self.logTag) audioDescription: \"\(audioDescription)\">"
     }
 }
 
 @objc
 public class OWSAudioSession: NSObject {
 
-    // Force singleton access
-    @objc public static let shared = OWSAudioSession()
-    private override init() {}
+    @objc
+    public func setup() {
+        NotificationCenter.default.addObserver(self, selector: #selector(proximitySensorStateDidChange(notification:)), name: UIDevice.proximityStateDidChangeNotification, object: nil)
+    }
+
+    // MARK: Dependencies
+
+    var proximityMonitoringManager: OWSProximityMonitoringManager {
+        return Environment.shared.proximityMonitoringManager
+    }
+
     private let avAudioSession = AVAudioSession.sharedInstance()
 
-    private var currentActivities: [Weak<AudioActivity>] = []
+    private let device = UIDevice.current
 
-    // Respects hardware mute switch, plays through external speaker, mixes with backround audio
-    // appropriate for foreground sound effects.
-    @objc
-    public func startAmbientAudioActivity(_ audioActivity: AudioActivity) {
-        Logger.debug("")
+    // MARK: 
 
-        objc_sync_enter(self)
-        defer { objc_sync_exit(self) }
-
-        startAudioActivity(audioActivity)
-        guard currentActivities.count == 1 else {
-            // We don't want to clobber the audio capabilities configured by (e.g.) media playback or an in-progress call
-            Logger.info("not touching audio session since another currentActivity exists.")
-            return
-        }
-
-        do {
-            try avAudioSession.setCategory(AVAudioSessionCategoryAmbient)
-        } catch {
-            owsFailDebug("failed with error: \(error)")
-        }
-    }
-
-    // Ignores hardware mute switch, plays through external speaker
-    @objc
-    public func startPlaybackAudioActivity(_ audioActivity: AudioActivity) {
-        Logger.debug("")
-
-        objc_sync_enter(self)
-        defer { objc_sync_exit(self) }
-
-        startAudioActivity(audioActivity)
-
-        do {
-            try avAudioSession.setCategory(AVAudioSessionCategoryPlayback)
-        } catch {
-            owsFailDebug("failed with error: \(error)")
-        }
+    public private(set) var currentActivities: [Weak<AudioActivity>] = []
+    var aggregateBehaviors: Set<OWSAudioBehavior> {
+        return Set(self.currentActivities.compactMap { $0.value?.behavior })
     }
 
     @objc
-    public func startRecordingAudioActivity(_ audioActivity: AudioActivity) -> Bool {
-        Logger.debug("")
-
-        objc_sync_enter(self)
-        defer { objc_sync_exit(self) }
-
-        assert(avAudioSession.recordPermission() == .granted)
-
-        startAudioActivity(audioActivity)
-
-        do {
-            try avAudioSession.setCategory(AVAudioSessionCategoryRecord)
-            return true
-        } catch {
-            owsFailDebug("failed with error: \(error)")
-            return false
-        }
-    }
-
-    @objc
-    public func startAudioActivity(_ audioActivity: AudioActivity) {
+    public func startAudioActivity(_ audioActivity: AudioActivity) -> Bool {
         Logger.debug("with \(audioActivity)")
 
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
         self.currentActivities.append(Weak(value: audioActivity))
+
+        do {
+            try reconcileAudioCategory()
+            return true
+        } catch {
+            owsFailDebug("failed with error: \(error)")
+            return false
+        }
     }
 
     @objc
@@ -111,19 +85,72 @@ public class OWSAudioSession: NSObject {
         defer { objc_sync_exit(self) }
 
         currentActivities = currentActivities.filter { return $0.value != audioActivity }
-        ensureAudioSessionActivationStateAfterDelay()
-    }
-
-    fileprivate func ensureAudioSessionActivationStateAfterDelay() {
-        // Without this delay, we sometimes error when deactivating the audio session with:
-        //     Error Domain=NSOSStatusErrorDomain Code=560030580 “The operation couldn’t be completed. (OSStatus error 560030580.)”
-        // aka "AVAudioSessionErrorCodeIsBusy"
-        DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
-            self.ensureAudioSessionActivationState()
+        do {
+            try reconcileAudioCategory()
+        } catch {
+            owsFailDebug("error in reconcileAudioCategory: \(error)")
         }
     }
 
-    private func ensureAudioSessionActivationState() {
+    @objc
+    public func ensureAudioState() {
+        objc_sync_enter(self)
+        defer { objc_sync_exit(self) }
+        do {
+            try reconcileAudioCategory()
+        } catch {
+            owsFailDebug("error in ensureAudioState: \(error)")
+        }
+    }
+
+    @objc
+    func proximitySensorStateDidChange(notification: Notification) {
+        ensureAudioState()
+    }
+
+    private func reconcileAudioCategory() throws {
+        if aggregateBehaviors.contains(.audioMessagePlayback) {
+            self.proximityMonitoringManager.add(lifetime: self)
+        } else {
+            self.proximityMonitoringManager.remove(lifetime: self)
+        }
+
+        if aggregateBehaviors.contains(.call) {
+            // Do nothing while on a call.
+            // WebRTC/CallAudioService manages call audio
+            // Eventually it would be nice to consolidate more of the audio
+            // session handling.
+        } else if aggregateBehaviors.contains(.playAndRecord) {
+            assert(avAudioSession.recordPermission == .granted)
+            try avAudioSession.setCategory(.record)
+        } else if aggregateBehaviors.contains(.audioMessagePlayback) {
+            if self.device.proximityState {
+                Logger.debug("proximityState: true")
+
+                try avAudioSession.setCategory(.playAndRecord)
+                try avAudioSession.overrideOutputAudioPort(.none)
+            } else {
+                Logger.debug("proximityState: false")
+                try avAudioSession.setCategory(.playback)
+            }
+        } else if aggregateBehaviors.contains(.playback) {
+            try avAudioSession.setCategory(.playback)
+        } else {
+            if avAudioSession.category != AVAudioSession.Category.soloAmbient {
+                Logger.debug("reverting to default audio category: soloAmbient")
+                try avAudioSession.setCategory(.soloAmbient)
+            }
+
+            ensureAudioSessionActivationState()
+        }
+    }
+
+    func ensureAudioSessionActivationState(remainingRetries: UInt = 3) {
+        guard remainingRetries > 0 else {
+            owsFailDebug("ensureAudioSessionActivationState has no remaining retries")
+            return
+        }
+
         objc_sync_enter(self)
         defer { objc_sync_exit(self) }
 
@@ -149,9 +176,21 @@ public class OWSAudioSession: NSObject {
         do {
             // When playing audio in Signal, other apps audio (e.g. Music) is paused.
             // By notifying when we deactivate, the other app can resume playback.
-            try avAudioSession.setActive(false, with: [.notifyOthersOnDeactivation])
-        } catch {
-            owsFailDebug("failed with error: \(error)")
+            try avAudioSession.setActive(false, options: [.notifyOthersOnDeactivation])
+        } catch let error as NSError {
+            if error.code == AVAudioSession.ErrorCode.isBusy.rawValue {
+                // Occasionally when trying to deactivate the audio session, we get a "busy" error.
+                // In that case we should retry after a delay.
+                //
+                // Error Domain=NSOSStatusErrorDomain Code=560030580 “The operation couldn’t be completed. (OSStatus error 560030580.)”
+                // aka "AVAudioSessionErrorCodeIsBusy"
+                DispatchQueue.global().asyncAfter(deadline: .now() + 0.5) {
+                    self.ensureAudioSessionActivationState(remainingRetries: remainingRetries - 1)
+                }
+                return
+            } else {
+                owsFailDebug("failed with error: \(error)")
+            }
         }
     }
 

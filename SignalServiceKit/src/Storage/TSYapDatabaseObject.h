@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import <Mantle/MTLModel+NSCoding.h>
@@ -7,11 +7,14 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class OWSPrimaryStorage;
+@class SDSAnyWriteTransaction;
 @class YapDatabaseConnection;
 @class YapDatabaseReadTransaction;
 @class YapDatabaseReadWriteTransaction;
 
 @interface TSYapDatabaseObject : MTLModel
+
+- (instancetype)init NS_DESIGNATED_INITIALIZER;
 
 /**
  *  Initializes a new database object with a unique identifier
@@ -21,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
  *  @return Initialized object
  */
 - (instancetype)initWithUniqueId:(NSString *_Nullable)uniqueId NS_DESIGNATED_INITIALIZER;
+
 - (nullable instancetype)initWithCoder:(NSCoder *)coder NS_DESIGNATED_INITIALIZER;
 
 /**
@@ -95,6 +99,8 @@ NS_ASSUME_NONNULL_BEGIN
  * Assign the latest persisted values from the database.
  */
 - (void)reload;
+- (void)reloadWithTransaction:(YapDatabaseReadTransaction *)transaction;
+- (void)reloadWithTransaction:(YapDatabaseReadTransaction *)transaction ignoreMissing:(BOOL)ignoreMissing;
 
 /**
  * Saves the object with the shared readWrite connection - does not block.
@@ -127,7 +133,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)removeWithTransaction:(YapDatabaseReadWriteTransaction *)transaction;
 - (void)remove;
 
-#pragma mark Update With...
+#pragma mark - Update With...
 
 // This method is used by "updateWith..." methods.
 //
@@ -155,6 +161,43 @@ NS_ASSUME_NONNULL_BEGIN
 // data loss and will resolve all known issues.
 - (void)applyChangeToSelfAndLatestCopy:(YapDatabaseReadWriteTransaction *)transaction
                            changeBlock:(void (^)(id))changeBlock;
+
+#pragma mark - Write Hooks
+
+// GRDB TODO: As a perf optimization, we could only call these
+//            methods for certain kinds of models which we could
+//            detect at compile time.
+- (void)anyWillInsertWithTransaction:(SDSAnyWriteTransaction *)transaction;
+- (void)anyDidInsertWithTransaction:(SDSAnyWriteTransaction *)transaction;
+- (void)anyWillRemoveWithTransaction:(SDSAnyWriteTransaction *)transaction;
+- (void)anyDidRemoveWithTransaction:(SDSAnyWriteTransaction *)transaction;
+// GRDB TODO: didUpdate?
+
+#pragma mark - YDB Deprecation
+
++ (NSUInteger)ydb_numberOfKeysInCollection;
++ (NSUInteger)ydb_numberOfKeysInCollectionWithTransaction:(YapDatabaseReadTransaction *)transaction;
++ (void)ydb_removeAllObjectsInCollection;
++ (NSArray *)ydb_allObjectsInCollection;
++ (void)ydb_enumerateCollectionObjectsUsingBlock:(void (^)(id obj, BOOL *stop))block;
++ (void)ydb_enumerateCollectionObjectsWithTransaction:(YapDatabaseReadTransaction *)transaction
+                                           usingBlock:(void (^)(id object, BOOL *stop))block;
++ (nullable instancetype)ydb_fetchObjectWithUniqueID:(NSString *)uniqueID
+                                         transaction:(YapDatabaseReadTransaction *)transaction
+    NS_SWIFT_NAME(ydb_fetch(uniqueId:transaction:));
++ (nullable instancetype)ydb_fetchObjectWithUniqueID:(NSString *)uniqueID NS_SWIFT_NAME(ydb_fetch(uniqueId:));
+- (void)ydb_save;
+- (void)ydb_reload;
+- (void)ydb_reloadWithTransaction:(YapDatabaseReadTransaction *)transaction;
+- (void)ydb_reloadWithTransaction:(YapDatabaseReadTransaction *)transaction ignoreMissing:(BOOL)ignoreMissing;
+- (void)ydb_saveAsyncWithCompletionBlock:(void (^_Nullable)(void))completionBlock;
+- (void)ydb_saveWithTransaction:(YapDatabaseReadWriteTransaction *)transaction;
+- (void)ydb_touch;
+- (void)ydb_touchWithTransaction:(YapDatabaseReadWriteTransaction *)transaction;
+- (void)ydb_removeWithTransaction:(YapDatabaseReadWriteTransaction *)transaction;
+- (void)ydb_remove;
+- (void)ydb_applyChangeToSelfAndLatestCopy:(YapDatabaseReadWriteTransaction *)transaction
+                               changeBlock:(void (^)(id))changeBlock;
 
 @end
 

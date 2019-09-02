@@ -1,11 +1,11 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "OWSBackgroundTask.h"
 #import "AppContext.h"
 #import "NSTimer+OWS.h"
-#import "Threading.h"
+#import <SignalCoreKit/Threading.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -93,7 +93,7 @@ typedef NSNumber *OWSTaskId;
                                                object:nil];
 }
 
-- (void)applicationDidBecomeActive:(UIApplication *)application
+- (void)applicationDidBecomeActive:(NSNotification *)notification
 {
     OWSAssertIsOnMainThread();
 
@@ -105,7 +105,7 @@ typedef NSNumber *OWSTaskId;
     }
 }
 
-- (void)applicationWillResignActive:(UIApplication *)application
+- (void)applicationWillResignActive:(NSNotification *)notification
 {
     OWSAssertIsOnMainThread();
 

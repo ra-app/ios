@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 import Foundation
@@ -11,75 +11,76 @@ import SignalMessaging
  */
 @objc public class OutboundCallInitiator: NSObject {
 
-    let contactsManager: OWSContactsManager
-    let contactsUpdater: ContactsUpdater
-
-    @objc public init(contactsManager: OWSContactsManager, contactsUpdater: ContactsUpdater) {
-        self.contactsManager = contactsManager
-        self.contactsUpdater = contactsUpdater
-
+    @objc public override init() {
         super.init()
 
         SwiftSingletons.register(self)
     }
 
+    // MARK: - Dependencies
+
+    private var contactsManager: OWSContactsManager {
+        return Environment.shared.contactsManager
+    }
+
+    private var contactsUpdater: ContactsUpdater {
+        return SSKEnvironment.shared.contactsUpdater
+    }
+
+    // MARK: -
+
     /**
      * |handle| is a user formatted phone number, e.g. from a system contacts entry
      */
-    @discardableResult @objc public func initiateCall(handle: String) -> Bool {
+    @discardableResult
+    @objc
+    public func initiateCall(handle: String) -> Bool {
         Logger.info("with handle: \(handle)")
 
-        guard let recipientId = PhoneNumber(fromE164: handle)?.toE164() else {
+        guard let e164Number = PhoneNumber(fromE164: handle)?.toE164() else {
             Logger.warn("unable to parse signalId from phone number: \(handle)")
             return false
         }
-
-        return initiateCall(recipientId: recipientId, isVideo: false)
+        // TODO UUID: map phone number from contacts to UUID, maybe requires lookup?
+        let address = SignalServiceAddress(phoneNumber: e164Number)
+        return initiateCall(address: address, isVideo: false)
     }
 
     /**
      * |recipientId| is a e164 formatted phone number.
      */
-    @discardableResult @objc public func initiateCall(recipientId: String,
-        isVideo: Bool) -> Bool {
-        // Rather than an init-assigned dependency property, we access `callUIAdapter` via Environment
-        // because it can change after app launch due to user settings
-        let callUIAdapter = SignalApp.shared().callUIAdapter
+    @discardableResult
+    @objc
+    public func initiateCall(address: SignalServiceAddress, isVideo: Bool) -> Bool {
+        guard let callUIAdapter = AppEnvironment.shared.callService.callUIAdapter else {
+            owsFailDebug("missing callUIAdapter")
+            return false
+        }
         guard let frontmostViewController = UIApplication.shared.frontmostViewController else {
             owsFailDebug("could not identify frontmostViewController")
             return false
         }
 
-        let showedAlert = SafetyNumberConfirmationAlert.presentAlertIfNecessary(recipientId: recipientId,
+        let showedAlert = SafetyNumberConfirmationAlert.presentAlertIfNecessary(recipientId: address.transitional_phoneNumber,
                                                                                 confirmationText: CallStrings.confirmAndCallButtonTitle,
                                                                                 contactsManager: self.contactsManager,
                                                                                 completion: { didConfirmIdentity in
                                                                                     if didConfirmIdentity {
-                                                                                        _ = self.initiateCall(recipientId: recipientId, isVideo: isVideo)
+                                                                                        _ = self.initiateCall(address: address, isVideo: isVideo)
                                                                                     }
         })
         guard !showedAlert else {
             return false
         }
 
-        // Check for microphone permissions
-        // Alternative way without prompting for permissions:
-        // if AVAudioSession.sharedInstance().recordPermission() == .denied {
-        frontmostViewController.ows_ask(forMicrophonePermissions: { [weak self] granted in
-            // Success callback; camera permissions are granted.
-
-            guard let strongSelf = self else {
-                return
-            }
-
-            // Here the permissions are either granted or denied
+        frontmostViewController.ows_askForMicrophonePermissions { granted in
             guard granted == true else {
                 Logger.warn("aborting due to missing microphone permissions.")
                 OWSAlerts.showNoMicrophonePermissionAlert()
                 return
             }
-            callUIAdapter.startAndShowOutgoingCall(recipientId: recipientId, hasLocalVideo: isVideo)
-        })
+            callUIAdapter.startAndShowOutgoingCall(recipientId: address.transitional_phoneNumber, hasLocalVideo: isVideo)
+        }
 
         return true
     }

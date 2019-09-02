@@ -1,8 +1,9 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import <PureLayout/PureLayout.h>
+#import <SignalServiceKit/OWSMath.h>
 #import <UIKit/UIKit.h>
 
 NS_ASSUME_NONNULL_BEGIN
@@ -25,6 +26,7 @@ CGFloat ScaleFromIPhone5(CGFloat iPhone5Value);
 // Pins the width of this view to the width of its superview, with uniform margins.
 - (NSArray<NSLayoutConstraint *> *)autoPinWidthToSuperviewWithMargin:(CGFloat)margin;
 - (NSArray<NSLayoutConstraint *> *)autoPinWidthToSuperview;
+- (NSArray<NSLayoutConstraint *> *)autoPinWidthToSuperviewMargins;
 // Pins the height of this view to the height of its superview, with uniform margins.
 - (NSArray<NSLayoutConstraint *> *)autoPinHeightToSuperviewWithMargin:(CGFloat)margin;
 - (NSArray<NSLayoutConstraint *> *)autoPinHeightToSuperview;
@@ -39,7 +41,9 @@ CGFloat ScaleFromIPhone5(CGFloat iPhone5Value);
 - (void)autoPinHeightToHeightOfView:(UIView *)view;
 
 - (NSLayoutConstraint *)autoPinToSquareAspectRatio;
+- (NSLayoutConstraint *)autoPinToAspectRatioWithSize:(CGSize)size;
 - (NSLayoutConstraint *)autoPinToAspectRatio:(CGFloat)ratio;
+- (NSLayoutConstraint *)autoPinToAspectRatio:(CGFloat)ratio relation:(NSLayoutRelation)relation;
 
 #pragma mark - Content Hugging and Compression Resistance
 
@@ -149,30 +153,30 @@ CGFloat ScaleFromIPhone5(CGFloat iPhone5Value);
 
 - (UIView *)addBackgroundViewWithBackgroundColor:(UIColor *)backgroundColor;
 
+- (UIView *)addBackgroundViewWithBackgroundColor:(UIColor *)backgroundColor cornerRadius:(CGFloat)cornerRadius;
+
+- (UIView *)addBorderViewWithColor:(UIColor *)color strokeWidth:(CGFloat)strokeWidth cornerRadius:(CGFloat)cornerRadius;
+
+@end
+
+#pragma mark -
+
+@interface UIAlertAction (OWS)
+
++ (instancetype)actionWithTitle:(nullable NSString *)title
+        accessibilityIdentifier:(nullable NSString *)accessibilityIdentifier
+                          style:(UIAlertActionStyle)style
+                        handler:(void (^__nullable)(UIAlertAction *action))handler;
+
 @end
 
 #pragma mark - Macros
 
-CG_INLINE CGSize CGSizeCeil(CGSize size)
-{
-    return CGSizeMake((CGFloat)ceil(size.width), (CGFloat)ceil(size.height));
-}
-
-CG_INLINE CGSize CGSizeFloor(CGSize size)
-{
-    return CGSizeMake((CGFloat)floor(size.width), (CGFloat)floor(size.height));
-}
-
-CG_INLINE CGSize CGSizeRound(CGSize size)
-{
-    return CGSizeMake((CGFloat)round(size.width), (CGFloat)round(size.height));
-}
-
-CG_INLINE CGSize CGSizeMax(CGSize size1, CGSize size2)
-{
-    return CGSizeMake(MAX(size1.width, size2.width), MAX(size1.height, size2.height));
-}
-
 CGFloat CGHairlineWidth(void);
+
+/// Primarily useful to adjust border widths to
+/// compensate for antialiasing around light
+/// color curves on dark backgrounds.
+CGFloat CGHairlineWidthFraction(CGFloat);
 
 NS_ASSUME_NONNULL_END

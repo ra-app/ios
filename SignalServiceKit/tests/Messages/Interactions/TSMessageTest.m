@@ -1,16 +1,16 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
 #import "TSMessage.h"
-#import "NSDate+OWS.h"
-#import "SSKBaseTest.h"
+#import "SSKBaseTestObjC.h"
 #import "TSAttachmentStream.h"
 #import "TSContactThread.h"
+#import <SignalCoreKit/NSDate+OWS.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface TSMessageTest : SSKBaseTest
+@interface TSMessageTest : SSKBaseTestObjC
 
 @property TSThread *thread;
 
@@ -37,7 +37,10 @@ NS_ASSUME_NONNULL_BEGIN
                                                     expiresInSeconds:100
                                                      expireStartedAt:0
                                                        quotedMessage:nil
-                                                        contactShare:nil];
+                                                        contactShare:nil
+                                                         linkPreview:nil
+                                                      messageSticker:nil
+                                                   isViewOnceMessage:NO];
 
     XCTAssertEqual(0, message.expiresAt);
 }
@@ -54,7 +57,10 @@ NS_ASSUME_NONNULL_BEGIN
                                                     expiresInSeconds:expirationSeconds
                                                      expireStartedAt:now
                                                        quotedMessage:nil
-                                                        contactShare:nil];
+                                                        contactShare:nil
+                                                         linkPreview:nil
+                                                      messageSticker:nil
+                                                   isViewOnceMessage:NO];
     XCTAssertEqual(now + expirationMs, message.expiresAt);
 }
 

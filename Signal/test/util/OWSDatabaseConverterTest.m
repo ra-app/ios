@@ -1,12 +1,13 @@
 //
-//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
 //
 
-#import "OWSDatabaseConverterTest.h"
-#import <Curve25519Kit/Randomness.h>
-#import <SignalServiceKit/NSData+OWS.h>
+#import "SignalBaseTest.h"
+#import <SignalCoreKit/NSData+OWS.h>
+#import <SignalCoreKit/Randomness.h>
 #import <SignalServiceKit/OWSFileSystem.h>
 #import <SignalServiceKit/OWSStorage.h>
+#import <SignalServiceKit/SignalServiceKit-Swift.h>
 #import <SignalServiceKit/YapDatabaseConnection+OWS.h>
 #import <YapDatabase/YapDatabase.h>
 #import <YapDatabase/YapDatabaseCryptoUtils.h>
@@ -34,6 +35,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface YapDatabaseCryptoUtils (OWSDatabaseConverterTest)
 
 + (NSData *)readFirstNBytesOfDatabaseFile:(NSString *)filePath byteCount:(NSUInteger)byteCount;
+
+@end
+
+#pragma mark -
+
+@interface OWSDatabaseConverterTest : SignalBaseTest
 
 @end
 
@@ -101,6 +108,7 @@ NS_ASSUME_NONNULL_BEGIN
             };
             options.cipherUnencryptedHeaderLength = kSqliteHeaderLength;
         }
+        options.legacyCipherCompatibilityVersion = 3;
 
         OWSAssertDebug(options.cipherDefaultkdfIterNumber == 0);
         OWSAssertDebug(options.kdfIterNumber == 0);
@@ -156,7 +164,7 @@ NS_ASSUME_NONNULL_BEGIN
         [self waitForExpectationsWithTimeout:5.0
                                      handler:^(NSError *error) {
                                          if (error) {
-                                             NSLog(@"Timeout Error: %@", error);
+                                             OWSLogInfo(@"Timeout Error: %@", error);
                                          }
                                      }];
     }
@@ -317,6 +325,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     NSError *_Nullable error = [YapDatabaseCryptoUtils convertDatabaseIfNecessary:databaseFilePath
                                                                  databasePassword:databasePassword
+                                                                          options:OWSStorage.defaultDatabaseOptions
                                                                   recordSaltBlock:recordSaltBlock];
     if (error) {
         OWSLogError(@"error: %@", error);
@@ -358,6 +367,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     NSError *_Nullable error = [YapDatabaseCryptoUtils convertDatabaseIfNecessary:databaseFilePath
                                                                  databasePassword:databasePassword
+                                                                          options:OWSStorage.defaultDatabaseOptions
                                                                   recordSaltBlock:recordSaltBlock];
     if (error) {
         OWSLogError(@"error: %@", error);
@@ -398,6 +408,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     NSError *_Nullable error = [YapDatabaseCryptoUtils convertDatabaseIfNecessary:databaseFilePath
                                                                  databasePassword:databasePassword
+                                                                          options:OWSStorage.defaultDatabaseOptions
                                                                   recordSaltBlock:recordSaltBlock];
 
     XCTAssertNotNil(error);
@@ -450,6 +461,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     NSError *_Nullable error = [YapDatabaseCryptoUtils convertDatabaseIfNecessary:databaseFilePath
                                                                  databasePassword:databasePassword
+                                                                          options:OWSStorage.defaultDatabaseOptions
                                                                   recordSaltBlock:recordSaltBlock];
     if (error) {
         OWSLogError(@"error: %@", error);
@@ -493,6 +505,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     NSError *_Nullable error = [YapDatabaseCryptoUtils convertDatabaseIfNecessary:databaseFilePath
                                                                  databasePassword:databasePassword
+                                                                          options:OWSStorage.defaultDatabaseOptions
                                                                   recordSaltBlock:recordSaltBlock];
     if (error) {
         OWSLogError(@"error: %@", error);
@@ -526,6 +539,7 @@ NS_ASSUME_NONNULL_BEGIN
 
     NSError *_Nullable error = [YapDatabaseCryptoUtils convertDatabaseIfNecessary:databaseFilePath
                                                                  databasePassword:databasePassword
+                                                                          options:OWSStorage.defaultDatabaseOptions
                                                                   recordSaltBlock:recordSaltBlock];
     if (error) {
         OWSLogError(@"error: %@", error);

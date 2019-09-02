@@ -3,11 +3,11 @@
 //
 
 #import "OWSDisappearingMessagesConfiguration.h"
-#import "SSKBaseTest.h"
+#import "SSKBaseTestObjC.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
-@interface OWSDisappearingMessagesConfigurationTest : SSKBaseTest
+@interface OWSDisappearingMessagesConfigurationTest : SSKBaseTestObjC
 
 @end
 
@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
         [[OWSDisappearingMessagesConfiguration alloc] initWithThreadId:@"fake-thread-id"
                                                                enabled:YES
                                                        durationSeconds:10];
-    XCTAssertTrue(configuration.dictionaryValueDidChange);
+    XCTAssertFalse(configuration.dictionaryValueDidChange);
 
     [configuration save];
     XCTAssertFalse(configuration.dictionaryValueDidChange);
