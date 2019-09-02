@@ -5,7 +5,7 @@
 #import "OWSBackupExportJob.h"
 #import "OWSBackupIO.h"
 #import "OWSDatabaseMigration.h"
-#import "Signal-Swift.h"
+#import "RAAPP-Swift.h"
 #import <CloudKit/CloudKit.h>
 #import <PromiseKit/AnyPromise.h>
 #import <SignalCoreKit/NSData+OWS.h>

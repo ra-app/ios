@@ -6,7 +6,7 @@
 #import "OWSLabel.h"
 #import "OWSMessageBubbleView.h"
 #import "OWSMessageFooterView.h"
-#import "Signal-Swift.h"
+#import "RAAPP-Swift.h"
 #import "UIColor+OWS.h"
 #import <SignalMessaging/UIView+OWS.h>
 #import <YYImage/YYImage.h>

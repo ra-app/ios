@@ -3,7 +3,7 @@
 //
 
 #import "OWSMessageView.h"
-#import "Signal-Swift.h"
+#import "RAAPP-Swift.h"
 
 NS_ASSUME_NONNULL_BEGIN
 
