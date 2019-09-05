@@ -451,7 +451,7 @@ NSString *const kArchivedConversationsReuseIdentifier = @"kArchivedConversations
         self.hasThemeChanged = NO;
     }
 
-    [self requestReviewIfAppropriate];
+    //[self requestReviewIfAppropriate];
 
     [self.searchResultsController viewDidAppear:animated];
 
