@@ -16,6 +16,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface CountryCodeViewController () <OWSTableViewControllerDelegate, UISearchBarDelegate>
 
 @property (nonatomic, readonly) UISearchBar *searchBar;
+@property (nonatomic) UITextField *tfSearch;
+@property (nonatomic) UIView *viewSearchBaseView;
 
 @property (nonatomic) NSArray<NSString *> *countryCodes;
 
@@ -37,12 +39,12 @@ NS_ASSUME_NONNULL_BEGIN
 
     self.countryCodes = [PhoneNumberUtil countryCodesForSearchTerm:nil];
 
-    if (!self.isPresentedInNavigationController) {
-        self.navigationItem.leftBarButtonItem =
-            [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemStop
-                                                          target:self
-                                                          action:@selector(dismissWasPressed:)];
-    }
+//    if (!self.isPresentedInNavigationController) {
+//        self.navigationItem.leftBarButtonItem =
+//            [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemStop
+//                                                          target:self
+//                                                          action:@selector(dismissWasPressed:)];
+//    }
 
     [self createViews];
 }
@@ -50,15 +52,40 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)createViews
 {
     // Search
-    UISearchBar *searchBar = [OWSSearchBar new];
-    _searchBar = searchBar;
-    searchBar.delegate = self;
-    searchBar.placeholder = NSLocalizedString(@"SEARCH_BYNAMEORNUMBER_PLACEHOLDER_TEXT", @"");
-    [searchBar sizeToFit];
-
-    self.tableView.tableHeaderView = searchBar;
-
+    
+    UIView *viewSearchBaseView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.frame.size.width - 40, 35)];
+    
+    viewSearchBaseView.layer.cornerRadius = 19.0f;
+    viewSearchBaseView.backgroundColor = [UIColor whiteColor];
+    
+    
+    self.tfSearch = [[UITextField alloc] initWithFrame:CGRectMake(50, 5, 270, 25)];
+    self.tfSearch.backgroundColor = [UIColor clearColor];
+    self.tfSearch.placeholder = @"Name oder Nummer suchen";
+    [self.tfSearch addTarget:self
+                      action:@selector(textFieldDidChange:)
+            forControlEvents:UIControlEventEditingChanged];
+    
+    [viewSearchBaseView addSubview:self.tfSearch];
+    UIButton *btnCancel = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btnCancel setImage:[UIImage imageNamed:@"quoted-message-cancel.png"] forState:UIControlStateNormal];
+    btnCancel.frame = CGRectMake(5, 3, 30, 30);
+    [btnCancel addTarget:self action:@selector(dismissWasPressed:) forControlEvents:UIControlEventTouchUpInside];
+    [viewSearchBaseView addSubview:btnCancel];
+    
+    
+    self.navigationItem.titleView = viewSearchBaseView;
+    
+    //    UISearchBar *searchBar = [OWSSearchBar new];
+    //    _searchBar = searchBar;
+    //    searchBar.delegate = self;
+    //    searchBar.placeholder = NSLocalizedString(@"SEARCH_BYNAMEORNUMBER_PLACEHOLDER_TEXT", @"");
+    //    [searchBar sizeToFit];
+    //
+    //    self.tableView.tableHeaderView = searchBar;
+    
     [self updateTableContents];
+    
 }
 
 #pragma mark - Table Contents
@@ -123,6 +150,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark - UISearchBarDelegate
 
+-(void) textFieldDidChange:(UITextField *) sender {
+    [self searchTextDidChange];
+}
+
 - (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
 {
     [self searchTextDidChange];
@@ -150,8 +181,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)searchTextDidChange
 {
-    NSString *searchText = [self.searchBar.text ows_stripped];
-
+    //NSString *searchText = [self.searchBar.text ows_stripped];
+    NSString *searchText = [self.tfSearch.text ows_stripped];
     self.countryCodes = [PhoneNumberUtil countryCodesForSearchTerm:searchText];
 
     [self updateTableContents];

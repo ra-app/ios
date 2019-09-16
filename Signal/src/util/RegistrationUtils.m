@@ -80,7 +80,7 @@ NS_ASSUME_NONNULL_BEGIN
                                       [onboardingController updateWithPhoneNumber:onboardingPhoneNumber];
                                       OnboardingVerificationViewController *viewController =
                                           [[OnboardingVerificationViewController alloc]
-                                              initWithOnboardingController:onboardingController];
+                                              initWithOnboardingController:onboardingController/* nibName:@"RaOnboardingVerificationViewController"*/];
                                       [viewController hideBackLink];
                                       OWSNavigationController *navigationController =
                                           [[OWSNavigationController alloc] initWithRootViewController:viewController];

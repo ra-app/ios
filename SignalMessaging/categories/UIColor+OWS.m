@@ -14,13 +14,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIColor *)ows_signalBrandBlueColor
 {
-    return [UIColor colorWithRed:0.1135657504f green:0.4787300229f blue:0.89595204589999999f alpha:1.];
+    return [UIColor colorWithRGBHex:0xF5F5F5];//[UIColor colorWithRed:0.1135657504f green:0.4787300229f blue:0.89595204589999999f alpha:1.];
 }
 
 + (UIColor *)ows_materialBlueColor
 {
+    return [UIColor colorWithRGBHex:0xF5F5F5];
     // blue: #2090EA
-    return [UIColor colorWithRed:32.f / 255.f green:144.f / 255.f blue:234.f / 255.f alpha:1.f];
+   // return [UIColor colorWithRed:32.f / 255.f green:144.f / 255.f blue:234.f / 255.f alpha:1.f];
 }
 
 + (UIColor *)ows_darkIconColor

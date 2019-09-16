@@ -206,7 +206,15 @@ NS_ASSUME_NONNULL_BEGIN
         [self.view setNeedsLayout];
         [self.view layoutSubviews];
     }
+    
     [UIView setAnimationsEnabled:YES];
+    
+    [self.navigationBar setTitleTextAttributes:@{NSForegroundColorAttributeName : [UIColor whiteColor]}];
+    [self setGradientBackground];
+}
+
+-(void) setGradientBackground {
+    [self.navigationBar setBackgroundImage:[UIView getGradientLayerForFrameWithFrame:self.navigationBar.bounds] forBarMetrics:UIBarMetricsDefault];
 }
 
 #pragma mark - Orientation

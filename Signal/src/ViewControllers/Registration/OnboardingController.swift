@@ -92,12 +92,36 @@ public class OnboardingController: NSObject {
     public func initialViewController() -> UIViewController {
         AssertIsOnMainThread()
 
-        let view = OnboardingSplashViewController(onboardingController: self)
+       
+        //let view = RaWelcomeScreenViewController(nibName: "RaWelcomeScreenViewController", bundle: nil)
+        let view = RaWelcomeScreenViewController(onboardingController: self, nibName: "RaWelcomeScreenViewController")
+        
         return view
     }
 
     // MARK: - Transitions
-
+    public func welcomeDidComplete(viewController:UIViewController) {
+        AssertIsOnMainThread()
+        
+        Logger.info("")
+        let view = RaInvitationViewController(onboardingController: self, nibName: "RaInvitationViewController")
+        viewController.navigationController?.pushViewController(view, animated: true)
+    }
+    
+    public func invitationDidComplete(viewController:UIViewController) {
+        let view = RaAGBViewController(onboardingController: self, nibName: "RaAGBViewController")
+        viewController.navigationController?.pushViewController(view, animated: true)
+    }
+    
+    public func agbDidComplete(viewController:UIViewController) {
+        AssertIsOnMainThread()
+        
+        Logger.info("")
+        
+        let view = OnboardingPermissionsViewController(onboardingController: self)
+        viewController.navigationController?.pushViewController(view, animated: true)
+    }
+    
     public func onboardingSplashDidComplete(viewController: UIViewController) {
         AssertIsOnMainThread()
 
@@ -126,7 +150,7 @@ public class OnboardingController: NSObject {
     private func pushPhoneNumberView(viewController: UIViewController) {
         AssertIsOnMainThread()
 
-        let view = OnboardingPhoneNumberViewController(onboardingController: self)
+        let view = OnboardingPhoneNumberViewController(onboardingController: self, nibName: "RaOnboardingPhoneNumberViewController")
         viewController.navigationController?.pushViewController(view, animated: true)
     }
 
@@ -135,7 +159,7 @@ public class OnboardingController: NSObject {
 
         Logger.info("")
 
-        let view = OnboardingVerificationViewController(onboardingController: self)
+        let view = OnboardingVerificationViewController(onboardingController: self/*, nibName: "RaOnboardingVerificationViewController"*/)
         viewController.navigationController?.pushViewController(view, animated: true)
     }
 

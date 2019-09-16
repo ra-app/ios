@@ -7,6 +7,11 @@ import UIKit
 @objc
 public class OnboardingProfileViewController: OnboardingBaseViewController {
 
+    @IBOutlet var raTextFieldName:RaTextField!
+    @IBOutlet var raLabelPlsAddAvatar:UILabel!
+    @IBOutlet var btnFinish:RaGradientButton!
+    @IBOutlet var raAvatarImageView:UIImageView!
+    
     // MARK: - Dependencies
 
     var profileManager: OWSProfileManager {
@@ -15,111 +20,112 @@ public class OnboardingProfileViewController: OnboardingBaseViewController {
 
     // MARK: -
 
-    private let avatarView = AvatarImageView()
-    private let nameTextfield = UITextField()
+    //private let avatarView = AvatarImageView()
+    //private let nameTextfield = UITextField()
     private var avatar: UIImage?
-    private let cameraCircle = UIView.container()
+    //private let cameraCircle = UIView.container()
 
     private let avatarViewHelper = AvatarViewHelper()
 
     override public func loadView() {
         super.loadView()
+        
+        raTextFieldName.textField.delegate = self
+        //avatarViewHelper.delegate = self
 
-        avatarViewHelper.delegate = self
+        //view.backgroundColor = Theme.backgroundColor
+        //view.layoutMargins = .zero
 
-        view.backgroundColor = Theme.backgroundColor
-        view.layoutMargins = .zero
-
-        let titleLabel = self.titleLabel(text: NSLocalizedString("ONBOARDING_PROFILE_TITLE", comment: "Title of the 'onboarding profile' view."))
-        titleLabel.accessibilityIdentifier = "onboarding.profile." + "titleLabel"
-
-        let explanationLabel = self.explanationLabel(explanationText: NSLocalizedString("ONBOARDING_PROFILE_EXPLANATION",
-                                                                                        comment: "Explanation in the 'onboarding profile' view."))
-        explanationLabel.accessibilityIdentifier = "onboarding.profile." + "explanationLabel"
-
-        let nextButton = self.button(title: NSLocalizedString("BUTTON_NEXT",
-                                                              comment: "Label for the 'next' button."),
-                                     selector: #selector(nextPressed))
-        nextButton.accessibilityIdentifier = "onboarding.profile." + "nextButton"
-
-        avatarView.autoSetDimensions(to: CGSize(width: CGFloat(avatarSize), height: CGFloat(avatarSize)))
-
-        let cameraImageView = UIImageView()
-        cameraImageView.image = UIImage(named: "settings-avatar-camera-2")?.withRenderingMode(.alwaysTemplate)
-        cameraImageView.tintColor = Theme.secondaryColor
-        cameraCircle.backgroundColor = Theme.backgroundColor
-        cameraCircle.addSubview(cameraImageView)
-        let cameraCircleDiameter: CGFloat = 40
-        cameraCircle.autoSetDimensions(to: CGSize(width: cameraCircleDiameter, height: cameraCircleDiameter))
-        cameraCircle.layer.shadowColor = UIColor(white: 0, alpha: 0.15).cgColor
-        cameraCircle.layer.shadowRadius = 5
-        cameraCircle.layer.shadowOffset = CGSize(width: 1, height: 1)
-        cameraCircle.layer.shadowOpacity = 1
-        cameraCircle.layer.cornerRadius = cameraCircleDiameter * 0.5
-        cameraCircle.clipsToBounds = false
-        cameraImageView.autoCenterInSuperview()
-
-        let avatarWrapper = UIView.container()
-        avatarWrapper.isUserInteractionEnabled = true
-        avatarWrapper.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(avatarTapped)))
-        avatarWrapper.addSubview(avatarView)
-        avatarView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
-        avatarWrapper.addSubview(cameraCircle)
-        cameraCircle.autoPinEdge(toSuperviewEdge: .trailing)
-        cameraCircle.autoPinEdge(toSuperviewEdge: .bottom)
-        avatarWrapper.accessibilityIdentifier = "onboarding.profile." + "avatarWrapper"
-
-        nameTextfield.textAlignment = .left
-        nameTextfield.delegate = self
-        nameTextfield.returnKeyType = .done
-        nameTextfield.textColor = Theme.primaryColor
-        nameTextfield.font = UIFont.ows_dynamicTypeBodyClamped
-        nameTextfield.placeholder = NSLocalizedString("ONBOARDING_PROFILE_NAME_PLACEHOLDER",
-                                                      comment: "Placeholder text for the profile name in the 'onboarding profile' view.")
-        nameTextfield.setContentHuggingHorizontalLow()
-        nameTextfield.setCompressionResistanceHorizontalLow()
-        nameTextfield.accessibilityIdentifier = "onboarding.profile." + "nameTextfield"
-
-        let nameWrapper = UIView.container()
-        nameWrapper.setCompressionResistanceHorizontalLow()
-        nameWrapper.setContentHuggingHorizontalLow()
-        nameWrapper.addSubview(nameTextfield)
-        nameTextfield.autoPinWidthToSuperview()
-        nameTextfield.autoPinEdge(toSuperviewEdge: .top, withInset: 8)
-        nameTextfield.autoPinEdge(toSuperviewEdge: .bottom, withInset: 8)
-        _ = nameWrapper.addBottomStroke()
-
-        let profileRow = UIStackView(arrangedSubviews: [
-            avatarWrapper,
-            nameWrapper
-            ])
-        profileRow.axis = .horizontal
-        profileRow.alignment = .center
-        profileRow.spacing = 8
-
-        let topSpacer = UIView.vStretchingSpacer()
-        let bottomSpacer = UIView.vStretchingSpacer()
-
-        let stackView = UIStackView(arrangedSubviews: [
-            titleLabel,
-            topSpacer,
-            profileRow,
-            UIView.spacer(withHeight: 25),
-            explanationLabel,
-            bottomSpacer,
-            nextButton
-            ])
-        stackView.axis = .vertical
-        stackView.alignment = .fill
-        stackView.layoutMargins = UIEdgeInsets(top: 32, left: 32, bottom: 32, right: 32)
-        stackView.isLayoutMarginsRelativeArrangement = true
-        view.addSubview(stackView)
-        stackView.autoPinWidthToSuperview()
-        stackView.autoPin(toTopLayoutGuideOf: self, withInset: 0)
-        autoPinView(toBottomOfViewControllerOrKeyboard: stackView, avoidNotch: true)
-
-        // Ensure whitespace is balanced, so inputs are vertically centered.
-        topSpacer.autoMatch(.height, to: .height, of: bottomSpacer)
+//        let titleLabel = self.titleLabel(text: NSLocalizedString("ONBOARDING_PROFILE_TITLE", comment: "Title of the 'onboarding profile' view."))
+//        titleLabel.accessibilityIdentifier = "onboarding.profile." + "titleLabel"
+//
+//        let explanationLabel = self.explanationLabel(explanationText: NSLocalizedString("ONBOARDING_PROFILE_EXPLANATION",
+//                                                                                        comment: "Explanation in the 'onboarding profile' view."))
+//        explanationLabel.accessibilityIdentifier = "onboarding.profile." + "explanationLabel"
+//
+//        let nextButton = self.button(title: NSLocalizedString("BUTTON_NEXT",
+//                                                              comment: "Label for the 'next' button."),
+//                                     selector: #selector(nextPressed))
+//        nextButton.accessibilityIdentifier = "onboarding.profile." + "nextButton"
+//
+//        avatarView.autoSetDimensions(to: CGSize(width: CGFloat(avatarSize), height: CGFloat(avatarSize)))
+//
+//        let cameraImageView = UIImageView()
+//        cameraImageView.image = UIImage(named: "settings-avatar-camera-2")?.withRenderingMode(.alwaysTemplate)
+//        cameraImageView.tintColor = Theme.secondaryColor
+//        cameraCircle.backgroundColor = Theme.backgroundColor
+//        cameraCircle.addSubview(cameraImageView)
+//        let cameraCircleDiameter: CGFloat = 40
+//        cameraCircle.autoSetDimensions(to: CGSize(width: cameraCircleDiameter, height: cameraCircleDiameter))
+//        cameraCircle.layer.shadowColor = UIColor(white: 0, alpha: 0.15).cgColor
+//        cameraCircle.layer.shadowRadius = 5
+//        cameraCircle.layer.shadowOffset = CGSize(width: 1, height: 1)
+//        cameraCircle.layer.shadowOpacity = 1
+//        cameraCircle.layer.cornerRadius = cameraCircleDiameter * 0.5
+//        cameraCircle.clipsToBounds = false
+//        cameraImageView.autoCenterInSuperview()
+//
+//        let avatarWrapper = UIView.container()
+//        avatarWrapper.isUserInteractionEnabled = true
+//        avatarWrapper.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(avatarTapped)))
+//        avatarWrapper.addSubview(avatarView)
+//        avatarView.autoPinEdgesToSuperviewEdges(with: UIEdgeInsets(top: 4, leading: 4, bottom: 4, trailing: 4))
+//        avatarWrapper.addSubview(cameraCircle)
+//        cameraCircle.autoPinEdge(toSuperviewEdge: .trailing)
+//        cameraCircle.autoPinEdge(toSuperviewEdge: .bottom)
+//        avatarWrapper.accessibilityIdentifier = "onboarding.profile." + "avatarWrapper"
+//
+//        nameTextfield.textAlignment = .left
+//        nameTextfield.delegate = self
+//        nameTextfield.returnKeyType = .done
+//        nameTextfield.textColor = Theme.primaryColor
+//        nameTextfield.font = UIFont.ows_dynamicTypeBodyClamped
+//        nameTextfield.placeholder = NSLocalizedString("ONBOARDING_PROFILE_NAME_PLACEHOLDER",
+//                                                      comment: "Placeholder text for the profile name in the 'onboarding profile' view.")
+//        nameTextfield.setContentHuggingHorizontalLow()
+//        nameTextfield.setCompressionResistanceHorizontalLow()
+//        nameTextfield.accessibilityIdentifier = "onboarding.profile." + "nameTextfield"
+//
+//        let nameWrapper = UIView.container()
+//        nameWrapper.setCompressionResistanceHorizontalLow()
+//        nameWrapper.setContentHuggingHorizontalLow()
+//        nameWrapper.addSubview(nameTextfield)
+//        nameTextfield.autoPinWidthToSuperview()
+//        nameTextfield.autoPinEdge(toSuperviewEdge: .top, withInset: 8)
+//        nameTextfield.autoPinEdge(toSuperviewEdge: .bottom, withInset: 8)
+//        _ = nameWrapper.addBottomStroke()
+//
+//        let profileRow = UIStackView(arrangedSubviews: [
+//            avatarWrapper,
+//            nameWrapper
+//            ])
+//        profileRow.axis = .horizontal
+//        profileRow.alignment = .center
+//        profileRow.spacing = 8
+//
+//        let topSpacer = UIView.vStretchingSpacer()
+//        let bottomSpacer = UIView.vStretchingSpacer()
+//
+//        let stackView = UIStackView(arrangedSubviews: [
+//            titleLabel,
+//            topSpacer,
+//            profileRow,
+//            UIView.spacer(withHeight: 25),
+//            explanationLabel,
+//            bottomSpacer,
+//            nextButton
+//            ])
+//        stackView.axis = .vertical
+//        stackView.alignment = .fill
+//        stackView.layoutMargins = UIEdgeInsets(top: 32, left: 32, bottom: 32, right: 32)
+//        stackView.isLayoutMarginsRelativeArrangement = true
+//        view.addSubview(stackView)
+//        stackView.autoPinWidthToSuperview()
+//        stackView.autoPin(toTopLayoutGuideOf: self, withInset: 0)
+//        autoPinView(toBottomOfViewControllerOrKeyboard: stackView, avoidNotch: true)
+//
+//        // Ensure whitespace is balanced, so inputs are vertically centered.
+//        topSpacer.autoMatch(.height, to: .height, of: bottomSpacer)
 
         updateAvatarView()
     }
@@ -128,20 +134,20 @@ public class OnboardingProfileViewController: OnboardingBaseViewController {
 
     private func updateAvatarView() {
         if let avatar = avatar {
-            avatarView.image = avatar
-            cameraCircle.isHidden = true
+            raAvatarImageView.image = avatar
+            //cameraCircle.isHidden = true
             return
         }
 
         let defaultAvatar = OWSContactAvatarBuilder(forLocalUserWithDiameter: avatarSize).buildDefaultImage()
-        avatarView.image = defaultAvatar
-        cameraCircle.isHidden = false
+        raAvatarImageView.image = defaultAvatar
+       // cameraCircle.isHidden = false
     }
 
      // MARK: -
 
     private func normalizedProfileName() -> String? {
-        return nameTextfield.text?.ows_stripped()
+        return raTextFieldName.textField.text // ToDo // return raTextFieldName.text.ows_stripped()
     }
 
     private func tryToComplete() {
@@ -184,11 +190,15 @@ public class OnboardingProfileViewController: OnboardingBaseViewController {
     public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        _ = nameTextfield.becomeFirstResponder()
+        _ = raTextFieldName.textField.becomeFirstResponder()
     }
 
     // MARK: - Events
 
+    @IBAction func avatarTouched(_ sender: Any) {
+        showAvatarActionSheet()
+    }
+    
     @objc func avatarTapped(sender: UIGestureRecognizer) {
         guard sender.state == .recognized else {
             return
@@ -196,6 +206,10 @@ public class OnboardingProfileViewController: OnboardingBaseViewController {
         showAvatarActionSheet()
     }
 
+    @IBAction func btnFinishedTouched(_ sender: Any) {
+        nextPressed()
+    }
+    
     @objc func nextPressed() {
         Logger.info("")
 

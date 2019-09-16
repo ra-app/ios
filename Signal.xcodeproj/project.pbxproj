@@ -484,6 +484,66 @@
 		45F659821E1BE77000444429 /* NonCallKitCallUIAdaptee.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45F659811E1BE77000444429 /* NonCallKitCallUIAdaptee.swift */; };
 		45FBC5C81DF8575700E9B410 /* CallKitCallManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FBC59A1DF8575700E9B410 /* CallKitCallManager.swift */; };
 		45FBC5D11DF8592E00E9B410 /* SignalCall.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FBC5D01DF8592E00E9B410 /* SignalCall.swift */; };
+		4A060244232A3322001DB885 /* checkbox-checked-200.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A060242232A3322001DB885 /* checkbox-checked-200.png */; };
+		4A060245232A3322001DB885 /* checkbox-200.png in Resources */ = {isa = PBXBuildFile; fileRef = 4A060243232A3322001DB885 /* checkbox-200.png */; };
+		4A060248232A4299001DB885 /* RaInvitationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A060246232A4298001DB885 /* RaInvitationViewController.swift */; };
+		4A060249232A4299001DB885 /* RaInvitationViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A060247232A4299001DB885 /* RaInvitationViewController.xib */; };
+		4A06024B232A6DF9001DB885 /* RaViewWithTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A06024A232A6DF9001DB885 /* RaViewWithTextField.swift */; };
+		4A06024D232A807D001DB885 /* RaProfileViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A06024C232A807D001DB885 /* RaProfileViewController.xib */; };
+		4A1FEEC62326944000D3A4FD /* RaAGBViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A1FEEC22326943F00D3A4FD /* RaAGBViewController.xib */; };
+		4A1FEEC72326944000D3A4FD /* RaWelcomeScreenViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A1FEEC32326943F00D3A4FD /* RaWelcomeScreenViewController.xib */; };
+		4A1FEEC82326944000D3A4FD /* RaWelcomeScreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1FEEC42326943F00D3A4FD /* RaWelcomeScreenViewController.swift */; };
+		4A1FEEC92326944000D3A4FD /* RaAGBViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1FEEC52326943F00D3A4FD /* RaAGBViewController.swift */; };
+		4A1FEECB2326946C00D3A4FD /* RaOnboardingPhoneNumberViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A1FEECA2326946C00D3A4FD /* RaOnboardingPhoneNumberViewController.xib */; };
+		4A1FEED0232695A400D3A4FD /* RaExtentionUIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1FEECD232695A400D3A4FD /* RaExtentionUIColor.swift */; };
+		4A1FEED1232695A400D3A4FD /* RaExtentionUINavigationBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1FEECE232695A400D3A4FD /* RaExtentionUINavigationBar.swift */; };
+		4A1FEED2232695A400D3A4FD /* RaGradientExtentionUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1FEECF232695A400D3A4FD /* RaGradientExtentionUIView.swift */; };
+		4A1FEED9232695D300D3A4FD /* RaHeaderSearchView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 4A1FEED4232695D300D3A4FD /* RaHeaderSearchView.xib */; };
+		4A1FEEDA232695D300D3A4FD /* RaHeaderSearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1FEED5232695D300D3A4FD /* RaHeaderSearchView.swift */; };
+		4A1FEEDB232695D300D3A4FD /* RaTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1FEED6232695D300D3A4FD /* RaTextField.swift */; };
+		4A1FEEDC232695D300D3A4FD /* RaGradientButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1FEED7232695D300D3A4FD /* RaGradientButton.swift */; };
+		4A1FEEDD232695D300D3A4FD /* RaCustomHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1FEED8232695D300D3A4FD /* RaCustomHeaderView.swift */; };
+		4A7EAA412327A62C0045750E /* RaGradientExtentionUIView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1FEECF232695A400D3A4FD /* RaGradientExtentionUIView.swift */; };
+		4A7EAA432327A6A30045750E /* RaExtentionUIColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A1FEECD232695A400D3A4FD /* RaExtentionUIColor.swift */; };
+		4A7EAA452327CBBF0045750E /* RaExtentionString.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4A7EAA442327CBBF0045750E /* RaExtentionString.swift */; };
+		4A7EAA5A2327F3410045750E /* Poppins-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA472327F3410045750E /* Poppins-ExtraLight.ttf */; };
+		4A7EAA5B2327F3410045750E /* Poppins-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA482327F3410045750E /* Poppins-ThinItalic.ttf */; };
+		4A7EAA5C2327F3410045750E /* Poppins-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA492327F3410045750E /* Poppins-ExtraLightItalic.ttf */; };
+		4A7EAA5D2327F3410045750E /* Poppins-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA4A2327F3410045750E /* Poppins-BoldItalic.ttf */; };
+		4A7EAA5E2327F3410045750E /* Poppins-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA4B2327F3410045750E /* Poppins-Light.ttf */; };
+		4A7EAA5F2327F3410045750E /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA4C2327F3410045750E /* Poppins-Medium.ttf */; };
+		4A7EAA602327F3410045750E /* Poppins-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA4D2327F3410045750E /* Poppins-SemiBoldItalic.ttf */; };
+		4A7EAA612327F3410045750E /* Poppins-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA4E2327F3410045750E /* Poppins-ExtraBoldItalic.ttf */; };
+		4A7EAA622327F3410045750E /* Poppins-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA4F2327F3410045750E /* Poppins-ExtraBold.ttf */; };
+		4A7EAA632327F3410045750E /* Poppins-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA502327F3410045750E /* Poppins-BlackItalic.ttf */; };
+		4A7EAA642327F3410045750E /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA512327F3410045750E /* OFL.txt */; };
+		4A7EAA652327F3410045750E /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA522327F3410045750E /* Poppins-Regular.ttf */; };
+		4A7EAA662327F3410045750E /* Poppins-RegularItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA532327F3410045750E /* Poppins-RegularItalic.ttf */; };
+		4A7EAA672327F3410045750E /* Poppins-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA542327F3410045750E /* Poppins-LightItalic.ttf */; };
+		4A7EAA682327F3410045750E /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA552327F3410045750E /* Poppins-Bold.ttf */; };
+		4A7EAA692327F3410045750E /* Poppins-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA562327F3410045750E /* Poppins-Black.ttf */; };
+		4A7EAA6A2327F3410045750E /* Poppins-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA572327F3410045750E /* Poppins-Thin.ttf */; };
+		4A7EAA6B2327F3410045750E /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA582327F3410045750E /* Poppins-SemiBold.ttf */; };
+		4A7EAA6C2327F3410045750E /* Poppins-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA592327F3410045750E /* Poppins-MediumItalic.ttf */; };
+		4A7EAA6D2327F35A0045750E /* Poppins-ExtraLight.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA472327F3410045750E /* Poppins-ExtraLight.ttf */; };
+		4A7EAA6E2327F35A0045750E /* Poppins-ThinItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA482327F3410045750E /* Poppins-ThinItalic.ttf */; };
+		4A7EAA6F2327F35A0045750E /* Poppins-ExtraLightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA492327F3410045750E /* Poppins-ExtraLightItalic.ttf */; };
+		4A7EAA702327F35A0045750E /* Poppins-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA4A2327F3410045750E /* Poppins-BoldItalic.ttf */; };
+		4A7EAA712327F35A0045750E /* Poppins-Light.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA4B2327F3410045750E /* Poppins-Light.ttf */; };
+		4A7EAA722327F35A0045750E /* Poppins-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA4C2327F3410045750E /* Poppins-Medium.ttf */; };
+		4A7EAA732327F35A0045750E /* Poppins-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA4D2327F3410045750E /* Poppins-SemiBoldItalic.ttf */; };
+		4A7EAA742327F35A0045750E /* Poppins-ExtraBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA4E2327F3410045750E /* Poppins-ExtraBoldItalic.ttf */; };
+		4A7EAA752327F35A0045750E /* Poppins-ExtraBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA4F2327F3410045750E /* Poppins-ExtraBold.ttf */; };
+		4A7EAA762327F35A0045750E /* Poppins-BlackItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA502327F3410045750E /* Poppins-BlackItalic.ttf */; };
+		4A7EAA772327F35A0045750E /* OFL.txt in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA512327F3410045750E /* OFL.txt */; };
+		4A7EAA782327F35A0045750E /* Poppins-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA522327F3410045750E /* Poppins-Regular.ttf */; };
+		4A7EAA792327F35A0045750E /* Poppins-RegularItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA532327F3410045750E /* Poppins-RegularItalic.ttf */; };
+		4A7EAA7A2327F35A0045750E /* Poppins-LightItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA542327F3410045750E /* Poppins-LightItalic.ttf */; };
+		4A7EAA7B2327F35A0045750E /* Poppins-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA552327F3410045750E /* Poppins-Bold.ttf */; };
+		4A7EAA7C2327F35A0045750E /* Poppins-Black.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA562327F3410045750E /* Poppins-Black.ttf */; };
+		4A7EAA7D2327F35A0045750E /* Poppins-Thin.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA572327F3410045750E /* Poppins-Thin.ttf */; };
+		4A7EAA7E2327F35A0045750E /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA582327F3410045750E /* Poppins-SemiBold.ttf */; };
+		4A7EAA7F2327F35A0045750E /* Poppins-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA592327F3410045750E /* Poppins-MediumItalic.ttf */; };
 		4AC4EA13C8A444455DAB351F /* Pods_SignalMessaging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 264242150E87D10A357DB07B /* Pods_SignalMessaging.framework */; };
 		4C04392A220A9EC800BAEA63 /* VoiceNoteLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C043929220A9EC800BAEA63 /* VoiceNoteLock.swift */; };
 		4C04F58421C860C50090D0BB /* MantlePerfTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C04F58321C860C50090D0BB /* MantlePerfTest.swift */; };
@@ -1258,6 +1318,45 @@
 		45F659811E1BE77000444429 /* NonCallKitCallUIAdaptee.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NonCallKitCallUIAdaptee.swift; sourceTree = "<group>"; };
 		45FBC59A1DF8575700E9B410 /* CallKitCallManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CallKitCallManager.swift; sourceTree = "<group>"; };
 		45FBC5D01DF8592E00E9B410 /* SignalCall.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SignalCall.swift; sourceTree = "<group>"; };
+		4A060242232A3322001DB885 /* checkbox-checked-200.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-checked-200.png"; sourceTree = "<group>"; };
+		4A060243232A3322001DB885 /* checkbox-200.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "checkbox-200.png"; sourceTree = "<group>"; };
+		4A060246232A4298001DB885 /* RaInvitationViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RaInvitationViewController.swift; sourceTree = "<group>"; };
+		4A060247232A4299001DB885 /* RaInvitationViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RaInvitationViewController.xib; sourceTree = "<group>"; };
+		4A06024A232A6DF9001DB885 /* RaViewWithTextField.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaViewWithTextField.swift; sourceTree = "<group>"; };
+		4A06024C232A807D001DB885 /* RaProfileViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RaProfileViewController.xib; sourceTree = "<group>"; };
+		4A1FEEC22326943F00D3A4FD /* RaAGBViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RaAGBViewController.xib; sourceTree = "<group>"; };
+		4A1FEEC32326943F00D3A4FD /* RaWelcomeScreenViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RaWelcomeScreenViewController.xib; sourceTree = "<group>"; };
+		4A1FEEC42326943F00D3A4FD /* RaWelcomeScreenViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RaWelcomeScreenViewController.swift; sourceTree = "<group>"; };
+		4A1FEEC52326943F00D3A4FD /* RaAGBViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RaAGBViewController.swift; sourceTree = "<group>"; };
+		4A1FEECA2326946C00D3A4FD /* RaOnboardingPhoneNumberViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RaOnboardingPhoneNumberViewController.xib; sourceTree = "<group>"; };
+		4A1FEECD232695A400D3A4FD /* RaExtentionUIColor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RaExtentionUIColor.swift; sourceTree = "<group>"; };
+		4A1FEECE232695A400D3A4FD /* RaExtentionUINavigationBar.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RaExtentionUINavigationBar.swift; sourceTree = "<group>"; };
+		4A1FEECF232695A400D3A4FD /* RaGradientExtentionUIView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RaGradientExtentionUIView.swift; sourceTree = "<group>"; };
+		4A1FEED4232695D300D3A4FD /* RaHeaderSearchView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = RaHeaderSearchView.xib; sourceTree = "<group>"; };
+		4A1FEED5232695D300D3A4FD /* RaHeaderSearchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RaHeaderSearchView.swift; sourceTree = "<group>"; };
+		4A1FEED6232695D300D3A4FD /* RaTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RaTextField.swift; sourceTree = "<group>"; };
+		4A1FEED7232695D300D3A4FD /* RaGradientButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RaGradientButton.swift; sourceTree = "<group>"; };
+		4A1FEED8232695D300D3A4FD /* RaCustomHeaderView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RaCustomHeaderView.swift; sourceTree = "<group>"; };
+		4A7EAA442327CBBF0045750E /* RaExtentionString.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RaExtentionString.swift; sourceTree = "<group>"; };
+		4A7EAA472327F3410045750E /* Poppins-ExtraLight.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-ExtraLight.ttf"; sourceTree = "<group>"; };
+		4A7EAA482327F3410045750E /* Poppins-ThinItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-ThinItalic.ttf"; sourceTree = "<group>"; };
+		4A7EAA492327F3410045750E /* Poppins-ExtraLightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-ExtraLightItalic.ttf"; sourceTree = "<group>"; };
+		4A7EAA4A2327F3410045750E /* Poppins-BoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-BoldItalic.ttf"; sourceTree = "<group>"; };
+		4A7EAA4B2327F3410045750E /* Poppins-Light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Light.ttf"; sourceTree = "<group>"; };
+		4A7EAA4C2327F3410045750E /* Poppins-Medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Medium.ttf"; sourceTree = "<group>"; };
+		4A7EAA4D2327F3410045750E /* Poppins-SemiBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-SemiBoldItalic.ttf"; sourceTree = "<group>"; };
+		4A7EAA4E2327F3410045750E /* Poppins-ExtraBoldItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-ExtraBoldItalic.ttf"; sourceTree = "<group>"; };
+		4A7EAA4F2327F3410045750E /* Poppins-ExtraBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-ExtraBold.ttf"; sourceTree = "<group>"; };
+		4A7EAA502327F3410045750E /* Poppins-BlackItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-BlackItalic.ttf"; sourceTree = "<group>"; };
+		4A7EAA512327F3410045750E /* OFL.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = OFL.txt; sourceTree = "<group>"; };
+		4A7EAA522327F3410045750E /* Poppins-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Regular.ttf"; sourceTree = "<group>"; };
+		4A7EAA532327F3410045750E /* Poppins-RegularItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-RegularItalic.ttf"; sourceTree = "<group>"; };
+		4A7EAA542327F3410045750E /* Poppins-LightItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-LightItalic.ttf"; sourceTree = "<group>"; };
+		4A7EAA552327F3410045750E /* Poppins-Bold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Bold.ttf"; sourceTree = "<group>"; };
+		4A7EAA562327F3410045750E /* Poppins-Black.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Black.ttf"; sourceTree = "<group>"; };
+		4A7EAA572327F3410045750E /* Poppins-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Thin.ttf"; sourceTree = "<group>"; };
+		4A7EAA582327F3410045750E /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-SemiBold.ttf"; sourceTree = "<group>"; };
+		4A7EAA592327F3410045750E /* Poppins-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-MediumItalic.ttf"; sourceTree = "<group>"; };
 		4C043929220A9EC800BAEA63 /* VoiceNoteLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceNoteLock.swift; sourceTree = "<group>"; };
 		4C04F58321C860C50090D0BB /* MantlePerfTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MantlePerfTest.swift; path = Models/MantlePerfTest.swift; sourceTree = "<group>"; };
 		4C090A1A210FD9C7001FD7F9 /* HapticFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HapticFeedback.swift; path = UserInterface/HapticFeedback.swift; sourceTree = "<group>"; };
@@ -1568,13 +1667,16 @@
 		340FC875204DAC8C007AEB0F /* Registration */ = {
 			isa = PBXGroup;
 			children = (
+				4A1FEEC12326943F00D3A4FD /* OfficeApp Registration */,
 				3441FD9E21A3604F00BB9542 /* BackupRestoreViewController.swift */,
 				349ED98F221B0194008045B0 /* Onboarding2FAViewController.swift */,
 				3448E1612213585C004B052E /* OnboardingBaseViewController.swift */,
 				3448E1652215B313004B052E /* OnboardingCaptchaViewController.swift */,
 				3448E15D221333F5004B052E /* OnboardingController.swift */,
 				3448E15B22133274004B052E /* OnboardingPermissionsViewController.swift */,
+				4A1FEECA2326946C00D3A4FD /* RaOnboardingPhoneNumberViewController.xib */,
 				3448E16322135FFA004B052E /* OnboardingPhoneNumberViewController.swift */,
+				4A06024C232A807D001DB885 /* RaProfileViewController.xib */,
 				34A4C61F22175C5C0042EF2E /* OnboardingProfileViewController.swift */,
 				3448E15F22134C88004B052E /* OnboardingSplashViewController.swift */,
 				34A4C61D221613D00042EF2E /* OnboardingVerificationViewController.swift */,
@@ -1643,6 +1745,7 @@
 		34330A581E7875FB00DF2FB9 /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
+				4A7EAA462327F3410045750E /* Poppins */,
 				34330A5B1E787A9800DF2FB9 /* dripicons-v2.ttf */,
 				34330A5D1E787BD800DF2FB9 /* ElegantIcons.ttf */,
 				34330A591E7875FB00DF2FB9 /* fontawesome-webfont.ttf */,
@@ -2169,6 +2272,8 @@
 		34D1F0BE1F8EC1760066283D /* Utils */ = {
 			isa = PBXGroup;
 			children = (
+				4A1FEED3232695D300D3A4FD /* Controls */,
+				4A1FEECC232695A400D3A4FD /* Extentions */,
 				34D1F0BF1F8EC1760066283D /* MessageRecipientStatusUtils.swift */,
 			);
 			path = Utils;
@@ -2416,6 +2521,69 @@
 			path = Speakerbox;
 			sourceTree = "<group>";
 		};
+		4A1FEEC12326943F00D3A4FD /* OfficeApp Registration */ = {
+			isa = PBXGroup;
+			children = (
+				4A060246232A4298001DB885 /* RaInvitationViewController.swift */,
+				4A060247232A4299001DB885 /* RaInvitationViewController.xib */,
+				4A1FEEC32326943F00D3A4FD /* RaWelcomeScreenViewController.xib */,
+				4A1FEEC42326943F00D3A4FD /* RaWelcomeScreenViewController.swift */,
+				4A1FEEC22326943F00D3A4FD /* RaAGBViewController.xib */,
+				4A1FEEC52326943F00D3A4FD /* RaAGBViewController.swift */,
+			);
+			path = "OfficeApp Registration";
+			sourceTree = "<group>";
+		};
+		4A1FEECC232695A400D3A4FD /* Extentions */ = {
+			isa = PBXGroup;
+			children = (
+				4A1FEECD232695A400D3A4FD /* RaExtentionUIColor.swift */,
+				4A1FEECE232695A400D3A4FD /* RaExtentionUINavigationBar.swift */,
+				4A1FEECF232695A400D3A4FD /* RaGradientExtentionUIView.swift */,
+				4A7EAA442327CBBF0045750E /* RaExtentionString.swift */,
+			);
+			path = Extentions;
+			sourceTree = "<group>";
+		};
+		4A1FEED3232695D300D3A4FD /* Controls */ = {
+			isa = PBXGroup;
+			children = (
+				4A1FEED4232695D300D3A4FD /* RaHeaderSearchView.xib */,
+				4A1FEED5232695D300D3A4FD /* RaHeaderSearchView.swift */,
+				4A1FEED6232695D300D3A4FD /* RaTextField.swift */,
+				4A1FEED7232695D300D3A4FD /* RaGradientButton.swift */,
+				4A1FEED8232695D300D3A4FD /* RaCustomHeaderView.swift */,
+				4A06024A232A6DF9001DB885 /* RaViewWithTextField.swift */,
+			);
+			path = Controls;
+			sourceTree = "<group>";
+		};
+		4A7EAA462327F3410045750E /* Poppins */ = {
+			isa = PBXGroup;
+			children = (
+				4A7EAA472327F3410045750E /* Poppins-ExtraLight.ttf */,
+				4A7EAA482327F3410045750E /* Poppins-ThinItalic.ttf */,
+				4A7EAA492327F3410045750E /* Poppins-ExtraLightItalic.ttf */,
+				4A7EAA4A2327F3410045750E /* Poppins-BoldItalic.ttf */,
+				4A7EAA4B2327F3410045750E /* Poppins-Light.ttf */,
+				4A7EAA4C2327F3410045750E /* Poppins-Medium.ttf */,
+				4A7EAA4D2327F3410045750E /* Poppins-SemiBoldItalic.ttf */,
+				4A7EAA4E2327F3410045750E /* Poppins-ExtraBoldItalic.ttf */,
+				4A7EAA4F2327F3410045750E /* Poppins-ExtraBold.ttf */,
+				4A7EAA502327F3410045750E /* Poppins-BlackItalic.ttf */,
+				4A7EAA512327F3410045750E /* OFL.txt */,
+				4A7EAA522327F3410045750E /* Poppins-Regular.ttf */,
+				4A7EAA532327F3410045750E /* Poppins-RegularItalic.ttf */,
+				4A7EAA542327F3410045750E /* Poppins-LightItalic.ttf */,
+				4A7EAA552327F3410045750E /* Poppins-Bold.ttf */,
+				4A7EAA562327F3410045750E /* Poppins-Black.ttf */,
+				4A7EAA572327F3410045750E /* Poppins-Thin.ttf */,
+				4A7EAA582327F3410045750E /* Poppins-SemiBold.ttf */,
+				4A7EAA592327F3410045750E /* Poppins-MediumItalic.ttf */,
+			);
+			path = Poppins;
+			sourceTree = "<group>";
+		};
 		4C3EF8002109184A0007EBF7 /* SSKTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -2577,6 +2745,8 @@
 		B633C4FD1A1D190B0059AC12 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				4A060243232A3322001DB885 /* checkbox-200.png */,
+				4A060242232A3322001DB885 /* checkbox-checked-200.png */,
 				AD83FF381A73426500B5C81A /* audio_pause_button_blue.png */,
 				AD83FF391A73426500B5C81A /* audio_pause_button_blue@2x.png */,
 				AD83FF3D1A73426500B5C81A /* audio_pause_button.png */,
@@ -3126,6 +3296,25 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A7EAA7C2327F35A0045750E /* Poppins-Black.ttf in Resources */,
+				4A7EAA742327F35A0045750E /* Poppins-ExtraBoldItalic.ttf in Resources */,
+				4A7EAA792327F35A0045750E /* Poppins-RegularItalic.ttf in Resources */,
+				4A7EAA7D2327F35A0045750E /* Poppins-Thin.ttf in Resources */,
+				4A7EAA7F2327F35A0045750E /* Poppins-MediumItalic.ttf in Resources */,
+				4A7EAA772327F35A0045750E /* OFL.txt in Resources */,
+				4A7EAA752327F35A0045750E /* Poppins-ExtraBold.ttf in Resources */,
+				4A7EAA782327F35A0045750E /* Poppins-Regular.ttf in Resources */,
+				4A7EAA762327F35A0045750E /* Poppins-BlackItalic.ttf in Resources */,
+				4A7EAA6F2327F35A0045750E /* Poppins-ExtraLightItalic.ttf in Resources */,
+				4A7EAA7B2327F35A0045750E /* Poppins-Bold.ttf in Resources */,
+				4A7EAA712327F35A0045750E /* Poppins-Light.ttf in Resources */,
+				4A7EAA6D2327F35A0045750E /* Poppins-ExtraLight.ttf in Resources */,
+				4A7EAA7A2327F35A0045750E /* Poppins-LightItalic.ttf in Resources */,
+				4A7EAA732327F35A0045750E /* Poppins-SemiBoldItalic.ttf in Resources */,
+				4A7EAA722327F35A0045750E /* Poppins-Medium.ttf in Resources */,
+				4A7EAA7E2327F35A0045750E /* Poppins-SemiBold.ttf in Resources */,
+				4A7EAA6E2327F35A0045750E /* Poppins-ThinItalic.ttf in Resources */,
+				4A7EAA702327F35A0045750E /* Poppins-BoldItalic.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3136,14 +3325,25 @@
 				4C63CC00210A620B003AE45C /* SignalTSan.supp in Resources */,
 				4C6F527C20FFE8400097DEEE /* SignalUBSan.supp in Resources */,
 				34CF078A203E6B78005C4D61 /* end_call_tone_cept.caf in Resources */,
+				4A7EAA5F2327F3410045750E /* Poppins-Medium.ttf in Resources */,
 				AD83FF3F1A73426500B5C81A /* audio_pause_button_blue.png in Resources */,
+				4A7EAA672327F3410045750E /* Poppins-LightItalic.ttf in Resources */,
+				4A7EAA6A2327F3410045750E /* Poppins-Thin.ttf in Resources */,
+				4A1FEEC62326944000D3A4FD /* RaAGBViewController.xib in Resources */,
 				34330A5A1E7875FB00DF2FB9 /* fontawesome-webfont.ttf in Resources */,
+				4A7EAA692327F3410045750E /* Poppins-Black.ttf in Resources */,
+				4A060244232A3322001DB885 /* checkbox-checked-200.png in Resources */,
 				A5509ECA1A69AB8B00ABA4BC /* Main.storyboard in Resources */,
+				4A1FEED9232695D300D3A4FD /* RaHeaderSearchView.xib in Resources */,
 				AD83FF421A73426500B5C81A /* audio_play_button.png in Resources */,
+				4A7EAA622327F3410045750E /* Poppins-ExtraBold.ttf in Resources */,
+				4A7EAA5B2327F3410045750E /* Poppins-ThinItalic.ttf in Resources */,
+				4A7EAA6B2327F3410045750E /* Poppins-SemiBold.ttf in Resources */,
 				34330A5C1E787A9800DF2FB9 /* dripicons-v2.ttf in Resources */,
 				B633C5C41A1D190B0059AC12 /* mute_on@2x.png in Resources */,
 				B633C5CE1A1D190B0059AC12 /* quit@2x.png in Resources */,
 				AD83FF441A73426500B5C81A /* audio_pause_button.png in Resources */,
+				4A7EAA642327F3410045750E /* OFL.txt in Resources */,
 				B6F509971AA53F760068F56A /* Localizable.strings in Resources */,
 				B633C59D1A1D190B0059AC12 /* endcall@2x.png in Resources */,
 				FC5CDF391A3393DD00B47253 /* error_white@2x.png in Resources */,
@@ -3152,26 +3352,36 @@
 				AD83FF401A73426500B5C81A /* audio_pause_button_blue@2x.png in Resources */,
 				B66DBF4A19D5BBC8006EA940 /* Images.xcassets in Resources */,
 				34CF0788203E6B78005C4D61 /* ringback_tone_ansi.caf in Resources */,
+				4A060249232A4299001DB885 /* RaInvitationViewController.xib in Resources */,
+				4A1FEECB2326946C00D3A4FD /* RaOnboardingPhoneNumberViewController.xib in Resources */,
+				4A7EAA612327F3410045750E /* Poppins-ExtraBoldItalic.ttf in Resources */,
+				4A7EAA5D2327F3410045750E /* Poppins-BoldItalic.ttf in Resources */,
 				34C3C78F2040A4F70000134C /* sonarping.mp3 in Resources */,
 				AD83FF431A73426500B5C81A /* audio_play_button@2x.png in Resources */,
 				34661FB820C1C0D60056EDD6 /* message_sent.aiff in Resources */,
 				45CB2FA81CB7146C00E1B343 /* Launch Screen.storyboard in Resources */,
+				4A7EAA5A2327F3410045750E /* Poppins-ExtraLight.ttf in Resources */,
 				B633C5C31A1D190B0059AC12 /* mute_off@2x.png in Resources */,
 				AD83FF411A73426500B5C81A /* audio_play_button_blue@2x.png in Resources */,
 				34C3C78D20409F320000134C /* Opening.m4r in Resources */,
 				FC5CDF3A1A3393DD00B47253 /* warning_white@2x.png in Resources */,
 				B633C58D1A1D190B0059AC12 /* contact_default_feed.png in Resources */,
 				B10C9B621A7049EC00ECA2BF /* play_icon@2x.png in Resources */,
+				4A7EAA682327F3410045750E /* Poppins-Bold.ttf in Resources */,
 				B633C5861A1D190B0059AC12 /* call@2x.png in Resources */,
 				B67EBF5D19194AC60084CCFD /* Settings.bundle in Resources */,
 				B10C9B601A7049EC00ECA2BF /* pause_icon@2x.png in Resources */,
+				4A7EAA602327F3410045750E /* Poppins-SemiBoldItalic.ttf in Resources */,
 				FC9120411A39EFB70074545C /* qr@2x.png in Resources */,
 				34CF0787203E6B78005C4D61 /* busy_tone_ansi.caf in Resources */,
 				B10C9B5F1A7049EC00ECA2BF /* pause_icon.png in Resources */,
 				AD83FF471A73428300B5C81A /* audio_play_button_blue.png in Resources */,
+				4A7EAA5E2327F3410045750E /* Poppins-Light.ttf in Resources */,
 				34330A5E1E787BD800DF2FB9 /* ElegantIcons.ttf in Resources */,
+				4A7EAA6C2327F3410045750E /* Poppins-MediumItalic.ttf in Resources */,
 				AD83FF451A73426500B5C81A /* audio_pause_button@2x.png in Resources */,
 				45A2F005204473A3002E978A /* NewMessage.aifc in Resources */,
+				4A7EAA652327F3410045750E /* Poppins-Regular.ttf in Resources */,
 				45B74A882044AAB600CD42F8 /* aurora.aifc in Resources */,
 				45B74A742044AAB600CD42F8 /* aurora-quiet.aifc in Resources */,
 				45B74A852044AAB600CD42F8 /* bamboo.aifc in Resources */,
@@ -3181,15 +3391,20 @@
 				45B74A832044AAB600CD42F8 /* circles.aifc in Resources */,
 				45B74A892044AAB600CD42F8 /* circles-quiet.aifc in Resources */,
 				4503F1BF20470A5B00CEE724 /* classic.aifc in Resources */,
+				4A7EAA632327F3410045750E /* Poppins-BlackItalic.ttf in Resources */,
 				4503F1BE20470A5B00CEE724 /* classic-quiet.aifc in Resources */,
 				45B74A7E2044AAB600CD42F8 /* complete.aifc in Resources */,
 				45B74A872044AAB600CD42F8 /* complete-quiet.aifc in Resources */,
 				45B74A772044AAB600CD42F8 /* hello.aifc in Resources */,
 				4C61819F219E1796009BD6B5 /* typing-animation-dark.gif in Resources */,
+				4A1FEEC72326944000D3A4FD /* RaWelcomeScreenViewController.xib in Resources */,
 				45B74A7C2044AAB600CD42F8 /* hello-quiet.aifc in Resources */,
+				4A7EAA662327F3410045750E /* Poppins-RegularItalic.ttf in Resources */,
+				4A060245232A3322001DB885 /* checkbox-200.png in Resources */,
 				45B74A792044AAB600CD42F8 /* input.aifc in Resources */,
 				45B74A8C2044AAB600CD42F8 /* input-quiet.aifc in Resources */,
 				45B74A7A2044AAB600CD42F8 /* keys.aifc in Resources */,
+				4A06024D232A807D001DB885 /* RaProfileViewController.xib in Resources */,
 				45B74A762044AAB600CD42F8 /* keys-quiet.aifc in Resources */,
 				45B74A862044AAB600CD42F8 /* note.aifc in Resources */,
 				45B74A7F2044AAB600CD42F8 /* note-quiet.aifc in Resources */,
@@ -3198,6 +3413,7 @@
 				45B74A822044AAB600CD42F8 /* pulse.aifc in Resources */,
 				34B6A90B218BA1D1007C4606 /* typing-animation.gif in Resources */,
 				45B74A802044AAB600CD42F8 /* pulse-quiet.aifc in Resources */,
+				4A7EAA5C2327F3410045750E /* Poppins-ExtraLightItalic.ttf in Resources */,
 				45B74A8B2044AAB600CD42F8 /* synth.aifc in Resources */,
 				45B74A752044AAB600CD42F8 /* synth-quiet.aifc in Resources */,
 			);
@@ -3580,6 +3796,7 @@
 				340872CA2239563500CB25B0 /* AttachmentApprovalViewController.swift in Sources */,
 				346129AD1FD1F34E00532771 /* ImageCache.swift in Sources */,
 				34D5872F208E2C4200D2255A /* OWS109OutgoingMessageState.m in Sources */,
+				4A7EAA412327A62C0045750E /* RaGradientExtentionUIView.swift in Sources */,
 				340872D02239787F00CB25B0 /* AttachmentTextToolbar.swift in Sources */,
 				3416BCAE2277A24000E761B4 /* StickerPackDataSource.swift in Sources */,
 				34AC09F8211B39B100997B47 /* CountryCodeViewController.m in Sources */,
@@ -3649,6 +3866,7 @@
 				34AC09FA211B39B100997B47 /* SharingThreadPickerViewController.m in Sources */,
 				45F59A082028E4FB00E8D2B0 /* OWSAudioSession.swift in Sources */,
 				34612A071FD7238600532771 /* OWSSyncManager.m in Sources */,
+				4A7EAA432327A6A30045750E /* RaExtentionUIColor.swift in Sources */,
 				450C801220AD1D5B00F3A091 /* UIDevice+featureSupport.swift in Sources */,
 				451F8A471FD715BA005CB9DA /* OWSAvatarBuilder.m in Sources */,
 				349ED992221EE80D008045B0 /* AppPreferences.swift in Sources */,
@@ -3681,6 +3899,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4CC0B59C20EC5F2E00CF6EE0 /* ConversationConfigurationSyncOperation.swift in Sources */,
+				4A060248232A4299001DB885 /* RaInvitationViewController.swift in Sources */,
 				3434AE1C22AEDE7D002EE04E /* ViewOnceMessageViewController.swift in Sources */,
 				3461293E1FD1D72B00532771 /* ExperienceUpgradeFinder.swift in Sources */,
 				34C4E2582118957600BEA353 /* WebRTCProto.swift in Sources */,
@@ -3690,10 +3909,12 @@
 				34DC9BD921543E0C00FDDCEC /* DebugContactsUtils.m in Sources */,
 				34DBF007206C3CB200025978 /* OWSBubbleShapeView.m in Sources */,
 				4C04392A220A9EC800BAEA63 /* VoiceNoteLock.swift in Sources */,
+				4A1FEED1232695A400D3A4FD /* RaExtentionUINavigationBar.swift in Sources */,
 				34D1F0BA1F8800D90066283D /* OWSAudioMessageView.m in Sources */,
 				34D8C02B1ED3685800188D7C /* DebugUIContacts.m in Sources */,
 				3496956E21A301A100DCFE74 /* OWSBackupExportJob.m in Sources */,
 				4C1885D2218F8E1C00B67051 /* PhotoGridViewCell.swift in Sources */,
+				4A1FEEDD232695D300D3A4FD /* RaCustomHeaderView.swift in Sources */,
 				45C9DEB81DF4E35A0065CA84 /* WebRTCCallMessageHandler.swift in Sources */,
 				34D1F0501F7D45A60066283D /* GifPickerCell.swift in Sources */,
 				3496957421A301A100DCFE74 /* OWSBackupAPI.swift in Sources */,
@@ -3711,6 +3932,7 @@
 				348570A820F67575004FF32B /* OWSMessageHeaderView.m in Sources */,
 				450DF2091E0DD2C6003D14BE /* UserNotificationsAdaptee.swift in Sources */,
 				34B6A907218B5241007C4606 /* TypingIndicatorCell.swift in Sources */,
+				4A1FEEC92326944000D3A4FD /* RaAGBViewController.swift in Sources */,
 				4CFD151D22415AA400F2450F /* CallVideoHintView.swift in Sources */,
 				34D1F0AB1F867BFC0066283D /* OWSContactOffersCell.m in Sources */,
 				343A65981FC4CFE7000477A1 /* ConversationScrollButton.m in Sources */,
@@ -3739,6 +3961,7 @@
 				346E9D5421B040B700562252 /* RegistrationController.swift in Sources */,
 				340FC8AD204DAC8D007AEB0F /* OWSLinkedDevicesTableViewController.m in Sources */,
 				340FC8AA204DAC8D007AEB0F /* NotificationSettingsViewController.m in Sources */,
+				4A06024B232A6DF9001DB885 /* RaViewWithTextField.swift in Sources */,
 				4C090A1B210FD9C7001FD7F9 /* HapticFeedback.swift in Sources */,
 				3496744F2076ACD000080B5F /* LongTextViewController.swift in Sources */,
 				34B3F8931E8DF1710035BE1A /* SignalsNavigationController.m in Sources */,
@@ -3789,6 +4012,7 @@
 				4542DF54208D40AC007B4E76 /* LoadingViewController.swift in Sources */,
 				34D5CCA91EAE3D30005515DB /* AvatarViewHelper.m in Sources */,
 				34D1F0B71F87F8850066283D /* OWSGenericAttachmentView.m in Sources */,
+				4A7EAA452327CBBF0045750E /* RaExtentionString.swift in Sources */,
 				3448E15C22133274004B052E /* OnboardingPermissionsViewController.swift in Sources */,
 				34D920E720E179C200D51158 /* OWSMessageFooterView.m in Sources */,
 				341341EF2187467A00192D59 /* ConversationViewModel.m in Sources */,
@@ -3799,12 +4023,14 @@
 				4C13C9F620E57BA30089A98B /* ColorPickerViewController.swift in Sources */,
 				4CC1ECFB211A553000CC13BE /* AppUpdateNag.swift in Sources */,
 				3448E16022134C89004B052E /* OnboardingSplashViewController.swift in Sources */,
+				4A1FEEDC232695D300D3A4FD /* RaGradientButton.swift in Sources */,
 				34B6A903218B3F63007C4606 /* TypingIndicatorView.swift in Sources */,
 				458E38371D668EBF0094BD24 /* OWSDeviceProvisioningURLParser.m in Sources */,
 				34B6A905218B4C91007C4606 /* TypingIndicatorInteraction.swift in Sources */,
 				4517642B1DE939FD00EDB8B9 /* ContactCell.swift in Sources */,
 				34EA69402194933900702471 /* MediaDownloadView.swift in Sources */,
 				340FC8AB204DAC8D007AEB0F /* DomainFrontingCountryViewController.m in Sources */,
+				4A1FEEC82326944000D3A4FD /* RaWelcomeScreenViewController.swift in Sources */,
 				4C586926224FAB83003FD070 /* AVAudioSession+OWS.m in Sources */,
 				3496744D2076768700080B5F /* OWSMessageBubbleView.m in Sources */,
 				34B3F8751E8DF1700035BE1A /* CallViewController.swift in Sources */,
@@ -3831,6 +4057,7 @@
 				45FBC5D11DF8592E00E9B410 /* SignalCall.swift in Sources */,
 				340FC8BB204DAC8D007AEB0F /* OWSAddToContactViewController.m in Sources */,
 				34C2EEB92272244600BCA1D0 /* OWSMessageStickerView.m in Sources */,
+				4A1FEED2232695A400D3A4FD /* RaGradientExtentionUIView.swift in Sources */,
 				45F32C232057297A00A300D5 /* MediaPageViewController.swift in Sources */,
 				452C468F1E427E200087B011 /* OutboundCallInitiator.swift in Sources */,
 				34D2CCDA2062E7D000CB1A14 /* OWSScreenLockUI.m in Sources */,
@@ -3851,6 +4078,7 @@
 				34D1F0841F8678AA0066283D /* ConversationInputToolbar.m in Sources */,
 				457F671B20746193000EABCD /* QuotedReplyPreview.swift in Sources */,
 				34A6C28021E503E700B5B12E /* OWSImagePickerController.swift in Sources */,
+				4A1FEEDB232695D300D3A4FD /* RaTextField.swift in Sources */,
 				4C21D5D6223A9DC500EF8A77 /* UIAlerts+iOS9.m in Sources */,
 				34DBF004206BD5A500025978 /* OWSBubbleView.m in Sources */,
 				3496957021A301A100DCFE74 /* OWSBackupIO.m in Sources */,
@@ -3862,6 +4090,7 @@
 				340FC8B6204DAC8D007AEB0F /* OWSQRCodeScanningViewController.m in Sources */,
 				4CB5F26920F7D060004D1B42 /* MessageActions.swift in Sources */,
 				340FC8B5204DAC8D007AEB0F /* AboutTableViewController.m in Sources */,
+				4A1FEED0232695A400D3A4FD /* RaExtentionUIColor.swift in Sources */,
 				34BECE2B1F74C12700D7438D /* DebugUIStress.m in Sources */,
 				340FC8B9204DAC8D007AEB0F /* UpdateGroupViewController.m in Sources */,
 				3448E1662215B313004B052E /* OnboardingCaptchaViewController.swift in Sources */,
@@ -3874,6 +4103,7 @@
 				340FC8AE204DAC8D007AEB0F /* OWSSoundSettingsViewController.m in Sources */,
 				4579431E1E7C8CE9008ED0C0 /* Pastelog.m in Sources */,
 				340FC8B0204DAC8D007AEB0F /* AddToBlockListViewController.m in Sources */,
+				4A1FEEDA232695D300D3A4FD /* RaHeaderSearchView.swift in Sources */,
 				3496957321A301A100DCFE74 /* OWSBackupJob.m in Sources */,
 				340FC8B3204DAC8D007AEB0F /* AppSettingsViewController.m in Sources */,
 				34C4E2572118957600BEA353 /* OWSWebRTCDataProtos.pb.swift in Sources */,
@@ -4465,7 +4695,7 @@
 					"\"$(SRCROOT)/Libraries\"/**",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Signal/Signal-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4531,7 +4761,7 @@
 					"\"$(SRCROOT)/Libraries\"/**",
 				);
 				INFOPLIST_FILE = "$(SRCROOT)/Signal/Signal-Info.plist";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

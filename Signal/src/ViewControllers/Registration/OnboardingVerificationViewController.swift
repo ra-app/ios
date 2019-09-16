@@ -94,7 +94,7 @@ private class OnboardingCodeView: UIView {
         textfield.textAlignment = .left
         textfield.delegate = self
         textfield.keyboardType = .numberPad
-        textfield.textColor = Theme.primaryColor
+        textfield.textColor = /*Theme.primaryColor*/ UIColor(hexFromString: "#005AF5")
         textfield.font = UIFont.ows_dynamicTypeLargeTitle1Clamped
         textfield.codeDelegate = self
 
@@ -128,7 +128,7 @@ private class OnboardingCodeView: UIView {
         let digitLabel = UILabel()
         digitLabel.text = text
         digitLabel.font = UIFont.ows_dynamicTypeLargeTitle1Clamped
-        digitLabel.textColor = Theme.primaryColor
+        digitLabel.textColor = /*Theme.primaryColor*/UIColor(hexFromString: "#005AF5")
         digitLabel.textAlignment = .center
         digitView.addSubview(digitLabel)
         digitLabel.autoCenterInSuperview()
@@ -182,7 +182,7 @@ private class OnboardingCodeView: UIView {
     }
 
     func setHasError(_ hasError: Bool) {
-        let backgroundColor = (hasError ? UIColor.ows_destructiveRed : Theme.primaryColor)
+        let backgroundColor = (hasError ? UIColor.ows_destructiveRed : /*Theme.primaryColor*/UIColor(red: 106/255.0, green: 208/255.0, blue: 159/255.0, alpha: 1))
         for digitStroke in digitStrokes {
             digitStroke.backgroundColor = backgroundColor
         }
@@ -220,6 +220,7 @@ extension OnboardingCodeView: UITextFieldDelegate {
         self.delegate?.codeViewDidChange()
 
         // Inform our caller that we took care of performing the change.
+        
         return false
     }
 
@@ -248,6 +249,10 @@ extension OnboardingCodeView: OnboardingCodeViewTextFieldDelegate {
 @objc
 public class OnboardingVerificationViewController: OnboardingBaseViewController {
 
+    @IBOutlet var arrDigitLabel:[UILabel]!
+    @IBOutlet var labelVerifyMobileNr:UILabel!
+    @IBOutlet var headerView:UIView!
+    
     private enum CodeState {
         case sent
         case readyForResend
@@ -258,7 +263,7 @@ public class OnboardingVerificationViewController: OnboardingBaseViewController 
 
     private var codeState = CodeState.sent
 
-    private var titleLabel: UILabel?
+    private var titleLabel: UILabel!
     private var backLink: UIView?
     private let onboardingCodeView = OnboardingCodeView()
     private var codeStateLink: OWSFlatButton?
@@ -274,13 +279,16 @@ public class OnboardingVerificationViewController: OnboardingBaseViewController 
 
         view.backgroundColor = Theme.backgroundColor
         view.layoutMargins = .zero
-
-        let titleLabel = self.titleLabel(text: "")
-        self.titleLabel = titleLabel
-        titleLabel.accessibilityIdentifier = "onboarding.verification." + "titleLabel"
-
-        let backLink = self.linkButton(title: NSLocalizedString("ONBOARDING_VERIFICATION_BACK_LINK",
-                                                                comment: "Label for the link that lets users change their phone number in the onboarding views."),
+       
+        let headerView = self.getHeaderView()
+        self.view.addSubview(headerView)
+        
+//        let titleLabel = self.titleLabel(text: "")
+//        self.titleLabel = titleLabel
+//        titleLabel.accessibilityIdentifier = "onboarding.verification." + "titleLabel"
+//        titleLabel.setGradientForTitleView(gradientLayer: CAGradientLayer())
+        let backLink = self.linkButton(title: /*NSLocalizedString("ONBOARDING_VERIFICATION_BACK_LINK",
+                                                                comment: "Label for the link that lets users change their phone number in the onboarding views.")*/ "Mich stattdessen anrufen",
                                        selector: #selector(backLinkTapped))
         self.backLink = backLink
         backLink.accessibilityIdentifier = "onboarding.verification." + "backLink"
@@ -302,41 +310,112 @@ public class OnboardingVerificationViewController: OnboardingBaseViewController 
 
         let codeStateLink = self.linkButton(title: "",
                                              selector: #selector(resendCodeLinkTapped))
+        self.view.addSubview(codeStateLink)
         codeStateLink.enableMultilineLabel()
         self.codeStateLink = codeStateLink
         codeStateLink.accessibilityIdentifier = "onboarding.verification." + "codeStateLink"
 
-        let topSpacer = UIView.vStretchingSpacer()
-        let bottomSpacer = UIView.vStretchingSpacer()
+        self.view.addSubview(onboardingCodeView)
+        onboardingCodeView.autoPinEdge(.top, to: .bottom, of: headerView, withOffset: 100)
+        onboardingCodeView.autoSetDimension(.width, toSize: 240)
+        onboardingCodeView.autoSetDimension(.height, toSize: 30)
+        onboardingCodeView.autoHCenterInSuperview()
+        
+        codeStateLink.autoPinEdge(.top, to: .bottom, of: onboardingCodeView, withOffset: 50)
+        codeStateLink.autoPinWidthToSuperview()
+        codeStateLink.autoSetDimension(.height, toSize: 41)
+        codeStateLink.autoHCenterInSuperview()
+        
+//        let topSpacer = UIView.vStretchingSpacer()
+//        let bottomSpacer = UIView.vStretchingSpacer()
 
-        let stackView = UIStackView(arrangedSubviews: [
-            titleLabel,
-            UIView.spacer(withHeight: 12),
-            backLink,
-            topSpacer,
-            onboardingCodeView,
-            UIView.spacer(withHeight: 12),
-            errorRow,
-            bottomSpacer,
-            codeStateLink
-            ])
-        stackView.axis = .vertical
-        stackView.alignment = .fill
-        stackView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
-        stackView.isLayoutMarginsRelativeArrangement = true
-        view.addSubview(stackView)
-        stackView.autoPinWidthToSuperview()
-        stackView.autoPin(toTopLayoutGuideOf: self, withInset: 0)
-        autoPinView(toBottomOfViewControllerOrKeyboard: stackView, avoidNotch: true)
-
-        // Ensure whitespace is balanced, so inputs are vertically centered.
-        topSpacer.autoMatch(.height, to: .height, of: bottomSpacer)
+//        let stackView = UIStackView(arrangedSubviews: [
+//            /*titleLabel,
+//            UIView.spacer(withHeight: 12),*/
+//            backLink,
+//            topSpacer,
+//            onboardingCodeView,
+//            UIView.spacer(withHeight: 12),
+//            errorRow,
+//            bottomSpacer,
+//            codeStateLink
+//            ])
+//        stackView.axis = .vertical
+//        stackView.alignment = .fill
+//        stackView.layoutMargins = UIEdgeInsets(top: 16, left: 16, bottom: 16, right: 16)
+//        stackView.isLayoutMarginsRelativeArrangement = true
+//        view.addSubview(stackView)
+//        stackView.autoPinWidthToSuperview()
+//        //stackView.autoPin(toTo)
+//        stackView.autoPinEdge(.top, to: .bottom, of: headerView)
+//
+//        //stackView.autoPinEdge(toSuperviewEdge: .top)
+//        //stackView.autoPin(toTopLayoutGuideOf: self, withInset: 0)
+//        autoPinView(toBottomOfViewControllerOrKeyboard: stackView, avoidNotch: true)
+//
+//        // Ensure whitespace is balanced, so inputs are vertically centered.
+//        topSpacer.autoMatch(.height, to: .height, of: bottomSpacer)
 
         startCodeCountdown()
 
         updateCodeState()
 
         setHasInvalidCode(false)
+    }
+    
+    func getHeaderView()->UIView {
+        let headerView = RaCustomHeaderView()
+        self.view.addSubview(headerView)
+        // headerView.backgroundColor = .blue
+        //headerView.setGradientForTitleView(gradientLayer: CAGradientLayer())
+        headerView.autoSetDimension(.height, toSize: 172)
+        headerView.autoPinEdge(.top, to: .top, of: self.view)
+        //headerView.autoPinTopToSuperviewMargin()
+        headerView.autoPinWidthToSuperview()
+        
+        let gradient = CAGradientLayer()
+        
+        gradient.frame = headerView.bounds
+        gradient.colors = [UIColor.white.cgColor, UIColor.black.cgColor]
+        
+        headerView.layer.insertSublayer(gradient, at: 0)
+        
+        self.titleLabel = UILabel()
+         headerView.addSubview(self.titleLabel!)
+        self.titleLabel.autoPinEdge(.top, to: .top, of: headerView, withOffset: 55)
+        self.titleLabel.textAlignment = .center
+        self.titleLabel.font = UIFont(name: "Poppins-Bold", size: 17)
+        self.titleLabel.textColor = .white
+        
+        let subTitle1 = UILabel()
+        headerView.addSubview(subTitle1)
+        subTitle1.autoPinEdge(.top, to: .bottom, of: self.titleLabel, withOffset: 10.0)
+        subTitle1.numberOfLines = 2
+        subTitle1.font = UIFont(name: "Poppins", size: 14)
+        subTitle1.textColor = .white
+        subTitle1.text = "Bitte geben Sie den angegebenen\nVerifikationcode ein."         // ToDo Localization
+        subTitle1.textAlignment = .center
+        subTitle1.autoPinWidthToSuperview()
+        
+        let subTitle2 = UILabel()
+        headerView.addSubview(subTitle2)
+        subTitle2.autoPinEdge(.top, to: .bottom, of: subTitle1, withOffset: 10.0)
+        subTitle2.font = UIFont(name: "Poppins", size: 14)
+        subTitle2.textColor = .white
+        
+        
+        subTitle2.textAlignment = .center
+        subTitle2.autoPinWidthToSuperview()
+        self.titleLabel.autoPinWidthToSuperview()
+        
+        let underlineAttribute = [NSAttributedString.Key.underlineStyle: NSUnderlineStyle.single.rawValue]
+        let underlineAttributedString = NSAttributedString(string: "Falsche Telefonnummer?" , attributes: underlineAttribute)   // ToDo Localization
+        subTitle2.attributedText = underlineAttributedString
+        subTitle2.isUserInteractionEnabled = true
+        let tap = UITapGestureRecognizer(target: self, action: #selector(backLinkTapped))
+        subTitle2.addGestureRecognizer(tap)
+       
+        return headerView
     }
 
      // MARK: - Code State
@@ -406,17 +485,18 @@ public class OnboardingVerificationViewController: OnboardingBaseViewController 
         }
         let formattedPhoneNumber = PhoneNumber.bestEffortLocalizedPhoneNumber(withE164: e164PhoneNumber)
 
+        titleLabel.text = formattedPhoneNumber + " verifizieren"         // ToDo Localization
         // Update titleLabel
-        switch codeState {
-        case .sent, .readyForResend:
-            titleLabel.text = String(format: NSLocalizedString("ONBOARDING_VERIFICATION_TITLE_DEFAULT_FORMAT",
-                                                               comment: "Format for the title of the 'onboarding verification' view. Embeds {{the user's phone number}}."),
-                                     formattedPhoneNumber)
-        case .resent:
-            titleLabel.text = String(format: NSLocalizedString("ONBOARDING_VERIFICATION_TITLE_RESENT_FORMAT",
-                                                               comment: "Format for the title of the 'onboarding verification' view after the verification code has been resent. Embeds {{the user's phone number}}."),
-                                     formattedPhoneNumber)
-        }
+//        switch codeState {
+//        case .sent, .readyForResend:
+//            titleLabel.text = String(format: NSLocalizedString("ONBOARDING_VERIFICATION_TITLE_DEFAULT_FORMAT",
+//                                                               comment: "Format for the title of the 'onboarding verification' view. Embeds {{the user's phone number}}."),
+//                                     formattedPhoneNumber)
+//        case .resent:
+//            titleLabel.text = String(format: NSLocalizedString("ONBOARDING_VERIFICATION_TITLE_RESENT_FORMAT",
+//                                                               comment: "Format for the title of the 'onboarding verification' view after the verification code has been resent. Embeds {{the user's phone number}}."),
+//                                     formattedPhoneNumber)
+//        }
 
         // Update codeStateLink
         switch codeState {
@@ -424,10 +504,12 @@ public class OnboardingVerificationViewController: OnboardingBaseViewController 
             let countdownInterval = abs(codeCountdownStart.timeIntervalSinceNow)
             let countdownRemaining = max(0, countdownDuration - countdownInterval)
             let formattedCountdown = OWSFormat.formatDurationSeconds(Int(round(countdownRemaining)))
-            let text = String(format: NSLocalizedString("ONBOARDING_VERIFICATION_CODE_COUNTDOWN_FORMAT",
-                                                        comment: "Format for the label of the 'sent code' label of the 'onboarding verification' view. Embeds {{the time until the code can be resent}}."),
-                              formattedCountdown)
-            codeStateLink.setTitle(title: text, font: .ows_dynamicTypeBodyClamped, titleColor: Theme.secondaryColor)
+            //let text = String(format: NSLocalizedString("ONBOARDING_VERIFICATION_CODE_COUNTDOWN_FORMAT",
+            //                                            comment: "Format for the label of the 'sent code' label of the 'onboarding verification' view. Embeds {{the time until the code can be resent}}."),
+            //                  formattedCountdown)
+            let text = String(format:"Mich stattdessen anrufen\n(Verfügbar in %@)", formattedCountdown)             // ToDo Localization
+            
+            codeStateLink.setTitle(title: text, font: /*.ows_dynamicTypeBodyClamped*/UIFont(name: "Poppins", size: 14)!, titleColor: /*Theme.secondaryColor*/UIColor(hexFromString: "#005AF5"))
         case .readyForResend:
             codeStateLink.setTitle(title: NSLocalizedString("ONBOARDING_VERIFICATION_ORIGINAL_CODE_MISSING_LINK",
                                                             comment: "Label for link that can be used when the original code did not arrive."),
@@ -465,7 +547,8 @@ public class OnboardingVerificationViewController: OnboardingBaseViewController 
             // Ignore taps until the countdown expires.
             break
         case .readyForResend, .resent:
-            showResendActionSheet()
+            /*showResendActionSheet()*/
+            self.onboardingController.requestVerification(fromViewController: self, isSMS: false)
         }
     }
 

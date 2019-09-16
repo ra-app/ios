@@ -19,6 +19,15 @@ public class OnboardingBaseViewController: OWSViewController {
 
         self.shouldUseTheme = false
     }
+    
+    @objc
+    public init(onboardingController: OnboardingController, nibName:String) {
+        self.onboardingController = onboardingController
+        
+        super.init(nibName: nibName, bundle: nil)
+        
+        self.shouldUseTheme = false
+    }
 
     @available(*, unavailable, message: "use other init() instead.")
     required public init?(coder aDecoder: NSCoder) {

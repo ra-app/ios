@@ -2,17 +2,17 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "AvatarDefault-2.png",
+      "filename" : "icon-picture-add-200.png",
       "scale" : "1x"
     },
     {
       "idiom" : "universal",
-      "filename" : "AvatarDefault.png",
+      "filename" : "icon-picture-add-201.png",
       "scale" : "2x"
     },
     {
       "idiom" : "universal",
-      "filename" : "AvatarDefault-1.png",
+      "filename" : "icon-picture-add-202.png",
       "scale" : "3x"
     }
   ],

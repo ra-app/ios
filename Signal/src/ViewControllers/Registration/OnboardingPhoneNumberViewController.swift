@@ -17,9 +17,10 @@ public class OnboardingPhoneNumberViewController: OnboardingBaseViewController {
     // MARK: -
 
     private let countryNameLabel = UILabel()
-    private let callingCodeLabel = UILabel()
-    private let phoneNumberTextField = UITextField()
-    private var nextButton: OWSFlatButton?
+    @IBOutlet  var callingCodeLabel : UILabel!
+    @IBOutlet  var phoneNumberTextField : UITextField!
+    @IBOutlet  var  nextButton : RaGradientButton!
+    @IBOutlet var headerView:UIView!
     private var phoneStrokeNormal: UIView?
     private var phoneStrokeError: UIView?
     private let validationWarningLabel = UILabel()
@@ -27,123 +28,125 @@ public class OnboardingPhoneNumberViewController: OnboardingBaseViewController {
 
     override public func loadView() {
         super.loadView()
-
+        
+        self.headerView.setGradientForTitleView(gradientLayer: CAGradientLayer())
+        
         populateDefaults()
 
-        view.backgroundColor = Theme.backgroundColor
-        view.layoutMargins = .zero
-
-        let titleLabel = self.titleLabel(text: NSLocalizedString("ONBOARDING_PHONE_NUMBER_TITLE", comment: "Title of the 'onboarding phone number' view."))
-        titleLabel.accessibilityIdentifier = "onboarding.phoneNumber." + "titleLabel"
-
-        // Country
-
-        let rowHeight: CGFloat = 40
-
-        countryNameLabel.textColor = Theme.primaryColor
-        countryNameLabel.font = UIFont.ows_dynamicTypeBodyClamped
-        countryNameLabel.setContentHuggingHorizontalLow()
-        countryNameLabel.setCompressionResistanceHorizontalLow()
-        countryNameLabel.accessibilityIdentifier = "onboarding.phoneNumber." + "countryNameLabel"
-
-        let countryIcon = UIImage(named: (CurrentAppContext().isRTL
-            ? "small_chevron_left"
-            : "small_chevron_right"))
-        let countryImageView = UIImageView(image: countryIcon?.withRenderingMode(.alwaysTemplate))
-        countryImageView.tintColor = Theme.placeholderColor
-        countryImageView.setContentHuggingHigh()
-        countryImageView.setCompressionResistanceHigh()
-        countryImageView.accessibilityIdentifier = "onboarding.phoneNumber." + "countryImageView"
-
-        let countryRow = UIStackView(arrangedSubviews: [
-            countryNameLabel,
-            countryImageView
-            ])
-        countryRow.axis = .horizontal
-        countryRow.alignment = .center
-        countryRow.spacing = 10
-        countryRow.isUserInteractionEnabled = true
-        countryRow.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(countryRowTapped)))
-        countryRow.autoSetDimension(.height, toSize: rowHeight)
-        _ = countryRow.addBottomStroke()
-        countryRow.accessibilityIdentifier = "onboarding.phoneNumber." + "countryRow"
-
-        callingCodeLabel.textColor = Theme.primaryColor
-        callingCodeLabel.font = UIFont.ows_dynamicTypeBodyClamped
-        callingCodeLabel.setContentHuggingHorizontalHigh()
-        callingCodeLabel.setCompressionResistanceHorizontalHigh()
-        callingCodeLabel.isUserInteractionEnabled = true
-        callingCodeLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(countryCodeTapped)))
-        _ = callingCodeLabel.addBottomStroke()
-        callingCodeLabel.autoSetDimension(.width, toSize: rowHeight, relation: .greaterThanOrEqual)
-        callingCodeLabel.accessibilityIdentifier = "onboarding.phoneNumber." + "callingCodeLabel"
-
-        phoneNumberTextField.textAlignment = .left
-        phoneNumberTextField.delegate = self
-        phoneNumberTextField.keyboardType = .numberPad
-        phoneNumberTextField.textColor = Theme.primaryColor
-        phoneNumberTextField.font = UIFont.ows_dynamicTypeBodyClamped
-        phoneNumberTextField.setContentHuggingHorizontalLow()
-        phoneNumberTextField.setCompressionResistanceHorizontalLow()
-        phoneNumberTextField.accessibilityIdentifier = "onboarding.phoneNumber." + "phoneNumberTextField"
-
-        phoneStrokeNormal = phoneNumberTextField.addBottomStroke()
-        phoneStrokeError = phoneNumberTextField.addBottomStroke(color: .ows_destructiveRed, strokeWidth: 2)
-
-        let phoneNumberRow = UIStackView(arrangedSubviews: [
-            callingCodeLabel,
-            phoneNumberTextField
-            ])
-        phoneNumberRow.axis = .horizontal
-        phoneNumberRow.alignment = .fill
-        phoneNumberRow.spacing = 10
-        phoneNumberRow.autoSetDimension(.height, toSize: rowHeight)
-        callingCodeLabel.autoMatch(.height, to: .height, of: phoneNumberTextField)
-
-        validationWarningLabel.text = NSLocalizedString("ONBOARDING_PHONE_NUMBER_VALIDATION_WARNING",
-                                                        comment: "Label indicating that the phone number is invalid in the 'onboarding phone number' view.")
-        validationWarningLabel.textColor = .ows_destructiveRed
-        validationWarningLabel.font = UIFont.ows_dynamicTypeSubheadlineClamped
-        validationWarningLabel.autoSetDimension(.height, toSize: validationWarningLabel.font.lineHeight)
-        validationWarningLabel.accessibilityIdentifier = "onboarding.phoneNumber." + "validationWarningLabel"
-
-        let validationWarningRow = UIView()
-        validationWarningRow.addSubview(validationWarningLabel)
-        validationWarningLabel.autoPinHeightToSuperview()
-        validationWarningLabel.autoPinEdge(toSuperviewEdge: .trailing)
-
-        let nextButton = self.button(title: NSLocalizedString("BUTTON_NEXT",
-                                                                comment: "Label for the 'next' button."),
-                                           selector: #selector(nextPressed))
-        nextButton.accessibilityIdentifier = "onboarding.phoneNumber." + "nextButton"
-        self.nextButton = nextButton
-        let topSpacer = UIView.vStretchingSpacer()
-        let bottomSpacer = UIView.vStretchingSpacer()
-
-        let stackView = UIStackView(arrangedSubviews: [
-            titleLabel,
-            topSpacer,
-            countryRow,
-            UIView.spacer(withHeight: 8),
-            phoneNumberRow,
-            UIView.spacer(withHeight: 8),
-            validationWarningRow,
-            bottomSpacer,
-            nextButton
-            ])
-        stackView.axis = .vertical
-        stackView.alignment = .fill
-        stackView.layoutMargins = UIEdgeInsets(top: 32, left: 32, bottom: 32, right: 32)
-        stackView.isLayoutMarginsRelativeArrangement = true
-        view.addSubview(stackView)
-        stackView.autoPinWidthToSuperview()
-        stackView.autoPin(toTopLayoutGuideOf: self, withInset: 0)
-        autoPinView(toBottomOfViewControllerOrKeyboard: stackView, avoidNotch: true)
-
-        // Ensure whitespace is balanced, so inputs are vertically centered.
-        topSpacer.autoMatch(.height, to: .height, of: bottomSpacer)
-
-        validationWarningLabel.autoPinEdge(.leading, to: .leading, of: phoneNumberTextField)
+//        view.backgroundColor = Theme.backgroundColor
+//        view.layoutMargins = .zero
+//
+//        let titleLabel = self.titleLabel(text: NSLocalizedString("ONBOARDING_PHONE_NUMBER_TITLE", comment: "Title of the 'onboarding phone number' view."))
+//        titleLabel.accessibilityIdentifier = "onboarding.phoneNumber." + "titleLabel"
+//
+//        // Country
+//
+//        let rowHeight: CGFloat = 40
+//
+//        countryNameLabel.textColor = Theme.primaryColor
+//        countryNameLabel.font = UIFont.ows_dynamicTypeBodyClamped
+//        countryNameLabel.setContentHuggingHorizontalLow()
+//        countryNameLabel.setCompressionResistanceHorizontalLow()
+//        countryNameLabel.accessibilityIdentifier = "onboarding.phoneNumber." + "countryNameLabel"
+//
+//        let countryIcon = UIImage(named: (CurrentAppContext().isRTL
+//            ? "small_chevron_left"
+//            : "small_chevron_right"))
+//        let countryImageView = UIImageView(image: countryIcon?.withRenderingMode(.alwaysTemplate))
+//        countryImageView.tintColor = Theme.placeholderColor
+//        countryImageView.setContentHuggingHigh()
+//        countryImageView.setCompressionResistanceHigh()
+//        countryImageView.accessibilityIdentifier = "onboarding.phoneNumber." + "countryImageView"
+//
+//        let countryRow = UIStackView(arrangedSubviews: [
+//            countryNameLabel,
+//            countryImageView
+//            ])
+//        countryRow.axis = .horizontal
+//        countryRow.alignment = .center
+//        countryRow.spacing = 10
+//        countryRow.isUserInteractionEnabled = true
+//        countryRow.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(countryRowTapped)))
+//        countryRow.autoSetDimension(.height, toSize: rowHeight)
+//        _ = countryRow.addBottomStroke()
+//        countryRow.accessibilityIdentifier = "onboarding.phoneNumber." + "countryRow"
+//
+//        callingCodeLabel.textColor = Theme.primaryColor
+//        callingCodeLabel.font = UIFont.ows_dynamicTypeBodyClamped
+//        callingCodeLabel.setContentHuggingHorizontalHigh()
+//        callingCodeLabel.setCompressionResistanceHorizontalHigh()
+//        callingCodeLabel.isUserInteractionEnabled = true
+//        callingCodeLabel.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(countryCodeTapped)))
+//        _ = callingCodeLabel.addBottomStroke()
+//        callingCodeLabel.autoSetDimension(.width, toSize: rowHeight, relation: .greaterThanOrEqual)
+//        callingCodeLabel.accessibilityIdentifier = "onboarding.phoneNumber." + "callingCodeLabel"
+//
+//        phoneNumberTextField.textAlignment = .left
+//        phoneNumberTextField.delegate = self
+//        phoneNumberTextField.keyboardType = .numberPad
+//        phoneNumberTextField.textColor = Theme.primaryColor
+//        phoneNumberTextField.font = UIFont.ows_dynamicTypeBodyClamped
+//        phoneNumberTextField.setContentHuggingHorizontalLow()
+//        phoneNumberTextField.setCompressionResistanceHorizontalLow()
+//        phoneNumberTextField.accessibilityIdentifier = "onboarding.phoneNumber." + "phoneNumberTextField"
+//
+//        phoneStrokeNormal = phoneNumberTextField.addBottomStroke()
+//        phoneStrokeError = phoneNumberTextField.addBottomStroke(color: .ows_destructiveRed, strokeWidth: 2)
+//
+//        let phoneNumberRow = UIStackView(arrangedSubviews: [
+//            callingCodeLabel,
+//            phoneNumberTextField
+//            ])
+//        phoneNumberRow.axis = .horizontal
+//        phoneNumberRow.alignment = .fill
+//        phoneNumberRow.spacing = 10
+//        phoneNumberRow.autoSetDimension(.height, toSize: rowHeight)
+//        callingCodeLabel.autoMatch(.height, to: .height, of: phoneNumberTextField)
+//
+//        validationWarningLabel.text = NSLocalizedString("ONBOARDING_PHONE_NUMBER_VALIDATION_WARNING",
+//                                                        comment: "Label indicating that the phone number is invalid in the 'onboarding phone number' view.")
+//        validationWarningLabel.textColor = .ows_destructiveRed
+//        validationWarningLabel.font = UIFont.ows_dynamicTypeSubheadlineClamped
+//        validationWarningLabel.autoSetDimension(.height, toSize: validationWarningLabel.font.lineHeight)
+//        validationWarningLabel.accessibilityIdentifier = "onboarding.phoneNumber." + "validationWarningLabel"
+//
+//        let validationWarningRow = UIView()
+//        validationWarningRow.addSubview(validationWarningLabel)
+//        validationWarningLabel.autoPinHeightToSuperview()
+//        validationWarningLabel.autoPinEdge(toSuperviewEdge: .trailing)
+//
+//        let nextButton = self.button(title: NSLocalizedString("BUTTON_NEXT",
+//                                                                comment: "Label for the 'next' button."),
+//                                           selector: #selector(nextPressed))
+//        nextButton.accessibilityIdentifier = "onboarding.phoneNumber." + "nextButton"
+//        self.nextButton = nextButton
+//        let topSpacer = UIView.vStretchingSpacer()
+//        let bottomSpacer = UIView.vStretchingSpacer()
+//
+//        let stackView = UIStackView(arrangedSubviews: [
+//            titleLabel,
+//            topSpacer,
+//            countryRow,
+//            UIView.spacer(withHeight: 8),
+//            phoneNumberRow,
+//            UIView.spacer(withHeight: 8),
+//            validationWarningRow,
+//            bottomSpacer,
+//            nextButton
+//            ])
+//        stackView.axis = .vertical
+//        stackView.alignment = .fill
+//        stackView.layoutMargins = UIEdgeInsets(top: 32, left: 32, bottom: 32, right: 32)
+//        stackView.isLayoutMarginsRelativeArrangement = true
+//        view.addSubview(stackView)
+//        stackView.autoPinWidthToSuperview()
+//        stackView.autoPin(toTopLayoutGuideOf: self, withInset: 0)
+//        autoPinView(toBottomOfViewControllerOrKeyboard: stackView, avoidNotch: true)
+//
+//        // Ensure whitespace is balanced, so inputs are vertically centered.
+//        topSpacer.autoMatch(.height, to: .height, of: bottomSpacer)
+//
+//        validationWarningLabel.autoPinEdge(.leading, to: .leading, of: phoneNumberTextField)
     }
 
     // MARK: - View Lifecycle
@@ -271,10 +274,23 @@ public class OnboardingPhoneNumberViewController: OnboardingBaseViewController {
 
         countryNameLabel.text = countryName
         callingCodeLabel.text = callingCode
-
+        self.callingCodeLabel.attributedText = getCountryNameCodeString()
+        
         self.phoneNumberTextField.placeholder = ViewControllerUtils.examplePhoneNumber(forCountryCode: countryCode, callingCode: callingCode)
 
         updateValidationWarnings()
+    }
+    
+    private func getCountryNameCodeString()->NSAttributedString {
+        let sLabelText = countryCode.localizedUppercase + " ▼ " + callingCode
+        let blueColor = UIColor(red: 0, green: 62.0/255.0, blue: 240.0/255.0, alpha: 1.0)
+        let attribStr = NSMutableAttributedString(string:sLabelText)
+        
+        
+        attribStr.addAttribute(.foregroundColor, value: blueColor, range: NSRange(location: 0, length: countryCode.localizedUppercase.count + 2))
+        attribStr.addAttribute(.font, value: UIFont.systemFont(ofSize: 10), range: NSRange(location: countryCode.localizedUppercase.count + 1, length: 1))
+        
+        return attribStr
     }
 
     private func updateValidationWarnings() {
@@ -294,14 +310,14 @@ public class OnboardingPhoneNumberViewController: OnboardingBaseViewController {
         showCountryPicker()
     }
 
-    @objc func countryCodeTapped(sender: UIGestureRecognizer) {
+    @IBAction @objc func countryCodeTapped(sender: UIGestureRecognizer) {
         guard sender.state == .recognized else {
             return
         }
         showCountryPicker()
     }
 
-    @objc func nextPressed() {
+    @IBAction @objc func nextPressed() {
         Logger.info("")
 
         parseAndTryToRegister()

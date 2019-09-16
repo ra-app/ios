@@ -1,5 +1,5 @@
 //
-//  Copyright (c) 2019 Open Whisper Systems. All rights reserved.
+//  Copyright (c) 2018 Open Whisper Systems. All rights reserved.
 //
 
 #import "ProfileViewController.h"
@@ -23,10 +23,10 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef NS_ENUM(NSInteger, ProfileViewMode) {
-    ProfileViewMode_AppSettings = 0,
-    ProfileViewMode_Registration,
-};
+//typedef NS_ENUM(NSInteger, ProfileViewMode) {
+//    ProfileViewMode_AppSettings = 0,
+//    ProfileViewMode_Registration,
+//};
 
 NSString *const kProfileView_Collection = @"kProfileView_Collection";
 NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDate";
@@ -35,9 +35,9 @@ NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDat
 
 @property (nonatomic, readonly) AvatarViewHelper *avatarViewHelper;
 
-@property (nonatomic) UITextField *nameTextField;
+//@property (nonatomic) UITextField *nameTextField;
 
-@property (nonatomic) AvatarImageView *avatarView;
+//@property (nonatomic) IBOutlet AvatarImageView *avatarView;
 
 @property (nonatomic) UIImageView *cameraImageView;
 
@@ -48,12 +48,34 @@ NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDat
 @property (nonatomic) BOOL hasUnsavedChanges;
 
 @property (nonatomic) ProfileViewMode profileViewMode;
+@property (strong, nonatomic) IBOutlet RaTextField *raTextFieldName;
+@property (strong, nonatomic) IBOutlet UILabel *raLabelPlsAddAvatar;
+@property (strong, nonatomic) IBOutlet RaGradientButton *btnFinish;
+@property (strong, nonatomic) IBOutlet UIView *raHeaderView;
+@property (strong, nonatomic) IBOutlet UIImageView *raAvatarImageView;
 
 @end
 
 #pragma mark -
 
 @implementation ProfileViewController
+
+
+- (instancetype)initWithNibName:(nullable NSString *)nibNameOrNil bundle:(nullable NSBundle *)nibBundleOrNil andMode:(ProfileViewMode)profileViewMode
+{
+    self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+    if (!self) {
+        return self;
+    }
+    
+    self.profileViewMode = profileViewMode;
+    
+    [[[OWSPrimaryStorage sharedManager] dbReadWriteConnection] setDate:[NSDate new]
+                                                                forKey:kProfileView_LastPresentedDate
+                                                          inCollection:kProfileView_Collection];
+    
+    return self;
+}
 
 - (instancetype)initWithMode:(ProfileViewMode)profileViewMode
 {
@@ -76,20 +98,20 @@ NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDat
 - (void)loadView
 {
     [super loadView];
-
+    
     self.title = NSLocalizedString(@"PROFILE_VIEW_TITLE", @"Title for the profile view.");
-
+    
     _avatarViewHelper = [AvatarViewHelper new];
     _avatarViewHelper.delegate = self;
-
+    
     _avatar = [OWSProfileManager.sharedManager localProfileAvatarImage];
-
+    
     [self createViews];
     [self updateNavigationItem];
-
+    
     if (self.profileViewMode == ProfileViewMode_Registration) {
         // mark as dirty if re-registration has content
-        if (self.nameTextField.text.length > 0 || self.avatar != nil) {
+        if (self.raTextFieldName.textField.text.length > 0 || self.avatar != nil) {
             self.hasUnsavedChanges = YES;
         }
     }
@@ -97,190 +119,195 @@ NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDat
 
 - (void)createViews
 {
+    
+    self.raTextFieldName.textField.text = [OWSProfileManager.sharedManager localProfileName];
+    [self.raTextFieldName.textField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     self.view.backgroundColor = Theme.offBackgroundColor;
+    
+    [self updateAvatarView];
 
-    UIView *contentView = [UIView containerView];
-    contentView.backgroundColor = Theme.backgroundColor;
-    [self.view addSubview:contentView];
-    [contentView autoPinToTopLayoutGuideOfViewController:self withInset:0];
-    [contentView autoPinWidthToSuperview];
+//    UIView *contentView = [UIView containerView];
+//    contentView.backgroundColor = Theme.backgroundColor;
+//    [self.view addSubview:contentView];
+//    [contentView autoPinToTopLayoutGuideOfViewController:self withInset:0];
+//    [contentView autoPinWidthToSuperview];
+//
+//    const CGFloat fontSizePoints = ScaleFromIPhone5To7Plus(16.f, 20.f);
+//    NSMutableArray<UIView *> *rows = [NSMutableArray new];
+//
+//    // Name
+//
+//    UIView *nameRow = [UIView containerView];
+//    nameRow.userInteractionEnabled = YES;
+//    [nameRow
+//        addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(nameRowTapped:)]];
+//    [rows addObject:nameRow];
+//
+//    UILabel *nameLabel = [UILabel new];
+//    nameLabel.text = NSLocalizedString(
+//        @"PROFILE_VIEW_PROFILE_NAME_FIELD", @"Label for the profile name field of the profile view.");
+//    nameLabel.textColor = Theme.primaryColor;
+//    nameLabel.font = [UIFont ows_mediumFontWithSize:fontSizePoints];
+//    [nameRow addSubview:nameLabel];
+//    [nameLabel autoPinLeadingToSuperviewMargin];
+//    [nameLabel autoPinHeightToSuperviewWithMargin:5.f];
 
-    const CGFloat fontSizePoints = ScaleFromIPhone5To7Plus(16.f, 20.f);
-    NSMutableArray<UIView *> *rows = [NSMutableArray new];
-
-    // Name
-
-    UIView *nameRow = [UIView containerView];
-    nameRow.userInteractionEnabled = YES;
-    [nameRow
-        addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(nameRowTapped:)]];
-    nameRow.accessibilityIdentifier = ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"nameRow");
-    [rows addObject:nameRow];
-
-    UILabel *nameLabel = [UILabel new];
-    nameLabel.text = NSLocalizedString(
-        @"PROFILE_VIEW_PROFILE_NAME_FIELD", @"Label for the profile name field of the profile view.");
-    nameLabel.textColor = Theme.primaryColor;
-    nameLabel.font = [UIFont ows_mediumFontWithSize:fontSizePoints];
-    [nameRow addSubview:nameLabel];
-    [nameLabel autoPinLeadingToSuperviewMargin];
-    [nameLabel autoPinHeightToSuperviewWithMargin:5.f];
-
-    UITextField *nameTextField;
-    if (UIDevice.currentDevice.isShorterThanIPhone5) {
-        nameTextField = [DismissableTextField new];
-    } else {
-        nameTextField = [OWSTextField new];
-    }
-    _nameTextField = nameTextField;
-    nameTextField.font = [UIFont ows_mediumFontWithSize:18.f];
-    nameTextField.textColor = [UIColor ows_materialBlueColor];
-    nameTextField.placeholder = NSLocalizedString(
-        @"PROFILE_VIEW_NAME_DEFAULT_TEXT", @"Default text for the profile name field of the profile view.");
-    nameTextField.delegate = self;
-    nameTextField.text = [OWSProfileManager.sharedManager localProfileName];
-    nameTextField.textAlignment = NSTextAlignmentRight;
-    nameTextField.font = [UIFont ows_mediumFontWithSize:fontSizePoints];
-    SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, nameTextField);
-    [nameTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
-    [nameRow addSubview:nameTextField];
-    [nameTextField autoPinLeadingToTrailingEdgeOfView:nameLabel offset:10.f];
-    [nameTextField autoPinTrailingToSuperviewMargin];
-    [nameTextField autoVCenterInSuperview];
+//    UITextField *nameTextField;
+//    if (UIDevice.currentDevice.isShorterThanIPhone5) {
+//        nameTextField = [DismissableTextField new];
+//    } else {
+//        nameTextField = [OWSTextField new];
+//    }
+//    _nameTextField = nameTextField;
+//    nameTextField.font = [UIFont ows_mediumFontWithSize:18.f];
+//    nameTextField.textColor = [UIColor ows_materialBlueColor];
+//    nameTextField.placeholder = NSLocalizedString(
+//        @"PROFILE_VIEW_NAME_DEFAULT_TEXT", @"Default text for the profile name field of the profile view.");
+//    nameTextField.delegate = self;
+//    nameTextField.text = [OWSProfileManager.sharedManager localProfileName];
+//    nameTextField.textAlignment = NSTextAlignmentRight;
+//    nameTextField.font = [UIFont ows_mediumFontWithSize:fontSizePoints];
+//    [nameTextField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
+//    [nameRow addSubview:nameTextField];
+//    [nameTextField autoPinLeadingToTrailingEdgeOfView:nameLabel offset:10.f];
+//    [nameTextField autoPinTrailingToSuperviewMargin];
+//    [nameTextField autoVCenterInSuperview];
 
     // Avatar
+//
+//    UIView *avatarRow = [UIView containerView];
+//    avatarRow.userInteractionEnabled = YES;
+//    [avatarRow
+//        addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(avatarRowTapped:)]];
+//    [rows addObject:avatarRow];
+//
+//    UILabel *avatarLabel = [UILabel new];
+//    avatarLabel.text = NSLocalizedString(
+//        @"PROFILE_VIEW_PROFILE_AVATAR_FIELD", @"Label for the profile avatar field of the profile view.");
+//    avatarLabel.textColor = Theme.primaryColor;
+//    avatarLabel.font = [UIFont ows_mediumFontWithSize:fontSizePoints];
+//    [avatarRow addSubview:avatarLabel];
+//    [avatarLabel autoPinLeadingToSuperviewMargin];
+//    [avatarLabel autoVCenterInSuperview];
 
-    UIView *avatarRow = [UIView containerView];
-    avatarRow.userInteractionEnabled = YES;
-    [avatarRow
-        addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(avatarRowTapped:)]];
-    avatarRow.accessibilityIdentifier = ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"avatarRow");
-    [rows addObject:avatarRow];
-
-    UILabel *avatarLabel = [UILabel new];
-    avatarLabel.text = NSLocalizedString(
-        @"PROFILE_VIEW_PROFILE_AVATAR_FIELD", @"Label for the profile avatar field of the profile view.");
-    avatarLabel.textColor = Theme.primaryColor;
-    avatarLabel.font = [UIFont ows_mediumFontWithSize:fontSizePoints];
-    [avatarRow addSubview:avatarLabel];
-    [avatarLabel autoPinLeadingToSuperviewMargin];
-    [avatarLabel autoVCenterInSuperview];
-
-    self.avatarView = [AvatarImageView new];
-    self.avatarView.accessibilityIdentifier = ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"avatarView");
-
-    UIImage *cameraImage = [UIImage imageNamed:@"settings-avatar-camera"];
-    self.cameraImageView = [[UIImageView alloc] initWithImage:cameraImage];
-    
-    [avatarRow addSubview:self.avatarView];
-    [avatarRow addSubview:self.cameraImageView];
-    [self updateAvatarView];
-    [self.avatarView autoPinTrailingToSuperviewMargin];
-    [self.avatarView autoPinLeadingToTrailingEdgeOfView:avatarLabel offset:10.f];
-    const CGFloat kAvatarVMargin = 4.f;
-    [self.avatarView autoPinEdgeToSuperviewEdge:ALEdgeTop withInset:kAvatarVMargin];
-    [self.avatarView autoPinEdgeToSuperviewEdge:ALEdgeBottom withInset:kAvatarVMargin];
-    [self.avatarView autoSetDimension:ALDimensionWidth toSize:self.avatarSize];
-    [self.avatarView autoSetDimension:ALDimensionHeight toSize:self.avatarSize];
-    [self.cameraImageView autoPinTrailingToEdgeOfView:self.avatarView];
-    [self.cameraImageView autoPinEdge:ALEdgeBottom toEdge:ALEdgeBottom ofView:self.avatarView];
+//    self.avatarView = [AvatarImageView new];
+//
+//    UIImage *cameraImage = [UIImage imageNamed:@"settings-avatar-camera"];
+//    self.cameraImageView = [[UIImageView alloc] initWithImage:cameraImage];
+//
+//    [avatarRow addSubview:self.avatarView];
+//    [avatarRow addSubview:self.cameraImageView];
+//    [self updateAvatarView];
+//    [self.avatarView autoPinTrailingToSuperviewMargin];
+//    [self.avatarView autoPinLeadingToTrailingEdgeOfView:avatarLabel offset:10.f];
+//    const CGFloat kAvatarSizePoints = 50.f;
+//    const CGFloat kAvatarVMargin = 4.f;
+//    [self.avatarView autoPinEdgeToSuperviewEdge:ALEdgeTop withInset:kAvatarVMargin];
+//    [self.avatarView autoPinEdgeToSuperviewEdge:ALEdgeBottom withInset:kAvatarVMargin];
+//    [self.avatarView autoSetDimension:ALDimensionWidth toSize:kAvatarSizePoints];
+//    [self.avatarView autoSetDimension:ALDimensionHeight toSize:kAvatarSizePoints];
+//    [self.cameraImageView autoPinTrailingToEdgeOfView:self.avatarView];
+//    [self.cameraImageView autoPinEdge:ALEdgeBottom toEdge:ALEdgeBottom ofView:self.avatarView];
 
     // Information
 
-    UIView *infoRow = [UIView containerView];
-    infoRow.userInteractionEnabled = YES;
-    [infoRow
-        addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(infoRowTapped:)]];
-    infoRow.accessibilityIdentifier = ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"infoRow");
-    [rows addObject:infoRow];
-
-    UILabel *infoLabel = [UILabel new];
-    infoLabel.textColor = Theme.secondaryColor;
-    infoLabel.font = [UIFont ows_regularFontWithSize:11.f];
-    infoLabel.textAlignment = NSTextAlignmentCenter;
-    NSMutableAttributedString *text = [NSMutableAttributedString new];
-    [text appendAttributedString:[[NSAttributedString alloc]
-                                     initWithString:NSLocalizedString(@"PROFILE_VIEW_PROFILE_DESCRIPTION",
-                                                        @"Description of the user profile.")
-                                         attributes:@{}]];
-    [text appendAttributedString:[[NSAttributedString alloc] initWithString:@" " attributes:@{}]];
-    [text appendAttributedString:[[NSAttributedString alloc]
-                                     initWithString:NSLocalizedString(@"PROFILE_VIEW_PROFILE_DESCRIPTION_LINK",
-                                                        @"Link to more information about the user profile.")
-                                         attributes:@{
-                                             NSUnderlineStyleAttributeName :
-                                                 @(NSUnderlineStyleSingle | NSUnderlinePatternSolid),
-                                             NSForegroundColorAttributeName : [UIColor ows_materialBlueColor],
-                                         }]];
-    infoLabel.attributedText = text;
-    infoLabel.numberOfLines = 0;
-    infoLabel.lineBreakMode = NSLineBreakByWordWrapping;
-    [infoRow addSubview:infoLabel];
-    [infoLabel autoPinLeadingToSuperviewMargin];
-    [infoLabel autoPinTrailingToSuperviewMargin];
-    [infoLabel autoPinEdgeToSuperviewEdge:ALEdgeTop withInset:10.f];
-    [infoLabel autoPinEdgeToSuperviewEdge:ALEdgeBottom withInset:10.f];
+//    UIView *infoRow = [UIView containerView];
+//    infoRow.userInteractionEnabled = YES;
+//    [infoRow
+//        addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(infoRowTapped:)]];
+//    [rows addObject:infoRow];
+//
+//    UILabel *infoLabel = [UILabel new];
+//    infoLabel.textColor = Theme.secondaryColor;
+//    infoLabel.font = [UIFont ows_regularFontWithSize:11.f];
+//    infoLabel.textAlignment = NSTextAlignmentCenter;
+//    NSMutableAttributedString *text = [NSMutableAttributedString new];
+//    [text appendAttributedString:[[NSAttributedString alloc]
+//                                     initWithString:NSLocalizedString(@"PROFILE_VIEW_PROFILE_DESCRIPTION",
+//                                                        @"Description of the user profile.")
+//                                         attributes:@{}]];
+//    [text appendAttributedString:[[NSAttributedString alloc] initWithString:@" " attributes:@{}]];
+//    [text appendAttributedString:[[NSAttributedString alloc]
+//                                     initWithString:NSLocalizedString(@"PROFILE_VIEW_PROFILE_DESCRIPTION_LINK",
+//                                                        @"Link to more information about the user profile.")
+//                                         attributes:@{
+//                                             NSUnderlineStyleAttributeName :
+//                                                 @(NSUnderlineStyleSingle | NSUnderlinePatternSolid),
+//                                             NSForegroundColorAttributeName : [UIColor ows_materialBlueColor],
+//                                         }]];
+//    infoLabel.attributedText = text;
+//    infoLabel.numberOfLines = 0;
+//    infoLabel.lineBreakMode = NSLineBreakByWordWrapping;
+//    [infoRow addSubview:infoLabel];
+//    [infoLabel autoPinLeadingToSuperviewMargin];
+//    [infoLabel autoPinTrailingToSuperviewMargin];
+//    [infoLabel autoPinEdgeToSuperviewEdge:ALEdgeTop withInset:10.f];
+//    [infoLabel autoPinEdgeToSuperviewEdge:ALEdgeBottom withInset:10.f];
 
     // Big Button
 
-    if (self.profileViewMode == ProfileViewMode_Registration) {
-        UIView *buttonRow = [UIView containerView];
-        [rows addObject:buttonRow];
-
-        const CGFloat kButtonHeight = 47.f;
-        // NOTE: We use ows_signalBrandBlueColor instead of ows_materialBlueColor
-        //       throughout the onboarding flow to be consistent with the headers.
-        OWSFlatButton *saveButton =
-            [OWSFlatButton buttonWithTitle:NSLocalizedString(@"PROFILE_VIEW_SAVE_BUTTON",
-                                               @"Button to save the profile view in the profile view.")
-                                      font:[OWSFlatButton fontForHeight:kButtonHeight]
-                                titleColor:[UIColor whiteColor]
-                           backgroundColor:[UIColor ows_signalBrandBlueColor]
-                                    target:self
-                                  selector:@selector(saveButtonPressed)];
-        SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, saveButton);
-        self.saveButton = saveButton;
-        [buttonRow addSubview:saveButton];
-        [saveButton autoPinLeadingAndTrailingToSuperviewMargin];
-        [saveButton autoPinHeightToSuperview];
-        [saveButton autoSetDimension:ALDimensionHeight toSize:47.f];
-    }
+//    if (self.profileViewMode == ProfileViewMode_Registration || self.profileViewMode == ProfileViewMode_UpgradeOrNag) {
+//        UIView *buttonRow = [UIView containerView];
+//        [rows addObject:buttonRow];
+//
+//        const CGFloat kButtonHeight = 47.f;
+//        // NOTE: We use ows_signalBrandBlueColor instead of ows_materialBlueColor
+//        //       throughout the onboarding flow to be consistent with the headers.
+//        OWSFlatButton *saveButton =
+//            [OWSFlatButton buttonWithTitle:NSLocalizedString(@"PROFILE_VIEW_SAVE_BUTTON",
+//                                               @"Button to save the profile view in the profile view.")
+//                                      font:[OWSFlatButton fontForHeight:kButtonHeight]
+//                                titleColor:[UIColor whiteColor]
+//                           backgroundColor:[UIColor ows_signalBrandBlueColor]
+//                                    target:self
+//                                  selector:@selector(saveButtonPressed)];
+//        self.saveButton = saveButton;
+//        [buttonRow addSubview:saveButton];
+//        [saveButton autoPinLeadingAndTrailingToSuperviewMargin];
+//        [saveButton autoPinHeightToSuperview];
+//        [saveButton autoSetDimension:ALDimensionHeight toSize:47.f];
+//    }
 
     // Row Layout
 
-    UIView *_Nullable lastRow = nil;
-    for (UIView *row in rows) {
-        [contentView addSubview:row];
-        if (lastRow) {
-            [row autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:lastRow withOffset:5.f];
-        } else {
-            [row autoPinEdgeToSuperviewEdge:ALEdgeTop withInset:15.f];
-        }
-        [row autoPinLeadingToSuperviewMarginWithInset:18.f];
-        [row autoPinTrailingToSuperviewMarginWithInset:18.f];
-        lastRow = row;
-
-        if (lastRow == nameRow || lastRow == avatarRow) {
-            UIView *separator = [UIView containerView];
-            separator.backgroundColor = Theme.cellSeparatorColor;
-            [contentView addSubview:separator];
-            [separator autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:lastRow withOffset:5.f];
-            [separator autoPinLeadingToSuperviewMarginWithInset:18.f];
-            [separator autoPinTrailingToSuperviewMarginWithInset:18.f];
-            [separator autoSetDimension:ALDimensionHeight toSize:CGHairlineWidth()];
-            lastRow = separator;
-        }
-    }
-    [lastRow autoPinEdgeToSuperviewEdge:ALEdgeBottom withInset:10.f];
+//    UIView *_Nullable lastRow = nil;
+//    for (UIView *row in rows) {
+//        [contentView addSubview:row];
+//        if (lastRow) {
+//            [row autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:lastRow withOffset:5.f];
+//        } else {
+//            [row autoPinEdgeToSuperviewEdge:ALEdgeTop withInset:15.f];
+//        }
+//        [row autoPinLeadingToSuperviewMarginWithInset:18.f];
+//        [row autoPinTrailingToSuperviewMarginWithInset:18.f];
+//        lastRow = row;
+//
+//        if (lastRow == nameRow || lastRow == avatarRow) {
+//            UIView *separator = [UIView containerView];
+//            separator.backgroundColor = Theme.cellSeparatorColor;
+//            [contentView addSubview:separator];
+//            [separator autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:lastRow withOffset:5.f];
+//            [separator autoPinLeadingToSuperviewMarginWithInset:18.f];
+//            [separator autoPinTrailingToSuperviewMarginWithInset:18.f];
+//            [separator autoSetDimension:ALDimensionHeight toSize:CGHairlineWidth()];
+//            lastRow = separator;
+//        }
+//    }
+//    [lastRow autoPinEdgeToSuperviewEdge:ALEdgeBottom withInset:10.f];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-
-    [self.nameTextField becomeFirstResponder];
+    self.navigationController.navigationBarHidden = YES;
+    [self.raTextFieldName.textField becomeFirstResponder];
+    [_raHeaderView setGradientForTitleViewWithGradientLayer:[[CAGradientLayer alloc] init]];
 }
-
+-(void) viewDidDisappear:(BOOL)animated
+{
+    [super viewDidDisappear:animated];
+    self.navigationController.navigationBarHidden = NO;
+}
 #pragma mark - Event Handling
 
 - (void)backOrSkipButtonPressed
@@ -290,33 +317,33 @@ NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDat
 
 - (void)leaveViewCheckingForUnsavedChanges
 {
-    [self.nameTextField resignFirstResponder];
+    [self.raTextFieldName.textField resignFirstResponder];
 
     if (!self.hasUnsavedChanges) {
         // If user made no changes, return to conversation settings view.
         [self profileCompletedOrSkipped];
         return;
     }
- 
+
     __weak ProfileViewController *weakSelf = self;
     UIAlertController *alert = [UIAlertController
-        alertControllerWithTitle:
-            NSLocalizedString(@"NEW_GROUP_VIEW_UNSAVED_CHANGES_TITLE",
-                @"The alert title if user tries to exit the new group view without saving changes.")
-                         message:
-                             NSLocalizedString(@"NEW_GROUP_VIEW_UNSAVED_CHANGES_MESSAGE",
-                                 @"The alert message if user tries to exit the new group view without saving changes.")
-                  preferredStyle:UIAlertControllerStyleAlert];
+                                alertControllerWithTitle:
+                                NSLocalizedString(@"NEW_GROUP_VIEW_UNSAVED_CHANGES_TITLE",
+                                                  @"The alert title if user tries to exit the new group view without saving changes.")
+                                message:
+                                NSLocalizedString(@"NEW_GROUP_VIEW_UNSAVED_CHANGES_MESSAGE",
+                                                  @"The alert message if user tries to exit the new group view without saving changes.")
+                                preferredStyle:UIAlertControllerStyleAlert];
     UIAlertAction *discardAction =
-        [UIAlertAction actionWithTitle:NSLocalizedString(@"ALERT_DISCARD_BUTTON",
-                                           @"The label for the 'discard' button in alerts and action sheets.")
-               accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"discard")
-                                 style:UIAlertActionStyleDestructive
-                               handler:^(UIAlertAction *action) {
-                                   [weakSelf profileCompletedOrSkipped];
-                               }];
+    [UIAlertAction actionWithTitle:NSLocalizedString(@"ALERT_DISCARD_BUTTON",
+                                                     @"The label for the 'discard' button in alerts and action sheets.")
+           accessibilityIdentifier:ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"discard")
+                             style:UIAlertActionStyleDestructive
+                           handler:^(UIAlertAction *action) {
+                               [weakSelf profileCompletedOrSkipped];
+                           }];
     [alert addAction:discardAction];
-
+    
     [alert addAction:[OWSAlerts cancelAction]];
     [self presentAlert:alert];
 }
@@ -330,7 +357,7 @@ NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDat
 {
     _hasUnsavedChanges = hasUnsavedChanges;
 
-    [self updateNavigationItem];
+//    [self updateNavigationItem];
 }
 
 - (void)updateNavigationItem
@@ -347,16 +374,15 @@ NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDat
         case ProfileViewMode_AppSettings:
             if (self.hasUnsavedChanges) {
                 // If we have a unsaved changes, right item should be a "save" button.
-                UIBarButtonItem *saveButton =
+                self.navigationItem.rightBarButtonItem =
                     [[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemSave
                                                                   target:self
                                                                   action:@selector(updatePressed)];
-                SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, saveButton);
-                self.navigationItem.rightBarButtonItem = saveButton;
             } else {
                 self.navigationItem.rightBarButtonItem = nil;
             }
             break;
+        case ProfileViewMode_UpgradeOrNag:
         case ProfileViewMode_Registration:
             self.navigationItem.hidesBackButton = YES;
             self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc]
@@ -367,6 +393,7 @@ NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDat
             break;
     }
 
+    // The save button is only used in "registration" and "upgrade or nag" modes.
     if (self.hasUnsavedChanges) {
         self.saveButton.enabled = YES;
         [self.saveButton setBackgroundColorsWithUpColor:[UIColor ows_signalBrandBlueColor]];
@@ -386,61 +413,60 @@ NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDat
 - (void)updateProfile
 {
     __weak ProfileViewController *weakSelf = self;
-
-    [self.nameTextField acceptAutocorrectSuggestion];
-
+    
+    [self.raTextFieldName.textField acceptAutocorrectSuggestion];
+    
     NSString *normalizedProfileName = [self normalizedProfileName];
     if ([OWSProfileManager.sharedManager isProfileNameTooLong:normalizedProfileName]) {
         [OWSAlerts
-            showErrorAlertWithMessage:NSLocalizedString(@"PROFILE_VIEW_ERROR_PROFILE_NAME_TOO_LONG",
-                                          @"Error message shown when user tries to update profile with a profile name "
-                                          @"that is too long.")];
+         showErrorAlertWithMessage:NSLocalizedString(@"PROFILE_VIEW_ERROR_PROFILE_NAME_TOO_LONG",
+                                                     @"Error message shown when user tries to update profile with a profile name "
+                                                     @"that is too long.")];
         return;
     }
-
+    
     // Show an activity indicator to block the UI during the profile upload.
     [ModalActivityIndicatorViewController
-        presentFromViewController:self
-                        canCancel:NO
-                  backgroundBlock:^(ModalActivityIndicatorViewController *modalActivityIndicator) {
-                      [OWSProfileManager.sharedManager updateLocalProfileName:normalizedProfileName
-                          avatarImage:weakSelf.avatar
-                          success:^{
-                              dispatch_async(dispatch_get_main_queue(), ^{
-                                  [modalActivityIndicator dismissWithCompletion:^{
-                                      [weakSelf updateProfileCompleted];
-                                  }];
-                              });
-                          }
-                          failure:^{
-                              dispatch_async(dispatch_get_main_queue(), ^{
-                                  [modalActivityIndicator dismissWithCompletion:^{
-                                      [OWSAlerts showErrorAlertWithMessage:NSLocalizedString(
-                                                                               @"PROFILE_VIEW_ERROR_UPDATE_FAILED",
-                                                                               @"Error message shown when a "
-                                                                               @"profile update fails.")];
-                                  }];
-                              });
-                          }];
-                  }];
+     presentFromViewController:self
+     canCancel:NO
+     backgroundBlock:^(ModalActivityIndicatorViewController *modalActivityIndicator) {
+         [OWSProfileManager.sharedManager updateLocalProfileName:normalizedProfileName
+                                                     avatarImage:weakSelf.avatar
+                                                         success:^{
+                                                             dispatch_async(dispatch_get_main_queue(), ^{
+                                                                 [modalActivityIndicator dismissWithCompletion:^{
+                                                                     [weakSelf updateProfileCompleted];
+                                                                 }];
+                                                             });
+                                                         }
+                                                         failure:^{
+                                                             dispatch_async(dispatch_get_main_queue(), ^{
+                                                                 [modalActivityIndicator dismissWithCompletion:^{
+                                                                     [OWSAlerts showErrorAlertWithMessage:NSLocalizedString(
+                                                                                                                            @"PROFILE_VIEW_ERROR_UPDATE_FAILED",
+                                                                                                                            @"Error message shown when a "
+                                                                                                                            @"profile update fails.")];
+                                                                 }];
+                                                             });
+                                                         }];
+     }];
 }
-
 - (NSString *)normalizedProfileName
 {
-    return [self.nameTextField.text ows_stripped];
+    return [self.raTextFieldName.textField.text ows_stripped];
 }
 
 - (void)updateProfileCompleted
 {
     OWSLogVerbose(@"");
-
+    
     [self profileCompletedOrSkipped];
 }
 
 - (void)profileCompletedOrSkipped
 {
     OWSLogVerbose(@"");
-
+    
     // Dismiss this view.
     switch (self.profileViewMode) {
         case ProfileViewMode_AppSettings:
@@ -456,7 +482,7 @@ NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDat
 {
     OWSAssertIsOnMainThread();
     OWSLogVerbose(@"");
-
+    
     [SignalApp.sharedApp showHomeView];
 }
 
@@ -506,15 +532,17 @@ NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDat
 
 - (void)updateAvatarView
 {
-    self.avatarView.image = (self.avatar
-            ?: [[[OWSContactAvatarBuilder alloc] initForLocalUserWithDiameter:self.avatarSize] buildDefaultImage]);
-    self.cameraImageView.hidden = self.avatar != nil;
+    self.raAvatarImageView.image = (self.avatar
+            ?: [[UIImage imageNamed:@"profile_avatar_default"]
+                   imageWithRenderingMode:UIImageRenderingModeAlwaysTemplate]);
+    self.raAvatarImageView.tintColor = (self.avatar ? nil : /*Theme.middleGrayColor*/[UIColor colorWithRGBHex:0x33D49B]);
+    self.raLabelPlsAddAvatar.hidden = self.avatar != nil;
 }
 
 - (void)nameRowTapped:(UIGestureRecognizer *)sender
 {
     if (sender.state == UIGestureRecognizerStateRecognized) {
-        [self.nameTextField becomeFirstResponder];
+        [self.raTextFieldName.textField becomeFirstResponder];
     }
 }
 
@@ -561,7 +589,7 @@ NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDat
     OWSAssertDebug(navigationController);
     OWSAssertDebug([navigationController isKindOfClass:[OWSNavigationController class]]);
 
-    ProfileViewController *vc = [[ProfileViewController alloc] initWithMode:ProfileViewMode_AppSettings];
+    ProfileViewController *vc = [[ProfileViewController alloc] initWithNibName:@"RaProfileViewController" bundle:nil andMode:ProfileViewMode_AppSettings];
     [navigationController pushViewController:vc animated:YES];
 }
 
@@ -570,8 +598,20 @@ NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDat
     OWSAssertDebug(navigationController);
     OWSAssertDebug([navigationController isKindOfClass:[OWSNavigationController class]]);
 
-    ProfileViewController *vc = [[ProfileViewController alloc] initWithMode:ProfileViewMode_Registration];
+    //ProfileViewController *vc = [[ProfileViewController alloc] initWithMode:ProfileViewMode_Registration];
+    ProfileViewController *vc = [[ProfileViewController alloc] initWithNibName:@"RaProfileViewController" bundle:nil andMode:ProfileViewMode_Registration];
     [navigationController pushViewController:vc animated:YES];
+}
+
++ (void)presentForUpgradeOrNag:(HomeViewController *)fromViewController
+{
+    OWSAssertDebug(fromViewController);
+
+    ProfileViewController *vc = [[ProfileViewController alloc] initWithNibName:@"RaProfileViewController" bundle:nil andMode:ProfileViewMode_UpgradeOrNag];
+    //ProfileViewController *vc = [[ProfileViewController alloc] initWithMode:ProfileViewMode_UpgradeOrNag];
+    OWSNavigationController *navigationController = [[OWSNavigationController alloc] initWithRootViewController:vc];
+    
+    [fromViewController presentViewController:navigationController animated:YES completion:nil];
 }
 
 #pragma mark - AvatarViewHelperDelegate
@@ -622,12 +662,24 @@ NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDat
     return result;
 }
 
+- (IBAction)btnFinishedTouched:(id)sender {
+    [self saveButtonPressed];
+}
+
+- (IBAction)btnExitTouched:(id)sender {
+    [self backOrSkipButtonPressed];
+}
+
+- (IBAction)btnAddAvatarTouched:(id)sender {
+    [self avatarTapped];
+}
+
 #pragma mark - Orientation
 
 - (UIInterfaceOrientationMask)supportedInterfaceOrientations
 {
     return (self.profileViewMode == ProfileViewMode_Registration ? UIInterfaceOrientationMaskPortrait
-                                                                 : UIInterfaceOrientationMaskAllButUpsideDown);
+            : UIInterfaceOrientationMaskAllButUpsideDown);
 }
 
 @end
