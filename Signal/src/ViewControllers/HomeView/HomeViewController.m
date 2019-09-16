@@ -715,7 +715,7 @@ NSString *const kArchiveButtonPseudoGroup = @"kArchiveButtonPseudoGroup";
         self.hasThemeChanged = NO;
     }
 
-    [self requestReviewIfAppropriate];
+    //[self requestReviewIfAppropriate];
 
     [self.searchResultsController viewDidAppear:animated];
 
