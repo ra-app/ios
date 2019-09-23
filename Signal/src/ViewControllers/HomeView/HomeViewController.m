@@ -354,7 +354,7 @@ NSString *const kArchiveButtonPseudoGroup = @"kArchiveButtonPseudoGroup";
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     self.tableView.estimatedRowHeight = 60;
 
-    self.emptyInboxView = [self createEmptyInboxView];
+/*    self.emptyInboxView = [self createEmptyInboxView];
     [self.view addSubview:self.emptyInboxView];
     [self.emptyInboxView autoPinWidthToSuperviewMargins];
     [self.emptyInboxView autoVCenterInSuperview];
@@ -363,6 +363,7 @@ NSString *const kArchiveButtonPseudoGroup = @"kArchiveButtonPseudoGroup";
     [self createFirstConversationCueView];
     [self.view addSubview:self.firstConversationCueView];
     [self.firstConversationCueView autoPinToTopLayoutGuideOfViewController:self withInset:0.f];
+    
     // This inset bakes in assumptions about UINavigationBar layout, but I'm not sure
     // there's a better way to do it, since it isn't safe to use iOS auto layout with
     // UINavigationBar contents.
@@ -372,9 +373,11 @@ NSString *const kArchiveButtonPseudoGroup = @"kArchiveButtonPseudoGroup";
                                                      relation:NSLayoutRelationGreaterThanOrEqual];
     [self.firstConversationCueView autoPinEdgeToSuperviewMargin:ALEdgeBottom
                                                        relation:NSLayoutRelationGreaterThanOrEqual];
+ 
+
     SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, _firstConversationCueView);
     SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, _firstConversationLabel);
-
+      */
     UIRefreshControl *pullToRefreshView = [UIRefreshControl new];
     pullToRefreshView.tintColor = [UIColor grayColor];
     [pullToRefreshView addTarget:self
