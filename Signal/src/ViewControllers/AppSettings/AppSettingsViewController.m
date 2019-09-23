@@ -514,7 +514,7 @@
 
 - (void)updateRightBarButtonForTheme
 {
-    self.navigationItem.rightBarButtonItem = [self darkThemeBarButton];
+    //self.navigationItem.rightBarButtonItem = [self darkThemeBarButton];
 }
 
 #pragma mark - Socket Status Notifications

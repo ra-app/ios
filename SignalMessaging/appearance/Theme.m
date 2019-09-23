@@ -141,7 +141,7 @@ NSString *const ThemeKeyThemeEnabled = @"ThemeKeyThemeEnabled";
 
 + (UIColor *)navbarIconColor
 {
-    return (Theme.isDarkThemeEnabled ? self.darkThemeNavbarIconColor : UIColor.ows_gray60Color);
+    return (Theme.isDarkThemeEnabled ? self.darkThemeNavbarIconColor : UIColor.whiteColor);
 }
 
 + (UIColor *)darkThemeNavbarIconColor

@@ -66,6 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
     self.navigationBar.barTintColor = [UINavigationBar appearance].barTintColor;
     self.navigationBar.tintColor = [UINavigationBar appearance].tintColor;
     self.navigationBar.titleTextAttributes = [UINavigationBar appearance].titleTextAttributes;
+    [self setGradientBackground];
 }
 
 - (void)viewDidLoad
