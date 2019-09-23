@@ -121,6 +121,7 @@ NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDat
 {
     
     self.raTextFieldName.textField.text = [OWSProfileManager.sharedManager localProfileName];
+    self.raTextFieldName.textField.tintColor = [UIColor blackColor];
     [self.raTextFieldName.textField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     self.view.backgroundColor = Theme.offBackgroundColor;
     
@@ -299,15 +300,16 @@ NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDat
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    self.navigationController.navigationBarHidden = YES;
+    [self.navigationController setNavigationBarHidden:YES animated:YES];
     [self.raTextFieldName.textField becomeFirstResponder];
     [_raHeaderView setGradientForTitleViewWithGradientLayer:[[CAGradientLayer alloc] init]];
 }
+
 -(void) viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
-    self.navigationController.navigationBarHidden = NO;
 }
+
 #pragma mark - Event Handling
 
 - (void)backOrSkipButtonPressed
@@ -470,6 +472,7 @@ NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDat
     // Dismiss this view.
     switch (self.profileViewMode) {
         case ProfileViewMode_AppSettings:
+            [self.navigationController setNavigationBarHidden:NO animated:NO];
             [self.navigationController popViewControllerAnimated:YES];
             break;
         case ProfileViewMode_Registration:

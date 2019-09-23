@@ -10,7 +10,7 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="OnboardingProfileViewController" customModule="OfficeApp" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ProfileViewController">
             <connections>
                 <outlet property="btnFinish" destination="dO4-RI-FUa" id="3VC-aY-2Zp"/>
                 <outlet property="raAvatarImageView" destination="xG5-PC-UjI" id="Za8-Xe-XMg"/>
@@ -56,21 +56,21 @@
                         <constraint firstItem="Bbc-NL-QPe" firstAttribute="top" secondItem="loI-Lx-PLc" secondAttribute="top" id="sYs-1e-FG1"/>
                     </constraints>
                 </view>
-                <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Gis-kr-fnn" customClass="RaTextField" customModule="OfficeApp" customModuleProvider="target">
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Gis-kr-fnn" customClass="RaTextField" customModule="OfficeApp" customModuleProvider="target">
                     <rect key="frame" x="20" y="150" width="374" height="50"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <userDefinedRuntimeAttributes>
                         <userDefinedRuntimeAttribute type="string" keyPath="title" value="BENUTZERNAME"/>
                     </userDefinedRuntimeAttributes>
                 </view>
-                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="profile_avatar_default" translatesAutoresizingMaskIntoConstraints="NO" id="xG5-PC-UjI" userLabel="Image View Avatar" customClass="AvatarImageView" customModule="SignalMessaging">
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="profile_avatar_default" translatesAutoresizingMaskIntoConstraints="NO" id="xG5-PC-UjI" userLabel="Image View Avatar" customClass="AvatarImageView" customModule="SignalMessaging">
                     <rect key="frame" x="20" y="235" width="77" height="77"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="77" id="cdJ-O7-xH1"/>
                         <constraint firstAttribute="width" constant="77" id="lb2-H1-S8X"/>
                     </constraints>
                 </imageView>
-                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="icon-picture-add" translatesAutoresizingMaskIntoConstraints="NO" id="Hhh-6I-ibk" userLabel="Image View Plus">
+                <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="icon-picture-add" translatesAutoresizingMaskIntoConstraints="NO" id="Hhh-6I-ibk" userLabel="Image View Plus">
                     <rect key="frame" x="75" y="280" width="35" height="35"/>
                     <color key="tintColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                     <constraints>
@@ -78,7 +78,7 @@
                         <constraint firstAttribute="width" constant="35" id="8cb-2c-GKW"/>
                     </constraints>
                 </imageView>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="BITTE FÜGEN SIE       EIN PROFILBLID HINZU" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lPC-ub-iLi">
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="BITTE FÜGEN SIE       EIN PROFILBLID HINZU" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lPC-ub-iLi">
                     <rect key="frame" x="132" y="250" width="145" height="53"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="53" id="Fr6-bP-zaz"/>
@@ -88,18 +88,17 @@
                     <color key="textColor" red="0.70220947265625" green="0.7331119179725647" blue="0.74902898073196411" alpha="1" colorSpace="custom" customColorSpace="displayP3"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wUb-4r-gGS" userLabel="Button Add Avatar">
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="wUb-4r-gGS" userLabel="Button Add Avatar">
                     <rect key="frame" x="20" y="235" width="257" height="77"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="257" id="dcF-Cx-lUH"/>
                         <constraint firstAttribute="height" constant="77" id="x5H-qc-F05"/>
                     </constraints>
                     <connections>
-                        <action selector="avatarTouched:" destination="-1" eventType="touchUpInside" id="kEq-GC-gND"/>
-                        <action selector="btnAddAvatarTouched:" destination="-1" eventType="touchUpInside" id="mmp-2U-rq6"/>
+                        <action selector="btnAddAvatarTouched:" destination="-1" eventType="touchUpInside" id="1xc-QT-hC4"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dO4-RI-FUa" customClass="GradientButton" customModule="OfficeApp" customModuleProvider="target">
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="dO4-RI-FUa" customClass="RaGradientButton" customModule="OfficeApp" customModuleProvider="target">
                     <rect key="frame" x="20" y="345" width="374" height="42"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="42" id="MYY-7M-287"/>
