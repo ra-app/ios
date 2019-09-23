@@ -225,9 +225,9 @@ NSString *const kArchiveButtonPseudoGroup = @"kArchiveButtonPseudoGroup";
 
     [self reloadTableViewData];
 
-    if (!self.firstConversationCueView.isHidden) {
-        [self updateFirstConversationLabel];
-    }
+//    if (!self.firstConversationCueView.isHidden) {
+//        [self updateFirstConversationLabel];
+//    }
 }
 
 - (void)registrationStateDidChange:(id)notification
@@ -353,31 +353,31 @@ NSString *const kArchiveButtonPseudoGroup = @"kArchiveButtonPseudoGroup";
 
     self.tableView.rowHeight = UITableViewAutomaticDimension;
     self.tableView.estimatedRowHeight = 60;
-
-/*    self.emptyInboxView = [self createEmptyInboxView];
-    [self.view addSubview:self.emptyInboxView];
-    [self.emptyInboxView autoPinWidthToSuperviewMargins];
-    [self.emptyInboxView autoVCenterInSuperview];
-    SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, _emptyInboxView);
-
-    [self createFirstConversationCueView];
-    [self.view addSubview:self.firstConversationCueView];
-    [self.firstConversationCueView autoPinToTopLayoutGuideOfViewController:self withInset:0.f];
-    
-    // This inset bakes in assumptions about UINavigationBar layout, but I'm not sure
-    // there's a better way to do it, since it isn't safe to use iOS auto layout with
-    // UINavigationBar contents.
-    [self.firstConversationCueView autoPinEdgeToSuperviewEdge:ALEdgeTrailing withInset:6.f];
-    [self.firstConversationCueView autoPinEdgeToSuperviewEdge:ALEdgeLeading
-                                                    withInset:10
-                                                     relation:NSLayoutRelationGreaterThanOrEqual];
-    [self.firstConversationCueView autoPinEdgeToSuperviewMargin:ALEdgeBottom
-                                                       relation:NSLayoutRelationGreaterThanOrEqual];
- 
-
-    SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, _firstConversationCueView);
-    SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, _firstConversationLabel);
-      */
+//
+//    self.emptyInboxView = [self createEmptyInboxView];
+//    [self.view addSubview:self.emptyInboxView];
+//    [self.emptyInboxView autoPinWidthToSuperviewMargins];
+//    [self.emptyInboxView autoVCenterInSuperview];
+//    SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, _emptyInboxView);
+//
+//    [self createFirstConversationCueView];
+//    [self.view addSubview:self.firstConversationCueView];
+//    [self.firstConversationCueView autoPinToTopLayoutGuideOfViewController:self withInset:0.f];
+//
+//    // This inset bakes in assumptions about UINavigationBar layout, but I'm not sure
+//    // there's a better way to do it, since it isn't safe to use iOS auto layout with
+//    // UINavigationBar contents.
+//    [self.firstConversationCueView autoPinEdgeToSuperviewEdge:ALEdgeTrailing withInset:6.f];
+//    [self.firstConversationCueView autoPinEdgeToSuperviewEdge:ALEdgeLeading
+//                                                    withInset:10
+//                                                     relation:NSLayoutRelationGreaterThanOrEqual];
+//    [self.firstConversationCueView autoPinEdgeToSuperviewMargin:ALEdgeBottom
+//                                                       relation:NSLayoutRelationGreaterThanOrEqual];
+//
+//
+//    SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, _firstConversationCueView);
+//    SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, _firstConversationLabel);
+//
     UIRefreshControl *pullToRefreshView = [UIRefreshControl new];
     pullToRefreshView.tintColor = [UIColor grayColor];
     [pullToRefreshView addTarget:self
@@ -627,7 +627,8 @@ NSString *const kArchiveButtonPseudoGroup = @"kArchiveButtonPseudoGroup";
     switch (self.homeViewMode) {
         case HomeViewMode_Inbox:
             // TODO: Should our app name be translated?  Probably not.
-            self.title = NSLocalizedString(@"HOME_VIEW_TITLE_INBOX", @"Title for the home view's default mode.");
+            //self.title = NSLocalizedString(@"HOME_VIEW_TITLE_INBOX", @"Title for the home view's default mode.");
+            self.title = @"Kommunikation";                  // ToDo Localization
             break;
         case HomeViewMode_Archive:
             self.title = NSLocalizedString(@"HOME_VIEW_TITLE_ARCHIVE", @"Title for the home view's 'archive' mode.");
@@ -1643,13 +1644,13 @@ NSString *const kArchiveButtonPseudoGroup = @"kArchiveButtonPseudoGroup";
 {
     if (self.shouldShowFirstConversationCue) {
         [_tableView setHidden:YES];
-        [self.emptyInboxView setHidden:NO];
-        [self.firstConversationCueView setHidden:NO];
+//        [self.emptyInboxView setHidden:NO];
+//        [self.firstConversationCueView setHidden:NO];
         [self updateFirstConversationLabel];
     } else {
         [_tableView setHidden:NO];
-        [self.emptyInboxView setHidden:YES];
-        [self.firstConversationCueView setHidden:YES];
+//        [self.emptyInboxView setHidden:YES];
+//        [self.firstConversationCueView setHidden:YES];
     }
 }
 
