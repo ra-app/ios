@@ -84,7 +84,7 @@ NSString *const ThemeKeyThemeEnabled = @"ThemeKeyThemeEnabled";
 
 + (UIColor *)backgroundColor
 {
-    return (Theme.isDarkThemeEnabled ? Theme.darkThemeBackgroundColor : UIColor.ows_whiteColor);
+    return (Theme.isDarkThemeEnabled ? Theme.darkThemeBackgroundColor : UIColor.ows_signalBrandBlueColor);
 }
 
 + (UIColor *)darkThemeOffBackgroundColor
@@ -144,6 +144,11 @@ NSString *const ThemeKeyThemeEnabled = @"ThemeKeyThemeEnabled";
     return (Theme.isDarkThemeEnabled ? self.darkThemeNavbarIconColor : UIColor.whiteColor);
 }
 
++ (UIColor *)toolbarIconColor
+{
+    return (Theme.isDarkThemeEnabled ? self.darkThemeNavbarIconColor : UIColor.office_app_toolbarIconColor);
+}
+
 + (UIColor *)darkThemeNavbarIconColor
 {
     return UIColor.ows_gray25Color;
@@ -151,12 +156,12 @@ NSString *const ThemeKeyThemeEnabled = @"ThemeKeyThemeEnabled";
 
 + (UIColor *)navbarTitleColor
 {
-    return Theme.primaryColor;
+    return [UIColor whiteColor];
 }
 
 + (UIColor *)toolbarBackgroundColor
 {
-    return self.navbarBackgroundColor;
+       return (Theme.isDarkThemeEnabled ? self.darkThemeNavbarBackgroundColor : UIColor.office_app_darkerGrayColor);
 }
 
 + (UIColor *)cellSelectedColor

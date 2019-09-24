@@ -187,7 +187,7 @@ const CGFloat kMaxTextViewHeight = 98;
     _inputTextView = [ConversationInputTextView new];
     self.inputTextView.textViewToolbarDelegate = self;
     self.inputTextView.font = [UIFont ows_dynamicTypeBodyFont];
-    self.inputTextView.backgroundColor = Theme.toolbarBackgroundColor;
+    self.inputTextView.backgroundColor = [UIColor whiteColor];
     [self.inputTextView setContentHuggingLow];
     [self.inputTextView setCompressionResistanceLow];
     SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, _inputTextView);
@@ -202,7 +202,7 @@ const CGFloat kMaxTextViewHeight = 98;
     [self.cameraButton addTarget:self
                           action:@selector(cameraButtonPressed)
                 forControlEvents:UIControlEventTouchUpInside];
-    [self.cameraButton setTemplateImageName:@"camera-filled-24" tintColor:Theme.navbarIconColor];
+    [self.cameraButton setTemplateImageName:@"camera-filled-24" tintColor:Theme.toolbarIconColor];
     [self.cameraButton autoSetDimensionsToSize:CGSizeMake(40, kMinTextViewHeight)];
     SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, _cameraButton);
 
@@ -214,7 +214,7 @@ const CGFloat kMaxTextViewHeight = 98;
     [self.attachmentButton addTarget:self
                               action:@selector(attachmentButtonPressed)
                     forControlEvents:UIControlEventTouchUpInside];
-    [self.attachmentButton setTemplateImageName:@"ic_circled_plus" tintColor:Theme.navbarIconColor];
+    [self.attachmentButton setTemplateImageName:@"ic_circled_plus" tintColor:[UIColor colorWithRed:63/255.0f green:139/255.0f blue:201/255.0f alpha:1.0]];
     [self.attachmentButton autoSetDimensionsToSize:CGSizeMake(40, kMinTextViewHeight)];
     SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, _attachmentButton);
 
@@ -229,12 +229,12 @@ const CGFloat kMaxTextViewHeight = 98;
     SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, _sendButton);
 
     _voiceMemoButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.voiceMemoButton setTemplateImageName:@"voice-memo-button" tintColor:Theme.navbarIconColor];
+    [self.voiceMemoButton setTemplateImageName:@"voice-memo-button" tintColor:Theme.toolbarIconColor];
     [self.voiceMemoButton autoSetDimensionsToSize:CGSizeMake(40, kMinTextViewHeight)];
     SET_SUBVIEW_ACCESSIBILITY_IDENTIFIER(self, _voiceMemoButton);
 
     _stickerButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [self.stickerButton setTemplateImageName:@"sticker-filled-24" tintColor:Theme.navbarIconColor];
+    [self.stickerButton setTemplateImageName:@"sticker-filled-24" tintColor:Theme.toolbarIconColor];
     [self.stickerButton addTarget:self
                            action:@selector(stickerButtonPressed)
                  forControlEvents:UIControlEventTouchUpInside];

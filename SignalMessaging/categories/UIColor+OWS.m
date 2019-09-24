@@ -12,6 +12,14 @@ NS_ASSUME_NONNULL_BEGIN
 
 #pragma mark -
 
++(UIColor *) office_app_darkerGrayColor {       // ConversationView New Message Toolbar Background
+    return [UIColor colorWithRGBHex:0xE0E0E0];
+}
+
++(UIColor *) office_app_toolbarIconColor {
+    return [UIColor colorWithRed:153/255.0f green:165/255.0f blue:176/255.0f alpha:1.0];
+}
+
 + (UIColor *)ows_signalBrandBlueColor
 {
     return [UIColor colorWithRGBHex:0xF5F5F5];//[UIColor colorWithRed:0.1135657504f green:0.4787300229f blue:0.89595204589999999f alpha:1.];
@@ -217,6 +225,7 @@ NS_ASSUME_NONNULL_BEGIN
     // HEX 0xc2090EA
     return [UIColor colorWithRed:32.f / 255.f green:144.f / 255.f blue:234.f / 255.f alpha:1.f];
 }
+
 
 @end
 

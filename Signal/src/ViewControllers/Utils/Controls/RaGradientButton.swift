@@ -23,6 +23,7 @@ import UIKit
     override func layoutSubviews() {
         super.layoutSubviews()
         setGradient90DegreesForRaButton(gradientLayer: gradientLayer)
+         self.layer.cornerRadius = 20
     }
     
     /* background: transparent linear-gradient(90deg, #005AF5 34%, #025FF1 43%, #086EE6 54%, #1286D4 66%, #20A8BA 79%, #33D49B 91%, #50DC8C 93%, #84EC74 97%, #99F26B 99%) 0% 0% no-repeat padding-box;

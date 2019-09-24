@@ -118,13 +118,13 @@ public class OnboardingController: NSObject {
         
         Logger.info("")
         
-//        let view = OnboardingPermissionsViewController(onboardingController: self)
-//        viewController.navigationController?.pushViewController(view, animated: true)
-        AssertIsOnMainThread()
-        
-        Logger.info("")
-        
-        pushPhoneNumberView(viewController: viewController)
+        let view = OnboardingPermissionsViewController(onboardingController: self)
+        viewController.navigationController?.pushViewController(view, animated: true)
+//        AssertIsOnMainThread()
+//
+//        Logger.info("")
+//
+//        pushPhoneNumberView(viewController: viewController)
     }
     
     public func onboardingSplashDidComplete(viewController: UIViewController) {

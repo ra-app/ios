@@ -9,7 +9,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface UIColor (OWS)
 
 #pragma mark -
-
+@property (class, readonly, nonatomic) UIColor *office_app_toolbarIconColor;
+@property (class, readonly, nonatomic) UIColor *office_app_darkerGrayColor;
 @property (class, readonly, nonatomic) UIColor *ows_systemPrimaryButtonColor;
 @property (class, readonly, nonatomic) UIColor *ows_signalBrandBlueColor;
 @property (class, readonly, nonatomic) UIColor *ows_materialBlueColor;

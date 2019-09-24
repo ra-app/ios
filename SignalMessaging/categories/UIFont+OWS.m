@@ -11,27 +11,33 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIFont *)ows_thinFontWithSize:(CGFloat)size
 {
-    return [UIFont systemFontOfSize:size weight:UIFontWeightThin];
+    return [UIFont fontWithName:@"Poppins-Thin" size:size];
+    //return [UIFont systemFontOfSize:size weight:UIFontWeightThin];
 }
+
 
 + (UIFont *)ows_lightFontWithSize:(CGFloat)size
 {
-    return [UIFont systemFontOfSize:size weight:UIFontWeightLight];
+    return [UIFont fontWithName:@"Poppins-Light" size:size];
+    //return [UIFont systemFontOfSize:size weight:UIFontWeightLight];
 }
 
 + (UIFont *)ows_regularFontWithSize:(CGFloat)size
 {
-    return [UIFont systemFontOfSize:size weight:UIFontWeightRegular];
+    return [UIFont fontWithName:@"Poppins-Regular" size:size];
+    //return [UIFont systemFontOfSize:size weight:UIFontWeightRegular];
 }
 
 + (UIFont *)ows_mediumFontWithSize:(CGFloat)size
 {
-    return [UIFont systemFontOfSize:size weight:UIFontWeightMedium];
+    return [UIFont fontWithName:@"Poppins-Medium" size:size];
+    //return [UIFont systemFontOfSize:size weight:UIFontWeightMedium];
 }
 
 + (UIFont *)ows_boldFontWithSize:(CGFloat)size
 {
-    return [UIFont boldSystemFontOfSize:size];
+    return [UIFont fontWithName:@"Poppins-Bold" size:size];
+    //return [UIFont boldSystemFontOfSize:size];
 }
 
 + (UIFont *)ows_monospacedDigitFontWithSize:(CGFloat)size
