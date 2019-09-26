@@ -189,10 +189,14 @@ static NSTimeInterval launchStartedAt;
 
     [DDLog flushLog];
 }
-
+void uncaughtExceptionHandler(NSException *exception) {
+    NSLog(@"CRASH: %@", exception);
+    NSLog(@"Stack Trace: %@", [exception callStackSymbols]);
+}
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
 
     // This should be the first thing we do.
+    NSSetUncaughtExceptionHandler(&uncaughtExceptionHandler);
     SetCurrentAppContext([MainAppContext new]);
 
     launchStartedAt = CACurrentMediaTime();
@@ -267,6 +271,7 @@ static NSTimeInterval launchStartedAt;
     UIWindow *mainWindow = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window = mainWindow;
     CurrentAppContext().mainWindow = mainWindow;
+    
     // Show LoadingViewController until the async database view registrations are complete.
     mainWindow.rootViewController = [LoadingViewController new];
     [mainWindow makeKeyAndVisible];
@@ -307,7 +312,7 @@ static NSTimeInterval launchStartedAt;
     OWSLogInfo(@"application: didFinishLaunchingWithOptions completed.");
 
     [OWSAnalytics appLaunchDidBegin];
-
+    
     return YES;
 }
 
@@ -419,12 +424,15 @@ static NSTimeInterval launchStartedAt;
 
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
 
+
     // Show the launch screen
     self.window.rootViewController =
         [[UIStoryboard storyboardWithName:@"Launch Screen" bundle:nil] instantiateInitialViewController];
 
     [self.window makeKeyAndVisible];
 
+   
+    
     UIAlertController *alert =
         [UIAlertController alertControllerWithTitle:NSLocalizedString(@"APP_LAUNCH_FAILURE_ALERT_TITLE",
                                                         @"Title for the 'app launch failed' alert.")
@@ -1388,6 +1396,12 @@ static NSTimeInterval launchStartedAt;
     }
 
     [ViewOnceMessages appDidBecomeReady];
+    
+    if (_window.traitCollection.userInterfaceStyle == UIUserInterfaceStyleDark) {
+        [Theme setIsDarkThemeEnabled:YES];
+    } else {
+        [Theme setIsDarkThemeEnabled:NO];
+    }
 }
 
 - (void)registrationStateDidChange

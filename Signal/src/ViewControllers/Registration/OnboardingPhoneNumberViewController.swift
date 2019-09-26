@@ -32,7 +32,7 @@ public class OnboardingPhoneNumberViewController: OnboardingBaseViewController {
         self.headerView.setGradientForTitleView(gradientLayer: CAGradientLayer())
         
         populateDefaults()
-
+        view.backgroundColor = Theme.backgroundColor
 //        view.backgroundColor = Theme.backgroundColor
 //        view.layoutMargins = .zero
 //

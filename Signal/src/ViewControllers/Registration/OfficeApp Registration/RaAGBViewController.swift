@@ -24,6 +24,7 @@ class RaAGBViewController: OnboardingBaseViewController {
        // imageViewAccepted.layer.borderColor = UIColor.gray.cgColor
        // imageViewAccepted.layer.borderWidth = 0.5
         self.updateAGBImage()
+        self.view.backgroundColor = Theme.backgroundColor
     }
 
 //    @objc static func showAGB(inViewCtrl:UIViewController, completionHandler: @escaping (Bool) -> Void)

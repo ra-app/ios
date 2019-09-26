@@ -14,6 +14,7 @@ import UIKit
         // Do any additional setup after loading the view.
         
         self.headerView.setGradientForTitleView(gradientLayer: CAGradientLayer())
+        self.view.backgroundColor = Theme.backgroundColor
     }
 
 

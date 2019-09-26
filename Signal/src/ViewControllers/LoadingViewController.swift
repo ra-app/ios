@@ -16,7 +16,7 @@ public class LoadingViewController: UIViewController {
 
     override public func loadView() {
         self.view = UIView()
-        view.backgroundColor = UIColor.ows_materialBlue
+        view.backgroundColor = Theme.backgroundColor//UIColor.ows_materialBlue
 
         self.logoView = UIImageView(image: #imageLiteral(resourceName: "logoSignal"))
         view.addSubview(logoView)

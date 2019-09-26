@@ -31,6 +31,8 @@ import UIKit
         
         attrStr.addAttributes([NSAttributedString.Key.underlineStyle: NSUnderlineStyle.thick.rawValue as Any],range: range)
         labelDownloadHint.attributedText = attrStr
+        
+        self.view.backgroundColor = Theme.backgroundColor
     }
 
 

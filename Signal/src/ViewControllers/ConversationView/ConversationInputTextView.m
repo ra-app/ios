@@ -35,7 +35,7 @@ NS_ASSUME_NONNULL_BEGIN
         self.userInteractionEnabled = YES;
 
         self.font = [UIFont ows_dynamicTypeBodyFont];
-        self.textColor = Theme.primaryColor;
+        self.textColor = UIColor.ows_gray90Color;
         self.textAlignment = NSTextAlignmentNatural;
 
         self.contentMode = UIViewContentModeRedraw;

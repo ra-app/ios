@@ -649,7 +649,7 @@ NSString *const kArchiveButtonPseudoGroup = @"kArchiveButtonPseudoGroup";
     searchBar.placeholder = NSLocalizedString(@"HOME_VIEW_CONVERSATION_SEARCHBAR_PLACEHOLDER",
         @"Placeholder text for search bar which filters conversations.");
     searchBar.delegate = self;
-    searchBar.textField.accessibilityIdentifier = ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"conversation_search");
+    //searchBar.textField.accessibilityIdentifier = ACCESSIBILITY_IDENTIFIER_WITH_NAME(self, @"conversation_search");
     [searchBar sizeToFit];
 
     // Setting tableHeader calls numberOfSections, which must happen after updateMappings has been called at least once.
@@ -1646,7 +1646,7 @@ NSString *const kArchiveButtonPseudoGroup = @"kArchiveButtonPseudoGroup";
         [_tableView setHidden:YES];
 //        [self.emptyInboxView setHidden:NO];
 //        [self.firstConversationCueView setHidden:NO];
-        [self updateFirstConversationLabel];
+//        [self updateFirstConversationLabel];
     } else {
         [_tableView setHidden:NO];
 //        [self.emptyInboxView setHidden:YES];

@@ -82,7 +82,7 @@ static NSString *const RPDefaultsKeyPhoneNumberCanonical = @"RPDefaultsKeyPhoneN
     countryCode = [locale objectForKey:NSLocaleCountryCode];
 #endif
     if (!countryCode) {
-        OWSFailDebug(@"Could not identify country code for locale: %@", locale);
+        //OWSFailDebug(@"Could not identify country code for locale: %@", locale);
         countryCode = @"US";
     }
     return countryCode;
