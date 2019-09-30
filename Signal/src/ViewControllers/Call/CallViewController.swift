@@ -965,7 +965,7 @@ class CallViewController: OWSViewController, CallObserver, CallServiceObserver, 
             assert(fromViewController != nil)
 
             // Construct the "settings" view & push the "privacy settings" view.
-            let navigationController = AppSettingsViewController.inModalNavigationController()
+            let navigationController = RaAppSettingsViewController.inModalNavigationController()
             navigationController.pushViewController(PrivacySettingsTableViewController(), animated: false)
 
             fromViewController?.present(navigationController, animated: true, completion: nil)

@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		296D105D2340006B007AED2F /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 296D105C233FFC24007AED2F /* OpenSans-Regular.ttf */; };
+		296D105E23400134007AED2F /* OpenSans-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 296D105C233FFC24007AED2F /* OpenSans-Regular.ttf */; };
+		296D10612340044F007AED2F /* RaOWSConversationSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 296D105F2340044E007AED2F /* RaOWSConversationSettingsViewController.m */; };
+		2988F3E4234235F700F3B90E /* message_over_white_24x24.png in Resources */ = {isa = PBXBuildFile; fileRef = 2988F3E3234235F700F3B90E /* message_over_white_24x24.png */; };
+		29BA0F94233A015900480046 /* RaAppSettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 29BA0F93233A015900480046 /* RaAppSettingsViewController.m */; };
 		2AE2882E4C2B96BFFF9EE27C /* Pods_SignalShareExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0F94C85CB0B235DA37F68ED0 /* Pods_SignalShareExtension.framework */; };
 		3403B95D20EA9527001A1F44 /* OWSContactShareButtonsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3403B95B20EA9526001A1F44 /* OWSContactShareButtonsView.m */; };
 		34074F61203D0CBE004596AE /* OWSSounds.m in Sources */ = {isa = PBXBuildFile; fileRef = 34074F5F203D0CBD004596AE /* OWSSounds.m */; };
@@ -735,6 +740,13 @@
 		1C93CF3971B64E8B6C1F9AC1 /* Pods-SignalShareExtension.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SignalShareExtension.test.xcconfig"; path = "Pods/Target Support Files/Pods-SignalShareExtension/Pods-SignalShareExtension.test.xcconfig"; sourceTree = "<group>"; };
 		1CE3CD5C23334683BDD3D78C /* Pods-Signal.test.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Signal.test.xcconfig"; path = "Pods/Target Support Files/Pods-Signal/Pods-Signal.test.xcconfig"; sourceTree = "<group>"; };
 		264242150E87D10A357DB07B /* Pods_SignalMessaging.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_SignalMessaging.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		296D105C233FFC24007AED2F /* OpenSans-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "OpenSans-Regular.ttf"; sourceTree = "<group>"; };
+		296D105F2340044E007AED2F /* RaOWSConversationSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RaOWSConversationSettingsViewController.m; sourceTree = "<group>"; };
+		296D10602340044F007AED2F /* RaOWSConversationSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RaOWSConversationSettingsViewController.h; sourceTree = "<group>"; };
+		296D106223400A21007AED2F /* RaOWSConversationSettingsViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RaOWSConversationSettingsViewDelegate.h; sourceTree = "<group>"; };
+		2988F3E3234235F700F3B90E /* message_over_white_24x24.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = message_over_white_24x24.png; sourceTree = "<group>"; };
+		29BA0F92233A015800480046 /* RaAppSettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RaAppSettingsViewController.h; sourceTree = "<group>"; };
+		29BA0F93233A015900480046 /* RaAppSettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RaAppSettingsViewController.m; sourceTree = "<group>"; };
 		3403B95B20EA9526001A1F44 /* OWSContactShareButtonsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OWSContactShareButtonsView.m; sourceTree = "<group>"; };
 		3403B95C20EA9527001A1F44 /* OWSContactShareButtonsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OWSContactShareButtonsView.h; sourceTree = "<group>"; };
 		34074F5F203D0CBD004596AE /* OWSSounds.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = OWSSounds.m; sourceTree = "<group>"; };
@@ -1693,6 +1705,8 @@
 				340FC886204DAC8C007AEB0F /* AddToBlockListViewController.m */,
 				340FC881204DAC8C007AEB0F /* AdvancedSettingsTableViewController.h */,
 				340FC88C204DAC8C007AEB0F /* AdvancedSettingsTableViewController.m */,
+				29BA0F92233A015800480046 /* RaAppSettingsViewController.h */,
+				29BA0F93233A015900480046 /* RaAppSettingsViewController.m */,
 				340FC880204DAC8C007AEB0F /* AppSettingsViewController.h */,
 				340FC88D204DAC8C007AEB0F /* AppSettingsViewController.m */,
 				340FC890204DAC8C007AEB0F /* BlockListViewController.h */,
@@ -1730,9 +1744,12 @@
 				340FC89F204DAC8D007AEB0F /* FingerprintViewScanController.m */,
 				340FC898204DAC8D007AEB0F /* OWSAddToContactViewController.h */,
 				340FC8A1204DAC8D007AEB0F /* OWSAddToContactViewController.m */,
+				296D10602340044F007AED2F /* RaOWSConversationSettingsViewController.h */,
+				296D105F2340044E007AED2F /* RaOWSConversationSettingsViewController.m */,
 				340FC8A0204DAC8D007AEB0F /* OWSConversationSettingsViewController.h */,
 				340FC89A204DAC8D007AEB0F /* OWSConversationSettingsViewController.m */,
 				340FC899204DAC8D007AEB0F /* OWSConversationSettingsViewDelegate.h */,
+				296D106223400A21007AED2F /* RaOWSConversationSettingsViewDelegate.h */,
 				340FC89E204DAC8D007AEB0F /* ShowGroupMembersViewController.h */,
 				340FC8A6204DAC8D007AEB0F /* ShowGroupMembersViewController.m */,
 				340FC8A3204DAC8D007AEB0F /* UpdateGroupViewController.h */,
@@ -2561,6 +2578,7 @@
 		4A7EAA462327F3410045750E /* Poppins */ = {
 			isa = PBXGroup;
 			children = (
+				296D105C233FFC24007AED2F /* OpenSans-Regular.ttf */,
 				4A7EAA472327F3410045750E /* Poppins-ExtraLight.ttf */,
 				4A7EAA482327F3410045750E /* Poppins-ThinItalic.ttf */,
 				4A7EAA492327F3410045750E /* Poppins-ExtraLightItalic.ttf */,
@@ -2761,6 +2779,7 @@
 				FC5CDF371A3393DD00B47253 /* error_white@2x.png */,
 				B633C5411A1D190B0059AC12 /* mute_off@2x.png */,
 				B633C5421A1D190B0059AC12 /* mute_on@2x.png */,
+				2988F3E3234235F700F3B90E /* message_over_white_24x24.png */,
 				B10C9B5B1A7049EC00ECA2BF /* pause_icon.png */,
 				B10C9B5C1A7049EC00ECA2BF /* pause_icon@2x.png */,
 				B10C9B5D1A7049EC00ECA2BF /* play_icon.png */,
@@ -3306,6 +3325,7 @@
 				4A7EAA782327F35A0045750E /* Poppins-Regular.ttf in Resources */,
 				4A7EAA762327F35A0045750E /* Poppins-BlackItalic.ttf in Resources */,
 				4A7EAA6F2327F35A0045750E /* Poppins-ExtraLightItalic.ttf in Resources */,
+				296D105E23400134007AED2F /* OpenSans-Regular.ttf in Resources */,
 				4A7EAA7B2327F35A0045750E /* Poppins-Bold.ttf in Resources */,
 				4A7EAA712327F35A0045750E /* Poppins-Light.ttf in Resources */,
 				4A7EAA6D2327F35A0045750E /* Poppins-ExtraLight.ttf in Resources */,
@@ -3332,6 +3352,7 @@
 				4A1FEEC62326944000D3A4FD /* RaAGBViewController.xib in Resources */,
 				34330A5A1E7875FB00DF2FB9 /* fontawesome-webfont.ttf in Resources */,
 				4A7EAA692327F3410045750E /* Poppins-Black.ttf in Resources */,
+				296D105D2340006B007AED2F /* OpenSans-Regular.ttf in Resources */,
 				4A060244232A3322001DB885 /* checkbox-checked-200.png in Resources */,
 				A5509ECA1A69AB8B00ABA4BC /* Main.storyboard in Resources */,
 				4A1FEED9232695D300D3A4FD /* RaHeaderSearchView.xib in Resources */,
@@ -3339,6 +3360,7 @@
 				4A7EAA622327F3410045750E /* Poppins-ExtraBold.ttf in Resources */,
 				4A7EAA5B2327F3410045750E /* Poppins-ThinItalic.ttf in Resources */,
 				4A7EAA6B2327F3410045750E /* Poppins-SemiBold.ttf in Resources */,
+				2988F3E4234235F700F3B90E /* message_over_white_24x24.png in Resources */,
 				34330A5C1E787A9800DF2FB9 /* dripicons-v2.ttf in Resources */,
 				B633C5C41A1D190B0059AC12 /* mute_on@2x.png in Resources */,
 				B633C5CE1A1D190B0059AC12 /* quit@2x.png in Resources */,
@@ -3948,6 +3970,7 @@
 				3416BCAA227763A500E761B4 /* OWSMessageView.m in Sources */,
 				88905E9E229CCA96004E4234 /* ExpirationNagView.swift in Sources */,
 				340FC8BA204DAC8D007AEB0F /* FingerprintViewScanController.m in Sources */,
+				296D10612340044F007AED2F /* RaOWSConversationSettingsViewController.m in Sources */,
 				4585C4681ED8F8D200896AEA /* SafetyNumberConfirmationAlert.swift in Sources */,
 				4C20B2B920CA10DE001BAC90 /* ConversationSearchViewController.swift in Sources */,
 				450D19131F85236600970622 /* RemoteVideoView.m in Sources */,
@@ -4021,6 +4044,7 @@
 				457C87B82032645C008D52D6 /* DebugUINotifications.swift in Sources */,
 				4C21D5D8223AC60F00EF8A77 /* PhotoCapture.swift in Sources */,
 				4C13C9F620E57BA30089A98B /* ColorPickerViewController.swift in Sources */,
+				29BA0F94233A015900480046 /* RaAppSettingsViewController.m in Sources */,
 				4CC1ECFB211A553000CC13BE /* AppUpdateNag.swift in Sources */,
 				3448E16022134C89004B052E /* OnboardingSplashViewController.swift in Sources */,
 				4A1FEEDC232695D300D3A4FD /* RaGradientButton.swift in Sources */,

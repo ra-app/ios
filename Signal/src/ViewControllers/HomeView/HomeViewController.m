@@ -4,7 +4,7 @@
 
 #import "HomeViewController.h"
 #import "AppDelegate.h"
-#import "AppSettingsViewController.h"
+#import "RaAppSettingsViewController.h"
 #import "HomeViewCell.h"
 #import "NewContactThreadViewController.h"
 #import "OWSNavigationController.h"
@@ -780,7 +780,7 @@ NSString *const kArchiveButtonPseudoGroup = @"kArchiveButtonPseudoGroup";
 
 - (void)settingsButtonPressed:(id)sender
 {
-    OWSNavigationController *navigationController = [AppSettingsViewController inModalNavigationController];
+    OWSNavigationController *navigationController = [RaAppSettingsViewController inModalNavigationController];
     [self presentViewController:navigationController animated:YES completion:nil];
 }
 

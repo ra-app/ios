@@ -27,7 +27,7 @@ extern NSString *const ThemeDidChangeNotification;
 @property (class, readonly, nonatomic) UIColor *hairlineColor;
 
 #pragma mark - Global App Colors
-
+@property (class, readonly, nonatomic) UIColor *sectionHeaderTextColor;
 @property (class, readonly, nonatomic) UIColor *navbarBackgroundColor;
 @property (class, readonly, nonatomic) UIColor *navbarIconColor;
 @property (class, readonly, nonatomic) UIColor *navbarTitleColor;
@@ -38,6 +38,8 @@ extern NSString *const ThemeDidChangeNotification;
 
 @property (class, readonly, nonatomic) UIColor *cellSelectedColor;
 @property (class, readonly, nonatomic) UIColor *cellSeparatorColor;
+@property (class, readonly, nonatomic) UIColor *cellBackgroundColor;
+
 
 @property (class, readonly, nonatomic) UIColor *cursorColor;
 

@@ -133,14 +133,15 @@
 		<string>ElegantIcons.ttf</string>
 		<string>fontawesome-webfont.ttf</string>
 		<string>Poppins-Bold.ttf</string>
-		<string>Poppins-Regular</string>
-		<string>Poppins-Light</string>
-		<string>Poppins-Medium</string>
-		<string>Poppins-Thin</string>
-		<string>Poppins-SemiBold</string>
-		<string>Poppins-BoldItalic</string>
-		<string>Poppins-MediumItalic</string>
-		<string>Poppins-RegularItalic</string>
+		<string>Poppins-Regular.ttf</string>
+		<string>Poppins-Light.ttf</string>
+		<string>Poppins-Medium.ttf</string>
+		<string>Poppins-Thin.ttf</string>
+		<string>Poppins-SemiBold.ttf</string>
+		<string>Poppins-BoldItalic.ttf</string>
+		<string>Poppins-MediumItalic.ttf</string>
+		<string>Poppins-RegularItalic.ttf</string>
+		<string>OpenSans-Regular.ttf</string>
 	</array>
 	<key>UIApplicationShortcutItems</key>
 	<array>

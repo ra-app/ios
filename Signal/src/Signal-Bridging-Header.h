@@ -7,7 +7,7 @@
 
 // Separate iOS Frameworks from other imports.
 #import "AVAudioSession+OWS.h"
-#import "AppSettingsViewController.h"
+#import "RaAppSettingsViewController.h"
 #import "AttachmentUploadView.h"
 #import "AvatarViewHelper.h"
 #import "ContactCellView.h"

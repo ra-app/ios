@@ -22,7 +22,7 @@
 #import "NewGroupViewController.h"
 #import "OWSAudioPlayer.h"
 #import "OWSContactOffersCell.h"
-#import "OWSConversationSettingsViewController.h"
+#import "RaOWSConversationSettingsViewController.h"
 #import "OWSConversationSettingsViewDelegate.h"
 #import "OWSDisappearingMessagesJob.h"
 #import "OWSMath.h"
@@ -1759,7 +1759,7 @@ typedef enum : NSUInteger {
 
 - (void)showConversationSettingsAndShowVerification:(BOOL)showVerification
 {
-    OWSConversationSettingsViewController *settingsVC = [OWSConversationSettingsViewController new];
+    RaOWSConversationSettingsViewController *settingsVC = [RaOWSConversationSettingsViewController new];
     settingsVC.conversationSettingsViewDelegate = self;
     [settingsVC configureWithThread:self.thread uiDatabaseConnection:self.uiDatabaseConnection];
     settingsVC.showVerificationOnAppear = showVerification;
@@ -4120,7 +4120,7 @@ typedef enum : NSUInteger {
 
 #pragma mark - Conversation Search
 
-- (void)conversationSettingsDidRequestConversationSearch:(OWSConversationSettingsViewController *)conversationSettingsViewController
+- (void)conversationSettingsDidRequestConversationSearch:(RaOWSConversationSettingsViewController *)conversationSettingsViewController
 {
     [self showSearchUI];
     [self popAllConversationSettingsViewsWithCompletion:^{

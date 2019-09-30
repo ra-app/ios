@@ -28,6 +28,13 @@ NS_ASSUME_NONNULL_BEGIN
     //return [UIFont systemFontOfSize:size weight:UIFontWeightRegular];
 }
 
++ (UIFont *)ows_footerFontWithSize:(CGFloat)size
+{
+    return [UIFont fontWithName:@"OpenSans-Regular" size:size];
+    //return [UIFont systemFontOfSize:size weight:UIFontWeightRegular];
+}
+
+
 + (UIFont *)ows_mediumFontWithSize:(CGFloat)size
 {
     return [UIFont fontWithName:@"Poppins-Medium" size:size];
@@ -37,6 +44,12 @@ NS_ASSUME_NONNULL_BEGIN
 + (UIFont *)ows_boldFontWithSize:(CGFloat)size
 {
     return [UIFont fontWithName:@"Poppins-Bold" size:size];
+    //return [UIFont boldSystemFontOfSize:size];
+}
+
++ (UIFont *)ows_semiboldFontWithSize:(CGFloat)size
+{
+    return [UIFont fontWithName:@"Poppins-SemiBold" size:size];
     //return [UIFont boldSystemFontOfSize:size];
 }
 
@@ -71,6 +84,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIFont *)ows_dynamicTypeTitle2Font
 {
+    //return [UIFont fontWithName:@"Poppins-SemiBold" size:17];
     return [UIFont preferredFontForTextStyle:UIFontTextStyleTitle2];
 }
 

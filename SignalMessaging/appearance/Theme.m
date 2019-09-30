@@ -129,6 +129,11 @@ NSString *const ThemeKeyThemeEnabled = @"ThemeKeyThemeEnabled";
 
 #pragma mark - Global App Colors
 
++ (UIColor *)sectionHeaderTextColor
+{
+    return (Theme.isDarkThemeEnabled ? UIColor.ows_whiteColor : [UIColor colorWithRed:0.06 green:0.38 blue:0.95 alpha:1.00]);
+}
+
 + (UIColor *)navbarBackgroundColor
 {
     return (Theme.isDarkThemeEnabled ? self.darkThemeNavbarBackgroundColor : UIColor.ows_whiteColor);
@@ -167,6 +172,11 @@ NSString *const ThemeKeyThemeEnabled = @"ThemeKeyThemeEnabled";
 + (UIColor *)cellSelectedColor
 {
     return (Theme.isDarkThemeEnabled ? [UIColor colorWithWhite:0.2 alpha:1] : [UIColor colorWithWhite:0.92 alpha:1]);
+}
+
++ (UIColor *)cellBackgroundColor
+{
+    return (Theme.isDarkThemeEnabled ? [UIColor colorWithWhite:0.2 alpha:1] : [UIColor whiteColor]);
 }
 
 + (UIColor *)cellSeparatorColor

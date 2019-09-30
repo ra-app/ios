@@ -2250,7 +2250,7 @@
 "SETTINGS_NOTIFICATION_EVENTS_SECTION_TITLE" = "Ereignisse";
 
 /* No comment provided by engineer. */
-"SETTINGS_NOTIFICATIONS" = "Mitteilungen";
+"SETTINGS_NOTIFICATIONS" = "Benachrichtigungen";
 
 /* Label for 'CallKit privacy' preference */
 "SETTINGS_PRIVACY_CALLKIT_PRIVACY_TITLE" = "Anrufername und -nummer anzeigen";

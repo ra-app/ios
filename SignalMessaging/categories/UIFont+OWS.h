@@ -16,9 +16,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIFont *)ows_mediumFontWithSize:(CGFloat)size;
 
++ (UIFont *)ows_semiboldFontWithSize:(CGFloat)size;
+
 + (UIFont *)ows_boldFontWithSize:(CGFloat)size;
 
 + (UIFont *)ows_monospacedDigitFontWithSize:(CGFloat)size;
+
++ (UIFont *)ows_footerFontWithSize:(CGFloat)size;
 
 #pragma mark - Icon Fonts
 

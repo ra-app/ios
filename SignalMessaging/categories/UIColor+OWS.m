@@ -22,7 +22,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIColor *)ows_signalBrandBlueColor
 {
-    return [UIColor colorWithRGBHex:0xF5F5F5];//[UIColor colorWithRed:0.1135657504f green:0.4787300229f blue:0.89595204589999999f alpha:1.];
+    return [UIColor colorWithRed:0.95 green:0.95 blue:0.95 alpha:1.00];
+    //return [UIColor colorWithRGBHex:0xF5F5F5];//[UIColor colorWithRed:0.1135657504f green:0.4787300229f blue:0.89595204589999999f alpha:1.];
 }
 
 + (UIColor *)ows_materialBlueColor
@@ -86,7 +87,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (UIColor *)ows_lightBackgroundColor
 {
-    return [UIColor colorWithRed:242.f / 255.f green:242.f / 255.f blue:242.f / 255.f alpha:1.f];
+    return [UIColor colorWithRed:0.96 green:0.96 blue:0.96 alpha:1.00];
+   // return [UIColor colorWithRed:242.f / 255.f green:242.f / 255.f blue:242.f / 255.f alpha:1.f];
 }
 
 + (UIColor *)ows_systemPrimaryButtonColor
