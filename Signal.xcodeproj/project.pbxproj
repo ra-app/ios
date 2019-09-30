@@ -550,6 +550,8 @@
 		4A7EAA7E2327F35A0045750E /* Poppins-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA582327F3410045750E /* Poppins-SemiBold.ttf */; };
 		4A7EAA7F2327F35A0045750E /* Poppins-MediumItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 4A7EAA592327F3410045750E /* Poppins-MediumItalic.ttf */; };
 		4AC4EA13C8A444455DAB351F /* Pods_SignalMessaging.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 264242150E87D10A357DB07B /* Pods_SignalMessaging.framework */; };
+		4AD71F4623421947004E126A /* RaAlwaysShowPopup.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD71F4523421946004E126A /* RaAlwaysShowPopup.swift */; };
+		4AD71F482342195C004E126A /* RaArrayChoiceTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4AD71F472342195B004E126A /* RaArrayChoiceTableViewController.swift */; };
 		4C04392A220A9EC800BAEA63 /* VoiceNoteLock.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C043929220A9EC800BAEA63 /* VoiceNoteLock.swift */; };
 		4C04F58421C860C50090D0BB /* MantlePerfTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C04F58321C860C50090D0BB /* MantlePerfTest.swift */; };
 		4C090A1B210FD9C7001FD7F9 /* HapticFeedback.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4C090A1A210FD9C7001FD7F9 /* HapticFeedback.swift */; };
@@ -1369,6 +1371,8 @@
 		4A7EAA572327F3410045750E /* Poppins-Thin.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-Thin.ttf"; sourceTree = "<group>"; };
 		4A7EAA582327F3410045750E /* Poppins-SemiBold.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-SemiBold.ttf"; sourceTree = "<group>"; };
 		4A7EAA592327F3410045750E /* Poppins-MediumItalic.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Poppins-MediumItalic.ttf"; sourceTree = "<group>"; };
+		4AD71F4523421946004E126A /* RaAlwaysShowPopup.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RaAlwaysShowPopup.swift; sourceTree = "<group>"; };
+		4AD71F472342195B004E126A /* RaArrayChoiceTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RaArrayChoiceTableViewController.swift; sourceTree = "<group>"; };
 		4C043929220A9EC800BAEA63 /* VoiceNoteLock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceNoteLock.swift; sourceTree = "<group>"; };
 		4C04F58321C860C50090D0BB /* MantlePerfTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MantlePerfTest.swift; path = Models/MantlePerfTest.swift; sourceTree = "<group>"; };
 		4C090A1A210FD9C7001FD7F9 /* HapticFeedback.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HapticFeedback.swift; path = UserInterface/HapticFeedback.swift; sourceTree = "<group>"; };
@@ -2565,6 +2569,8 @@
 		4A1FEED3232695D300D3A4FD /* Controls */ = {
 			isa = PBXGroup;
 			children = (
+				4AD71F472342195B004E126A /* RaArrayChoiceTableViewController.swift */,
+				4AD71F4523421946004E126A /* RaAlwaysShowPopup.swift */,
 				4A1FEED4232695D300D3A4FD /* RaHeaderSearchView.xib */,
 				4A1FEED5232695D300D3A4FD /* RaHeaderSearchView.swift */,
 				4A1FEED6232695D300D3A4FD /* RaTextField.swift */,
@@ -3969,6 +3975,7 @@
 				45794E861E00620000066731 /* CallUIAdapter.swift in Sources */,
 				3416BCAA227763A500E761B4 /* OWSMessageView.m in Sources */,
 				88905E9E229CCA96004E4234 /* ExpirationNagView.swift in Sources */,
+				4AD71F4623421947004E126A /* RaAlwaysShowPopup.swift in Sources */,
 				340FC8BA204DAC8D007AEB0F /* FingerprintViewScanController.m in Sources */,
 				296D10612340044F007AED2F /* RaOWSConversationSettingsViewController.m in Sources */,
 				4585C4681ED8F8D200896AEA /* SafetyNumberConfirmationAlert.swift in Sources */,
@@ -4121,6 +4128,7 @@
 				4574A5D61DD6704700C6B692 /* CallService.swift in Sources */,
 				4521C3C01F59F3BA00B4C582 /* TextFieldHelper.swift in Sources */,
 				34D2CCDF206939B400CB1A14 /* DebugUIMessagesAction.m in Sources */,
+				4AD71F482342195C004E126A /* RaArrayChoiceTableViewController.swift in Sources */,
 				340FC8AC204DAC8D007AEB0F /* PrivacySettingsTableViewController.m in Sources */,
 				340FC8C5204DE223007AEB0F /* DebugUIBackup.m in Sources */,
 				4C11AA5020FD59C700351FBD /* MessageStatusView.swift in Sources */,
@@ -4294,6 +4302,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 0.2;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 6UA2C59S24;
 				FRAMEWORK_SEARCH_PATHS = (
@@ -4357,6 +4366,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 0.2;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 6UA2C59S24;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -4691,7 +4701,7 @@
 				CODE_SIGN_ENTITLEMENTS = Signal/Signal.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 0.2;
 				DEVELOPMENT_TEAM = 6UA2C59S24;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -4757,7 +4767,7 @@
 				CODE_SIGN_ENTITLEMENTS = Signal/Signal.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 0.2;
 				DEVELOPMENT_TEAM = 6UA2C59S24;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
