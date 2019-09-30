@@ -53,6 +53,7 @@ NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDat
 @property (strong, nonatomic) IBOutlet RaGradientButton *btnFinish;
 @property (strong, nonatomic) IBOutlet UIView *raHeaderView;
 @property (strong, nonatomic) IBOutlet UIImageView *raAvatarImageView;
+@property (strong, nonatomic) IBOutlet UIView *viewBackButton;
 
 @end
 
@@ -126,6 +127,12 @@ NSString *const kProfileView_LastPresentedDate = @"kProfileView_LastPresentedDat
     self.view.backgroundColor = Theme.offBackgroundColor;
     
     [self updateAvatarView];
+    
+    if (self.profileViewMode == ProfileViewMode_AppSettings){
+        [self.btnFinish setHidden:YES];
+    } else {
+        [self.viewBackButton setHidden:YES];
+    }
 
 //    UIView *contentView = [UIView containerView];
 //    contentView.backgroundColor = Theme.backgroundColor;
