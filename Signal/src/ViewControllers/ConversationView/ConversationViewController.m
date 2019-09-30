@@ -1671,8 +1671,14 @@ typedef enum : NSUInteger {
 
 - (void)startAudioCall
 {
+    // Test
+//    NSArray *arrChoices = [NSArray arrayWithObjects:@"Verschwindene Nachrichten", @"Alle Medieninhalte", @"Unterhaltungseinstellungen", @"Verschlüsselung neu starten", @"Stummschalten",  nil];
+//    UIBarButtonItem *item = [self.navigationItem.rightBarButtonItems lastObject];
+//
+//    [self showPopUpWithTableAndArray:arrChoices andSender:item.customView];
     [self callWithVideo:NO];
 }
+
 
 - (void)startVideoCall
 {
@@ -5208,6 +5214,15 @@ typedef enum : NSUInteger {
     // Scroll button layout depends on input toolbar size.
     [self updateScrollDownButtonLayout];
 }
+
+# pragma mark context menu
+-(void) showPopUpWithTableAndArray:(NSArray *)arrValues andSender:(UIView *) _sender {
+    
+    [RaAlwaysPresentAsPopover showPopUpInViewControllerWithViewCtrl:self sourceView:_sender valueArray:arrValues onSelect:^(NSInteger result) {
+        
+    }];
+}
+
 
 @end
 
