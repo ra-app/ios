@@ -420,7 +420,7 @@ public class OnboardingVerificationViewController: OnboardingBaseViewController 
 
      // MARK: - Code State
 
-    private let countdownDuration: TimeInterval = 60
+    private let countdownDuration: TimeInterval = 5//60
     private var codeCountdownTimer: Timer?
     private var codeCountdownStart: NSDate?
 
@@ -511,10 +511,12 @@ public class OnboardingVerificationViewController: OnboardingBaseViewController 
             
             codeStateLink.setTitle(title: text, font: /*.ows_dynamicTypeBodyClamped*/UIFont(name: "Poppins", size: 14)!, titleColor: /*Theme.secondaryColor*/UIColor(hexFromString: "#005AF5"))
         case .readyForResend:
-            codeStateLink.setTitle(title: NSLocalizedString("ONBOARDING_VERIFICATION_ORIGINAL_CODE_MISSING_LINK",
-                                                            comment: "Label for link that can be used when the original code did not arrive."),
-                                   font: .ows_dynamicTypeBodyClamped,
-                                   titleColor: .ows_materialBlue)
+             let text = String(format:"Mich stattdessen anrufen")  // ToDo Localization
+            codeStateLink.setTitle(title: text, font: /*.ows_dynamicTypeBodyClamped*/UIFont(name: "Poppins", size: 14)!, titleColor: /*Theme.secondaryColor*/UIColor(hexFromString: "#005AF5"))
+//            codeStateLink.setTitle(title: NSLocalizedString("ONBOARDING_VERIFICATION_ORIGINAL_CODE_MISSING_LINK",
+//                                                            comment: "Label for link that can be used when the original code did not arrive."),
+//                                   font: .ows_dynamicTypeBodyClamped,
+//                                   titleColor: .ows_materialBlue)
         case .resent:
             codeStateLink.setTitle(title: NSLocalizedString("ONBOARDING_VERIFICATION_RESENT_CODE_MISSING_LINK",
                                                             comment: "Label for link that can be used when the resent code did not arrive."),
